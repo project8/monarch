@@ -11,6 +11,10 @@
 #include <sstream>
 using std::stringstream;
 
+#include "mantis_env.hpp"
+#include "mantis_exceptions.hpp"
+#include "mantis_status.hpp"
+
 #include <iostream>
 using std::cout;
 using std::endl;
@@ -20,7 +24,6 @@ using std::endl;
 #include <hdf5.h>
 #include <unistd.h>
 
-#define JOELLE_FILE_NAME "JoelleOut.hdf5"
 #define JOELLE_RUN_DURATION 3600
 #define JOELLE_SAMPLE_RATE 500.0
 #define JOELLE_SAMPLE_SIZE (4 * 1048576)
@@ -264,8 +267,21 @@ void* WriteThreadFunction( void* BlockPtr )
     return NULL;
 }
 
-int main()
+int main(int argc, char** argv)
 {
+
+  /*
+   * parse the argc/argv into an environment.  if we catch an exception,
+   * die with some meaningful error here.
+   */
+  static safeEnvPtr runEnvironment;
+  try {
+    runEnvironment = mantis_env::parseArgs(argc, argv);
+  }
+  catch(argument_exception e) {
+    std::cout << e.what() << std::endl;
+    exit(env_arg_error);
+  }
 
     //****************************
     //shared memory initialization
@@ -385,7 +401,10 @@ int main()
 
     //1. make a new hdf5 type file
 
-    Buffer.fFileHandle = H5Fcreate( JOELLE_FILE_NAME, H5F_ACC_TRUNC, H5P_DEFAULT, H5P_DEFAULT );
+    Buffer.fFileHandle = H5Fcreate( runEnvironment->getOutName().c_str(), 
+				    H5F_ACC_TRUNC, 
+				    H5P_DEFAULT, 
+				    H5P_DEFAULT );
 
     //2. make a new hdf5 data space of rank 1 with a length as long as our dimensions
 
