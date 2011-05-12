@@ -24,8 +24,6 @@ using std::endl;
 #include <hdf5.h>
 #include <unistd.h>
 
-#define JOELLE_RUN_DURATION 3600
-#define JOELLE_SAMPLE_RATE 500.0
 #define JOELLE_SAMPLE_SIZE (4 * 1048576)
 
 typedef unsigned long int data_id_t;
@@ -300,7 +298,7 @@ int main(int argc, char** argv)
     Buffer.fDataStatusB = eAvailable;
 
     pthread_mutex_init( &Buffer.fRunMutex, NULL );
-    Buffer.fRunDuration = JOELLE_RUN_DURATION;
+    Buffer.fRunDuration = runEnvironment->getRunLength();
     Buffer.fRunStatus = eRun;
 
     //************************
@@ -350,9 +348,9 @@ int main(int argc, char** argv)
 
     //4. set sampling rate
 
-    cout << "setting sampling rate to " << JOELLE_SAMPLE_RATE << " MHz...";
+    cout << "setting sampling rate to " << runEnvironment->getClockRate() << " MHz...";
 
-    PX4Result = SetInternalAdcClockRatePX4( Buffer.fDigitizerHandle, JOELLE_SAMPLE_RATE );
+    PX4Result = SetInternalAdcClockRatePX4( Buffer.fDigitizerHandle, runEnvironment->getClockRate() );
     if( PX4Result != SIG_SUCCESS )
     {
         DumpLibErrorPX4( PX4Result, "failed to set sampling rate: " );
