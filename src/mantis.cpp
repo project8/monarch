@@ -295,14 +295,14 @@ int main(int argc, char** argv)
   }
 
   mantis_logger::Info("mantis started.  requested run environment:");
-  //  cout << runEnvironment << endl;
+  cout << runEnvironment << endl;
 
     //****************************
     //shared memory initialization
     //****************************
 
     shared_block Buffer;
-
+    
     pthread_mutex_init( &Buffer.fDataMutexA, NULL );
     Buffer.fDataA = NULL;
     Buffer.fDataIdA = 0;
@@ -324,7 +324,6 @@ int main(int argc, char** argv)
     int PX4Result; //this reused variable holds the results of px4 library function calls
 
     //1. try to connect to digitizer
-
     mantis_logger::Info("connecting to digitizer...");
 
     PX4Result = ConnectToDevicePX4( &Buffer.fDigitizerHandle, 1 );
