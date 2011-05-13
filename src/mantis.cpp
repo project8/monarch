@@ -276,8 +276,8 @@ int main(int argc, char** argv)
   try {
     runEnvironment = mantis_env::parseArgs(argc, argv);
   }
-  catch(argument_exception e) {
-    std::cout << e.what() << std::endl;
+  catch(argument_exception* e) {
+    std::cout << e->what() << std::endl;
     exit(env_arg_error);
   }
 
