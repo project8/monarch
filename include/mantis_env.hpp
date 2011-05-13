@@ -32,7 +32,7 @@ public:
   std::size_t getRunLength();
 
   friend std::ostream& operator << (std::ostream& outstream, 
-				    safeEnvPtr);
+				    safeEnvPtr&);
 };
 
 #endif
