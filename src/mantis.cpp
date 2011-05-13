@@ -7,6 +7,7 @@
 
 #include <cstdlib>
 #include <cstring>
+#include <signal.h>
 
 #include <sstream>
 using std::stringstream;
@@ -14,6 +15,7 @@ using std::stringstream;
 #include "mantis_env.hpp"
 #include "mantis_exceptions.hpp"
 #include "mantis_status.hpp"
+#include "mantis_handlers.hpp"
 
 #include <iostream>
 using std::cout;
@@ -272,6 +274,13 @@ void* WriteThreadFunction( void* BlockPtr )
 
 int main(int argc, char** argv)
 {
+
+  /*
+   * set up signal handling such that on ctrl-c, we clean up file handlers and
+   * mutexes sensibly.
+   */
+  void (*sig_hand)(int) = signal(SIGINT, abort_run);
+  if(sig_hand == SIG_IGN) signal(SIGINT, SIG_IGN);
 
   /*
    * parse the argc/argv into an environment.  if we catch an exception,
