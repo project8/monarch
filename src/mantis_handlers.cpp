@@ -4,12 +4,10 @@ void abort_run(int condition)
 {
   switch(condition) {
   case run_end_normal:
-    std::cout << "\n\trun ended normally.  cleaning up and terminating..."
-	      << std::endl;
+    mantis_logger::Info("run ended normally.  cleaning up...");
     break;
   case run_end_killed:
-    std::cout << "\n\trun termination requested.  cleaning up..."
-	      << std::endl;
+    mantis_logger::Info("run termination requested.  cleaning up...");
     break;
   default:
     break; 
