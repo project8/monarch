@@ -16,6 +16,7 @@ using std::stringstream;
 #include "mantis_exceptions.hpp"
 #include "mantis_status.hpp"
 #include "mantis_handlers.hpp"
+#include "mantis_logger.hpp"
 
 #include <iostream>
 using std::cout;
@@ -101,11 +102,9 @@ void* ReadThreadFunction( void* BlockPtr )
 
     //3. arm recording
 
-    cout << "beginning buffered PCI acquisition...";
+    mantis_logger::Info("beginning buffered PCI acquisition...");
 
     BeginBufferedPciAcquisitionPX4( Block->fDigitizerHandle, PX4_FREE_RUN );
-
-    cout << "ok" << endl;
 
     //4. go go go go
 
@@ -291,9 +290,12 @@ int main(int argc, char** argv)
     runEnvironment = mantis_env::parseArgs(argc, argv);
   }
   catch(argument_exception* e) {
-    std::cout << e->what() << std::endl;
+    mantis_logger::Error(e->what());
     exit(env_arg_error);
   }
+
+  mantis_logger::Info("mantis started.  requested run environment:");
+  //  cout << runEnvironment << endl;
 
     //****************************
     //shared memory initialization
@@ -323,7 +325,7 @@ int main(int argc, char** argv)
 
     //1. try to connect to digitizer
 
-    cout << "connecting to digitizer...";
+    mantis_logger::Info("connecting to digitizer...");
 
     PX4Result = ConnectToDevicePX4( &Buffer.fDigitizerHandle, 1 );
     if( PX4Result != SIG_SUCCESS )
@@ -332,11 +334,9 @@ int main(int argc, char** argv)
         return -1;
     }
 
-    cout << "ok" << endl;
-
     //2. set the parameters to the default state
 
-    cout << "setting digizer defaults...";
+    mantis_logger::Info("setting digizer defaults...");
 
     PX4Result = SetPowerupDefaultsPX4( Buffer.fDigitizerHandle );
     if( PX4Result != SIG_SUCCESS )
@@ -345,11 +345,9 @@ int main(int argc, char** argv)
         return -1;
     }
 
-    cout << "ok" << endl;
-
     //3. set channel 1 for acquisition
 
-    cout << "enabling channel one...";
+    mantis_logger::Info("enabling channel one...");
 
     PX4Result = SetActiveChannelsPX4( Buffer.fDigitizerHandle, PX4CHANSEL_SINGLE_CH1 );
     if( PX4Result != SIG_SUCCESS )
@@ -358,11 +356,9 @@ int main(int argc, char** argv)
         return -1;
     }
 
-    cout << "ok" << endl;
-
     //4. set sampling rate
+    mantis_logger::Info("setting sample rate...");
 
-    cout << "setting sampling rate to " << runEnvironment->getClockRate() << " MHz...";
 
     PX4Result = SetInternalAdcClockRatePX4( Buffer.fDigitizerHandle, runEnvironment->getClockRate() );
     if( PX4Result != SIG_SUCCESS )
@@ -371,15 +367,13 @@ int main(int argc, char** argv)
         return -1;
     }
 
-    cout << "ok" << endl;
-
     //*********************
     //dma buffer allocation
     //*********************
 
     //1. allocate first DMA buffer
 
-    cout << "allocating first DMA buffer of " << JOELLE_SAMPLE_SIZE << " bytes...";
+    mantis_logger::Info( "allocating first DMA buffer...");
 
     PX4Result = AllocateDmaBufferPX4( Buffer.fDigitizerHandle, JOELLE_SAMPLE_SIZE, &Buffer.fDataA );
     if( PX4Result != SIG_SUCCESS )
@@ -388,11 +382,9 @@ int main(int argc, char** argv)
         return -1;
     }
 
-    cout << "ok" << endl;
-
     //2. allocate second DMA buffer
 
-    cout << "allocating second DMA buffer of " << JOELLE_SAMPLE_SIZE << " bytes...";
+    mantis_logger::Info("allocating second DMA buffer...");
 
     PX4Result = AllocateDmaBufferPX4( Buffer.fDigitizerHandle, JOELLE_SAMPLE_SIZE, &Buffer.fDataB );
     if( PX4Result != SIG_SUCCESS )
@@ -401,13 +393,11 @@ int main(int argc, char** argv)
         return -1;
     }
 
-    cout << "ok" << endl;
-
     //*******************
     //hdf5 initialization
     //*******************
 
-    cout << "setting up new hdf5 file..";
+    mantis_logger::Info("setting up new hdf5 file..");
 
     hsize_t H5DataSpaceDimensions;
 
@@ -436,11 +426,6 @@ int main(int argc, char** argv)
     size_t xfer_buf_size = 2*1024*1024;
 
     H5Pset_buffer(Buffer.fDSetXferProps,xfer_buf_size,NULL,NULL);
-    //    H5Pset_chunk_cache(Buffer.fDSetAccessProps,34457,32*1024*1024,H5D_CHUNK_CACHE_W0_DEFAULT);
-
-    cout << "ok" << endl;
-    cout << "successfully initialized:";
-    cout << runEnvironment << endl;
 
     //***************
     //go threads go!!
@@ -462,7 +447,7 @@ int main(int argc, char** argv)
     //finalize hdf5
     //*************
 
-    cout << "closing hdf5 file...";
+    mantis_logger::Info("closing hdf5 file...");
 
     //1. clean up datatype
 
@@ -476,15 +461,13 @@ int main(int argc, char** argv)
 
     H5Fclose( Buffer.fFileHandle );
 
-    cout << "ok" << endl;
-
     //**********************
     //deallocate dma buffers
     //**********************
 
     //1. deallocate first DMA buffer
 
-    cout << "deallocating first DMA buffer...";
+    mantis_logger::Info("deallocating first DMA buffer...");
 
     PX4Result = FreeDmaBufferPX4( Buffer.fDigitizerHandle, Buffer.fDataA );
     if( PX4Result != SIG_SUCCESS )
@@ -493,11 +476,9 @@ int main(int argc, char** argv)
         return -1;
     }
 
-    cout << "ok" << endl;
-
     //2. deallocate second DMA buffer
 
-    cout << "deallocating second DMA buffer...";
+    mantis_logger::Info("deallocating second DMA buffer...");
 
     PX4Result = FreeDmaBufferPX4( Buffer.fDigitizerHandle, Buffer.fDataB );
     if( PX4Result != SIG_SUCCESS )
@@ -506,15 +487,13 @@ int main(int argc, char** argv)
         return -1;
     }
 
-    cout << "ok" << endl;
-
     //******************
     //finalize digitizer
     //******************
 
     //1. disconnect from digitizer
 
-    cout << "disconnecting from digitizer...";
+    mantis_logger::Info("disconnecting from digitizer...");
 
     PX4Result = DisconnectFromDevicePX4( Buffer.fDigitizerHandle );
     if( PX4Result != SIG_SUCCESS )
@@ -522,8 +501,6 @@ int main(int argc, char** argv)
         DumpLibErrorPX4( PX4Result, "failed to disconnect from digitizer card: " );
         return -1;
     }
-
-    cout << "ok" << endl;
 
     //**********************
     //finalize shared memory
