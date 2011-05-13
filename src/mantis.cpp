@@ -243,7 +243,12 @@ void* WriteThreadFunction( void* BlockPtr )
 					H5P_DEFAULT, 
 					Block->fDSetCreateProps, 
 					Block->fDSetAccessProps );
-            H5Dwrite( DataSetHandle, H5T_NATIVE_UCHAR, Block->fMemSpaceHandle, Block->fDataSpaceHandle, Block->fDSetXferProps, Block->fDataB );
+            H5Dwrite( DataSetHandle, 
+		      H5T_NATIVE_UCHAR, 
+		      Block->fMemSpaceHandle, 
+		      Block->fDataSpaceHandle, 
+		      Block->fDSetXferProps, 
+		      Block->fDataB );
             H5Dclose( DataSetHandle );
             
             if( Block-> fDataIdB % 1000 == 0 )
@@ -425,6 +430,8 @@ int main(int argc, char** argv)
     //    H5Pset_chunk_cache(Buffer.fDSetAccessProps,34457,32*1024*1024,H5D_CHUNK_CACHE_W0_DEFAULT);
 
     cout << "ok" << endl;
+    cout << "successfully initialized:";
+    cout << runEnvironment << endl;
 
     //***************
     //go threads go!!
