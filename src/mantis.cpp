@@ -41,6 +41,10 @@ typedef enum
     eRun, eHalt
 } run_status_t;
 
+typedef enum {
+  eNormal, eError
+} run_condition_t;
+
 struct shared_block
 {
   pthread_mutex_t fDataMutexA;
@@ -56,6 +60,7 @@ struct shared_block
   pthread_mutex_t fRunMutex;
   run_duration_t fRunDuration;
   run_status_t fRunStatus;
+  run_condition_t fRunCondition;
 
   HPX4 fDigitizerHandle;
   hid_t fFileHandle;
