@@ -90,13 +90,12 @@ void* RunThreadFunction( void* BlockPtr )
     }
 
     //3. lock the mutex protecting the run status and set it to halt
-
     pthread_mutex_lock( &Block->fRunMutex );
     Block->fRunStatus = eHalt;
     pthread_mutex_unlock( &Block->fRunMutex );
 
     //4. bail
-
+    mantis_logger::Info("Run control thread terminating.");
     return NULL;
 }
 
@@ -151,6 +150,7 @@ void* ReadThreadFunction( void* BlockPtr )
 	  mantis_logger::Error("Error while writing data to DMA Buffer!");
 	  canTakeData = false;
 	  Block->fRunCondition = eError;
+	  pthread_mutex_unlock( &Block->fDataMutexA );
 	  break;
 	}
 	else {
@@ -159,6 +159,7 @@ void* ReadThreadFunction( void* BlockPtr )
 	    mantis_logger::Error("Error waiting for DMA transfer!");
 	    canTakeData = false;
 	    Block->fRunCondition = eError;
+	    pthread_mutex_unlock( &Block->fDataMutexA );
 	    break;
 	  }  
 	}
@@ -188,6 +189,7 @@ void* ReadThreadFunction( void* BlockPtr )
 	  mantis_logger::Error("Error while writing data to DMA Buffer!");
 	  canTakeData = false;
 	  Block->fRunCondition = eError;
+	  pthread_mutex_unlock( &Block->fDataMutexB );
 	  break;
 	}
 	else {
@@ -196,6 +198,7 @@ void* ReadThreadFunction( void* BlockPtr )
 	    mantis_logger::Error("Error waiting for DMA transfer!");
 	    canTakeData = false;
 	    Block->fRunCondition = eError;
+	    pthread_mutex_unlock( &Block->fDataMutexB );
 	    break;
 	  }  
 	}
@@ -218,7 +221,7 @@ void* ReadThreadFunction( void* BlockPtr )
     cout << DataId << " total records acquired" << endl;
 
     //6. bail
-
+    mantis_logger::Info("Read thread terminating.");
     return NULL;
 }
 
@@ -319,7 +322,7 @@ void* WriteThreadFunction( void* BlockPtr )
     H5Fflush( Block->fFileHandle, H5F_SCOPE_GLOBAL );
 
     //5. bail
-
+    mantis_logger::Info("Write thread terminating.");
     return NULL;
 }
 
