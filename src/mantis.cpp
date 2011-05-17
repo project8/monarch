@@ -564,5 +564,10 @@ int main(int argc, char** argv)
     pthread_mutex_destroy( &Buffer.fDataMutexB );
     pthread_mutex_destroy( &Buffer.fRunMutex );
 
-    return 0;
+    if( Buffer.fRunCondition == eError ) {
+      return run_end_error;
+    }
+    else {
+      return run_end_normal;
+    }
 }
