@@ -80,8 +80,14 @@ void* RunThreadFunction( void* BlockPtr )
     shared_block* Block = (shared_block*) (BlockPtr);
 
     //2. sleep for the duration of the run
-
-    sleep( Block->fRunDuration );
+    for(std::size_t runT = 0; runT < Block->fRunDuration; runT++) {
+      if(Block->fRunCondition == eError) {
+	mantis_logger::Error("Error condition encountered.  Exiting...");
+	break;
+      }
+      // Otherwise we just sleep for one second.
+      sleep(1);
+    }
 
     //3. lock the mutex protecting the run status and set it to halt
 
