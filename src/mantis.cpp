@@ -144,7 +144,14 @@ void* ReadThreadFunction( void* BlockPtr )
         DataId++;
 
         pthread_mutex_lock( &Block->fDataMutexA );
-        GetPciAcquisitionDataFastPX4( Block->fDigitizerHandle, JOELLE_SAMPLE_SIZE, Block->fDataA, 0 );
+        PX4Result = GetPciAcquisitionDataFastPX4( Block->fDigitizerHandle, 
+						  JOELLE_SAMPLE_SIZE, 
+						  Block->fDataA, 0 );
+	if( PX4Result != SIG_SUCCESS ) {
+	  mantis_logger::Error("Error while writing data to DMA Buffer A!");
+	  canTakeData = false;
+	  Block->fRunCondition = eError;
+	}
         Block->fDataIdA = DataId;
         Block->fDataStatusA = eComplete;
         pthread_mutex_unlock( &Block->fDataMutexA );
