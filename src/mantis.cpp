@@ -106,8 +106,10 @@ void* ReadThreadFunction( void* BlockPtr )
 
     shared_block* Block = (shared_block*) (BlockPtr);
 
-    //2. allocate and initialize a record counter and a status buffer
-
+    //2. allocate and initialize a record counter and a status buffer,
+    //   as well as a status flag
+    int PX4Result;
+    bool canTakeData = true;
     data_id_t DataId = 0;
     run_status_t RunStatus = eRun;
 
@@ -115,11 +117,16 @@ void* ReadThreadFunction( void* BlockPtr )
 
     mantis_logger::Info("beginning buffered PCI acquisition...");
 
-    BeginBufferedPciAcquisitionPX4( Block->fDigitizerHandle, PX4_FREE_RUN );
+    PX4Result = BeginBufferedPciAcquisitionPX4( Block->fDigitizerHandle, 
+						PX4_FREE_RUN );
+    if( PX4Result != SIG_SUCCESS ) {
+      mantis_logger::Error("Couldn't start PCI acquisition!");
+      canTakeData = false;
+      Block->fRunCondition = eError;
+    }
 
     //4. go go go go
-
-    while( true )
+    while( true && canTakeData )
     {
 
         //a. check the run status
