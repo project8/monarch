@@ -148,9 +148,19 @@ void* ReadThreadFunction( void* BlockPtr )
 						  JOELLE_SAMPLE_SIZE, 
 						  Block->fDataA, 0 );
 	if( PX4Result != SIG_SUCCESS ) {
-	  mantis_logger::Error("Error while writing data to DMA Buffer A!");
+	  mantis_logger::Error("Error while writing data to DMA Buffer!");
 	  canTakeData = false;
 	  Block->fRunCondition = eError;
+	  break;
+	}
+	else {
+	  PX4Result = WaitForTransferCompletePX4(Block->fDigitizerHandle);
+	  if( PX4Result != SIG_SUCCESS ) {
+	    mantis_logger::Error("Error waiting for DMA transfer!");
+	    canTakeData = false;
+	    Block->fRunCondition = eError;
+	    break;
+	  }  
 	}
         Block->fDataIdA = DataId;
         Block->fDataStatusA = eComplete;
@@ -171,7 +181,24 @@ void* ReadThreadFunction( void* BlockPtr )
         DataId++;
 
         pthread_mutex_lock( &Block->fDataMutexB );
-        GetPciAcquisitionDataFastPX4( Block->fDigitizerHandle, JOELLE_SAMPLE_SIZE, Block->fDataB, 0 );
+        PX4Result = GetPciAcquisitionDataFastPX4( Block->fDigitizerHandle, 
+						  JOELLE_SAMPLE_SIZE, 
+						  Block->fDataB, 0 );
+	if( PX4Result != SIG_SUCCESS ) {
+	  mantis_logger::Error("Error while writing data to DMA Buffer!");
+	  canTakeData = false;
+	  Block->fRunCondition = eError;
+	  break;
+	}
+	else {
+	  PX4Result = WaitForTransferCompletePX4(Block->fDigitizerHandle);
+	  if( PX4Result != SIG_SUCCESS ) {
+	    mantis_logger::Error("Error waiting for DMA transfer!");
+	    canTakeData = false;
+	    Block->fRunCondition = eError;
+	    break;
+	  }  
+	}
         Block->fDataIdB = DataId;
         Block->fDataStatusB = eComplete;
         pthread_mutex_unlock( &Block->fDataMutexB );
