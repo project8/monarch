@@ -19,6 +19,7 @@ class mantis_env
 private:
   std::string outName;
   double clockRate;
+  std::size_t bufferCount;
   std::size_t runLength;
 public:
   mantis_env();

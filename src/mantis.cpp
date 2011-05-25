@@ -1,5 +1,5 @@
 /*
- * Joelle.cpp
+ * mantis.cpp
  *
  * created on: May 9, 2011
  * author: dlfurse
@@ -27,7 +27,7 @@ using std::endl;
 #include <hdf5.h>
 #include <unistd.h>
 
-#define JOELLE_SAMPLE_SIZE (4 * 1048576)
+#define MANTIS_SAMPLE_SIZE (4 * 1048576)
 
 typedef unsigned long int data_id_t;
 typedef enum
@@ -144,7 +144,7 @@ void* ReadThreadFunction( void* BlockPtr )
 
         pthread_mutex_lock( &Block->fDataMutexA );
         PX4Result = GetPciAcquisitionDataFastPX4( Block->fDigitizerHandle, 
-						  JOELLE_SAMPLE_SIZE, 
+						  MANTIS_SAMPLE_SIZE, 
 						  Block->fDataA, 0 );
 	if( PX4Result != SIG_SUCCESS ) {
 	  mantis_logger::Error("Error while writing data to DMA Buffer!");
@@ -183,7 +183,7 @@ void* ReadThreadFunction( void* BlockPtr )
 
         pthread_mutex_lock( &Block->fDataMutexB );
         PX4Result = GetPciAcquisitionDataFastPX4( Block->fDigitizerHandle, 
-						  JOELLE_SAMPLE_SIZE, 
+						  MANTIS_SAMPLE_SIZE, 
 						  Block->fDataB, 0 );
 	if( PX4Result != SIG_SUCCESS ) {
 	  mantis_logger::Error("Error while writing data to DMA Buffer!");
@@ -429,7 +429,7 @@ int main(int argc, char** argv)
 
     mantis_logger::Info( "allocating first DMA buffer...");
 
-    PX4Result = AllocateDmaBufferPX4( Buffer.fDigitizerHandle, JOELLE_SAMPLE_SIZE, &Buffer.fDataA );
+    PX4Result = AllocateDmaBufferPX4( Buffer.fDigitizerHandle, MANTIS_SAMPLE_SIZE, &Buffer.fDataA );
     if( PX4Result != SIG_SUCCESS )
     {
         DumpLibErrorPX4( PX4Result, "failed to allocate first DMA buffer: " );
@@ -440,7 +440,7 @@ int main(int argc, char** argv)
 
     mantis_logger::Info("allocating second DMA buffer...");
 
-    PX4Result = AllocateDmaBufferPX4( Buffer.fDigitizerHandle, JOELLE_SAMPLE_SIZE, &Buffer.fDataB );
+    PX4Result = AllocateDmaBufferPX4( Buffer.fDigitizerHandle, MANTIS_SAMPLE_SIZE, &Buffer.fDataB );
     if( PX4Result != SIG_SUCCESS )
     {
         DumpLibErrorPX4( PX4Result, "failed to allocate second DMA buffer: " );
@@ -464,7 +464,7 @@ int main(int argc, char** argv)
 
     //2. make a new hdf5 data space of rank 1 with a length as long as our dimensions
 
-    H5DataSpaceDimensions = JOELLE_SAMPLE_SIZE;
+    H5DataSpaceDimensions = MANTIS_SAMPLE_SIZE;
     Buffer.fDataSpaceHandle = H5Screate_simple( 1, &H5DataSpaceDimensions, NULL );
     Buffer.fMemSpaceHandle = H5Screate_simple( 1, &H5DataSpaceDimensions, NULL );
 
