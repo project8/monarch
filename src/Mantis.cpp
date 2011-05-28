@@ -47,16 +47,14 @@ int main( int argc, char** argv )
     
     MantisStatus* Status = new MantisStatus();    
     MantisBuffer* Buffer = MantisBuffer::bufferFromEnv(runEnvironment);    
-    MantisRun* Run = MantisRun::runFromEnv(runEnvironment,Status);
-    
+    MantisRun* Run = MantisRun::runFromEnv(runEnvironment,Status);    
     MantisPX1500* Reader = MantisPX1500::digFromEnv(runEnvironment,
 						    Status,
 						    Buffer);
     
-    MantisFileWriter* Writer = new MantisFileWriter();
-    Writer->SetStatus(Status);
-    Writer->SetBuffer(Buffer);
-    Writer->SetFileName(FileName);
+    MantisFileWriter* Writer = MantisFileWriter::writerFromEnv(runEnvironment,
+							       Status,
+							       Buffer);
     
     Buffer->Initialize();
     Run->Initialize();
