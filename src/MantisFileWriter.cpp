@@ -100,4 +100,4 @@ void MantisFileWriter::Finalize()
     cout << "records written: " << fRecordCount << endl;
     
     return;
-}       
+}

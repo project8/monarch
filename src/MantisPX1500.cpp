@@ -143,6 +143,7 @@ void MantisPX1500::Execute()
         {
             DumpLibErrorPX4( PX4Result, "failed to acquire dma data over pci: " );
             fStatus->SetError();
+            PX4Result = EndBufferedPciAcquisitionPX4( fHandle );
             delete Iterator;
             return;
         }
@@ -153,9 +154,7 @@ void MantisPX1500::Execute()
             PX4Result = EndBufferedPciAcquisitionPX4( fHandle );
 
             StartTick = clock();
-            cout << "writer waiting\n";
             fCondition.Wait();
-            cout << "writer released\n";
             EndTick = clock();
             fDeadTickCount += (EndTick - StartTick);
             
