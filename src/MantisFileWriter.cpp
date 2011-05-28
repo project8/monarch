@@ -2,6 +2,8 @@
 
 #include <cstdio>
 
+#include <unistd.h>
+
 #include <iostream>
 using std::cout;
 using std::endl;
@@ -76,11 +78,6 @@ void MantisFileWriter::Execute()
             return;
         }
         
-        Iterator->SetReading();
-        WriteResult = this->egg_ptr->write_data( Iterator->Data() );
-        fRecordCount++;
-        Iterator->SetRead();
-        
         if( Iterator->TryIncrement() == false )
         {
             if( fStatus->GetWriterCondition()->IsWaiting() == true )
@@ -89,6 +86,15 @@ void MantisFileWriter::Execute()
             }
             Iterator->Increment();
         }
+        
+        if( !Iterator->State().IsWritten() )
+        {
+            cout << "found an unwritten block, might possibly fail?\n";
+        }
+        Iterator->SetReading();
+        WriteResult = this->egg_ptr->write_data( Iterator->Data() );
+        fRecordCount++;
+        Iterator->SetRead();
     }
     return;
 }

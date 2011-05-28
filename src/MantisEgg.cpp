@@ -1,5 +1,8 @@
 #include "MantisEgg.hpp"
 
+//REMOVE
+#include <iostream>
+
 MantisEgg::MantisEgg() 
   : file_ptr(NULL),
     header_finished(false),
@@ -72,7 +75,7 @@ bool MantisEgg::write_raw_bytes(const void* tgt,
   if ( written != tgt_size * tgt_width ) {
     res = false;
   }
-
+    
   return res;
 }
 
@@ -141,10 +144,10 @@ bool MantisEgg::write_data(MantisData* block)
   u_long_byter.value = block->fId;
   clock_t_byter.value = block->fTick;
   this->write_raw_bytes(u_long_byter.value_bytes,
-			u_long_byter.value_bytes[0],
+			sizeof(u_long_byter.value_bytes[0]),
 			sizeof(u_long_byter));
   this->write_raw_bytes(clock_t_byter.value_bytes,
-			clock_t_byter.value_bytes[0],
+			sizeof(clock_t_byter.value_bytes[0]),
 			sizeof(clock_t_byter));
   this->write_raw_bytes(block->fDataPtr,
 			this->data_size,

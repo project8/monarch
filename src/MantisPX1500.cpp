@@ -102,8 +102,11 @@ void MantisPX1500::Execute()
 {   
     //allocate some local variables
     int PX4Result;
-    clock_t StartTick;
-    clock_t EndTick;
+    clock_t ReferenceTick;
+    ReferenceTick = clock();
+    
+    clock_t DeadStartTick;
+    clock_t DeadEndTick;
     
     //grab an iterator
     MantisBufferIterator* Iterator = fBuffer->CreateIterator();
@@ -136,6 +139,7 @@ void MantisPX1500::Execute()
             return;
         }
         
+        Iterator->SetWriting();
         Iterator->Data()->fId = fAcquisitionCount;
         Iterator->Data()->fTick = clock();
         PX4Result = GetPciAcquisitionDataFastPX4( fHandle, fBuffer->GetDataLength(), Iterator->Data()->fDataPtr, 0 );
@@ -148,15 +152,18 @@ void MantisPX1500::Execute()
             return;
         }
         fRecordCount++;
+        Iterator->SetWritten();
         
         if( Iterator->TryIncrement() == false )
         {
             PX4Result = EndBufferedPciAcquisitionPX4( fHandle );
 
-            StartTick = clock();
+            DeadStartTick = clock();
+            cout << "blocked\n";
             fCondition.Wait();
-            EndTick = clock();
-            fDeadTickCount += (EndTick - StartTick);
+            cout << "released\n";
+            DeadEndTick = clock();
+            fDeadTickCount += (DeadEndTick - DeadStartTick);
             
             if( fStatus->IsRunning() == false )
             {
