@@ -14,6 +14,11 @@ MantisRun::~MantisRun()
 {
 }
 
+MantisRun* MantisRun::runFromEnv(safeEnvPtr& env)
+{
+  
+}
+
 void MantisRun::SetStatus( MantisStatus* aStatus )
 {
     fStatus = aStatus;
