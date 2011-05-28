@@ -45,14 +45,9 @@ int main( int argc, char** argv )
 
     runEnvironment = MantisEnv::parseArgs(argc, argv);
     
-    MantisStatus* Status = new MantisStatus();
-    
-    MantisBuffer* Buffer = MantisBuffer::bufferFromEnv(runEnvironment);
-    
-    MantisRun* Run = new MantisRun();
+    MantisStatus* Status = new MantisStatus();    
+    MantisBuffer* Buffer = MantisBuffer::bufferFromEnv(runEnvironment);    
     MantisRun* Run = MantisRun::runFromEnv(runEnvironment,Status);
-    Run->SetStatus(Status);
-    Run->SetDuration(Duration);
     
     MantisPX1500* Reader = new MantisPX1500();
     Reader->SetStatus(Status);
