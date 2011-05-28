@@ -10,10 +10,10 @@
 #include <getopt.h>
 #include <ctime>
 
-class mantis_env;
-typedef std::auto_ptr<mantis_env> safeEnvPtr;
+class MantisEnv;
+typedef std::auto_ptr<MantisEnv> safeEnvPtr;
 
-class mantis_env
+class MantisEnv
 {
 
 private:
@@ -22,7 +22,7 @@ private:
   std::size_t bufferCount;
   std::size_t runLength;
 public:
-  mantis_env();
+  MantisEnv();
   static safeEnvPtr parseArgs(int argc,char** argv);
   static void verifyEnvironment(safeEnvPtr);
   void setOutName(std::string);
