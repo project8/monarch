@@ -50,6 +50,7 @@ int main( int argc, char** argv )
     MantisBuffer* Buffer = MantisBuffer::bufferFromEnv(runEnvironment);
     
     MantisRun* Run = new MantisRun();
+    MantisRun* Run = MantisRun::runFromEnv(runEnvironment,Status);
     Run->SetStatus(Status);
     Run->SetDuration(Duration);
     
