@@ -17,32 +17,6 @@ safeEnvPtr runEnvironment;
 
 int main( int argc, char** argv )
 {
-    if( argc < 4 )
-    {
-        cout << "usage:" << endl;
-        cout << "\tMantis <rate> <duration> <output file name>" << endl;
-        return -1;
-    }
-    stringstream Converter;
-    double Rate;
-    unsigned int Duration;
-    string FileName;
-    
-    Converter.clear();
-    Converter.str("");
-    Converter << argv[1];
-    Converter >> Rate;
-    
-    Converter.clear();
-    Converter.str("");
-    Converter << argv[2];
-    Converter >> Duration;    
-    
-    Converter.clear();
-    Converter.str("");
-    Converter << argv[3];
-    Converter >> FileName;
-
     runEnvironment = MantisEnv::parseArgs(argc, argv);
     
     MantisStatus* Status = new MantisStatus();    
