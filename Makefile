@@ -20,7 +20,7 @@ $(TGT): $(OBJ)
 	@$(CC) -o $@ $(OBJ) $(LDFLAGS)
 
 %.o: %.cpp $(BUILDIR)
-	@echo CXX $@
+	@echo CXX $(basename $(notdir $@))
 	@$(CC) $(CFLAGS) $(INCDIRS) -c $< -o $@
 
 clean: 
