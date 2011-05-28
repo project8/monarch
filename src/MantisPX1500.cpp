@@ -106,12 +106,17 @@ void MantisPX1500::Execute()
     clock_t EndTick;
     
     //grab an iterator
-    cout << "queueing up write pointer\n";
     MantisBufferIterator* Iterator = fBuffer->CreateIterator();
-    cout << "write pointer queued at " << Iterator->Index() << "\n";
+    
+    //wait for run to release me
+    fCondition.Wait();
+    if( fStatus->IsRunning() == false )
+    {
+        delete Iterator;
+        return;
+    }
     
     //start acquisition
-    cout << "starting acquisition\n";
     PX4Result = BeginBufferedPciAcquisitionPX4( fHandle, PX4_FREE_RUN );
     if( PX4Result != SIG_SUCCESS )
     {
@@ -120,18 +125,6 @@ void MantisPX1500::Execute()
         return;
     }
     fAcquisitionCount++;
-    cout << "done starting acquisition\n";
-    
-    //wait for run to release me
-    cout << "write thread waiting\n";
-    fCondition.Wait();
-    if( fStatus->IsRunning() == false )
-    {
-        cout << "deleting iterator\n";
-        delete Iterator;
-        return;
-    }
-    cout << "write thread released\n";
     
     //go go go go
     while( true )
