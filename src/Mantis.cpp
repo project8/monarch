@@ -47,9 +47,7 @@ int main( int argc, char** argv )
     
     MantisStatus* Status = new MantisStatus();
     
-    MantisBuffer* Buffer = new MantisBuffer();
-    Buffer->SetDataLength(4194304);
-    Buffer->SetBufferLength(400);
+    MantisBuffer* Buffer = MantisBuffer::bufferFromEnv(runEnvironment);
     
     MantisRun* Run = new MantisRun();
     Run->SetStatus(Status);
