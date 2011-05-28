@@ -3,7 +3,7 @@
 
 #include "mantis_status.hpp"
 #include "mantis_run_ctrl.hpp"
-#include "mantis_logger.hpp"
+#include "MantisLogger.hpp"
 #include <iostream>
 
 void abort_run(int);

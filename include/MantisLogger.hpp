@@ -1,6 +1,6 @@
 #ifndef __mantis_logger_hpp
 #define __mantis_logger_hpp
-/* mantis_logger.hpp
+/* MantisLogger.hpp
  * started by jared kofron <jared.kofron@gmail.com> 3/14/2011
  * provides an abstract logging interface for the project 8 daq.
  */
@@ -10,11 +10,11 @@
 #include <memory>
 #include <time.h>
 
-class mantis_logger
+class MantisLogger
 {
 private:
-  mantis_logger();
-  ~mantis_logger();
+  MantisLogger();
+  ~MantisLogger();
   static void updateTime();
   static char fmtTimeBuf[23];
   static time_t rawTimeBuf;
@@ -25,4 +25,4 @@ public:
   static void Info(std::string);
 };
 
-#endif //__mantis_logger_hpp
+#endif //__MantisLogger_hpp
