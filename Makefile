@@ -16,10 +16,12 @@ OBJ=$(CSRC:%.cpp=%.o)
 TGT=Mantis
 
 $(TGT): $(OBJ)
-	$(CC) -o $@ $(OBJ) $(LDFLAGS)
+	@echo LD $@
+	@$(CC) -o $@ $(OBJ) $(LDFLAGS)
 
 %.o: %.cpp $(BUILDIR)
-	$(CC) $(CFLAGS) $(INCDIRS) -c $< -o $@
+	@echo CXX $@
+	@$(CC) $(CFLAGS) $(INCDIRS) -c $< -o $@
 
 clean: 
 	@find . -maxdepth 2 -name "*.o" | xargs -I{} rm {}
@@ -29,7 +31,6 @@ clean:
 
 $(BUILDIR): 
 	@[ -d $@ ] || mkdir -p $@
-	
+
 MantisBlock.o: MantisBlock.cc MantisBlock.hh
 	$(CC) $(CFLAGS) $(INCDIRS) -c $< -o $@
-    
