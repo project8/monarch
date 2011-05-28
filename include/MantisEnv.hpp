@@ -1,7 +1,7 @@
 #ifndef __env_hpp
 #define __env_hpp
 
-#include "mantis_exceptions.hpp"
+#include "MantisExceptions.hpp"
 #include <sstream>
 #include <memory>
 #include <string>
