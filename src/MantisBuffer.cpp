@@ -8,6 +8,16 @@ MantisBuffer::~MantisBuffer()
 {
 }
 
+MantisBuffer* MantisBuffer::bufferFromEnv(safeEnvPtr& env)
+{
+  MantisBuffer* res = new MantisBuffer();
+  
+  res->SetDataLength((env.get())->getDataWidth());
+  res->SetBufferLength((env.get())->getBufferCount());
+
+  return res;
+}
+
 void MantisBuffer::Initialize()
 {
     fBuffer = new MantisBufferBlock[fBufferLength];
