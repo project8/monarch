@@ -1,7 +1,7 @@
 #ifndef __mantis_egg_hpp
 #define __mantis_egg_hpp
 
-#include "MantisBlock.hpp"
+#include "MantisData.hpp"
 #include <cstdio>
 #include <string>
 #include <cstring>
@@ -22,12 +22,14 @@ private:
   std::string file_name;
   static std::string attr_to_xml(egg_hdr_k_type key,
 				 egg_hdr_v_type val);
-  static std::string size_to_hex(std::size_t size);
   static std::string xml_vers_header();
   static std::string xml_hdr_open();
   static std::string xml_hdr_close();
   std::size_t data_size;
   std::size_t data_width;
+  bool write_raw_bytes(const void* tgt, 
+		       std::size_t tgt_size, 
+		       std::size_t tgt_width);
   mantis_egg();
 public:
   static mantis_egg* egg_from_env();
@@ -35,18 +37,18 @@ public:
   template<typename T> bool add_header_attr(egg_hdr_k_type key, 
 					    T value);
   bool write_header();
-  bool write_data(MantisBlock* block);
+  bool write_data(MantisData* block);
   ~mantis_egg();
 };
 
 static union {
   clock_t value;
-  char value_bytes[sizeof(clock_t)];
+  unsigned char value_bytes[sizeof(clock_t)];
 } clock_t_byter;
 
 static union {
   unsigned long value;
-  char value_bytes[sizeof(unsigned long)];
+  unsigned char value_bytes[sizeof(unsigned long)];
 } u_long_byter;
 
 template<typename T> bool mantis_egg::add_header_attr(egg_hdr_k_type key,
