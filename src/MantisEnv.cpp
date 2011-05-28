@@ -3,7 +3,9 @@
 MantisEnv::MantisEnv()
   : outName("mantis_out.h5"), // default output name
     clockRate(500.0),         // default ADC clock rate (MHz)
-    runLength(600)            // default run length in seconds
+    runLength(600),           // default run length in seconds
+    dataWidth(4194304),       // number of bytes in a single record
+    bufferCount(600)          // number of circular buffer nodes
 { /* no-op */ }
 
 void MantisEnv::setOutName(std::string newOutName)
@@ -48,6 +50,28 @@ void MantisEnv::setRunLength(std::string runLengthStr)
 std::size_t MantisEnv::getRunLength()
 {
   return (*this).runLength;
+}
+
+void MantisEnv::setDataWidth(std::string dWidthStr)
+{
+  std::istringstream(dWidthStr) >> (*this).dataWidth;
+  return;
+}
+
+std::size_t MantisEnv::getDataWidth()
+{
+  return (*this).dataWidth;
+}
+
+void MantisEnv::setBufferCount(std::string bufCountStr)
+{
+  std::istringstream(bufCountStr) >> (*this).bufferCount;
+  return;
+}
+
+std::size_t MantisEnv::getBufferCount()
+{
+  return (*this).bufferCount;
 }
 
 safeEnvPtr MantisEnv::parseArgs(int argc, char** argv)
