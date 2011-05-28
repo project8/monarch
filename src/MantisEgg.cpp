@@ -18,7 +18,7 @@ MantisEgg::~MantisEgg()
 MantisEgg* MantisEgg::egg_from_env(safeEnvPtr& env)
 {
   MantisEgg* egg_ptr = new MantisEgg();
-  egg_ptr->file_ptr = fopen((env.get())->getOutName(),"wb");
+  egg_ptr->file_ptr = fopen((env.get())->getOutName().c_str(),"wb");
 
   egg_ptr->add_header_attr("clock_ticks_per_second",
 			   CLOCKS_PER_SEC);
