@@ -9,12 +9,15 @@
 
 #include "MantisStatus.hpp"
 #include "MantisBuffer.hpp"
+#include "MantisEnv.hpp"
 
 class MantisPX1500 :
     public MantisCallable
 {
     public:
-        MantisPX1500();
+  static MantisPX1500* digFromEnv(safeEnvPtr& env, 
+				  MantisStatus* sts,
+				  MantisBuffer* buf);
         virtual ~MantisPX1500();
         
         void SetStatus( MantisStatus* aStatus );
@@ -26,6 +29,7 @@ class MantisPX1500 :
         void Finalize();
         
     private:
+        MantisPX1500();
         MantisCondition fCondition;
         HPX4 fHandle;
         unsigned long fAcquisitionCount;

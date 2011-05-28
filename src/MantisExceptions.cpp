@@ -1,4 +1,4 @@
-#include "mantis_exceptions.hpp"
+#include "MantisExceptions.hpp"
 
 const char* argument_exception::what()
 {

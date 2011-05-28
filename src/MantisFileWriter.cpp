@@ -14,6 +14,17 @@ MantisFileWriter::~MantisFileWriter()
 {
 }
 
+MantisFileWriter* MantisFileWriter::writerFromEnv(safeEnvPtr& env,
+						  MantisStatus* sts,
+						  MantisBuffer* buf)
+{
+  MantisFileWriter* res = new MantisFileWriter();
+  res->SetFileName((env.get())->getOutName());
+  res->SetStatus(sts);
+  res->SetBuffer(buf);
+  return res;
+}
+
 void MantisFileWriter::SetStatus( MantisStatus* aStatus )
 {
     fStatus = aStatus;

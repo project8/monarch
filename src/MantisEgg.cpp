@@ -1,6 +1,6 @@
-#include "mantis_egg.hpp"
+#include "MantisEgg.hpp"
 
-mantis_egg::mantis_egg() 
+MantisEgg::MantisEgg() 
   : file_ptr(NULL),
     header_finished(false),
     file_name("default_egg.egg"),
@@ -8,16 +8,16 @@ mantis_egg::mantis_egg()
     data_width(10)
 { /* no-op */ }
 
-mantis_egg::~mantis_egg()
+MantisEgg::~MantisEgg()
 {
   if(file_ptr) {
     fclose(file_ptr);
   }
 }
 
-mantis_egg* mantis_egg::egg_from_env()
+MantisEgg* MantisEgg::egg_from_env()
 {
-  mantis_egg* egg_ptr = new mantis_egg();
+  MantisEgg* egg_ptr = new MantisEgg();
   egg_ptr->file_ptr = fopen(egg_ptr->file_name.c_str(),"wb");
 
   egg_ptr->add_header_attr("clock_ticks_per_second",
@@ -30,7 +30,7 @@ mantis_egg* mantis_egg::egg_from_env()
   return egg_ptr;
 }
 
-std::string mantis_egg::attr_to_xml(egg_hdr_k_type key,
+std::string MantisEgg::attr_to_xml(egg_hdr_k_type key,
 				    egg_hdr_v_type val)
 {
   std::stringstream fuse;
@@ -44,22 +44,22 @@ std::string mantis_egg::attr_to_xml(egg_hdr_k_type key,
   return fuse.str();
 }
 
-std::string mantis_egg::xml_vers_header()
+std::string MantisEgg::xml_vers_header()
 {
   return "<?xml version=\"1.0\"?>";
 }
 
-std::string mantis_egg::xml_hdr_open()
+std::string MantisEgg::xml_hdr_open()
 {
   return "<header>";
 }
 
-std::string mantis_egg::xml_hdr_close()
+std::string MantisEgg::xml_hdr_close()
 {
   return "</header>";
 }
 
-bool mantis_egg::write_raw_bytes(const void* tgt, 
+bool MantisEgg::write_raw_bytes(const void* tgt, 
 				 std::size_t tgt_size, 
 				 std::size_t tgt_width)
 {
@@ -76,7 +76,7 @@ bool mantis_egg::write_raw_bytes(const void* tgt,
   return res;
 }
 
-bool mantis_egg::write_header()
+bool MantisEgg::write_header()
 {
   bool ret_val = true;
   std::string hdr_string;
@@ -88,12 +88,12 @@ bool mantis_egg::write_header()
   }
   
   if( ret_val ) {
-    fuse << mantis_egg::xml_vers_header();
-    fuse << mantis_egg::xml_hdr_open();
+    fuse << MantisEgg::xml_vers_header();
+    fuse << MantisEgg::xml_hdr_open();
 
     // Write header attributes
     while( header_it != header_attrs.end() ) {
-      std::string xml = mantis_egg::attr_to_xml((*header_it).first,
+      std::string xml = MantisEgg::attr_to_xml((*header_it).first,
 						(*header_it).second);
       fuse << xml;
       header_it++;
@@ -107,10 +107,10 @@ bool mantis_egg::write_header()
 	     << sizeof(MantisData::ClockType) << "|"
 	     << "data:"
 	     << this->data_width;
-    fuse << mantis_egg::attr_to_xml("data_format",dataDesc.str());
+    fuse << MantisEgg::attr_to_xml("data_format",dataDesc.str());
 
     // Close the header, we're done.
-    fuse << mantis_egg::xml_hdr_close();
+    fuse << MantisEgg::xml_hdr_close();
   }
 
   char buffer[2*sizeof(std::size_t)];
@@ -133,7 +133,7 @@ bool mantis_egg::write_header()
   return ret_val;
 }
 
-bool mantis_egg::write_data(MantisData* block)
+bool MantisEgg::write_data(MantisData* block)
 {
   /* fmt: |fID|fTick|fData| */
   static serializer<unsigned long int> u_long_byter;

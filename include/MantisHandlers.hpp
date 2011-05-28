@@ -1,9 +1,9 @@
 #ifndef __mantis_handlers_hpp
 #define __mantis_handlers_hpp
 
-#include "mantis_status.hpp"
-#include "mantis_run_ctrl.hpp"
-#include "mantis_logger.hpp"
+#include "MantisStatus.hpp"
+#include "MantisRunCtrl.hpp"
+#include "MantisLogger.hpp"
 #include <iostream>
 
 void abort_run(int);

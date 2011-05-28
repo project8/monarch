@@ -1,23 +1,25 @@
-#include "mantis_env.hpp"
+#include "MantisEnv.hpp"
 
-mantis_env::mantis_env()
+MantisEnv::MantisEnv()
   : outName("mantis_out.h5"), // default output name
     clockRate(500.0),         // default ADC clock rate (MHz)
-    runLength(600)            // default run length in seconds
+    runLength(600),           // default run length in seconds
+    dataWidth(4194304),       // number of bytes in a single record
+    bufferCount(600)          // number of circular buffer nodes
 { /* no-op */ }
 
-void mantis_env::setOutName(std::string newOutName)
+void MantisEnv::setOutName(std::string newOutName)
 {
   (*this).outName = newOutName;
   return;
 }
 
-std::string mantis_env::getOutName()
+std::string MantisEnv::getOutName()
 {
   return (*this).outName;
 }
 
-void mantis_env::setClockRate(std::string clockRateStr)
+void MantisEnv::setClockRate(std::string clockRateStr)
 {
   try {
     std::istringstream(clockRateStr) >> (*this).clockRate;
@@ -28,12 +30,12 @@ void mantis_env::setClockRate(std::string clockRateStr)
   return;
 }
 
-double mantis_env::getClockRate()
+double MantisEnv::getClockRate()
 {
   return (*this).clockRate;
 }
 
-void mantis_env::setRunLength(std::string runLengthStr)
+void MantisEnv::setRunLength(std::string runLengthStr)
 {
   try {
     std::istringstream(runLengthStr) >> (*this).runLength;
@@ -45,14 +47,36 @@ void mantis_env::setRunLength(std::string runLengthStr)
   return;
 }
 
-std::size_t mantis_env::getRunLength()
+std::size_t MantisEnv::getRunLength()
 {
   return (*this).runLength;
 }
 
-safeEnvPtr mantis_env::parseArgs(int argc, char** argv)
+void MantisEnv::setDataWidth(std::string dWidthStr)
 {
-  safeEnvPtr result(new mantis_env());
+  std::istringstream(dWidthStr) >> (*this).dataWidth;
+  return;
+}
+
+std::size_t MantisEnv::getDataWidth()
+{
+  return (*this).dataWidth;
+}
+
+void MantisEnv::setBufferCount(std::string bufCountStr)
+{
+  std::istringstream(bufCountStr) >> (*this).bufferCount;
+  return;
+}
+
+std::size_t MantisEnv::getBufferCount()
+{
+  return (*this).bufferCount;
+}
+
+safeEnvPtr MantisEnv::parseArgs(int argc, char** argv)
+{
+  safeEnvPtr result(new MantisEnv());
  
   int c;
   try {
@@ -78,7 +102,7 @@ safeEnvPtr mantis_env::parseArgs(int argc, char** argv)
   return result;
 }
 
-void mantis_env::verifyEnvironment(safeEnvPtr someEnvironment)
+void MantisEnv::verifyEnvironment(safeEnvPtr someEnvironment)
 {
   return;
 }

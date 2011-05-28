@@ -1,3 +1,4 @@
+#include "MantisEnv.hpp"
 #include "MantisRun.hpp"
 #include "MantisPX1500.hpp"
 #include "MantisFileWriter.hpp"
@@ -11,55 +12,23 @@ using std::stringstream;
 using std::cout;
 using std::endl;
 
-#include <unistd.h>
+// The global environment variable.
+safeEnvPtr runEnvironment;
 
-int main( int argv, char** argc )
+int main( int argc, char** argv )
 {
-    if( argv < 4 )
-    {
-        cout << "usage:" << endl;
-        cout << "\tMantis <rate> <duration> <output file name>" << endl;
-        return -1;
-    }
-    stringstream Converter;
-    double Rate;
-    unsigned int Duration;
-    string FileName;
+    runEnvironment = MantisEnv::parseArgs(argc, argv);
     
-    Converter.clear();
-    Converter.str("");
-    Converter << argc[1];
-    Converter >> Rate;
+    MantisStatus* Status = new MantisStatus();    
+    MantisBuffer* Buffer = MantisBuffer::bufferFromEnv(runEnvironment);    
+    MantisRun* Run = MantisRun::runFromEnv(runEnvironment,Status);    
+    MantisPX1500* Reader = MantisPX1500::digFromEnv(runEnvironment,
+						    Status,
+						    Buffer);
     
-    Converter.clear();
-    Converter.str("");
-    Converter << argc[2];
-    Converter >> Duration;    
-    
-    Converter.clear();
-    Converter.str("");
-    Converter << argc[3];
-    Converter >> FileName;
-    
-    MantisStatus* Status = new MantisStatus();
-    
-    MantisBuffer* Buffer = new MantisBuffer();
-    Buffer->SetDataLength( 4194304 );
-    Buffer->SetBufferLength( 630 );
-    
-    MantisRun* Run = new MantisRun();
-    Run->SetStatus(Status);
-    Run->SetDuration(Duration);
-    
-    MantisPX1500* Reader = new MantisPX1500();
-    Reader->SetStatus(Status);
-    Reader->SetBuffer(Buffer);
-    Reader->SetDigitizationRate(Rate);
-    
-    MantisFileWriter* Writer = new MantisFileWriter();
-    Writer->SetStatus(Status);
-    Writer->SetBuffer(Buffer);
-    Writer->SetFileName(FileName);
+    MantisFileWriter* Writer = MantisFileWriter::writerFromEnv(runEnvironment,
+							       Status,
+							       Buffer);
     
     Buffer->Initialize();
     Run->Initialize();

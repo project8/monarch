@@ -14,7 +14,7 @@ typedef std::string egg_hdr_v_type;
 typedef std::pair<egg_hdr_k_type,egg_hdr_v_type> egg_hdr_type;
 typedef std::map<egg_hdr_k_type,egg_hdr_v_type> egg_hdr_container;
 
-class mantis_egg {
+class MantisEgg {
 private:
   FILE* file_ptr;
   bool header_finished;
@@ -30,15 +30,15 @@ private:
   bool write_raw_bytes(const void* tgt, 
 		       std::size_t tgt_size, 
 		       std::size_t tgt_width);
-  mantis_egg();
+  MantisEgg();
 public:
-  static mantis_egg* egg_from_env();
+  static MantisEgg* egg_from_env();
 
   template<typename T> bool add_header_attr(egg_hdr_k_type key, 
 					    T value);
   bool write_header();
   bool write_data(MantisData* block);
-  ~mantis_egg();
+  ~MantisEgg();
 };
 
 template<typename T>
@@ -48,7 +48,7 @@ union serializer {
 };
 
 template<typename T>
-bool mantis_egg::add_header_attr(egg_hdr_k_type key,
+bool MantisEgg::add_header_attr(egg_hdr_k_type key,
 				 T value)
 {
   std::pair<egg_hdr_container::iterator,bool> ret;

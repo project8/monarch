@@ -6,6 +6,7 @@
 #include "MantisCondition.hpp"
 #include <cstdio>
 
+#include "MantisEnv.hpp"
 #include "MantisStatus.hpp"
 #include "MantisBuffer.hpp"
 
@@ -16,7 +17,9 @@ class MantisFileWriter :
     public MantisCallable
 {
     public:
-        MantisFileWriter();
+  static MantisFileWriter* writerFromEnv(safeEnvPtr& env,
+					 MantisStatus* sts,
+					 MantisBuffer* buf);
         virtual ~MantisFileWriter();
 
         void SetStatus( MantisStatus* aStatus );        
@@ -28,6 +31,7 @@ class MantisFileWriter :
         void Finalize();
         
     private:
+        MantisFileWriter();
         MantisCondition fCondition;
         FILE* fFile;
         unsigned long fRecordCount;
