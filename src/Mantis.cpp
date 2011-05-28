@@ -11,6 +11,8 @@ using std::stringstream;
 using std::cout;
 using std::endl;
 
+#include <unistd.h>
+
 int main( int argv, char** argc )
 {
     if( argv < 4 )
@@ -42,8 +44,8 @@ int main( int argv, char** argc )
     MantisStatus* Status = new MantisStatus();
     
     MantisBuffer* Buffer = new MantisBuffer();
-    Buffer->SetDataLength(4194304);
-    Buffer->SetBufferLength(400);
+    Buffer->SetDataLength( 4194304 );
+    Buffer->SetBufferLength( 630 );
     
     MantisRun* Run = new MantisRun();
     Run->SetStatus(Status);
@@ -62,19 +64,25 @@ int main( int argv, char** argc )
     Buffer->Initialize();
     Run->Initialize();
 
-    cout << "initializing digitizer..." << endl;
+    cout << "initializing writer..." << endl;
     Reader->Initialize();
 
-    cout << "initializing writer..." << endl;    
+    cout << "initializing reader..." << endl;    
     Writer->Initialize();
     
     MantisThread* RunThread = new MantisThread(Run);
     MantisThread* ReadThread = new MantisThread(Reader);
     MantisThread* WriteThread = new MantisThread(Writer);
 
-    cout << "starting threads..." << endl;    
+    cout << "starting read thread..." << endl;
     ReadThread->Start();
-    WriteThread->Start();
+    while( Status->GetWriterCondition()->IsWaiting() == false );
+
+    cout << "starting write thread..." << endl;
+    WriteThread->Start();    
+    while( Status->GetReaderCondition()->IsWaiting() == false );
+    
+    cout << "starting run thread..." << endl;
     RunThread->Start();
 
     RunThread->Join();

@@ -21,7 +21,6 @@ bool MantisCondition::IsWaiting()
     bool StateCopy;
     pthread_mutex_lock( &fMutex );
     StateCopy = fState;
-    cout << "<" << this << "> polled: " << StateCopy << endl;
     pthread_mutex_unlock( &fMutex );
     return StateCopy;
 };

@@ -25,6 +25,10 @@ class MantisBufferIterator
         void SetWriting();
         
         MantisData* Data();
+        const size_t& Index()
+        {
+            return fCurrentIndex;
+        }
         
     protected:
         MantisBufferBlock* fBlockArray;

@@ -94,19 +94,32 @@ void MantisPX1500::Execute()
     clock_t EndTick;
     
     //grab an iterator
+    cout << "queueing up write pointer\n";
     MantisBufferIterator* Iterator = fBuffer->CreateIterator();
+    cout << "write pointer queued at " << Iterator->Index() << "\n";
+    
+    //start acquisition
+    cout << "starting acquisition\n";
+    PX4Result = BeginBufferedPciAcquisitionPX4( fHandle, PX4_FREE_RUN );
+    if( PX4Result != SIG_SUCCESS )
+    {
+        DumpLibErrorPX4( PX4Result, "failed to begin dma acquisition: " );
+        fStatus->SetError();
+        return;
+    }
+    fAcquisitionCount++;
+    cout << "done starting acquisition\n";
     
     //wait for run to release me
+    cout << "write thread waiting\n";
     fCondition.Wait();
     if( fStatus->IsRunning() == false )
     {
+        cout << "deleting iterator\n";
         delete Iterator;
         return;
     }
-    
-    //start acquisition
-    PX4Result = BeginBufferedPciAcquisitionPX4( fHandle, PX4_FREE_RUN );
-    fAcquisitionCount++;
+    cout << "write thread released\n";
     
     //go go go go
     while( true )
@@ -121,6 +134,13 @@ void MantisPX1500::Execute()
         Iterator->Data()->fId = fAcquisitionCount;
         Iterator->Data()->fTick = clock();
         PX4Result = GetPciAcquisitionDataFastPX4( fHandle, fBuffer->GetDataLength(), Iterator->Data()->fDataPtr, 0 );
+        if( PX4Result != SIG_SUCCESS )
+        {
+            DumpLibErrorPX4( PX4Result, "failed to acquire dma data over pci: " );
+            fStatus->SetError();
+            delete Iterator;
+            return;
+        }
         fRecordCount++;
         
         if( Iterator->TryIncrement() == false )
@@ -128,9 +148,9 @@ void MantisPX1500::Execute()
             PX4Result = EndBufferedPciAcquisitionPX4( fHandle );
 
             StartTick = clock();
-            cout << "reader waiting" << endl;
+            cout << "writer waiting\n";
             fCondition.Wait();
-            cout << "reader released" << endl;
+            cout << "writer released\n";
             EndTick = clock();
             fDeadTickCount += (EndTick - StartTick);
             

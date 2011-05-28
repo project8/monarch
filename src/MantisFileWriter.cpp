@@ -1,4 +1,4 @@
-#include "MantisFileWriter.hpp"
+ #include "MantisFileWriter.hpp"
 
 #include <cstdio>
 
@@ -44,16 +44,20 @@ void MantisFileWriter::Execute()
     int WriteResult;
     
     //get an iterator and pull it up to right behind the read iterator
+    cout << "queueing up read pointer\n";
     MantisBufferIterator* Iterator = fBuffer->CreateIterator();
     while( Iterator->TryIncrement() == true );
+    cout << "read iterator queued at " << Iterator->Index() << "\n";
     
     //wait for run to release me
+    cout << "read thread waiting\n";
     fCondition.Wait();
     if( fStatus->IsRunning() == false )
     {
         delete Iterator;
         return;
     }
+    cout << "read thread released\n";
 
     //go go go
     while( true )
@@ -74,7 +78,7 @@ void MantisFileWriter::Execute()
         {
             if( fStatus->GetWriterCondition()->IsWaiting() == true )
             {
-                cout << "found a waiting reader" << endl;
+                cout << "found a waiting writer " << Iterator->Index() << "\n";
                 fStatus->GetWriterCondition()->Release();
             }
             Iterator->Increment();
