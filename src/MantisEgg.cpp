@@ -15,7 +15,7 @@ MantisEgg::~MantisEgg()
   }
 }
 
-MantisEgg* MantisEgg::egg_from_env()
+MantisEgg* MantisEgg::egg_from_env(safeEnvPtr& env)
 {
   MantisEgg* egg_ptr = new MantisEgg();
   egg_ptr->file_ptr = fopen(egg_ptr->file_name.c_str(),"wb");

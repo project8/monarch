@@ -2,6 +2,7 @@
 #define __mantis_egg_hpp
 
 #include "MantisData.hpp"
+#include "MantisEnv.hpp"
 #include <cstdio>
 #include <string>
 #include <cstring>
@@ -32,7 +33,7 @@ private:
 		       std::size_t tgt_width);
   MantisEgg();
 public:
-  static MantisEgg* egg_from_env();
+  static MantisEgg* egg_from_env(safeEnvPtr& env);
 
   template<typename T> bool add_header_attr(egg_hdr_k_type key, 
 					    T value);

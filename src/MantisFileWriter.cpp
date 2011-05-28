@@ -7,7 +7,7 @@ using std::cout;
 using std::endl;
 
 MantisFileWriter::MantisFileWriter() :
-    fCondition(), fFile( NULL ), fRecordCount( 0 ), fStatus( NULL ), fBuffer( NULL ), fFileName("")
+    fCondition(), fRecordCount( 0 ), fStatus( NULL ), fBuffer( NULL )
 {
 }
 MantisFileWriter::~MantisFileWriter()
@@ -15,11 +15,12 @@ MantisFileWriter::~MantisFileWriter()
 }
 
 MantisFileWriter* MantisFileWriter::writerFromEnv(safeEnvPtr& env,
+						  MantisEgg* egg,
 						  MantisStatus* sts,
 						  MantisBuffer* buf)
 {
   MantisFileWriter* res = new MantisFileWriter();
-  res->SetFileName((env.get())->getOutName());
+  res->SetOutputEgg(egg);
   res->SetStatus(sts);
   res->SetBuffer(buf);
   return res;
@@ -35,17 +36,16 @@ void MantisFileWriter::SetBuffer( MantisBuffer* aBuffer )
     fBuffer = aBuffer;
     return;
 }
-void MantisFileWriter::SetFileName( const string& aName )
+
+void MantisFileWriter::SetOutputEgg( MantisEgg* anEgg )
 {
-    fFileName = aName;
-    return;
+  this->egg_ptr = anEgg;
+  return;
 }
 
 void MantisFileWriter::Initialize()
 {
-    fStatus->SetReaderCondition( &fCondition );
-    
-    fFile = fopen( fFileName.c_str(), "w" );
+    fStatus->SetReaderCondition( &fCondition );    
     return;
 }
 
@@ -77,7 +77,7 @@ void MantisFileWriter::Execute()
         }
         
         Iterator->SetReading();
-        WriteResult = fwrite( Iterator->Data()->fDataPtr, sizeof( MantisData::DataType ), fBuffer->GetDataLength(), fFile );
+        WriteResult = this->egg_ptr->write_data( Iterator->Data() );
         fRecordCount++;
         Iterator->SetRead();
         
@@ -95,8 +95,6 @@ void MantisFileWriter::Execute()
  
 void MantisFileWriter::Finalize()
 {
-    fclose( fFile );
-    
     cout << "records written: " << fRecordCount << endl;
     
     return;

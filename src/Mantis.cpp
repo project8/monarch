@@ -4,7 +4,6 @@
 #include "MantisFileWriter.hpp"
 
 #include "MantisThread.hpp"
-
 #include <sstream>
 using std::stringstream;
 
@@ -25,8 +24,11 @@ int main( int argc, char** argv )
     MantisPX1500* Reader = MantisPX1500::digFromEnv(runEnvironment,
 						    Status,
 						    Buffer);
+    MantisEgg* OutputFile = MantisEgg::egg_from_env(runEnvironment);
+    OutputFile->write_header();
     
     MantisFileWriter* Writer = MantisFileWriter::writerFromEnv(runEnvironment,
+							       OutputFile,
 							       Status,
 							       Buffer);
     

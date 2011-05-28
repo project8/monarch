@@ -7,6 +7,7 @@
 #include <cstdio>
 
 #include "MantisEnv.hpp"
+#include "MantisEgg.hpp"
 #include "MantisStatus.hpp"
 #include "MantisBuffer.hpp"
 
@@ -18,14 +19,14 @@ class MantisFileWriter :
 {
     public:
   static MantisFileWriter* writerFromEnv(safeEnvPtr& env,
+					 MantisEgg* egg,
 					 MantisStatus* sts,
 					 MantisBuffer* buf);
         virtual ~MantisFileWriter();
 
         void SetStatus( MantisStatus* aStatus );        
         void SetBuffer( MantisBuffer* aBuffer );
-        void SetFileName( const string& aName );
-        
+  void SetOutputEgg(MantisEgg* anEgg);
         void Initialize();
         void Execute();
         void Finalize();
@@ -33,12 +34,10 @@ class MantisFileWriter :
     private:
         MantisFileWriter();
         MantisCondition fCondition;
-        FILE* fFile;
-        unsigned long fRecordCount;
-        
+  MantisEgg* egg_ptr;
+        unsigned long fRecordCount;        
         MantisStatus* fStatus;
         MantisBuffer* fBuffer;
-        string fFileName;
 };
 
 #endif
