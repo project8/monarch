@@ -136,6 +136,8 @@ bool mantis_egg::write_header()
 bool mantis_egg::write_data(MantisData* block)
 {
   /* fmt: |fID|fTick|fData| */
+  static serializer<unsigned long int> u_long_byter;
+  static serializer<clock_t> clock_t_byter;
   u_long_byter.value = block->fId;
   clock_t_byter.value = block->fTick;
   this->write_raw_bytes(u_long_byter.value_bytes,
