@@ -18,6 +18,18 @@ MantisPX1500::~MantisPX1500()
 {
 }
 
+MantisPX1500* MantisPX1500::digFromEnv(safeEnvPtr& env, 
+				       MantisStatus* sts,
+				       MantisBuffer* buf)
+{
+  MantisPX1500* res = new MantisPX1500();
+  res->SetDigitizationRate((env.get())->getClockRate());
+  res->SetStatus(sts);
+  res->SetBuffer(buf);
+
+  return res;
+}
+
 void MantisPX1500::SetStatus( MantisStatus* aStatus )
 {
     fStatus = aStatus;

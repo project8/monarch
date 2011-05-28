@@ -49,10 +49,9 @@ int main( int argc, char** argv )
     MantisBuffer* Buffer = MantisBuffer::bufferFromEnv(runEnvironment);    
     MantisRun* Run = MantisRun::runFromEnv(runEnvironment,Status);
     
-    MantisPX1500* Reader = new MantisPX1500();
-    Reader->SetStatus(Status);
-    Reader->SetBuffer(Buffer);
-    Reader->SetDigitizationRate(Rate);
+    MantisPX1500* Reader = MantisPX1500::digFromEnv(runEnvironment,
+						    Status,
+						    Buffer);
     
     MantisFileWriter* Writer = new MantisFileWriter();
     Writer->SetStatus(Status);

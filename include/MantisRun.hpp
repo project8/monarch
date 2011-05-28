@@ -9,7 +9,7 @@ class MantisRun :
     public MantisCallable
 {
     public:
-  static MantisRun* runFromEnv(safeEnvPtr& env);
+  static MantisRun* runFromEnv(safeEnvPtr& env, MantisStatus* sts);
         virtual ~MantisRun();
         
         void SetStatus( MantisStatus* aStatus );
