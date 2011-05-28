@@ -2,8 +2,8 @@
 
 mantis_egg::mantis_egg() 
   : file_ptr(NULL),
-    file_name("default_egg.egg"),
     header_finished(false),
+    file_name("default_egg.egg"),
     data_size(sizeof(unsigned char)),
     data_width(10)
 { /* no-op */ }
@@ -59,10 +59,21 @@ std::string mantis_egg::xml_hdr_close()
   return "</header>";
 }
 
-std::string mantis_egg::size_to_hex(std::size_t size)
+bool mantis_egg::write_raw_bytes(const void* tgt, 
+				 std::size_t tgt_size, 
+				 std::size_t tgt_width)
 {
-  std::stringstream converter;
-  converter << std::hex << size;
+  bool res = true;
+
+  std::size_t written = fwrite(tgt,
+			       tgt_size,
+			       tgt_width,
+			       this->file_ptr);
+  if ( written != tgt_size * tgt_width ) {
+    res = false;
+  }
+
+  return res;
 }
 
 bool mantis_egg::write_header()
@@ -79,12 +90,26 @@ bool mantis_egg::write_header()
   if( ret_val ) {
     fuse << mantis_egg::xml_vers_header();
     fuse << mantis_egg::xml_hdr_open();
+
+    // Write header attributes
     while( header_it != header_attrs.end() ) {
       std::string xml = mantis_egg::attr_to_xml((*header_it).first,
 						(*header_it).second);
       fuse << xml;
       header_it++;
     }
+
+    // Now encode the data size and features, and write it as a string.
+    std::stringstream dataDesc;
+    dataDesc << "id:"
+	     << sizeof(MantisData::IdType) << "|"
+	     << "ts:"
+	     << sizeof(MantisData::ClockType) << "|"
+	     << "data:"
+	     << this->data_width;
+    fuse << mantis_egg::attr_to_xml("data_format",dataDesc.str());
+
+    // Close the header, we're done.
     fuse << mantis_egg::xml_hdr_close();
   }
 
@@ -93,15 +118,13 @@ bool mantis_egg::write_header()
 	  "%x",
 	  (unsigned)fuse.str().length());
 
-  fwrite(buffer,
-	 sizeof(char),
-	 strlen(buffer),
-	 this->file_ptr);
+  this->write_raw_bytes(buffer,
+			sizeof(unsigned char),
+			strlen(buffer));
 
-  fwrite(fuse.str().c_str(),
-	 sizeof(char),
-	 fuse.str().length(),
-	 this->file_ptr);
+  this->write_raw_bytes(fuse.str().c_str(),
+			sizeof(unsigned char),
+			fuse.str().length());
 
   if( ret_val ) {
     this->header_finished = true;
@@ -110,22 +133,19 @@ bool mantis_egg::write_header()
   return ret_val;
 }
 
-bool mantis_egg::write_data(MantisBlock* block)
+bool mantis_egg::write_data(MantisData* block)
 {
   /* fmt: |fID|fTick|fData| */
   u_long_byter.value = block->fId;
   clock_t_byter.value = block->fTick;
-  fwrite(u_long_byter.value_bytes,
-	 sizeof(char),
-	 sizeof(u_long_byter),
-	 this->file_ptr);
-  fwrite(clock_t_byter.value_bytes,
-	 sizeof(char),
-	 sizeof(clock_t_byter),
-	 this->file_ptr);
-  fwrite(block->fData,
-	 this->data_size,
-	 this->data_width,
-	 this->file_ptr);
+  this->write_raw_bytes(u_long_byter.value_bytes,
+			u_long_byter.value_bytes[0],
+			sizeof(u_long_byter));
+  this->write_raw_bytes(clock_t_byter.value_bytes,
+			clock_t_byter.value_bytes[0],
+			sizeof(clock_t_byter));
+  this->write_raw_bytes(block->fDataPtr,
+			this->data_size,
+			this->data_width);
   return true;
 }
