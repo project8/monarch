@@ -41,18 +41,15 @@ public:
   ~mantis_egg();
 };
 
-static union {
-  clock_t value;
-  unsigned char value_bytes[sizeof(clock_t)];
-} clock_t_byter;
+template<typename T>
+union serializer {
+  T value;
+  unsigned char value_bytes[sizeof(T)];
+};
 
-static union {
-  unsigned long value;
-  unsigned char value_bytes[sizeof(unsigned long)];
-} u_long_byter;
-
-template<typename T> bool mantis_egg::add_header_attr(egg_hdr_k_type key,
-						      T value)
+template<typename T>
+bool mantis_egg::add_header_attr(egg_hdr_k_type key,
+				 T value)
 {
   std::pair<egg_hdr_container::iterator,bool> ret;
   std::stringstream converter;
