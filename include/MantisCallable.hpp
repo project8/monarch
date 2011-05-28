@@ -1,5 +1,5 @@
-#ifndef MANTISCALLABLE_HH_
-#define MANTISCALLABLE_HH_
+#ifndef MANTISCALLABLE_HPP_
+#define MANTISCALLABLE_HPP_
 
 class MantisCallable
 {

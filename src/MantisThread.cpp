@@ -1,17 +1,17 @@
-#include "MantisThread.hh"
+#include "MantisThread.hpp"
 
-#include "MantisCallable.hh"
+#include "MantisCallable.hpp"
 
 MantisThread::MantisThread(MantisCallable* obj) :
     fThread(),
-    fThreadState(eReady),
+    fState(eReady),
     fObject(obj)
 {
 }
 
 MantisThread::~MantisThread()
 {
-    if( fThreadState == eRunning )
+    if( fState == eRunning )
     {
         Cancel();
     }
@@ -19,16 +19,16 @@ MantisThread::~MantisThread()
 
 void MantisThread::Start()
 {
-    if( fThreadState == eReady )
+    if( fState == eReady )
     {
         pthread_create(&fThread, 0, &MantisThread::ThreadActionFunction, this);
-        fThreadState = eRunning;
+        fState = eRunning;
     }
     return;
 }
 void MantisThread::Join()
 {
-    if( fThreadState == eRunning )
+    if( fState == eRunning )
     {
         pthread_join(fThread,0);
     }
@@ -36,32 +36,31 @@ void MantisThread::Join()
 }
 void MantisThread::Cancel()
 {
-    if( fThreadState == eRunning )
+    if( fState == eRunning )
     {
         pthread_cancel(fThread);
-        fThreadState = eCancelled;
+        fState = eCancelled;
     }
     return;
 }
 void MantisThread::Reset()
 {
-    fThreadState = eReady;
+    fState = eReady;
     return;
 }
 
 const MantisThread::State& MantisThread::GetState()
 {
-    return fThreadState;
+    return fState;
 }
 
 void* MantisThread::ThreadActionFunction( void* voidthread )
 {
     pthread_cleanup_push( &MantisThread::ThreadCleanupFunction, voidthread );
     MantisThread* thread = (MantisThread*)(voidthread);
-    MantisThread::State state = thread->fThreadState;
     MantisCallable* object = thread->fObject;
     object->Execute();
-    state = eComplete;
+    thread->fState = eComplete;
     pthread_cleanup_pop(0);
     return 0;
 }
@@ -69,7 +68,7 @@ void* MantisThread::ThreadActionFunction( void* voidthread )
 void MantisThread::ThreadCleanupFunction(void* voidthread )
 {
     MantisThread* thread = (MantisThread*)(voidthread);
-    MantisThread::State state = thread->fThreadState;
+    MantisThread::State state = thread->fState;
     state = eCancelled;
     return;
 }

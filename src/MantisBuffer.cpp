@@ -1,67 +1,49 @@
-#include "MantisBuffer.hh"
-
-#include "MantisBlock.hh"
-#include "MantisReadIterator.hh"
-#include "MantisWriteIterator.hh"
-
-#include <cstddef>
-#include <ctime>
+#include "MantisBuffer.hpp"
 
 MantisBuffer::MantisBuffer() :
-    fBufferLength( 0 ), fRecordLength( 0 ), fBlocks( NULL ), fReadIterator( NULL ), fWriteIterator( NULL )
+     fBuffer( NULL ), fBufferLength( 0 ), fDataLength( 0 )
 {
 }
-~MantisBuffer::MantisBuffer()
+MantisBuffer::~MantisBuffer()
 {
 }
 
 void MantisBuffer::Initialize()
 {
-    fBlocks = new MantisBlock[fBufferSize];
-    fReadIterator = new MantisReadIterator(fBufferLength,fRecordLength,fBlocks);
-    fWriteIterator = new MantisWriteIterator(fBufferLength,fRecordLength,fBlocks);
-    
+    fBuffer = new MantisBufferBlock[fBufferLength];
     return;
 }
 void MantisBuffer::Finalize()
 {
-}
-
-MantisIterator* MantisBuffer::CreateIterator()
-{
-    if( fMutexArray == NULL )
+    if( fBuffer != NULL )
     {
-        fMutexArray = new MantisMutex[fBufferSize];
+        delete[] fBuffer;
+        fBuffer = NULL;
     }
-    if( fBlockArray == NULL )
-    {
-        fBlockArray = new MantisBlock[fBufferSize];
-    }
-    
-    fIteratorIndex++;
-    if( fIteratorIndex == fBufferSize )
-    {
-        fIteratorIndex == 0;
-    }
-    return new MantisIterator( this, fIteratorIndex );    
-}
-
-void MantisBuffer::SetBufferSize( const size_t& aSize )
-{
-    fBufferSize = aSize;
     return;
 }
-const size_t& MantisBuffer::GetBufferSize() const
+
+MantisBufferIterator* MantisBuffer::CreateIterator() const
 {
-    return fBufferSize;
+    return new MantisBufferIterator( fBuffer, fBufferLength );    
 }
 
-void MantisBuffer::SetDataSize( const size_t& aSize )
+void MantisBuffer::SetBufferLength( const size_t& aLength )
 {
-    fDataSize = aSize;
+    fBufferLength = aLength;
     return;
 }
-const size_t& MantisBuffer::GetDataSize() const
+const size_t& MantisBuffer::GetBufferLength() const
 {
-    return fDataSize;
+    return fBufferLength;
+}
+
+void MantisBuffer::SetDataLength( const size_t& aLength )
+{
+    fDataLength = aLength;
+    return;
+}
+const size_t& MantisBuffer::GetDataLength() const
+{
+    return fDataLength;
 }

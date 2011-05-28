@@ -1,5 +1,5 @@
-#ifndef MANTISTHREAD_HH_
-#define MANTISTHREAD_HH_
+#ifndef MANTISTHREAD_HPP_
+#define MANTISTHREAD_HPP_
 
 #include "pthread.h"
 
@@ -26,8 +26,7 @@ class MantisThread
         static void ThreadCleanupFunction( void* voidstate );
 
         pthread_t fThread;
-        State fThreadState;
-        bool fThreadCancelled;
+        State fState;
         MantisCallable* fObject;
 };
 
