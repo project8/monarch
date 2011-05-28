@@ -1,5 +1,5 @@
 CC=g++
-CFLAGS=-Wall -Werror -O2
+CFLAGS=-Wall -Werror -O2 -gstabs+
 CSRC=$(wildcard ./src/*.cpp)
 PXINCDIR=/usr/local/include
 PXLIBDIR=/usr/local/lib
