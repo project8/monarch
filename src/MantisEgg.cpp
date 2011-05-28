@@ -4,8 +4,8 @@ MantisEgg::MantisEgg()
   : file_ptr(NULL),
     header_finished(false),
     file_name("default_egg.egg"),
-    data_size(sizeof(unsigned char)),
-    data_width(10)
+    data_size(sizeof(MantisData::DataType)),
+    data_width(4194304)
 { /* no-op */ }
 
 MantisEgg::~MantisEgg()
