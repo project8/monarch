@@ -14,9 +14,13 @@ MantisRun::~MantisRun()
 {
 }
 
-MantisRun* MantisRun::runFromEnv(safeEnvPtr& env)
+MantisRun* MantisRun::runFromEnv(safeEnvPtr& env, MantisStatus* sts)
 {
-  
+  MantisRun* res = new MantisRun();
+  res->SetDuration((env.get())->getRunLength());
+  res->SetStatus(sts);
+
+  return res;
 }
 
 void MantisRun::SetStatus( MantisStatus* aStatus )
