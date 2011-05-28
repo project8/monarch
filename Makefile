@@ -13,7 +13,7 @@ INCDIRS=$(addprefix -I,$(shell pwd)/include)
 LDFLAGS=$(addprefix -L,$(H5LIBDIR)) $(addprefix -l,$(H5LIB) $(PXLIB))
 BUILDDIR=build
 OBJ=$(CSRC:%.cpp=%.o)
-TGT=mantis
+TGT=Mantis
 
 $(TGT): $(OBJ)
 	$(CC) -o $@ $(OBJ) $(LDFLAGS)

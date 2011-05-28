@@ -1,9 +1,8 @@
-#ifndef MANTISBUFFER_HH_
-#define MANTISBUFFER_HH_
+#ifndef MANTISBUFFER_HPP_
+#define MANTISBUFFER_HPP_
 
-class MantisBlock;
-class MantisReadIterator;
-class MantisWriteIterator;
+#include "MantisBufferBlock.hpp"
+#include "MantisBufferIterator.hpp"
 
 class MantisBuffer
 {   
@@ -14,22 +13,18 @@ class MantisBuffer
         void Initialize();
         void Finalize();
         
-        MantisReadIterator* GetReadIterator();
-        MantisWriteIterator* GetWriteIterator();
+        MantisBufferIterator* CreateIterator() const;
         
-        void SetBufferLength( const size_t& aSize );
-        const size_t& GetBufferLength();
+        void SetBufferLength( const size_t& aLength );
+        const size_t& GetBufferLength() const;
         
-        void SetRecordLength( const size_t& aSize );
-        const size_t& GetRecordLength();
+        void SetDataLength( const size_t& aLength );
+        const size_t& GetDataLength() const;
         
     private:
+        MantisBufferBlock* fBuffer;
         size_t fBufferLength;
-        size_t fRecordLength;
-        MantisBlock* fBlocks;
-        
-        MantisReadIterator* fReadIterator;
-        MantisWriteIterator* fWriteIterator;
+        size_t fDataLength;
 };
 
 #endif

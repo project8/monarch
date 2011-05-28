@@ -1,5 +1,5 @@
-#ifndef MANTISMUTEX_HH_
-#define MANTISMUTEX_HH_
+#ifndef MANTISMUTEX_HPP_
+#define MANTISMUTEX_HPP_
 
 #include <pthread.h>
 
@@ -9,9 +9,9 @@ class MantisMutex
         MantisMutex();
         virtual ~MantisMutex();
 
-        int Lock();
-        int Trylock();
-        int Unlock();
+        void Lock();
+        bool Trylock();
+        void Unlock();
 
     private:
         pthread_mutex_t fMutex;

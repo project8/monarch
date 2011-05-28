@@ -1,4 +1,4 @@
-#include "MantisCallable.hh"
+#include "MantisCallable.hpp"
 
 MantisCallable::MantisCallable()
 {

@@ -1,23 +1,29 @@
-#include "MantisMutex.hh"
+#include "MantisMutex.hpp"
 
 MantisMutex::MantisMutex()
 {
-    pthread_mutex_init(&fMutex,0);
+    pthread_mutex_init(&fMutex,NULL);
 }
 MantisMutex::~MantisMutex()
 {
     pthread_mutex_destroy(&fMutex);
 }
 
-int MantisMutex::Lock()
+void MantisMutex::Lock()
 {
-    return pthread_mutex_lock(&fMutex);
+    pthread_mutex_lock(&fMutex);
+    return;
 }
-int MantisMutex::Trylock()
+bool MantisMutex::Trylock()
 {
-    return pthread_mutex_trylock(&fMutex);
+    if( pthread_mutex_trylock(&fMutex) == 0 )
+    {
+        return true;
+    }
+    return false;
 }
-int MantisMutex::Unlock()
+void MantisMutex::Unlock()
 {
-    return pthread_mutex_unlock(&fMutex);
+    pthread_mutex_unlock(&fMutex);
+    return;
 }
