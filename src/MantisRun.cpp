@@ -33,12 +33,32 @@ void MantisRun::Initialize()
 void MantisRun::Execute()
 {
     fStatus->SetRunning();
+    fStatus->GetWriterCondition()->Release();
+    fStatus->GetReaderCondition()->Release(); 
     for( unsigned int Seconds = 1; Seconds <= fDuration; Seconds++ )
     {
         sleep( 1 );
         cout << fDuration - Seconds << " seconds remaining..." << endl;
         if( !fStatus->IsRunning() )
         {
+            if( fStatus->IsError() == true )
+            {
+                cout << "stopping on error." << endl;
+            }
+            if( fStatus->IsComplete() == true )
+            {
+                cout << "run complete." << endl;
+            }
+            
+            if( fStatus->GetReaderCondition()->IsWaiting() == true )
+            {
+                fStatus->GetReaderCondition()->Release();
+            }
+            if( fStatus->GetWriterCondition()->IsWaiting() == true )
+            {
+                fStatus->GetWriterCondition()->Release(); 
+            }
+
             return;
         }
     }

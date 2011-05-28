@@ -9,8 +9,9 @@ class MantisMutex
         MantisMutex();
         virtual ~MantisMutex();
 
-        void Lock();
         bool Trylock();
+
+        void Lock();
         void Unlock();
 
     private:

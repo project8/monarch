@@ -7,7 +7,7 @@ using std::cout;
 using std::endl;
 
 MantisFileWriter::MantisFileWriter() :
-    fFile( NULL ), fRecordCount( 0 ), fStatus( NULL ), fBuffer( NULL ), fFileName("")
+    fCondition(), fFile( NULL ), fRecordCount( 0 ), fStatus( NULL ), fBuffer( NULL ), fFileName("")
 {
 }
 MantisFileWriter::~MantisFileWriter()
@@ -32,35 +32,53 @@ void MantisFileWriter::SetFileName( const string& aName )
 
 void MantisFileWriter::Initialize()
 {
+    fStatus->SetReaderCondition( &fCondition );
+    
     fFile = fopen( fFileName.c_str(), "w" );
     return;
 }
 
 void MantisFileWriter::Execute()
 {
-    MantisBufferIterator* Iterator = fBuffer->CreateIterator();
-
+    //allocate some local variables
     int WriteResult;
     
-    fRecordCount = 0;
+    //get an iterator and pull it up to right behind the read iterator
+    MantisBufferIterator* Iterator = fBuffer->CreateIterator();
+    while( Iterator->TryIncrement() == true );
+    
+    //wait for run to release me
+    fCondition.Wait();
+    if( fStatus->IsRunning() == false )
+    {
+        delete Iterator;
+        return;
+    }
 
+    //go go go
     while( true )
     {
+        //check the run status
         if( !fStatus->IsRunning() )
         {
             delete Iterator;
             return;
         }
         
-        if( Iterator->State().IsWritten() == true )
-        {
-            Iterator->SetReading();
-            WriteResult = fwrite( Iterator->Data()->fDataPtr, sizeof( MantisData::DataType ), fBuffer->GetDataLength(), fFile );
-            fRecordCount++;
-            Iterator->SetRead();
-        }
+        Iterator->SetReading();
+        WriteResult = fwrite( Iterator->Data()->fDataPtr, sizeof( MantisData::DataType ), fBuffer->GetDataLength(), fFile );
+        fRecordCount++;
+        Iterator->SetRead();
         
-        Iterator->Increment();
+        if( Iterator->TryIncrement() == false )
+        {
+            if( fStatus->GetWriterCondition()->IsWaiting() == true )
+            {
+                cout << "found a waiting reader" << endl;
+                fStatus->GetWriterCondition()->Release();
+            }
+            Iterator->Increment();
+        }
     }
     return;
 }

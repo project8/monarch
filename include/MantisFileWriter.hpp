@@ -3,6 +3,9 @@
 
 #include "MantisCallable.hpp"
 
+#include "MantisCondition.hpp"
+#include <cstdio>
+
 #include "MantisStatus.hpp"
 #include "MantisBuffer.hpp"
 
@@ -25,6 +28,7 @@ class MantisFileWriter :
         void Finalize();
         
     private:
+        MantisCondition fCondition;
         FILE* fFile;
         unsigned long fRecordCount;
         

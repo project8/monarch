@@ -11,7 +11,7 @@ using std::cout;
 using std::endl;
 
 MantisPX1500::MantisPX1500() :
-     fHandle(), fAcquisitionCount( 0 ), fRecordCount( 0 ), fDeadTickCount( 0 ), fStatus( NULL ), fBuffer( NULL ), fDigitizationRate( 0. )
+     fCondition(), fHandle(), fAcquisitionCount( 0 ), fRecordCount( 0 ), fDeadTickCount( 0 ), fStatus( NULL ), fBuffer( NULL ), fDigitizationRate( 0. )
 {
 }
 MantisPX1500::~MantisPX1500()
@@ -36,6 +36,8 @@ void MantisPX1500::SetDigitizationRate( const double& aRate )
 
 void MantisPX1500::Initialize()
 {
+    fStatus->SetWriterCondition( &fCondition );
+    
     int PX4Result;
     
     PX4Result = ConnectToDevicePX4( &fHandle, 1 );
@@ -86,15 +88,27 @@ void MantisPX1500::Initialize()
 
 void MantisPX1500::Execute()
 {   
-    MantisBufferIterator* Iterator = fBuffer->CreateIterator();
-    
+    //allocate some local variables
     int PX4Result;
     clock_t StartTick;
     clock_t EndTick;
     
+    //grab an iterator
+    MantisBufferIterator* Iterator = fBuffer->CreateIterator();
+    
+    //wait for run to release me
+    fCondition.Wait();
+    if( fStatus->IsRunning() == false )
+    {
+        delete Iterator;
+        return;
+    }
+    
+    //start acquisition
     PX4Result = BeginBufferedPciAcquisitionPX4( fHandle, PX4_FREE_RUN );
     fAcquisitionCount++;
     
+    //go go go go
     while( true )
     {
         if( fStatus->IsRunning() == false )
@@ -109,14 +123,22 @@ void MantisPX1500::Execute()
         PX4Result = GetPciAcquisitionDataFastPX4( fHandle, fBuffer->GetDataLength(), Iterator->Data()->fDataPtr, 0 );
         fRecordCount++;
         
-        if( Iterator->PeekNextState().IsRead() == false )
+        if( Iterator->TryIncrement() == false )
         {
             PX4Result = EndBufferedPciAcquisitionPX4( fHandle );
 
             StartTick = clock();
-            Iterator->Wait();
+            cout << "reader waiting" << endl;
+            fCondition.Wait();
+            cout << "reader released" << endl;
             EndTick = clock();
             fDeadTickCount += (EndTick - StartTick);
+            
+            if( fStatus->IsRunning() == false )
+            {
+                delete Iterator;
+                return;
+            }
 
             PX4Result = BeginBufferedPciAcquisitionPX4( fHandle, PX4_FREE_RUN );
             fAcquisitionCount++;

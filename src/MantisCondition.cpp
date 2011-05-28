@@ -1,5 +1,9 @@
 #include "MantisCondition.hpp"
 
+#include <iostream>
+using std::cout;
+using std::endl;
+
 MantisCondition::MantisCondition() :
     fState( false ), fMutex(), fCondition()
 {
@@ -17,6 +21,7 @@ bool MantisCondition::IsWaiting()
     bool StateCopy;
     pthread_mutex_lock( &fMutex );
     StateCopy = fState;
+    cout << "<" << this << "> polled: " << StateCopy << endl;
     pthread_mutex_unlock( &fMutex );
     return StateCopy;
 };

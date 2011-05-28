@@ -43,7 +43,7 @@ int main( int argv, char** argc )
     
     MantisBuffer* Buffer = new MantisBuffer();
     Buffer->SetDataLength(4194304);
-    Buffer->SetBufferLength(630);
+    Buffer->SetBufferLength(400);
     
     MantisRun* Run = new MantisRun();
     Run->SetStatus(Status);
@@ -73,17 +73,17 @@ int main( int argv, char** argc )
     MantisThread* WriteThread = new MantisThread(Writer);
 
     cout << "starting threads..." << endl;    
-    RunThread->Start();
     ReadThread->Start();
     WriteThread->Start();
-    
+    RunThread->Start();
+
     RunThread->Join();
-    ReadThread->Join();
     WriteThread->Join();
+    ReadThread->Join();
     
-    delete RunThread;
     delete ReadThread;
     delete WriteThread;
+    delete RunThread;
     cout << "threads finished..." << endl;
     
     Writer->Finalize();

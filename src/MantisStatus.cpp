@@ -1,7 +1,7 @@
 #include "MantisStatus.hpp"
 
 MantisStatus::MantisStatus() :
-    fValue( eIdle )
+    fValue( eIdle ), fMutex(), fReaderCondition( NULL ), fWriterCondition( NULL )
 {
 }
 MantisStatus::~MantisStatus()
@@ -66,4 +66,24 @@ bool MantisStatus::IsComplete()
     bool Value = (fValue == eComplete);
     fMutex.Unlock();
     return Value;
+}
+
+void MantisStatus::SetReaderCondition( MantisCondition* aCondition )
+{
+    fReaderCondition = aCondition;
+    return;
+}
+MantisCondition* MantisStatus::GetReaderCondition()
+{
+    return fReaderCondition;
+}
+
+void MantisStatus::SetWriterCondition( MantisCondition* aCondition )
+{
+    fWriterCondition = aCondition;
+    return;
+}
+MantisCondition* MantisStatus::GetWriterCondition()
+{
+    return fWriterCondition;
 }

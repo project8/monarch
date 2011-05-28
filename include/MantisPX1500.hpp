@@ -3,11 +3,12 @@
 
 #include "MantisCallable.hpp"
 
-#include "MantisStatus.hpp"
-#include "MantisBuffer.hpp"
-
+#include "MantisCondition.hpp"
 #include <cstddef> // px1500.h refers to NULL without including cstddef
 #include "px1500.h"
+
+#include "MantisStatus.hpp"
+#include "MantisBuffer.hpp"
 
 class MantisPX1500 :
     public MantisCallable
@@ -25,6 +26,7 @@ class MantisPX1500 :
         void Finalize();
         
     private:
+        MantisCondition fCondition;
         HPX4 fHandle;
         unsigned long fAcquisitionCount;
         unsigned long fRecordCount;

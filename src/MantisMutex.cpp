@@ -9,11 +9,6 @@ MantisMutex::~MantisMutex()
     pthread_mutex_destroy(&fMutex);
 }
 
-void MantisMutex::Lock()
-{
-    pthread_mutex_lock(&fMutex);
-    return;
-}
 bool MantisMutex::Trylock()
 {
     if( pthread_mutex_trylock(&fMutex) == 0 )
@@ -21,6 +16,12 @@ bool MantisMutex::Trylock()
         return true;
     }
     return false;
+}
+
+void MantisMutex::Lock()
+{
+    pthread_mutex_lock(&fMutex);
+    return;
 }
 void MantisMutex::Unlock()
 {
