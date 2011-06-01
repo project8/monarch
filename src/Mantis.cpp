@@ -32,10 +32,6 @@ int main( int argc, char** argv )
 							       Status,
 							       Buffer);
     
-    cout << "fuck you, clock" << endl;
-    clock_t resentful;
-    resentful = clock();
-    
     Buffer->Initialize();
     Run->Initialize();
 
