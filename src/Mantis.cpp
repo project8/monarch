@@ -35,25 +35,19 @@ int main( int argc, char** argv )
     Buffer->Initialize();
     Run->Initialize();
 
-    cout << "initializing writer..." << endl;
     Reader->Initialize();
-
-    cout << "initializing reader..." << endl;    
     Writer->Initialize();
     
     MantisThread* RunThread = new MantisThread(Run);
     MantisThread* ReadThread = new MantisThread(Reader);
     MantisThread* WriteThread = new MantisThread(Writer);
 
-    cout << "starting read thread..." << endl;
     ReadThread->Start();
     while( Status->GetWriterCondition()->IsWaiting() == false );
 
-    cout << "starting write thread..." << endl;
     WriteThread->Start();    
     while( Status->GetReaderCondition()->IsWaiting() == false );
     
-    cout << "starting run thread..." << endl;
     RunThread->Start();
 
     RunThread->Join();
@@ -63,7 +57,6 @@ int main( int argc, char** argv )
     delete ReadThread;
     delete WriteThread;
     delete RunThread;
-    cout << "threads finished..." << endl;
     
     Writer->Finalize();
     Reader->Finalize();
