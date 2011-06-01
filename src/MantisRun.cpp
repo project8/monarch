@@ -42,15 +42,11 @@ void MantisRun::Initialize()
 void MantisRun::Execute()
 {
     fStatus->SetRunning();
-    cout << "trying to release write thread\n";
     fStatus->GetWriterCondition()->Release();
-    cout << "trying to release read thread\n";
     fStatus->GetReaderCondition()->Release();
-    cout << "threads released\n";
     for( unsigned int Seconds = 1; Seconds <= fDuration; Seconds++ )
     {
         sleep( 1 );
-        cout << fDuration - Seconds << " seconds remaining..." << endl;
         if( !fStatus->IsRunning() )
         {
 
