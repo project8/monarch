@@ -5,7 +5,7 @@ MantisEnv::MantisEnv()
     clockRate(500.0),         // default ADC clock rate (MHz)
     runLength(600),           // default run length in seconds
     dataWidth(4194304),       // number of bytes in a single record
-    bufferCount(600)          // number of circular buffer nodes
+    bufferCount(630)          // number of circular buffer nodes
 { /* no-op */ }
 
 void MantisEnv::setOutName(std::string newOutName)
@@ -80,7 +80,7 @@ safeEnvPtr MantisEnv::parseArgs(int argc, char** argv)
  
   int c;
   try {
-    while((c = getopt(argc,argv,"o:r:d:")) != -1) {    
+    while((c = getopt(argc,argv,"o:r:d:w:c:")) != -1) {    
       switch(c) {
       case 'o':
 	result->setOutName(optarg);
@@ -90,6 +90,12 @@ safeEnvPtr MantisEnv::parseArgs(int argc, char** argv)
 	break;
       case 'd':
 	result->setRunLength(optarg);
+	break;
+	  case 'w':
+	result->setDataWidth(optarg);
+	break;
+	  case 'c':
+	result->setBufferCount(optarg);
 	break;
       default:
 	throw new argument_exception();
@@ -111,7 +117,9 @@ std::ostream& operator << (std::ostream& outstream, safeEnvPtr& obj)
 {
   outstream << "output file name: " << (obj.get())->getOutName() << "\n"
 	    << "digitizer rate: " << (obj.get())->getClockRate() << "(MHz)\n"
-	    << "run length: " << (obj.get())->getRunLength() << "(s)\n";
+	    << "run length: " << (obj.get())->getRunLength() << "(s)\n"
+	    << "data width: " << (obj.get())->getDataWidth() << "(bytes)\n"
+	    << "buffer count: " << (obj.get())->getBufferCount() << "(entries)\n";
     
   return outstream;
 }

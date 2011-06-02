@@ -4,15 +4,11 @@
 #include "MantisCallable.hpp"
 
 #include "MantisCondition.hpp"
-#include <cstdio>
-
 #include "MantisEnv.hpp"
 #include "MantisEgg.hpp"
+#include <sys/time.h>
 #include "MantisStatus.hpp"
 #include "MantisBuffer.hpp"
-
-#include <string>
-using std::string;
 
 class MantisFileWriter :
     public MantisCallable
@@ -34,8 +30,11 @@ class MantisFileWriter :
     private:
         MantisFileWriter();
         MantisCondition fCondition;
-  MantisEgg* egg_ptr;
-        unsigned long fRecordCount;        
+
+        unsigned long fRecordCount;
+        unsigned long long fLiveMicroseconds;
+        
+        MantisEgg* fEgg;
         MantisStatus* fStatus;
         MantisBuffer* fBuffer;
 };

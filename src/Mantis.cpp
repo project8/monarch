@@ -43,8 +43,6 @@ int main( int argc, char** argv )
     MantisThread* RunThread = new MantisThread(Run);
     MantisThread* ReadThread = new MantisThread(Reader);
     MantisThread* WriteThread = new MantisThread(Writer);
-    
-    cout << "starting threads..." << endl;
 
     ReadThread->Start();
     while( Status->GetWriterCondition()->IsWaiting() == false );
@@ -54,13 +52,9 @@ int main( int argc, char** argv )
     
     RunThread->Start();
 
-    cout << "threads started..." << endl;
-
     RunThread->Join();
     WriteThread->Join();
     ReadThread->Join();
-    
-    cout << "threads returned..." << endl;
     
     delete ReadThread;
     delete WriteThread;

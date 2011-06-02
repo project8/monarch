@@ -1,15 +1,11 @@
- #include "MantisFileWriter.hpp"
-
-#include <cstdio>
-
-#include <unistd.h>
+#include "MantisFileWriter.hpp"
 
 #include <iostream>
 using std::cout;
 using std::endl;
 
 MantisFileWriter::MantisFileWriter() :
-    fCondition(), fRecordCount( 0 ), fStatus( NULL ), fBuffer( NULL )
+    fCondition(), fRecordCount( 0 ), fLiveMicroseconds( 0 ), fEgg( NULL ), fStatus( NULL ), fBuffer( NULL )
 {
 }
 MantisFileWriter::~MantisFileWriter()
@@ -38,11 +34,10 @@ void MantisFileWriter::SetBuffer( MantisBuffer* aBuffer )
     fBuffer = aBuffer;
     return;
 }
-
 void MantisFileWriter::SetOutputEgg( MantisEgg* anEgg )
 {
-  this->egg_ptr = anEgg;
-  return;
+    fEgg = anEgg;
+    return;
 }
 
 void MantisFileWriter::Initialize()
@@ -54,7 +49,9 @@ void MantisFileWriter::Initialize()
 void MantisFileWriter::Execute()
 {
     //allocate some local variables
-    int WriteResult;
+    int Result;
+    timeval StartTime;
+    timeval EndTime;
     
     //get an iterator and pull it up to right behind the read iterator
     MantisBufferIterator* Iterator = fBuffer->CreateIterator();
@@ -67,6 +64,9 @@ void MantisFileWriter::Execute()
         delete Iterator;
         return;
     }
+    
+    //start timing
+    gettimeofday( &StartTime, NULL );
 
     //go go go
     while( true )
@@ -74,6 +74,10 @@ void MantisFileWriter::Execute()
         //check the run status
         if( !fStatus->IsRunning() )
         {
+            //get the time and update the number of live microseconds
+            gettimeofday( &EndTime, NULL );
+            fLiveMicroseconds += (1000000 * EndTime.tv_sec + EndTime.tv_usec) - (1000000 * StartTime.tv_sec + StartTime.tv_usec);
+            
             delete Iterator;
             return;
         }
@@ -92,7 +96,7 @@ void MantisFileWriter::Execute()
             cout << "found an unwritten block, might possibly fail?\n";
         }
         Iterator->SetReading();
-        WriteResult = this->egg_ptr->write_data( Iterator->Data() );
+        Result = fEgg->write_data( Iterator->Data() );
         fRecordCount++;
         Iterator->SetRead();
     }
@@ -101,7 +105,16 @@ void MantisFileWriter::Execute()
  
 void MantisFileWriter::Finalize()
 {
-    cout << "records written: " << fRecordCount << endl;
+    double LiveTime = fLiveMicroseconds / 1000000.;
+    double MegabytesWritten = fRecordCount * ( ((double)(fBuffer->GetDataLength())) / (1048576.) );
+    double WriteRate = MegabytesWritten / LiveTime;
+    
+    cout << "\nwriter statistics:\n";
+    cout << "  * records written: " << fRecordCount << "\n";
+    cout << "  * live time: " << LiveTime << "(sec)\n";
+    cout << "  * total data written: " << MegabytesWritten << "(Mb)\n";
+    cout << "  * average write rate: " << WriteRate << "(Mb/sec)\n";
+    cout.flush();
     
     return;
 }
