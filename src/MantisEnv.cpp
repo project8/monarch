@@ -109,10 +109,9 @@ void MantisEnv::verifyEnvironment(safeEnvPtr someEnvironment)
 
 std::ostream& operator << (std::ostream& outstream, safeEnvPtr& obj)
 {
-  outstream << "\n" 
-	    << "\toutput file name: " << (obj.get())->getOutName() << "\n"
-	    << "\tdigitizer rate: " << (obj.get())->getClockRate() << "(MHz)\n"
-	    << "\trun length: " << (obj.get())->getRunLength() << "(s)\n";
+  outstream << "output file name: " << (obj.get())->getOutName() << "\n"
+	    << "digitizer rate: " << (obj.get())->getClockRate() << "(MHz)\n"
+	    << "run length: " << (obj.get())->getRunLength() << "(s)\n";
     
   return outstream;
 }
