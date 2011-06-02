@@ -17,6 +17,8 @@ safeEnvPtr runEnvironment;
 int main( int argc, char** argv )
 {
     runEnvironment = MantisEnv::parseArgs(argc, argv);
+
+    std::cout << runEnvironment;
     
     MantisStatus* Status = new MantisStatus();    
     MantisBuffer* Buffer = MantisBuffer::bufferFromEnv(runEnvironment);    
