@@ -47,9 +47,8 @@ void MantisRun::Execute()
     for( unsigned int Seconds = 1; Seconds <= fDuration; Seconds++ )
     {
         sleep( 1 );
-        if( !fStatus->IsRunning() )
+        if( fStatus->IsError() )
         {
-
             if( fStatus->GetWriterCondition()->IsWaiting() == true )
             {
                 fStatus->GetWriterCondition()->Release(); 
@@ -58,14 +57,12 @@ void MantisRun::Execute()
             {
                 fStatus->GetReaderCondition()->Release();
             }
-
-            if( fStatus->IsError() == true )
-            {
-                cout << "stopping on error." << endl;
-            }
+            
+            cout << "stopping on error." << endl;
+            
             return;
         }
-    }
+    }       
     fStatus->SetComplete();
     
     if( fStatus->GetWriterCondition()->IsWaiting() == true )
