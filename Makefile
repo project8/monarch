@@ -3,14 +3,11 @@ CFLAGS=-Wall -Werror -O2 -gstabs+
 CSRC=$(wildcard ./src/*.cpp)
 PXINCDIR=/usr/local/include
 PXLIBDIR=/usr/local/lib
-H5INCDIR=/usr/local/include
-H5LIBDIR=/usr/local/lib
-H5LIB=hdf5 hdf5_cpp
 PXLIB=sig_px1500
 PTHLIB=pthread
-LIBDIRS=$(addprefix -L,$(H5LIBDIR) $(PXLIBDIR))
+LIBDIRS=$(addprefix -L,$(PXLIBDIR))
 INCDIRS=$(addprefix -I,$(shell pwd)/include)
-LDFLAGS=$(addprefix -L,$(H5LIBDIR)) $(addprefix -l,$(H5LIB) $(PXLIB))
+LDFLAGS=$(addprefix -l,$(PXLIB))
 BUILDDIR=build
 OBJ=$(CSRC:%.cpp=%.o)
 TGT=Mantis
