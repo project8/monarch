@@ -20,6 +20,9 @@ $(TGT): $(OBJ)
 	@echo CXX $(basename $(notdir $@))
 	@$(CC) $(CFLAGS) $(INCDIRS) -c $< -o $@
 
+install:
+	cp $(TGT) /usr/local/bin/Mantis
+
 clean: 
 	@find . -maxdepth 2 -name "*.o" | xargs -I{} rm {}
 	@find . -maxdepth 2 -name "*~" | xargs -I{} rm {}
