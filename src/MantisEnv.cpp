@@ -1,11 +1,11 @@
 #include "MantisEnv.hpp"
 
 MantisEnv::MantisEnv()
-  : outName("mantis_out.h5"), // default output name
-    clockRate(500.0),         // default ADC clock rate (MHz)
-    runLength(600),           // default run length in seconds
-    dataWidth(4194304),       // number of bytes in a single record
-    bufferCount(630)          // number of circular buffer nodes
+  : outName("mantis_out.egg"), // default output name
+    clockRate(500.0),          // default ADC clock rate (MHz)
+    runLength(600),            // default run length in seconds
+    dataWidth(4194304),        // number of bytes in a single record
+    bufferCount(630)           // number of circular buffer nodes
 { /* no-op */ }
 
 void MantisEnv::setOutName(std::string newOutName)
