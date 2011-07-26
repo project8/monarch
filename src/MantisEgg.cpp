@@ -118,7 +118,7 @@ bool MantisEgg::write_header()
 
   char buffer[2*sizeof(std::size_t)];
   sprintf(buffer,
-	  "%x",
+	  "%08x",
 	  (unsigned)fuse.str().length());
 
   this->write_raw_bytes(buffer,
