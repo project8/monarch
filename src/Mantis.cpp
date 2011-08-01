@@ -4,6 +4,7 @@
 #include "MantisFileWriter.hpp"
 
 #include "MantisThread.hpp"
+#include <cstdlib>
 #include <sstream>
 using std::stringstream;
 
@@ -27,7 +28,13 @@ int main( int argc, char** argv )
 						    Status,
 						    Buffer);
     MantisEgg* OutputFile = MantisEgg::egg_from_env(runEnvironment);
-    OutputFile->write_header();
+    if( OutputFile ) {
+      OutputFile->write_header();
+    }
+    else {
+      std::cout << "Couldn't create output file!" << std::endl;
+      exit(2);
+    }
     
     MantisFileWriter* Writer = MantisFileWriter::writerFromEnv(runEnvironment,
 							       OutputFile,
