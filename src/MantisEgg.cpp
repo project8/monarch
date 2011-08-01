@@ -21,29 +21,43 @@ MantisEgg::~MantisEgg()
 MantisEgg* MantisEgg::egg_from_env(safeEnvPtr& env)
 {
   MantisEgg* egg_ptr = new MantisEgg();
-  egg_ptr->file_ptr = fopen((env.get())->getOutName().c_str(),"wb");
 
-  egg_ptr->add_header_attr("clock_ticks_per_second",
-			   CLOCKS_PER_SEC);
+  if( egg_ptr ) {
+    egg_ptr->file_ptr = fopen((env.get())->getOutName().c_str(),"wb");
+    if ( egg_ptr->file_ptr ) {
 
-  if(egg_ptr->file_ptr == NULL) {
-    delete egg_ptr;
-    egg_ptr = NULL;
+    egg_ptr->add_header_attr("clock",
+			     "clock_ticks_per_sec",
+			     CLOCKS_PER_SEC);
+
+    // Now encode the data size and features, and write it as a string.
+    egg_ptr->add_header_attr("data_format",
+			     "id",
+			     sizeof(MantisData::IdType));
+    egg_ptr->add_header_attr("data_format",
+			     "ts",
+			     sizeof(MantisData::ClockType));
+    egg_ptr->add_header_attr("data_format",
+			     "data",
+			     egg_ptr->data_width);
+    }
+    else {
+      delete egg_ptr;
+      egg_ptr = NULL;
+    }
   }
+
   return egg_ptr;
 }
 
-std::string MantisEgg::attr_to_xml(egg_hdr_k_type key,
-				    egg_hdr_v_type val)
+std::string MantisEgg::attr_to_xml(egg_hdr_attr_k_t key,
+				   egg_hdr_attr_v_t val)
 {
   std::stringstream fuse;
-  fuse << "<key>" 
-       << "name=\"" 
-       << key 
-       << "\" " 
-       << "value=\"" 
+  fuse << key 
+       << "=\""
        << val 
-       << "\"</key>";
+       << "\"";
   return fuse.str();
 }
 
@@ -96,21 +110,18 @@ bool MantisEgg::write_header()
 
     // Write header attributes
     while( header_it != header_attrs.end() ) {
-      std::string xml = MantisEgg::attr_to_xml((*header_it).first,
-						(*header_it).second);
-      fuse << xml;
+      fuse << "<"
+	   << (*header_it).first << " ";
+      egg_hdr_attr_list::iterator attr_it = (*header_it).second.begin();
+      while( attr_it != (*header_it).second.end() ) {
+	std::string xml = MantisEgg::attr_to_xml((*attr_it).first,
+						 (*attr_it).second);
+	fuse << xml << " ";
+	attr_it++;
+      }
+      fuse << "/>";
       header_it++;
     }
-
-    // Now encode the data size and features, and write it as a string.
-    std::stringstream dataDesc;
-    dataDesc << "id:"
-	     << sizeof(MantisData::IdType) << "|"
-	     << "ts:"
-	     << sizeof(MantisData::ClockType) << "|"
-	     << "data:"
-	     << this->data_width;
-    fuse << MantisEgg::attr_to_xml("data_format",dataDesc.str());
 
     // Close the header, we're done.
     fuse << MantisEgg::xml_hdr_close();
