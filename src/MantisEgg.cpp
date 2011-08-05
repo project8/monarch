@@ -29,6 +29,9 @@ MantisEgg* MantisEgg::egg_from_env(safeEnvPtr& env)
     egg_ptr->add_header_attr("clock",
 			     "clock_ticks_per_sec",
 			     CLOCKS_PER_SEC);
+    egg_ptr->add_header_attr("run",
+			     "length",
+			     (env.get())->getRunLength());
 
     // Now encode the data size and features, and write it as a string.
     egg_ptr->add_header_attr("data_format",
@@ -40,6 +43,10 @@ MantisEgg* MantisEgg::egg_from_env(safeEnvPtr& env)
     egg_ptr->add_header_attr("data_format",
 			     "data",
 			     egg_ptr->data_width);
+    egg_ptr->add_header_attr("digitizer",
+			     "rate",
+			     (env.get())->getClockRate());
+
     }
     else {
       delete egg_ptr;
