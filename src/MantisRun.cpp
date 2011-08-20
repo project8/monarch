@@ -44,13 +44,13 @@ void MantisRun::Execute()
     fStatus->SetRunning();
     fStatus->GetWriterCondition()->Release();
     fStatus->GetReaderCondition()->Release();
-    for( unsigned int Seconds = 1; Seconds <= fDuration; Seconds++ )
+    for( unsigned int mSec = 1; mSec <= fDuration; mSec += 1 )
     {
-        sleep( 1 );
+        usleep( 1000 );
         
         cout << ".";
         cout.flush();
-        if( (Seconds % 10) == 0 )
+        if( (mSec % 10000) == 0 )
         {
             cout << "\r";
             cout << "          ";
