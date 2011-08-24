@@ -10,8 +10,10 @@ static const int prelude_size = 8;  /*the prelude size is currently restricted
 struct event {
   int timestamp_size;
   int frameID_size;
-  int data_size;
+  int record_size;
   int event_size;
+  int sample_rate;  //in MHz
+  int sample_length;  //in sec
   char *ts;
   char *fID;
   char *record;
