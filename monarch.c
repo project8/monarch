@@ -2,6 +2,8 @@
 
 struct egg *mBreakEgg(const char *fileName, struct egg *current) {
 
+  printf("Breaking egg..\n");
+
   current->eggptr = fopen(fileName,"r");
   current->prelude = malloc(prelude_size);
 
@@ -26,43 +28,61 @@ struct egg *mBreakEgg(const char *fileName, struct egg *current) {
   
   current->header = malloc(header_size);
   bytes_read = fread(current->header,sizeof(char),header_size,current->eggptr);
-  
+
+  printf("Break successful.\n");
+
   return current;
 
 }
 
 struct egg *mParseEggHeader(struct egg *current) {
 
+  printf("Parsing header...\n");
+
   mxml_node_t *tree;
   tree = mxmlLoadString(NULL,current->header,MXML_TEXT_CALLBACK);
   
-  mxml_node_t *format;
-  format = mxmlFindElement(tree,tree,"data_format",NULL,NULL,MXML_DESCEND);
+  mxml_node_t *data_format;
+  data_format = mxmlFindElement(tree,tree,"data_format",NULL,NULL,MXML_DESCEND);
   
   const char *value;
-  value = mxmlElementGetAttr(format, "id");
+  value = mxmlElementGetAttr(data_format, "id");
   current->data = malloc(sizeof(struct event));
   current->data->frameID_size = atoi(value);
 
-  value = mxmlElementGetAttr(format, "ts");
+  value = mxmlElementGetAttr(data_format, "ts");
   current->data->timestamp_size = atoi(value);
  
-  value = mxmlElementGetAttr(format, "data");
-  current->data->data_size = atoi(value);
+  value = mxmlElementGetAttr(data_format, "data");
+  current->data->record_size = atoi(value);
 
   current->data->event_size = current->data->frameID_size 
                              + current->data->timestamp_size 
-                             + current->data->data_size;
+                             + current->data->record_size;
 
   current->data->ts = malloc(current->data->timestamp_size);
   current->data->fID = malloc(current->data->frameID_size);
-  current->data->record = malloc(current->data->data_size);
+  current->data->record = malloc(current->data->record_size);
+
+  mxml_node_t *digitizer;
+  digitizer = mxmlFindElement(tree,tree,"digitizer",NULL,NULL,MXML_DESCEND);
+  value = mxmlElementGetAttr(digitizer, "rate");
+  current->data->sample_rate = atoi(value);
+
+  mxml_node_t *run;
+  run = mxmlFindElement(tree,tree,"run",NULL,NULL,MXML_DESCEND);
+  value = mxmlElementGetAttr(run, "length");
+  current->data->sample_length = atoi(value);
+
+  printf("Parse successful.\n");
 
   return current;
 
 }
 
 int mHatchNextEvent(struct egg *current) {
+
+  printf("Hatching egg...\n");
 
   int flag = 0;
 
@@ -79,17 +99,21 @@ int mHatchNextEvent(struct egg *current) {
   if(bytes_read == 0)
     flag = 1;
 
-  bytes_read  = fread(current->data->record,sizeof(char),current->data->data_size,
+  bytes_read  = fread(current->data->record,sizeof(char),current->data->record_size,
 		      current->eggptr);
 
   if(bytes_read == 0)
     flag = 1;
+
+  printf("Egg hatched.\n");
 
   return flag;
 
  }
 
 void mCleanUp(struct egg *current) {
+
+  printf("Cleaning up.\n");
 
   if(current->prelude)
     free(current->prelude);
@@ -110,6 +134,8 @@ void mCleanUp(struct egg *current) {
     free(current->data);
 
   fclose(current->eggptr);
+
+  printf("Clean up successful.\n");
 
   return;
 
