@@ -59,7 +59,7 @@ void displayResults(struct FFTinput *input) {
   for(i = 0; i < input->out_size; i++) {
 
     float f_val;
-    f_val = ( (float)i / input->in_size) * ( (float)1 / (input->step_size));
+    f_val = ( (float)i / input->in_size) * (1 / (input->step_size));
 
     double a;
     double b;
