@@ -2,8 +2,6 @@
 
 struct egg *mBreakEgg(const char *fileName, struct egg *current) {
 
-  printf("Breaking egg..\n");
-
   current->eggptr = fopen(fileName,"r");
   current->prelude = malloc(prelude_size);
 
@@ -29,15 +27,11 @@ struct egg *mBreakEgg(const char *fileName, struct egg *current) {
   current->header = malloc(header_size);
   bytes_read = fread(current->header,sizeof(char),header_size,current->eggptr);
 
-  printf("Break successful.\n");
-
   return current;
 
 }
 
 struct egg *mParseEggHeader(struct egg *current) {
-
-  printf("Parsing header...\n");
 
   mxml_node_t *tree;
   tree = mxmlLoadString(NULL,current->header,MXML_TEXT_CALLBACK);
@@ -74,15 +68,11 @@ struct egg *mParseEggHeader(struct egg *current) {
   value = mxmlElementGetAttr(run, "length");
   current->data->sample_length = atoi(value);
 
-  printf("Parse successful.\n");
-
   return current;
 
 }
 
 int mHatchNextEvent(struct egg *current) {
-
-  printf("Hatching egg...\n");
 
   int flag = 0;
 
@@ -105,15 +95,11 @@ int mHatchNextEvent(struct egg *current) {
   if(bytes_read == 0)
     flag = 1;
 
-  printf("Egg hatched.\n");
-
   return flag;
 
  }
 
 void mCleanUp(struct egg *current) {
-
-  printf("Cleaning up.\n");
 
   if(current->prelude)
     free(current->prelude);
@@ -134,8 +120,6 @@ void mCleanUp(struct egg *current) {
     free(current->data);
 
   fclose(current->eggptr);
-
-  printf("Clean up successful.\n");
 
   return;
 
