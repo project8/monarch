@@ -14,15 +14,15 @@ struct event {
   int event_size;
   int sample_rate;  //in MHz
   int sample_length;  //in sec
-  char *ts;
-  char *fID;
-  char *record;
+  unsigned char *ts;
+  unsigned char *fID;
+  unsigned char *record;
 };
 
 struct egg { 
   FILE *eggptr;
-  char *prelude;
-  char *header;
+  unsigned char *prelude;
+  unsigned char *header;
   struct event *data;
 };
 

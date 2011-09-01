@@ -7,7 +7,7 @@ struct egg *mBreakEgg(const char *fileName, struct egg *current) {
 
   int bytes_read;
   int header_size;
-  bytes_read = fread(current->prelude,sizeof(char),prelude_size,
+  bytes_read = fread(current->prelude,sizeof(unsigned char),prelude_size,
 		 	 current->eggptr);
     
   if(bytes_read != prelude_size) {
@@ -25,7 +25,7 @@ struct egg *mBreakEgg(const char *fileName, struct egg *current) {
   }
   
   current->header = malloc(header_size);
-  bytes_read = fread(current->header,sizeof(char),header_size,current->eggptr);
+  bytes_read = fread(current->header,sizeof(unsigned char),header_size,current->eggptr);
 
   return current;
 
@@ -77,20 +77,20 @@ int mHatchNextEvent(struct egg *current) {
   int flag = 0;
 
   int bytes_read;
-  bytes_read  = fread(current->data->ts,sizeof(char),current->data->timestamp_size,
-		      current->eggptr);
+  bytes_read  = fread(current->data->ts,sizeof(unsigned char),
+		      current->data->timestamp_size, current->eggptr);
 
   if(bytes_read == 0)
     flag = 1;
 
-  bytes_read  = fread(current->data->fID,sizeof(char),current->data->frameID_size,
-		      current->eggptr);
+  bytes_read  = fread(current->data->fID,sizeof(unsigned char),
+		      current->data->frameID_size,current->eggptr);
 
   if(bytes_read == 0)
     flag = 1;
 
-  bytes_read  = fread(current->data->record,sizeof(char),current->data->record_size,
-		      current->eggptr);
+  bytes_read  = fread(current->data->record,sizeof(unsigned char),
+		      current->data->record_size,current->eggptr);
 
   if(bytes_read == 0)
     flag = 1;
