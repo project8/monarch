@@ -6,7 +6,7 @@ struct egg *mBreakEgg(const char *fileName, struct egg *current) {
   current->prelude = malloc(prelude_size);
 
   int bytes_read;
-  int header_size;
+  unsigned int header_size;
   bytes_read = fread(current->prelude,sizeof(unsigned char),prelude_size,
 		 	 current->eggptr);
     
@@ -16,7 +16,7 @@ struct egg *mBreakEgg(const char *fileName, struct egg *current) {
 
   }
 
-  bytes_read = sscanf(current->prelude,"%08x",&header_size);
+  bytes_read = sscanf((char *)current->prelude,"%08x",&header_size);
   
   if(!1) {
 
@@ -34,7 +34,7 @@ struct egg *mBreakEgg(const char *fileName, struct egg *current) {
 struct egg *mParseEggHeader(struct egg *current) {
 
   mxml_node_t *tree;
-  tree = mxmlLoadString(NULL,current->header,MXML_TEXT_CALLBACK);
+  tree = mxmlLoadString(NULL,(char *)current->header,MXML_TEXT_CALLBACK);
   
   mxml_node_t *data_format;
   data_format = mxmlFindElement(tree,tree,"data_format",NULL,NULL,MXML_DESCEND);
