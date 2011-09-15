@@ -48,8 +48,10 @@ void MantisRun::Execute()
     {
         usleep( 1000 );
         
-        cout << ".";
-        cout.flush();
+	if( (mSec % 1000) == 0 ) {
+	  cout << ".";
+	  cout.flush();
+	}
         if( (mSec % 10000) == 0 )
         {
             cout << "\r";
