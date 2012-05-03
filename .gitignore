@@ -2,3 +2,12 @@
 *.o
 *~
 *.egg
+Mantis
+src/*.o
+*~
+#*
+*#
+*.h5
+*.hdf5
+*.out
+*.log
