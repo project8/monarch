@@ -9,11 +9,18 @@
 class Monarch
 {
   MonarchEgg *egg;
+  Monarch();
 public:
   Monarch(std::string);
   Monarch(int,int,std::string);
   Monarch(bool,int,int,std::string);
 };
+
+Monarch::Monarch(){
+
+  //empty
+
+}
 
 //read constructor
 Monarch::Monarch(std::string filename){
