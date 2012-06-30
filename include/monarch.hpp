@@ -1,51 +1,28 @@
 #include <iostream>
 #include <string>
 
+#include "MonarchIO.hpp"
+#include "MonarchEgg.hpp"
 #include "MonarchRead.hpp"
 #include "MonarchWrite.hpp"
 #include "MonarchSim.hpp"
-#include "MonarchEgg.hpp"
 
 class Monarch
 {
   MonarchEgg *egg;
+  MonarchIO *eggPTR;
   Monarch();
+  ~Monarch();
 public:
+  //constructors
   Monarch(std::string);
   Monarch(int,int,std::string);
   Monarch(bool,int,int,std::string);
+  //destructors
+  ~Monarch(std::string);
+  ~Monarch(int,int,std::string);
+  ~Monarch(bool,int,int,std::string);
+
+  //other useful functions maybe here
 };
-
-Monarch::Monarch(){
-
-  //empty
-
-}
-
-//read constructor
-Monarch::Monarch(std::string filename){
-
-  //fix me
-
-}
-
-//write constructor
-Monarch::Monarch(int sample_length,int sample_rate,std::string filename){
-
-  //fix me
-
-}
-
-//simulation constructor
-Monarch::Monarch(bool signal,int sample_length,int sample_rate,std::string filename){
-
-  //fix me
-
-}
-
-Monarch::~Monarch(){
-
-  //fix me
-
-}
 
