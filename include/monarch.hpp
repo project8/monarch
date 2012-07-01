@@ -13,6 +13,7 @@ class Monarch
   MonarchIO *eggPTR;
   Monarch();
   ~Monarch();
+
 public:
   //constructors
   Monarch(std::string);
@@ -23,6 +24,8 @@ public:
   ~Monarch(int,int,std::string);
   ~Monarch(bool,int,int,std::string);
 
-  //other useful functions maybe here
+  mPrintHeader();
+  mPrintNextEvent();
+  mPrintNextRecord();
 };
 
