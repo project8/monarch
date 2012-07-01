@@ -2,15 +2,20 @@
 #include <string>
 
 #include "MonarchIO.hpp"
-#include "MonarchEgg.hpp"
+#include "MonarchHeader.hpp"
+#include "MonarchEvent.hpp"
+#include "MonarchRecord.hpp"
 #include "MonarchRead.hpp"
 #include "MonarchWrite.hpp"
 #include "MonarchSim.hpp"
 
 class Monarch
 {
-  MonarchEgg *egg;
   MonarchIO *eggPTR;
+  MonarchHeader *header;
+  MonarchEvent *event;
+  MonarchRecord *record;
+
   Monarch();
   ~Monarch();
 
@@ -19,13 +24,11 @@ public:
   Monarch(std::string);
   Monarch(int,int,std::string);
   Monarch(bool,int,int,std::string);
-  //destructors
-  ~Monarch(std::string);
-  ~Monarch(int,int,std::string);
-  ~Monarch(bool,int,int,std::string);
+  //destructor
+  ~Monarch();
 
-  MonarchHeader* ReturnHeader();
-  MonarchEvent* ReturnNextEvent();
-  MonarchRecord* ReturnNextRecord();
+  MonarchHeader* getHeader();
+  MonarchEvent* getNextEvent();
+  MonarchRecord* getNextRecord();
 };
 
