@@ -24,8 +24,8 @@ public:
   ~Monarch(int,int,std::string);
   ~Monarch(bool,int,int,std::string);
 
-  mPrintHeader();
-  mPrintNextEvent();
-  mPrintNextRecord();
+  MonarchHeader* ReturnHeader();
+  MonarchEvent* ReturnNextEvent();
+  MonarchRecord* ReturnNextRecord();
 };
 
