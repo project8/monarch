@@ -10,10 +10,9 @@ Monarch::Monarch(){
 //read constructor
 Monarch::Monarch(std::string filename){
 	MonarchIO *eggPTR = new MonarchIO(std::string filename);
-	MonarchEgg *egg = new MonarchEgg();
-	MonarchRead *mReader = new MonarchRead(MonarchEgg *egg,MonarchIO *eggPTR)
-
-}
+  	MonarchEgg *egg BreakEgg(MonarchIO *eggPTR);
+  	MonarchEgg *egg = ParseHeader(MonarchIO *,MonarchEgg *);
+  }
 
 //write constructor
 Monarch::Monarch(int sample_length,int sample_rate,std::string filename){
@@ -32,5 +31,20 @@ Monarch::Monarch(bool signal,int sample_length,int sample_rate,std::string filen
 Monarch::~Monarch(){
 
   //fix me
+
+}
+
+Monarch::mPrintHeader() {
+
+
+}
+
+Monarch::mPrintNextEvent() {
+
+
+}
+
+Monarch::mPrintNextRecord() {
+
 
 }
