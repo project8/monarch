@@ -4,9 +4,4 @@
 
 class MonarchIO {
 	FILE *filePTR;
-	MonarchEgg *egg;
-	MonarchIO();
-	MonarchEgg();
-	~MonarchEgg();
-	~MonarchIO();
 };
