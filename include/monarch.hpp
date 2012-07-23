@@ -1,34 +1,29 @@
-#include <iostream>
-#include <string>
+#ifndef __MONARCH_HPP
+#define __MONARCH_HPP
 
 #include "MonarchIO.hpp"
-#include "MonarchHeader.hpp"
-#include "MonarchEvent.hpp"
-#include "MonarchRecord.hpp"
-#include "MonarchRead.hpp"
-#include "MonarchWrite.hpp"
-#include "MonarchSim.hpp"
+#include "MonarchTypes.hpp"
 
-class Monarch
-{
-  MonarchIO *eggPTR;
-  MonarchHeader *header;
-  MonarchEvent *event;
-  MonarchRecord *record;
-
+class Monarch {
+private:
+  // Default constructor is private, naturally
   Monarch();
-  ~Monarch();
+
+  // The MonarchIO class is the file pointer abstraction that we use
+  // to read and write data.
+  MonarchIO* io;
 
 public:
-  //constructors
-  Monarch(std::string);
-  Monarch(int,int,std::string);
-  Monarch(bool,int,int,std::string);
-  //destructor
-  ~Monarch();
+  // Some bits for configuration flags.
+  static const AcquisitionMode OneChannel = 0x03;
+  static const AcquisitionMode TwoChannel = 0x04;
 
-  MonarchHeader* getHeader();
-  MonarchEvent* getNextEvent();
-  MonarchRecord* getNextRecord();
+  // The simplest constructor takes a string filename, an access mode, and
+  // an acquisition mode which determines the number of channels in the data
+  // stream.
+  Monarch(std::string filename, 
+	  AccessMode iomode, 
+	  AcquisitionMode datamode);
 };
 
+#endif

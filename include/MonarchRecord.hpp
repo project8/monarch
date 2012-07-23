@@ -1,19 +1,18 @@
-#ifndef MANTISDATA_HPP_
-#define MANTISDATA_HPP_
+#ifndef MONARCHRECORD_HPP_
+#define MONARCHRECORD_HPP_
 
 #include <ctime>
-#include "px1500.h"
 
-class MantisData
+class MonarchRecord
 {
     public:
         typedef unsigned long int IdType;
         typedef clock_t ClockType;
-        typedef px4_sample_t DataType;
+        typedef char DataType;
     
     public:
-        MantisData();
-        ~MantisData();
+        MonarchRecord();
+        ~MonarchRecord();
     
         IdType fId;
         ClockType fTick;
