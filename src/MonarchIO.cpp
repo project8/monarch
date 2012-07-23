@@ -1,15 +1,19 @@
 #include "MonarchIO.hpp"
 
 MonarchIO::MonarchIO(std::string filename, AccessMode iomode) 
-  : _iomode(iomode)
+  : filePTR(NULL),
+    _iomode(iomode)
 {
-
-	//fix me
-
+  if(iomode == WriteMode) {
+    filePTR = fopen(filename.c_str(), "wb");
+  }
+  else if (iomode == ReadMode) {
+    filePTR = fopen(filename.c_str(), "rb");
+  }
 }
 
 MonarchIO::~MonarchIO() {
-
-	//fix me
-
+  if(filePTR) {
+    fclose(filePTR);
+  }
 }
