@@ -11,3 +11,4 @@ src/*.o
 *.hdf5
 *.out
 *.log
+monarch_test
