@@ -1,5 +1,5 @@
 CC=g++
-CFLAGS=-Wall -O2 -gstabs+
+CFLAGS=-Wall -gstabs+
 CSRC=$(wildcard ./src/*.cpp)
 PTHLIB=pthread
 LIBDIRS=$(addprefix -L,$(PXLIBDIR))

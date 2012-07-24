@@ -1,22 +1,16 @@
 #ifndef MONARCHRECORD_HPP_
 #define MONARCHRECORD_HPP_
 
+#include "MonarchTypes.hpp"
 #include <ctime>
 
-class MonarchRecord
+struct MonarchRecord
 {
-    public:
-        typedef unsigned long int IdType;
-        typedef clock_t ClockType;
-        typedef char DataType;
-    
-    public:
-        MonarchRecord();
-        ~MonarchRecord();
-    
-        IdType fId;
-        ClockType fTick;
-        DataType* fDataPtr;
+  ChIdType  fCId;
+  AcqIdType fAId;
+  RecIdType fRId;
+  ClockType fTick;
+  DataType fDataPtr[];
 };
 
 #endif
