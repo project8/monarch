@@ -25,3 +25,8 @@ clean:
 
 $(BUILDIR): 
 	@[ -d $@ ] || mkdir -p $@
+
+
+.PHONY: check-syntax
+check-syntax:
+	$(CC) $(CFLAGS) -Wall -Wextra -pedantic -fsyntax-only $(CSRC)
