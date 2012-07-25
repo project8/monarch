@@ -1,11 +1,9 @@
 #include "MonarchIO.hpp"
 
 MonarchIO::MonarchIO(std::string filename, 
-		     AccessMode iomode,
-		     std::size_t nbytes) 
+		     AccessMode iomode)
   : filePTR(NULL),
-    _iomode(iomode),
-    _recWidth(nbytes)
+    _iomode(iomode)
 {
   if(iomode == WriteMode) {
     filePTR = fopen(filename.c_str(), "wb");
@@ -25,13 +23,19 @@ MonarchIO::~MonarchIO() {
   }
 }
 
-bool MonarchIO::WriteRecord(MonarchRecord* data) {
-  static MonarchSerializer<MonarchRecord> ser;
-  ser.value = (*data);
-  std::size_t written = fwrite(ser.value_bytes,
+bool MonarchIO::Write(unsigned char* wbuf, std::size_t nbytes) {
+  std::size_t written = fwrite(wbuf,
 			       sizeof(DataType),
-			       this->_recWidth,
+			       nbytes,
 			       this->filePTR);
 
-  return (written == this->_recWidth * sizeof(DataType));
+  return (written == nbytes);
+}
+
+bool MonarchIO::Read(unsigned char* rbuf, std::size_t nbytes) {
+  std::size_t read = fread(rbuf,
+			   sizeof(DataType),
+			   nbytes,
+			   this->filePTR);
+  return (read == nbytes);
 }
