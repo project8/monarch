@@ -9,6 +9,11 @@ namespace MonarchExceptions {
   public:
     NoFile(std::string const& why);
   };
+
+  class EndOfFile : public std::logic_error {
+  public:
+    EndOfFile(std::string const& why);
+  };
   
 };
 
