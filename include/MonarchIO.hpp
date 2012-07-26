@@ -28,5 +28,8 @@ public:
 
   // Read nbytes of data from the file pointer and store
   // the result in the byte array rbuf.
-  bool Read(unsigned char* rbuf, std::size_t nbytes);
+  std::size_t Read(unsigned char* rbuf, std::size_t nbytes);
+
+  // Close the file handle owned by this IO object
+  bool Close();
 };
