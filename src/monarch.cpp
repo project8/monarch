@@ -6,6 +6,13 @@ Monarch::Monarch()
   //empty, just here to make the compiler throw a
   //fit if someone tries to call a default constructor
 }
+Monarch::~Monarch() 
+{
+  delete io;
+  rec->~MonarchRecord();
+  delete mem;
+}
+
 
 Monarch::Monarch(std::string filename, 
 		 AccessMode iomode,
@@ -16,7 +23,7 @@ Monarch::Monarch(std::string filename,
   recsize(DataWidth),
   io( new MonarchIO(filename,iomode) ),
   mem(new char[DataWidth]), 
-  rec( new (mem) MonarchSerializer<MonarchRecord>() )
+  rec( new (mem) MonarchRecord() )
 { }
 
 Monarch* Monarch::Open(std::string filename, 
@@ -39,34 +46,33 @@ Monarch* Monarch::Open(std::string filename,
 }
 
 Monarch* Monarch::OpenForReading(std::string filename) {
-  std::size_t rsize = 1024 + sizeof(MonarchRecord) - sizeof(DataType*);
+  std::size_t rsize = sizeof(ChIdType) + sizeof(AcqIdType) + sizeof(RecIdType) + sizeof(ClockType) + 1024;
   return new Monarch(filename, MonarchIO::ReadMode, OneChannel, rsize);
 }
 
 Monarch* Monarch::OpenForWriting(std::string filename) {
-  std::size_t rsize = 1024 + sizeof(MonarchRecord) - sizeof(DataType*);
+  std::size_t rsize = sizeof(ChIdType) + sizeof(AcqIdType) + sizeof(RecIdType) + sizeof(ClockType) + 1024;
   return new Monarch(filename, MonarchIO::WriteMode, OneChannel, rsize);
 }
 
 bool Monarch::Close() {
-  return true;
+  return (this->io->Close());
 }
 
 MonarchRecord* Monarch::NewRecord(std::size_t dsize) {
-  std::size_t rsize = dsize + sizeof(MonarchRecord) - sizeof(DataType*);
+  std::size_t rsize = sizeof(ChIdType) + sizeof(AcqIdType) + sizeof(RecIdType) + sizeof(ClockType) + dsize;
   unsigned char* mem = new unsigned char[rsize]();
   return new (mem) MonarchRecord();
 }
 
 bool Monarch::WriteRecord(MonarchRecord* newrec) {
-  (this->rec->value_bytes) = (unsigned char*)(newrec);
-  return (this->io)->Write((this->rec->value_bytes), this->recsize);
+  return (this->io)->Write((unsigned char*)(newrec), this->recsize);
 }
 
 MonarchRecord* Monarch::GetNextEvent() {
-  bool res = (this->io)->Read(this->rec->value_bytes,this->recsize);
-  if( res == true ) {
-    return &(this->rec->value);
+  std::size_t res = (this->io)->Read((unsigned char*)(this->rec), this->recsize);
+  if( res == this->recsize ) {
+    return (this->rec);
   }
   else {
     throw MonarchExceptions::EndOfFile(this->filename);
