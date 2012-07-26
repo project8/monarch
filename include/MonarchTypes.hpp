@@ -10,8 +10,8 @@ typedef char AcquisitionMode;
 
 // These types are used in the file format to
 // identify fields in the data records.
-typedef unsigned short AcqIdType;
-typedef unsigned short ChIdType;
+typedef unsigned int AcqIdType;
+typedef unsigned int ChIdType;
 typedef unsigned long int RecIdType;
 typedef clock_t ClockType;
 typedef char DataType;
