@@ -48,16 +48,15 @@ int main() {
   MonarchRecord* rtest_1 = Monarch::NewRecord(1024);
 
   rtest_1->fCId = 1;
-  rtest_1->fAId = 1;
-  for(std::size_t i = 0; i < 100; i++) {
-    rtest_1->fRId = (RecIdType)i;
-    rtest_1->fTick = (ClockType)i;
+  rtest_1->fAId = 2;
+  for(std::size_t i = 0; i < 1024; i++) {
+    rtest_1->fRId = (RecIdType)(i+3);
+    rtest_1->fTick = (ClockType)(i+4);
     for(std::size_t j=0; j<1024; j++) {
       rtest_1->fDataPtr[j] = (DataType)i;
     }
     wtest_1->WriteRecord(rtest_1);
   }
-  wtest_1->Close();
 
   std::cout << "Success.  Cleaning up." << std::endl;
   delete wtest_1;
@@ -69,7 +68,7 @@ int main() {
   std::cout << std::endl << "Reading back test file (testw1.egg)" << std::endl;
   Monarch* rtest_2 = Monarch::Open("testw1.egg",MonarchIO::ReadMode);
   MonarchRecord* ev;
-  for(std::size_t i = 0; i < 100; i++) {
+  for(std::size_t i = 0; i < 1024; i++) {
     try {
       ev = rtest_2->GetNextEvent();
     }
@@ -82,9 +81,9 @@ int main() {
     }
     // Assert that things are correct.
     assert(ev->fCId == 1);
-    assert(ev->fAId == 1);
-    assert(ev->fRId == (RecIdType)i);
-    assert(ev->fTick == (ClockType)i);
+    assert(ev->fAId == 2);
+    assert(ev->fRId == (RecIdType)(i+3));
+    assert(ev->fTick == (ClockType)(i+4));
     for(std::size_t j=0; j<1024; j++) {
       if(ev->fDataPtr[j] != (DataType)i) {
 	std::cout << "Error reading back data in event #"
@@ -99,8 +98,8 @@ int main() {
       }
     }
   }
+  std::cout << "Success.  Cleaning up." << std::endl;
 
   // Clean up.
-
   return 0;
 }
