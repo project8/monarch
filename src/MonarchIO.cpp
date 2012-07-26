@@ -32,10 +32,17 @@ bool MonarchIO::Write(unsigned char* wbuf, std::size_t nbytes) {
   return (written == nbytes);
 }
 
-bool MonarchIO::Read(unsigned char* rbuf, std::size_t nbytes) {
-  std::size_t read = fread(rbuf,
-			   sizeof(DataType),
-			   nbytes,
-			   this->filePTR);
-  return (read == nbytes);
+std::size_t MonarchIO::Read(unsigned char* rbuf, std::size_t nbytes) {
+  return fread(rbuf,
+	       sizeof(DataType),
+	       nbytes,
+	       this->filePTR);
+}
+
+bool MonarchIO::Close() {
+  if(this->filePTR) {
+    fclose(this->filePTR);
+    return true;
+  }
+  return false;
 }
