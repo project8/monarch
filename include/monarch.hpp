@@ -21,8 +21,7 @@ private:
   // A const pointer to an internal MonarchSerializer type templated to
   // the MonarchRecord type.  
   char* const mem;
-  MonarchSerializer<MonarchRecord>* const rec;
-  MonarchSerializer<MonarchRecord>* ser;
+  MonarchRecord* const rec;
 
   // The simplest constructor takes a string filename, an access mode, and
   // an acquisition mode which determines the number of channels in the data
@@ -37,6 +36,8 @@ private:
   static Monarch* OpenForWriting(std::string filename);
 
 public:
+  ~Monarch();
+
   // Some bits for configuration flags.
   static const AcquisitionMode OneChannel = 0x03;
   static const AcquisitionMode TwoChannel = 0x04;
