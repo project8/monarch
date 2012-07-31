@@ -1,0 +1,19 @@
+package Monarch;
+
+// The MonarchHeader class in protocol buffer form.
+message MonarchHeader {
+  // The name of the file this belongs to.  Seems redundant
+  // but could be useful in terms of keeping track of files.
+  required string _filename;
+
+  // The digitizer data is its own little message
+  message DigitizerInfo {
+    required unsigned int _digRate;
+    required unsigned int _recSize; 
+  }
+  // How long did we digitize for?
+  required unsigned int _acqTime;
+
+  // Now things like creation date (because why not)
+  optional string _createdate;
+}
