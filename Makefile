@@ -1,17 +1,24 @@
 CC=g++
 CFLAGS=-Wall -gstabs+
-CSRC=$(wildcard ./src/*.cpp)
+CSRC=$(wildcard ./src/*.cpp) src/MonarchHeader.pb.cpp
 PTHLIB=pthread
-LIBDIRS=$(addprefix -L,$(PXLIBDIR))
+LIBDIRS=$(addprefix -L,$(PXLIBDIR) $(PBDIR)/lib)
 INCDIRS=$(addprefix -I,$(shell pwd)/include)
-LDFLAGS=$(addprefix -l,$(PXLIB))
+LDFLAGS=$(addprefix -l,$(PXLIB) protobuf)
 BUILDDIR=build
-OBJ=$(CSRC:%.cpp=%.o)
+OBJ=$(sort $(CSRC:%.cpp=%.o))
 TGT=monarch_test
+PBHDR=src/MonarchHeader.pb.h
+
+all: $(PBHDR) $(TGT)
 
 $(TGT): $(OBJ)
 	@echo LD $@
-	@$(CC) -o $@ $(OBJ) $(LDFLAGS)
+	@$(CC) -o $@ $^ $(LDFLAGS)
+
+%.pb.o: %.pb.cpp $(BUILDIR)
+	@echo CXX $(basename $(notdir $@))
+	@$(CC) $(CFLAGS) $(INCDIRS) -c $< -o $@
 
 %.o: %.cpp $(BUILDIR)
 	@echo CXX $(basename $(notdir $@))
@@ -23,9 +30,12 @@ clean:
 	@find . -maxdepth 1 -name $(TGT) | xargs -I{} rm {}
 	@echo cleaned.
 
+$(PBHDR): src/MonarchHeader.proto
+	$(PBDIR)/bin/protoc -Isrc --cpp_out=src src/MonarchHeader.proto
+	mv src/MonarchHeader.pb.cc src/MonarchHeader.pb.cpp
+
 $(BUILDIR): 
 	@[ -d $@ ] || mkdir -p $@
-
 
 .PHONY: check-syntax
 check-syntax:
