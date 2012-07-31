@@ -1,8 +1,15 @@
 #include <iostream>
 #include <cassert>
 #include "Monarch.hpp"
+#include "MonarchHeader.pb.h"
 
 int main() {
+  /*
+   * Test header protocol buffers.
+   */
+  MonarchPB::MonarchHeader pb_hdr;
+  pb_hdr.set_filename("foo");
+
   /*
    * Nonexistent file test
    */
