@@ -11,4 +11,5 @@ src/*.o
 *.hdf5
 *.out
 *.log
+src/MonarchHeader.pb*
 monarch_test
