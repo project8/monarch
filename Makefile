@@ -2,7 +2,7 @@ CC=g++
 CFLAGS=-Wall -gstabs+ -Wextra
 CSRC=$(wildcard ./src/*.cpp) src/MonarchHeader.pb.cpp
 PTHLIB=pthread
-LIBDIRS=$(addprefix -L,$(PXLIBDIR) $(PBDIR)/lib)
+LIBDIRS=$(addprefix -L,$(PXLIBDIR) $(PBLIBDIR))
 INCDIRS=$(addprefix -I,$(shell pwd)/include $(shell pwd)/src)
 LDFLAGS=$(addprefix -l,$(PXLIB) protobuf)
 BUILDDIR=build
@@ -31,7 +31,7 @@ clean:
 	@echo cleaned.
 
 $(PBHDR): src/MonarchHeader.proto
-	$(PBDIR)/bin/protoc -Isrc --cpp_out=src src/MonarchHeader.proto
+	$(PROTOC) -Isrc --cpp_out=src src/MonarchHeader.proto
 	mv src/MonarchHeader.pb.cc src/MonarchHeader.pb.cpp
 
 $(BUILDIR): 
