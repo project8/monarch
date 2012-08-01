@@ -42,6 +42,7 @@ std::size_t MonarchIO::Read(char* rbuf, std::size_t nbytes) {
 bool MonarchIO::Close() {
   if(this->filePTR) {
     fclose(this->filePTR);
+    filePTR = NULL;
     return true;
   }
   return false;
