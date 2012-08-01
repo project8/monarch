@@ -10,6 +10,7 @@ message MonarchHeader {
   message DigitizerInfo {
     required uint32 digRate = 1;
     required uint32 recSize = 2; 
+    required uint32 acqMode = 3;
   }
   required DigitizerInfo digInfo = 2;
 
@@ -17,5 +18,5 @@ message MonarchHeader {
   required uint32 acqTime = 3;
 
   // Now things like creation date (because why not)
-  optional string createdate = 4;
+  optional string createdate = 4 [default = ""];
 }
