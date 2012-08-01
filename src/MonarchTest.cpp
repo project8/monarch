@@ -188,5 +188,26 @@ int main() {
   delete bnch_file;
 
   // Clean up.
+  if( remove("bench.egg") != 0 ) {
+    std::cout << "Error removing bench.egg!" << std::endl;
+  }
+  else {
+    std::cout << "Deleted bench.egg." << std::endl;
+  }
+
+  if( remove("w_test_1.egg") != 0 ) {
+    std::cout << "Error removing w_test_1.egg!" << std::endl;
+  }
+  else {
+    std::cout << "Deleted w_test_1.egg." << std::endl;
+  }
+
+  if( remove("test_egg.egg") != 0 ) {
+    std::cout << "Error removing test_egg.egg!" << std::endl;
+  }
+  else {
+    std::cout << "Deleted test_egg.egg." << std::endl;
+  }
+  
   return 0;
 }
