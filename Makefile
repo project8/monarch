@@ -2,19 +2,25 @@ CC=g++
 CFLAGS=-Wall -gstabs+ -Wextra
 CSRC=$(wildcard ./src/*.cpp) src/MonarchHeader.pb.cpp
 PTHLIB=pthread
-LIBDIRS=$(addprefix -L,$(PXLIBDIR) $(PBLIBDIR))
+LIBDIRS=$(addprefix -L,$(PXLIBDIR) $(PBLIBDIR) $(shell pwd))
 INCDIRS=$(addprefix -I,$(shell pwd)/include $(shell pwd)/src)
 LDFLAGS=$(addprefix -l,$(PXLIB) protobuf)
 BUILDDIR=build
 OBJ=$(sort $(CSRC:%.cpp=%.o))
 TGT=monarch_test
+LIBNAME=monarch
+LIB=$(addsuffix .so,$(addprefix lib,$(LIBNAME)))
 PBHDR=src/MonarchHeader.pb.h
 
-all: $(PBHDR) $(TGT)
+all: $(PBHDR) $(LIB) $(TGT) 
 
-$(TGT): $(OBJ)
+$(TGT): $(LIB)
 	@echo LD $@
-	@$(CC) -o $@ $^ $(LDFLAGS)
+	$(CC) -o $@ $(LIBDIRS) $(LDFLAGS) -l$(LIBNAME)
+
+$(LIB): $(OBJ)
+	@echo SO $@
+	@$(CC) -shared -o $@ $^ $(LDFLAGS)
 
 %.pb.o: %.pb.cpp $(BUILDIR)
 	@echo CXX $(basename $(notdir $@))
