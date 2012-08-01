@@ -11,23 +11,34 @@ Monarch::Monarch()
 
 Monarch::~Monarch() 
 {
-  delete io;
-  rec->~MonarchRecord();
-  delete mem;
+  if(io != NULL) delete io;
+  if(mem != NULL) delete mem;
 }
 
 
 Monarch::Monarch(std::string filename, 
-		 AccessMode iomode,
-		 AcquisitionMode datamode,
-		 std::size_t DataWidth) 
+		 AccessMode iomode)
   : 
   filename(filename),
-  recsize(DataWidth),
   io( new MonarchIO(filename,iomode) ),
-  mem(new char[DataWidth]), 
-  rec( new (mem) MonarchRecord() )
+  mem( NULL ),
+  rec( NULL )
 { }
+
+bool Monarch::AllocateRec(std::size_t nbytes) {
+  bool res = true;
+
+  if(mem) {
+    delete mem;
+  }
+  mem = new char[nbytes];
+  rec = new (mem) MonarchRecord();
+  if(mem == NULL || rec == NULL) {
+    res = false;
+  }
+
+  return res;
+}
 
 Monarch* Monarch::Open(std::string filename, 
 		       AccessMode iomode, 
@@ -50,9 +61,7 @@ Monarch* Monarch::Open(std::string filename,
 
 Monarch* Monarch::Open(MonarchHeader& hdr) {
   Monarch* ret = new Monarch(hdr.GetFilename(),
-			     MonarchIO::WriteMode,
-			     hdr.GetAcqMode(),
-			     hdr.GetRecordSize());
+			     MonarchIO::WriteMode);
   if(ret) {
     // Now just write the header & prelude on the file.  First we need to know
     // just how big the header is in bytes
@@ -74,7 +83,16 @@ Monarch* Monarch::Open(MonarchHeader& hdr) {
     }
     (ret->io)->Write(hdr_buf, hdr_size);
 
-    // OK, now we are ready for reading.
+    // Cache the size of records.
+    ret->recsize = sizeof(ChIdType) 
+      + sizeof(AcqIdType) 
+      + sizeof(RecIdType)
+      + sizeof(ClockType)
+      + hdr.GetRecordSize();
+
+    // OK, now we are ready for writing.
+    
+
   }
 
   return ret;
@@ -83,7 +101,7 @@ Monarch* Monarch::Open(MonarchHeader& hdr) {
 Monarch* Monarch::OpenForReading(std::string filename) {
   // This should really be fixed, it makes no goddamned sense.  You can't know these
   // parameters before you read the header!!!
-  Monarch* ret = new Monarch(filename, MonarchIO::ReadMode, OneChannel, 0);
+  Monarch* ret = new Monarch(filename, MonarchIO::ReadMode);
 
   if(ret) {
     // We need an array for the prelude and then another for the header to read in.
@@ -99,14 +117,29 @@ Monarch* Monarch::OpenForReading(std::string filename) {
     
     // Now deserialize.
     ret->hdr = MonarchHeader::FromArray(hdr_buf, hdr_size);
+
+    // Set the recsize to be correct from the header.  This will be fixed
+    // once the constructor for reading is less goofy.
+    ret->recsize = sizeof(ChIdType) 
+      + sizeof(AcqIdType) 
+      + sizeof(RecIdType)
+      + sizeof(ClockType)
+      + ret->hdr->GetRecordSize();
+
+    // Allocate memory for the record we keep.
+    ret->AllocateRec(ret->recsize);
   }
 
   return ret;
 }
 
 Monarch* Monarch::OpenForWriting(std::string filename) {
-  std::size_t rsize = sizeof(ChIdType) + sizeof(AcqIdType) + sizeof(RecIdType) + sizeof(ClockType) + 1024;
-  return new Monarch(filename, MonarchIO::WriteMode, OneChannel, rsize);
+  std::size_t rsize = sizeof(ChIdType) 
+    + sizeof(AcqIdType) 
+    + sizeof(RecIdType) 
+    + sizeof(ClockType) 
+    + 1024;
+  return new Monarch(filename, MonarchIO::WriteMode);
 }
 
 bool Monarch::Close() {
@@ -114,7 +147,11 @@ bool Monarch::Close() {
 }
 
 MonarchRecord* Monarch::NewRecord(std::size_t dsize) {
-  std::size_t rsize = sizeof(ChIdType) + sizeof(AcqIdType) + sizeof(RecIdType) + sizeof(ClockType) + dsize;
+  std::size_t rsize = sizeof(ChIdType) 
+    + sizeof(AcqIdType) 
+    + sizeof(RecIdType) 
+    + sizeof(ClockType) 
+    + dsize;
   char* mem = new char[rsize]();
   return new (mem) MonarchRecord();
 }
