@@ -24,16 +24,15 @@ private:
 
   // A const pointer to an internal MonarchSerializer type templated to
   // the MonarchRecord type.  
-  char* const mem;
-  MonarchRecord* const rec;
+  char* mem;
+  MonarchRecord* rec;
+  bool AllocateRec(std::size_t nbytes);
 
-  // The simplest constructor takes a string filename, an access mode, and
-  // an acquisition mode which determines the number of channels in the data
-  // stream.
+  // The simplest constructor takes a string filename and an access mode.
   Monarch(std::string filename, 
-	  AccessMode iomode, 
-	  AcquisitionMode datamode,
-	  std::size_t DataWidth);
+	  AccessMode iomode);
+
+  // This constructor takes the header directly 
 
   // Specialized open methods
   static Monarch* OpenForReading(std::string filename);
