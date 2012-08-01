@@ -1,26 +1,51 @@
 #include <iostream>
 #include <cassert>
 #include "Monarch.hpp"
-#include "MonarchHeader.pb.h"
 
 int main() {
   /*
-   * Test header protocol buffers.
+   * Test making a header in one channel mode at 500 MHz with
+   * a 4MB record size.  Then write some data.
    */
-  MonarchPB::MonarchHeader pb_hdr;
-  pb_hdr.set_filename("foo");
+  std::cout << "Testing that we can write and read back a header..." 
+	    << std::endl; 
+  MonarchHeader hdr;
+  hdr.SetFilename(std::string("test_egg.egg"));
+  hdr.SetAcqMode(Monarch::OneChannel);
+  hdr.SetAcqRate(500);
+  hdr.SetRecordSize(4194304);
+  hdr.SetAcqTime(100);
 
+  std::cout << "\tOpening a file (test.egg) based on header...";
+  Monarch* wr_test_0 = Monarch::Open(hdr);
+  wr_test_0->Close();
+  std::cout << "ok" << std::endl;
+
+  // Now we should be able to de-serialize the header and read
+  // back those attributes.
+  std::cout << "\tRe-opening the file and parsing the header...";
+  Monarch* rb_test_0 = Monarch::Open("test_egg.egg",MonarchIO::ReadMode);
+  MonarchHeader* rb_hdr = rb_test_0->GetHeader();
+  assert(rb_hdr->GetFilename() == "test_egg.egg");
+  assert(rb_hdr->GetAcqMode() == Monarch::OneChannel);
+  assert(rb_hdr->GetAcqRate() == 500);
+  assert(rb_hdr->GetRecordSize() == 4194304);
+  assert(rb_hdr->GetAcqTime() == 100);
+  std::cout << "ok" << std::endl;
+  std::cout << "Success.  Cleaning up." << std::endl;
+  
   /*
    * Nonexistent file test
    */
-  std::cout << "Testing for NoFile throw on missing file...";
+  std::cout << std::endl << "Testing for NoFile throw on missing file...";
   Monarch* readtest;
   try {
     readtest = Monarch::Open("test.egg",MonarchIO::ReadMode);
   }
   catch(MonarchExceptions::NoFile &e) {
-    std::cout << "\tok, success." << std::endl;
+    std::cout << "ok" << std::endl;
   }
+  std::cout << "Success.  Cleaning up." << std::endl;
 
   /*
    * Generate a new record using Monarch::NewRecord.  We should be 
