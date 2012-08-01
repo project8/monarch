@@ -1,0 +1,12 @@
+Monarch is the library for file I/O used by the Project 8 collaboration.
+Building the library requires Google's Protocol Buffers library (available 
+at https://developers.google.com/protocol-buffers/).  To build, install
+protocol buffers, and then execute 
+
+PBDIR=<path to bin/protoc and lib/libprotobuf> make
+
+Where PBDIR is the base directory in which bin/protoc and lib/libprotobuf
+are located.  Once monarch builds, you can execute the test executable
+by running ./monarch_test in the same directory.  It will run a series
+of tests, including throughput tests.  On a 2012 Macbook Air, I measure
+roughly 250MB/s write throughput.
