@@ -4,9 +4,13 @@
 #include "MonarchIO.hpp"
 #include "MonarchTypes.hpp"
 #include "MonarchExceptions.hpp"
+#include "MonarchHeader.hpp"
 
 class Monarch {
 private:
+  // Header for file
+  MonarchHeader* hdr;
+
   // Default constructor is private, naturally
   Monarch();
 
@@ -39,7 +43,7 @@ public:
   ~Monarch();
 
   // Some bits for configuration flags.
-  static const AcquisitionMode OneChannel = 0x03;
+  static const AcquisitionMode OneChannel;
   static const AcquisitionMode TwoChannel = 0x04;
 
   // Static factory method for constructing Monarch objects from a file.
@@ -51,8 +55,15 @@ public:
   // In read mode this assumes one channel!
   static Monarch* Open(std::string filename, AccessMode iomode);
 
+  // Here's a really sweet one - open using only a header.  This is of course
+  // only for writing, 
+  static Monarch* Open(MonarchHeader& hdr);
+
   // Close an open monarch file.
   bool Close();
+
+  // Get the header
+  MonarchHeader* GetHeader();
 
   // A RecordFactory - a factory method which builds properly initialized 
   // MonarchRecords.
