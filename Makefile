@@ -1,9 +1,9 @@
 CC=g++
-CFLAGS=-Wall -gstabs+
+CFLAGS=-Wall -gstabs+ -Wextra
 CSRC=$(wildcard ./src/*.cpp) src/MonarchHeader.pb.cpp
 PTHLIB=pthread
 LIBDIRS=$(addprefix -L,$(PXLIBDIR) $(PBDIR)/lib)
-INCDIRS=$(addprefix -I,$(shell pwd)/include)
+INCDIRS=$(addprefix -I,$(shell pwd)/include $(shell pwd)/src)
 LDFLAGS=$(addprefix -l,$(PXLIB) protobuf)
 BUILDDIR=build
 OBJ=$(sort $(CSRC:%.cpp=%.o))
