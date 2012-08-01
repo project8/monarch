@@ -23,7 +23,7 @@ MonarchIO::~MonarchIO() {
   }
 }
 
-bool MonarchIO::Write(unsigned char* wbuf, std::size_t nbytes) {
+bool MonarchIO::Write(char* wbuf, std::size_t nbytes) {
   std::size_t written = fwrite(wbuf,
 			       sizeof(DataType),
 			       nbytes,
@@ -32,7 +32,7 @@ bool MonarchIO::Write(unsigned char* wbuf, std::size_t nbytes) {
   return (written == nbytes);
 }
 
-std::size_t MonarchIO::Read(unsigned char* rbuf, std::size_t nbytes) {
+std::size_t MonarchIO::Read(char* rbuf, std::size_t nbytes) {
   return fread(rbuf,
 	       sizeof(DataType),
 	       nbytes,
