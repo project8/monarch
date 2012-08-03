@@ -30,5 +30,9 @@ public:
   // Pass-thru methods to underlying protocol buffer object
   int ByteSize();
   bool SerializeToArray(void* data, int size);
+  bool SerializeToOstream(std::ostream* output);
   
 };
+
+// Pretty printing method
+std::ostream& operator<<(std::ostream& out, MonarchHeader& hdr);
