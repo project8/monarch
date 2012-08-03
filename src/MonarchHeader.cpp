@@ -54,6 +54,10 @@ bool MonarchHeader::SerializeToArray(void* data, int size) {
   return pb_hdr->SerializeToArray(data,size);
 }
 
+bool MonarchHeader::SerializeToOstream(std::ostream* output) {
+  return pb_hdr->SerializeToOstream(output);
+}
+
 MonarchHeader* MonarchHeader::FromArray(void* bytes, int size) {
   MonarchHeader* ret = new MonarchHeader();
   if((ret->pb_hdr->ParseFromArray(bytes, size)) == false) {
@@ -63,4 +67,14 @@ MonarchHeader* MonarchHeader::FromArray(void* bytes, int size) {
   }
 
   return ret;
+}
+
+std::ostream& operator<<(std::ostream& out, MonarchHeader& hdr) {
+  out << "Here's the header: " << std::endl << std::endl;
+  out << "\tFilename: "<< hdr.GetFilename() << std::endl;
+  out << "\tAcquisition Mode: " << hdr.GetAcqMode() << std::endl;
+  out << "\tRecord Size: " << hdr.GetRecordSize() << std::endl;
+  out << "\tAcquisition Time: " << hdr.GetAcqTime() << std::endl;
+  out << "\tDigitization Rate: " << hdr.GetAcqRate() << std::endl;
+  return out;
 }
