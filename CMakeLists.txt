@@ -87,4 +87,8 @@ install (TARGETS monarch  DESTINATION ${LIB_INSTALL_DIR})
 add_executable (monarch_test ${CMAKE_CURRENT_SOURCE_DIR}/src/MonarchTest.cpp)
 target_link_libraries (monarch_test monarch)
 
+# Build the utility executable
+add_executable (eggutils ${CMAKE_CURRENT_SOURCE_DIR}/src/MonarchUtils.cpp)
+target_link_libraries (eggutils monarch)
+
 install (TARGETS monarch_test  DESTINATION ${BIN_INSTALL_DIR})
