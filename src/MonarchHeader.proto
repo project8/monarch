@@ -14,9 +14,30 @@ message MonarchHeader {
   }
   required DigitizerInfo digInfo = 2;
 
+  // It's nice to know where data came from.  This flag will
+  // specify that the data is either from mantis or it is
+  // simulated. 
+  enum DataSource {
+    Mantis = 0;
+    Simulation = 1;
+  } 
+
+  // It's also nice to know if you expect this file to be
+  // a background measurement or to contain an expected signal.
+  enum RunType {
+    Background = 0;
+    Signal = 1;
+  }
+
   // How long did we digitize for?
   required uint32 acqTime = 3;
 
   // Now things like creation date (because why not)
   optional string createdate = 4 [default = ""];
+
+  // Optionally flag the source of the data.
+  optional DataSource dsource = 5;
+
+  // Optionally flag the content of the data.
+  optional RunType rtype = 6;
 }
