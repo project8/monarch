@@ -45,13 +45,7 @@ public:
   static const AcquisitionMode OneChannel;
   static const AcquisitionMode TwoChannel = 0x04;
 
-  // Static factory method for constructing Monarch objects from a file.
-  static Monarch* Open(std::string filename, 
-		       AccessMode iomode, 
-		       AcquisitionMode datamode);
-
   // The most basic constructor only needs a filename and an access mode.
-  // In read mode this assumes one channel!
   static Monarch* Open(std::string filename, AccessMode iomode);
 
   // Here's a really sweet one - open using only a header.  This is of course

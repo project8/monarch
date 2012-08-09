@@ -41,8 +41,7 @@ bool Monarch::AllocateRec(std::size_t nbytes) {
 }
 
 Monarch* Monarch::Open(std::string filename, 
-		       AccessMode iomode, 
-		       AcquisitionMode datamode) {
+		       AccessMode iomode) {
   // First check for readmode 
   if(iomode == MonarchIO::ReadMode) {
     return Monarch::OpenForReading(filename);
@@ -52,11 +51,6 @@ Monarch* Monarch::Open(std::string filename,
   }
 
   return NULL;
-}
-
-Monarch* Monarch::Open(std::string filename, 
-		       AccessMode iomode) {
-  return Monarch::Open(filename, iomode, OneChannel);
 }
 
 Monarch* Monarch::Open(MonarchHeader& hdr) {
