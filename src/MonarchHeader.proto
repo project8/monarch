@@ -8,7 +8,7 @@ message MonarchHeader {
 
   // The digitizer data is its own little message
   message DigitizerInfo {
-    required uint32 digRate = 1;
+    required float digRate = 1;
     required uint32 recSize = 2; 
     required uint32 acqMode = 3;
   }
