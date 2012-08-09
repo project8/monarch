@@ -1,3 +1,6 @@
+#ifndef MONARCHHEADER_HPP_
+#define MONARCHHEADER_HPP_
+
 #include "MonarchTypes.hpp"
 #include "MonarchHeader.pb.h"
 
@@ -31,8 +34,10 @@ public:
   int ByteSize();
   bool SerializeToArray(void* data, int size);
   bool SerializeToOstream(std::ostream* output);
-  
+
 };
 
 // Pretty printing method
 std::ostream& operator<<(std::ostream& out, MonarchHeader& hdr);
+
+#endif

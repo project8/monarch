@@ -91,4 +91,4 @@ target_link_libraries (monarch_test monarch)
 add_executable (eggutils ${CMAKE_CURRENT_SOURCE_DIR}/src/MonarchUtils.cpp)
 target_link_libraries (eggutils monarch)
 
-install (TARGETS monarch_test  DESTINATION ${BIN_INSTALL_DIR})
+install (TARGETS eggutils monarch_test  DESTINATION ${BIN_INSTALL_DIR})
