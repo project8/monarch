@@ -1,6 +1,5 @@
 #include "Monarch.hpp"
 
-const AcquisitionMode Monarch::OneChannel = 0x03;
 
 Monarch::Monarch()
   : filename(""), io(NULL), mem(NULL), rec(NULL)
@@ -43,10 +42,10 @@ bool Monarch::AllocateRec(std::size_t nbytes) {
 Monarch* Monarch::Open(std::string filename, 
 		       AccessMode iomode) {
   // First check for readmode 
-  if(iomode == MonarchIO::ReadMode) {
+  if(iomode == ReadMode) {
     return Monarch::OpenForReading(filename);
   }
-  else if(iomode == MonarchIO::WriteMode) {
+  else if(iomode == WriteMode) {
     return Monarch::OpenForWriting(filename);
   }
 
@@ -55,7 +54,7 @@ Monarch* Monarch::Open(std::string filename,
 
 Monarch* Monarch::Open(MonarchHeader& hdr) {
   Monarch* ret = new Monarch(hdr.GetFilename(),
-			     MonarchIO::WriteMode);
+			     WriteMode);
   if(ret) {
     // Now just write the header & prelude on the file.  First we need to know
     // just how big the header is in bytes
@@ -95,7 +94,7 @@ Monarch* Monarch::Open(MonarchHeader& hdr) {
 Monarch* Monarch::OpenForReading(std::string filename) {
   // This should really be fixed, it makes no goddamned sense.  You can't know these
   // parameters before you read the header!!!
-  Monarch* ret = new Monarch(filename, MonarchIO::ReadMode);
+  Monarch* ret = new Monarch(filename, ReadMode);
 
   if(ret) {
     // We need an array for the prelude and then another for the header to read in.
@@ -133,7 +132,7 @@ Monarch* Monarch::OpenForWriting(std::string filename) {
     + sizeof(RecIdType) 
     + sizeof(ClockType) 
     + 1024;
-  return new Monarch(filename, MonarchIO::WriteMode);
+  return new Monarch(filename, WriteMode);
 }
 
 bool Monarch::Close() {

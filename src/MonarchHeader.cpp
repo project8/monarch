@@ -17,7 +17,7 @@ void MonarchHeader::SetAcqMode(const AcquisitionMode& mode) {
 }
 
 AcquisitionMode MonarchHeader::GetAcqMode() {
-  return (pb_hdr->diginfo()).acqmode();
+  return AcquisitionMode(pb_hdr->diginfo().acqmode());
 }
 
 void MonarchHeader::SetRecordSize(const std::size_t& recsize) {

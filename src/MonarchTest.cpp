@@ -12,7 +12,7 @@ int main() {
 	    << std::endl; 
   MonarchHeader hdr;
   hdr.SetFilename(std::string("test_egg.egg"));
-  hdr.SetAcqMode(Monarch::OneChannel);
+  hdr.SetAcqMode(OneChannel);
   hdr.SetAcqRate(500);
   hdr.SetRecordSize(4194304);
   hdr.SetAcqTime(100);
@@ -25,10 +25,10 @@ int main() {
   // Now we should be able to de-serialize the header and read
   // back those attributes.
   std::cout << "\tRe-opening the file and parsing the header...";
-  Monarch* rb_test_0 = Monarch::Open("test_egg.egg",MonarchIO::ReadMode);
+  Monarch* rb_test_0 = Monarch::Open("test_egg.egg",ReadMode);
   MonarchHeader* rb_hdr = rb_test_0->GetHeader();
   assert(rb_hdr->GetFilename() == "test_egg.egg");
-  assert(rb_hdr->GetAcqMode() == Monarch::OneChannel);
+  assert(rb_hdr->GetAcqMode() == OneChannel);
   assert(rb_hdr->GetAcqRate() == 500);
   assert(rb_hdr->GetRecordSize() == 4194304);
   assert(rb_hdr->GetAcqTime() == 100);
@@ -41,7 +41,7 @@ int main() {
   std::cout << std::endl << "Testing for NoFile throw on missing file...";
   Monarch* readtest;
   try {
-    readtest = Monarch::Open("test.egg",MonarchIO::ReadMode);
+    readtest = Monarch::Open("test.egg",ReadMode);
   }
   catch(MonarchExceptions::NoFile &e) {
     std::cout << "ok" << std::endl;
@@ -81,7 +81,7 @@ int main() {
   std::cout << "\tgenerating header...";
   MonarchHeader w_hdr_0;
   w_hdr_0.SetFilename(std::string("w_test_1.egg"));
-  w_hdr_0.SetAcqMode(Monarch::OneChannel);
+  w_hdr_0.SetAcqMode(OneChannel);
   w_hdr_0.SetAcqRate(500);
   w_hdr_0.SetRecordSize(1024);
   w_hdr_0.SetAcqTime(100);
@@ -111,7 +111,7 @@ int main() {
    * correct data.
    */
   std::cout << std::endl << "Reading back test file (w_test_1.egg)" << std::endl;
-  Monarch* rtest_2 = Monarch::Open("w_test_1.egg",MonarchIO::ReadMode);
+  Monarch* rtest_2 = Monarch::Open("w_test_1.egg",ReadMode);
   MonarchRecord* ev;
   for(std::size_t i = 0; i < 1024; i++) {
     try {
@@ -152,7 +152,7 @@ int main() {
   std::cout << "\tCreating header...";
   MonarchHeader bnch_hdr;
   bnch_hdr.SetFilename(std::string("bench.egg"));
-  bnch_hdr.SetAcqMode(Monarch::OneChannel);
+  bnch_hdr.SetAcqMode(OneChannel);
   bnch_hdr.SetAcqRate(500);
   bnch_hdr.SetRecordSize(1024);
   bnch_hdr.SetAcqTime(100);

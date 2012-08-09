@@ -41,10 +41,6 @@ private:
 public:
   ~Monarch();
 
-  // Some bits for configuration flags.
-  static const AcquisitionMode OneChannel;
-  static const AcquisitionMode TwoChannel = 0x04;
-
   // The most basic constructor only needs a filename and an access mode.
   static Monarch* Open(std::string filename, AccessMode iomode);
 

@@ -11,9 +11,6 @@ class MonarchIO {
   FILE *filePTR;
   AccessMode _iomode;
 public:
-  // Access Modes
-  static const AccessMode WriteMode = 0x01;
-  static const AccessMode ReadMode  = 0x02;
   
   // Constructors and Destructors
   MonarchIO(std::string filename,

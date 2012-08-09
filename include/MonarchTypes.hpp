@@ -5,8 +5,18 @@
 #include <ctime>
 
 // Modes for access and data acquisition
-typedef char AccessMode;
-typedef char AcquisitionMode;
+// The integer equivalents are hard-coded to preserve backwards compatibility with files written before
+// these flags were enums. Please do not change them!
+enum AccessMode
+{
+    WriteMode = 1,
+    ReadMode = 2
+};
+enum AcquisitionMode
+{
+    OneChannel = 3,
+    TwoChannel = 4
+};
 
 // These types are used in the file format to
 // identify fields in the data records.

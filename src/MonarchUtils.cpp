@@ -45,7 +45,7 @@ int main(int argc, char** argv) {
   // Otherwise we have an input file.  Let's try to open it!
   Monarch* in_egg;
   try {
-    in_egg = Monarch::Open(iname, MonarchIO::ReadMode);
+    in_egg = Monarch::Open(iname, ReadMode);
   }
 
   catch (MonarchExceptions::NoFile &e) {
