@@ -40,4 +40,7 @@ message MonarchHeader {
 
   // Optionally flag the content of the data.
   optional RunType rtype = 6;
+
+  // Optionally tag the run with some text description
+  optional string runinfo = 7 [default = ""];
 }
