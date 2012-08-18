@@ -2,7 +2,7 @@
 
 
 Monarch::Monarch()
-  : filename(""), io(NULL), mem(NULL), rec(NULL)
+  : hdr(NULL), filename(""), recsize(0), io(NULL), mem(NULL), rec(NULL)
 {
   //empty, just here to make the compiler throw a
   //fit if someone tries to call a default constructor
@@ -18,11 +18,13 @@ Monarch::~Monarch()
 Monarch::Monarch(std::string filename, 
 		 AccessMode iomode)
   : 
+  hdr( NULL ),
   filename(filename),
+  recsize(0),
   io( new MonarchIO(filename,iomode) ),
   mem( NULL ),
   rec( NULL )
-{ }
+{}
 
 bool Monarch::AllocateRec(std::size_t nbytes) {
   bool res = true;
