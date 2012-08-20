@@ -96,7 +96,18 @@ Monarch* Monarch::Open(MonarchHeader& hdr) {
 Monarch* Monarch::OpenForReading(std::string filename) {
   // This should really be fixed, it makes no goddamned sense.  You can't know these
   // parameters before you read the header!!!
-  Monarch* ret = new Monarch(filename, ReadMode);
+  Monarch* ret = NULL;
+  try
+  {
+    ret = new Monarch(filename, ReadMode);
+    std::cout << "in try: " << ret << std::endl;
+  }
+  catch(std::exception& e)
+  {
+    std::cout << "Unable to open file <" << filename << ">: " << e.what();
+    return NULL;
+  }
+  std::cout << "monarch object address is: " << ret << std::endl;
 
   if(ret) {
     // We need an array for the prelude and then another for the header to read in.
@@ -112,6 +123,12 @@ Monarch* Monarch::OpenForReading(std::string filename) {
     
     // Now deserialize.
     ret->hdr = MonarchHeader::FromArray(hdr_buf, hdr_size);
+    if (ret->hdr == NULL)
+    {
+        std::cout << "Header was not read from the file properly!" << std::endl;
+        delete ret;
+        return NULL;
+    }
 
     // Set the recsize to be correct from the header.  This will be fixed
     // once the constructor for reading is less goofy.
