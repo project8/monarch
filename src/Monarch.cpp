@@ -100,14 +100,12 @@ Monarch* Monarch::OpenForReading(std::string filename) {
   try
   {
     ret = new Monarch(filename, ReadMode);
-    std::cout << "in try: " << ret << std::endl;
   }
   catch(std::exception& e)
   {
     std::cout << "Unable to open file <" << filename << ">: " << e.what();
     return NULL;
   }
-  std::cout << "monarch object address is: " << ret << std::endl;
 
   if(ret) {
     // We need an array for the prelude and then another for the header to read in.
