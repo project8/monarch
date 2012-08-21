@@ -103,7 +103,7 @@ Monarch* Monarch::OpenForReading(std::string filename) {
   }
   catch(std::exception& e)
   {
-    std::cout << "Unable to open file <" << filename << ">: " << e.what();
+    std::cout << "Unable to open file <" << filename << ">: " << e.what() << std::endl;
     return NULL;
   }
 
