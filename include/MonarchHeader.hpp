@@ -2,42 +2,52 @@
 #define MONARCHHEADER_HPP_
 
 #include "MonarchTypes.hpp"
-#include "MonarchHeader.pb.h"
 
-class MonarchHeader {
-private:
-  MonarchPB::MonarchHeader* pb_hdr;
-public:
-  MonarchHeader();
+#include <string>
+using std::string;
 
-  // Getters and setters.  This is basically a wrapper around the
-  // protocol buffer object.
-  void SetFilename(std::string fname);
-  std::string GetFilename();
+namespace MonarchPB
+{
+    class MonarchHeader;
+}
 
-  void SetAcqMode(const AcquisitionMode& mode);
-  AcquisitionMode GetAcqMode();
+class MonarchHeader
+{
+    private:
+        mutable MonarchPB::MonarchHeader* fPBHeader;
 
-  void SetRecordSize(const std::size_t& recsize);
-  std::size_t GetRecordSize();
+    public:
+        MonarchHeader();
+        ~MonarchHeader();
 
-  void SetAcqTime(const std::size_t& acqt);
-  std::size_t GetAcqTime();
+        //size of monarch header in bytes (fixed by .proto definition)
+        int ByteSize() const;
 
-  void SetAcqRate(const std::size_t& acqr);
-  std::size_t GetAcqRate();
+        //marshal a MonarchHeader to an array of data
+        bool MarshalToArray( void* anArray, int aSize );
 
-  // Initialize a MonarchHeader object from a char array.
-  static MonarchHeader* FromArray(void* bytes, int size);
+        //demarshal a MonarchHeader object from an array of data
+        bool DemarshalFromArray( void* anArray, int aSize ) const;
 
-  // Pass-thru methods to underlying protocol buffer object
-  int ByteSize();
-  bool SerializeToArray(void* data, int size);
-  bool SerializeToOstream(std::ostream* output);
+        //access methods
 
+        void SetFilename( const string& aFilename );
+        const string& GetFilename() const;
+
+        void SetAcqRate( double acqr );
+        double GetAcqRate() const;
+
+        void SetAcqMode( unsigned int mode );
+        unsigned int GetAcqMode() const;
+
+        void SetAcqTime( unsigned int acqt );
+        unsigned int GetAcqTime() const;
+
+        void SetRecordSize( size_t recsize );
+        size_t GetRecordSize() const;
 };
 
 // Pretty printing method
-std::ostream& operator<<(std::ostream& out, MonarchHeader& hdr);
+std::ostream& operator<<( std::ostream& out, MonarchHeader& hdr );
 
 #endif

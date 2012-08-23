@@ -1,80 +1,85 @@
 #include "MonarchHeader.hpp"
+#include "MonarchHeader.pb.h"
 
-MonarchHeader::MonarchHeader() 
-  : pb_hdr(new MonarchPB::MonarchHeader)
-{}
-
-void MonarchHeader::SetFilename(std::string fname) {
-  pb_hdr->set_filename(fname);
+MonarchHeader::MonarchHeader() :
+    fPBHeader( new MonarchPB::MonarchHeader )
+{
+}
+MonarchHeader::~MonarchHeader()
+{
+    delete fPBHeader;
 }
 
-std::string MonarchHeader::GetFilename() {
-  return pb_hdr->filename();
+int MonarchHeader::ByteSize()
+{
+    return fPBHeader->ByteSize();
+}
+bool MonarchHeader::MarshalToArray( void* data, int size )
+{
+    return fPBHeader->SerializeToArray( data, size );
+}
+bool MonarchHeader::DemarshalFromArray( void* anArray, int aSize ) const
+{
+    return fPBHeader->ParseFromArray( anArray, aSize );
 }
 
-void MonarchHeader::SetAcqMode(const AcquisitionMode& mode) {
-  (pb_hdr->mutable_diginfo())->set_acqmode(mode);
+void MonarchHeader::SetFilename( const string& aFilename )
+{
+    fPBHeader->set_filename( aFilename );
+    return;
+}
+const string& MonarchHeader::GetFilename() const
+{
+    return fPBHeader->filename();
 }
 
-AcquisitionMode MonarchHeader::GetAcqMode() {
-  return AcquisitionMode(pb_hdr->diginfo().acqmode());
+void MonarchHeader::SetAcqRate( double aRate )
+{
+    fPBHeader->set_acqrate( aRate );
+    return;
+}
+double MonarchHeader::GetAcqRate() const
+{
+    return fPBHeader->acqrate();
 }
 
-void MonarchHeader::SetRecordSize(const std::size_t& recsize) {
-  (pb_hdr->mutable_diginfo())->set_recsize(recsize);
+void MonarchHeader::SetAcqMode( unsigned int aMode )
+{
+    fPBHeader->set_acqmode( aMode );
+    return;
+}
+unsigned int MonarchHeader::GetAcqMode() const
+{
+    return fPBHeader->acqmode();
 }
 
-std::size_t MonarchHeader::GetRecordSize() {
-  return (pb_hdr->diginfo()).recsize();
+void MonarchHeader::SetAcqTime( unsigned int aTime )
+{
+    fPBHeader->set_acqtime( aTime );
+    return;
+}
+unsigned int MonarchHeader::GetAcqTime() const
+{
+    return fPBHeader->acqtime();
 }
 
-void MonarchHeader::SetAcqTime(const std::size_t& acqt) {
-  pb_hdr->set_acqtime(acqt);
+void MonarchHeader::SetRecordSize( size_t aSize )
+{
+    fPBHeader->set_recsize( aSize );
+    return;
+}
+size_t MonarchHeader::GetRecordSize() const
+{
+    return fPBHeader->recsize();
 }
 
-std::size_t MonarchHeader::GetAcqTime() {
-  return pb_hdr->acqtime();
-}
-
-void MonarchHeader::SetAcqRate(const std::size_t& acqr) {
-  (pb_hdr->mutable_diginfo())->set_digrate(acqr);
-}
-
-std::size_t MonarchHeader::GetAcqRate() {
-  return (pb_hdr->diginfo()).digrate();
-}
-
-
-
-int MonarchHeader::ByteSize() {
-  return pb_hdr->ByteSize();
-}
-
-bool MonarchHeader::SerializeToArray(void* data, int size) {
-  return pb_hdr->SerializeToArray(data,size);
-}
-
-bool MonarchHeader::SerializeToOstream(std::ostream* output) {
-  return pb_hdr->SerializeToOstream(output);
-}
-
-MonarchHeader* MonarchHeader::FromArray(void* bytes, int size) {
-  MonarchHeader* ret = new MonarchHeader();
-  if((ret->pb_hdr->ParseFromArray(bytes, size)) == false) {
-    // uh oh
-    delete ret;
-    ret = NULL;
-  }
-
-  return ret;
-}
-
-std::ostream& operator<<(std::ostream& out, MonarchHeader& hdr) {
-  out << "Here's the header: " << std::endl << std::endl;
-  out << "\tFilename: "<< hdr.GetFilename() << std::endl;
-  out << "\tAcquisition Mode: " << hdr.GetAcqMode() << std::endl;
-  out << "\tRecord Size: " << hdr.GetRecordSize() << std::endl;
-  out << "\tAcquisition Time: " << hdr.GetAcqTime() << std::endl;
-  out << "\tDigitization Rate: " << hdr.GetAcqRate() << std::endl;
-  return out;
+std::ostream& operator<<( std::ostream& out, MonarchHeader& hdr )
+{
+    out << "Here's the header: " << std::endl << std::endl;
+    out << "\tFilename: " << hdr.GetFilename() << std::endl;
+    out << "\tAcquisition Mode: " << hdr.GetAcqMode() << std::endl;
+    out << "\tRecord Size: " << hdr.GetRecordSize() << std::endl;
+    out << "\tAcquisition Time: " << hdr.GetAcqTime() << std::endl;
+    out << "\tDigitization Rate: " << hdr.GetAcqRate() << std::endl;
+    return out;
 }

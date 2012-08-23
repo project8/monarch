@@ -6,67 +6,100 @@
 #include "MonarchExceptions.hpp"
 #include "MonarchHeader.hpp"
 
-class Monarch {
-private:
-  // Header for file
-  MonarchHeader* hdr;
+#include <string>
+using std::string;
 
-  // Default constructor is private, naturally
-  Monarch();
+class Monarch
+{
+        //***********************
+        // constructors and state
+        //***********************
 
-  // Filename we are currently working with
-  std::string filename;
-  std::size_t recsize;
+    private:
+        //private to force use of static constructor methods
+        Monarch();
 
-  // The MonarchIO class is the file pointer abstraction that we use
-  // to read and write data.
-  MonarchIO* io;
+        //current state of monarch
+        typedef enum
+        {
+            eOpen, // state when monarch has a file open but hasn't written/read the header
+            eReady, // state when monarch has dealt with the header and is writing/reading records
+            eDone // state when monarch is done with every
+        } State;
+        State fState;
 
-  // A const pointer to an internal MonarchSerializer type templated to
-  // the MonarchRecord type.  
-  char* mem;
-  MonarchRecord* rec;
-  bool AllocateRec(std::size_t nbytes);
+    public:
+        ~Monarch();
 
-  // The simplest constructor takes a string filename and an access mode.
-  Monarch(std::string filename, 
-	  AccessMode iomode);
+        //********************************
+        // methods for reading (all const)
+        //********************************
 
-  // This constructor takes the header directly 
+    public:
 
-  // Specialized open methods
-  static Monarch* OpenForReading(std::string filename);
-  static Monarch* OpenForWriting(std::string filename);
+        //this static method opens the file for reading.
+        //if the file exists and can be read, this returns a prepared monarch pointer, and memory is allocated for the header.
+        //upon successful return monarch is in the eOpen state.
+        static const Monarch* OpenForReading( const string& filename );
 
-public:
-  ~Monarch();
+        //this method parses the file for the header contents.
+        //if the header demarshalled correctly, this returns true and the header may be examined, and memory is allocated for the record.
+        //upon successful return monarch is in the eReady state.
+        bool ReadHeader() const;
 
-  // The most basic constructor only needs a filename and an access mode.
-  static Monarch* Open(std::string filename, AccessMode iomode);
+        //get the pointer to the header.
+        const MonarchHeader* GetHeader() const;
 
-  // Here's a really sweet one - open using only a header.  This is of course
-  // only for writing, 
-  static Monarch* Open(MonarchHeader& hdr);
+        //this method parses the file for a next record.
+        //if the record demarshalled correctly, this returns true and the record is refreshed with content.
+        //when the end of the file is reached, this will return false.
+        bool ReadRecord() const;
 
-  // Close an open monarch file.
-  bool Close();
+        //get the pointer to the current record.
+        const MonarchRecord* GetRecord() const;
 
-  // Get the header
-  MonarchHeader* GetHeader();
+        //close the file pointer.
+        bool Close() const;
 
-  // A RecordFactory - a factory method which builds properly initialized 
-  // MonarchRecords.
-  static MonarchRecord* NewRecord(std::size_t rsize);
+        //********************
+        // methods for writing
+        //********************
 
-  // Write a MonarchRecord to disk.  Assumes that the record is the right size!
-  // To avoid disappointment, generate your records with Monarch::NewRecord.
-  bool WriteRecord(MonarchRecord* rec);
+    public:
 
-  // Read the next event on disk into the MonarchSerializer buffer and return
-  // a pointer to the value member of the union.  This exposes a MonarchRecord*
-  // to the client.
-  MonarchRecord* GetNextEvent();
+        //this static method opens the file for writing.
+        //if the file exists and can be written, this returns a prepared monarch pointer, and memory is allocated for the header.
+        //upon successful return monarch is in the eOpen state.
+        static Monarch* OpenForWriting( const string& filename );
 
+        //this method marshals the current header to the file.
+        //if the header marshalled correctly, this returns true, memory is allocated for the record.
+        //upon successful return monarch is in the eReady state.
+        bool WriteHeader();
+
+        //get the pointer to the header.
+        MonarchHeader* GetHeader();
+
+        //this method marshals the current record into the file.
+        //if the record marshalled correctly, this returns true.
+        bool WriteRecord();
+
+        //get the pointer to the current record.
+        MonarchRecord* GetRecord();
+
+        //close the file pointer
+        bool Close();
+
+    private:
+        //the MonarchIO class wraps a bare C file pointer.
+        MonarchIO* fIO;
+
+        //the header
+        mutable MonarchHeader* fHeader;
+
+        //the record
+        mutable MonarchRecord* fRecord;
+        char* fRaw;
 };
 
 #endif

@@ -1,49 +1,43 @@
 #include "MonarchIO.hpp"
 
-MonarchIO::MonarchIO(std::string filename, 
-		     AccessMode iomode)
-  : filePTR(NULL),
-    _iomode(iomode)
+MonarchIO::MonarchIO( AccessModeType aMode ) :
+    fFile( NULL ),
+    fMode( aMode )
 {
-  if(iomode == WriteMode) {
-    filePTR = fopen(filename.c_str(), "wb");
-  }
-  else if (iomode == ReadMode) {
-    filePTR = fopen(filename.c_str(), "rb");
-  }
 
-  if( filePTR == NULL ) {
-    throw MonarchExceptions::NoFile("file could not be opened!");
-  }
+}
+MonarchIO::~MonarchIO()
+{
+    if( fFile )
+    {
+        fclose( fFile );
+    }
 }
 
-MonarchIO::~MonarchIO() {
-  if(filePTR) {
-    fclose(filePTR);
-  }
-}
+bool MonarchIO::Open( const string& aFilename )
+{
+    if( fMode == sWriteMode )
+    {
+        fFile = fopen( aFilename.c_str(), "wb" );
+    }
+    else if( fMode == sReadMode )
+    {
+        fFile = fopen( aFilename.c_str(), "rb" );
+    }
 
-bool MonarchIO::Write(char* wbuf, std::size_t nbytes) {
-  std::size_t written = fwrite(wbuf,
-			       sizeof(DataType),
-			       nbytes,
-			       this->filePTR);
-
-  return (written == nbytes);
-}
-
-std::size_t MonarchIO::Read(char* rbuf, std::size_t nbytes) {
-  return fread(rbuf,
-	       sizeof(DataType),
-	       nbytes,
-	       this->filePTR);
-}
-
-bool MonarchIO::Close() {
-  if(this->filePTR) {
-    fclose(this->filePTR);
-    filePTR = NULL;
+    if( fFile == NULL )
+    {
+        return false;
+    }
     return true;
-  }
-  return false;
+}
+bool MonarchIO::Close()
+{
+    if( this->fFile )
+    {
+        fclose( this->fFile );
+        fFile = NULL;
+        return true;
+    }
+    return false;
 }

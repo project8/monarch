@@ -4,22 +4,16 @@
 // We need clock_t
 #include <ctime>
 
-// Modes for access and data acquisition
-// The integer equivalents are hard-coded to preserve backwards compatibility with files written before
-// these flags were enums. Please do not change them!
-enum AccessMode
-{
-    WriteMode = 1,
-    ReadMode = 2
-};
-enum AcquisitionMode
-{
-    OneChannel = 3,
-    TwoChannel = 4
-};
+typedef unsigned int AccessModeType;
+static const AccessModeType sWriteMode = 1;
+static const AccessModeType sReadMode = 2;
 
-// These types are used in the file format to
-// identify fields in the data records.
+typedef unsigned int AcquisitionModeType;
+static const AcquisitionModeType sOneChannel = 1;
+static const AcquisitionModeType sTwoChannel = 2;
+
+typedef size_t PreludeType;
+
 typedef unsigned int AcqIdType;
 typedef unsigned int ChIdType;
 typedef unsigned long int RecIdType;

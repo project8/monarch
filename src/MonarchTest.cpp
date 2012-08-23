@@ -1,5 +1,6 @@
-#include <iostream>
 #include <cassert>
+#include <cstdlib>
+#include <iostream>
 #include "time.h"
 #include "Monarch.hpp"
 
@@ -8,8 +9,8 @@ int main() {
    * Test making a header in one channel mode at 500 MHz with
    * a 4MB record size.  Then write some data.
    */
-  std::cout << "Testing that we can write and read back a header..." 
-	    << std::endl; 
+  std::cout << "Testing that we can write and read back a header..."
+	    << std::endl;
   MonarchHeader hdr;
   hdr.SetFilename(std::string("test_egg.egg"));
   hdr.SetAcqMode(OneChannel);
@@ -34,7 +35,7 @@ int main() {
   assert(rb_hdr->GetAcqTime() == 100);
   std::cout << "ok" << std::endl;
   std::cout << "Success.  Cleaning up." << std::endl;
-  
+
   /*
    * Nonexistent file test
    */
@@ -49,7 +50,7 @@ int main() {
   std::cout << "Success.  Cleaning up." << std::endl;
 
   /*
-   * Generate a new record using Monarch::NewRecord.  We should be 
+   * Generate a new record using Monarch::NewRecord.  We should be
    * able to allocate it, play with it, and delete it with no problem.
    */
   std::cout << std::endl << "Testing Monarch::NewRecord" << std::endl;
@@ -118,7 +119,7 @@ int main() {
       ev = rtest_2->GetNextEvent();
     }
     catch(MonarchExceptions::EndOfFile &e) {
-      std::cout << "\tUh oh, shouldn't be the end of the file yet..." 
+      std::cout << "\tUh oh, shouldn't be the end of the file yet..."
 		<< "(event " << i << ")"
 		<< std::endl;
       std::cout << "FAILED." << std::endl;
@@ -133,8 +134,8 @@ int main() {
       if(ev->fDataPtr[j] != (DataType)i) {
       	std::cout << "Error reading back data in event #"
       		  << i << ": expected "
-      		  << i << " but got " 
-      		  << (int)ev->fDataPtr[j] 
+      		  << i << " but got "
+      		  << (int)ev->fDataPtr[j]
       		  << " at byte "
       		  << j
       		  << std::endl;
@@ -163,7 +164,7 @@ int main() {
   std::cout << "\twriting records...";
   bnch_rec->fCId = 1;
   bnch_rec->fAId = 2;
-  
+
   time_t start,end;
   time (&start);
 
@@ -178,8 +179,8 @@ int main() {
   time (&end);
   double dif = difftime (end,start);
   std::cout << "ok (" << dif << "s elapsed)" << std::endl;
-  std::cout << "\tApprox. throughput: " 
-	    << (1000000*1048)/(1024*1024*dif) 
+  std::cout << "\tApprox. throughput: "
+	    << (1000000*1048)/(1024*1024*dif)
 	    << "MBps"
 	    << std::endl;
 
@@ -208,6 +209,6 @@ int main() {
   else {
     std::cout << "Deleted test_egg.egg." << std::endl;
   }
-  
+
   return 0;
 }

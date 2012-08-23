@@ -5,22 +5,37 @@ message MonarchHeader {
   // The name of the file this belongs to.  Seems redundant
   // but could be useful in terms of keeping track of files.
   required string filename = 1;
-
-  // The digitizer data is its own little message
-  message DigitizerInfo {
-    required float digRate = 1;
-    required uint32 recSize = 2; 
-    required uint32 acqMode = 3;
-  }
-  required DigitizerInfo digInfo = 2;
+  
+  //there is no advantage to packaging the digitizer info into
+  //a message, so it was removed to simplify the structure
+  
+  // What is the sample rate?
+  required double acqRate = 2;
+  
+  // How many channels were used?  
+  required uint32 acqMode = 3;
+  
+  // How long did we digitize for?
+  required uint32 acqTime = 4;
+  
+  // How long are the records in bytes?
+  required uint32 recSize = 5;
+  
+  // Now things like creation date (because why not)
+  optional string runDate = 6 [default = ""];
+  
+  // Optionally tag the run with some text description
+  optional string runInfo = 7 [default = ""];
 
   // It's nice to know where data came from.  This flag will
   // specify that the data is either from mantis or it is
   // simulated. 
-  enum DataSource {
+  enum RunSource {
     Mantis = 0;
     Simulation = 1;
-  } 
+  }
+  // Optionally flag the source of the data.
+  optional RunSource runSource = 8;
 
   // It's also nice to know if you expect this file to be
   // a background measurement or to contain an expected signal.
@@ -28,19 +43,8 @@ message MonarchHeader {
     Background = 0;
     Signal = 1;
   }
-
-  // How long did we digitize for?
-  required uint32 acqTime = 3;
-
-  // Now things like creation date (because why not)
-  optional string createdate = 4 [default = ""];
-
-  // Optionally flag the source of the data.
-  optional DataSource dsource = 5;
-
   // Optionally flag the content of the data.
-  optional RunType rtype = 6;
+  optional RunType runType = 9;
 
-  // Optionally tag the run with some text description
-  optional string runinfo = 7 [default = ""];
+
 }
