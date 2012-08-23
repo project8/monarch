@@ -9,8 +9,8 @@ static const AccessModeType sWriteMode = 1;
 static const AccessModeType sReadMode = 2;
 
 typedef unsigned int AcquisitionModeType;
-static const AcquisitionModeType sOneChannel = 1;
-static const AcquisitionModeType sTwoChannel = 2;
+static const AcquisitionModeType sOneChannel = 3;
+static const AcquisitionModeType sTwoChannel = 4;
 
 typedef size_t PreludeType;
 
