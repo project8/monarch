@@ -52,6 +52,7 @@ set (MONARCH_HEADER_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/include/MonarchIO.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/include/MonarchHeader.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/include/MonarchRecord.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/MonarchTypes.hpp
 )
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 

@@ -2,7 +2,6 @@
 #define __MONARCH_HPP
 
 #include "MonarchIO.hpp"
-#include "MonarchTypes.hpp"
 #include "MonarchHeader.hpp"
 #include "MonarchRecord.hpp"
 
