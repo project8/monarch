@@ -3,8 +3,8 @@
 
 #include "MonarchIO.hpp"
 #include "MonarchTypes.hpp"
-#include "MonarchExceptions.hpp"
 #include "MonarchHeader.hpp"
+#include "MonarchRecord.hpp"
 
 #include <string>
 using std::string;
@@ -24,9 +24,9 @@ class Monarch
         {
             eOpen, // state when monarch has a file open but hasn't written/read the header
             eReady, // state when monarch has dealt with the header and is writing/reading records
-            eDone // state when monarch is done with every
+            eClosed // state when monarch has no file
         } State;
-        State fState;
+        mutable State fState;
 
     public:
         ~Monarch();
@@ -99,7 +99,26 @@ class Monarch
 
         //the record
         mutable MonarchRecord* fRecord;
-        char* fRaw;
+        mutable char* fRecordBytes;
+        mutable size_t fRecordSize;
 };
+
+inline MonarchHeader* Monarch::GetHeader()
+{
+    return fHeader;
+}
+inline const MonarchHeader* Monarch::GetHeader() const
+{
+    return fHeader;
+}
+
+inline MonarchRecord* Monarch::GetRecord()
+{
+    return fRecord;
+}
+inline const MonarchRecord* Monarch::GetRecord() const
+{
+    return fRecord;
+}
 
 #endif

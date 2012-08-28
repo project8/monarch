@@ -10,17 +10,25 @@ MonarchHeader::~MonarchHeader()
     delete fPBHeader;
 }
 
-int MonarchHeader::ByteSize()
+int MonarchHeader::ByteSize() const
 {
     return fPBHeader->ByteSize();
 }
-bool MonarchHeader::MarshalToArray( void* data, int size )
+bool MonarchHeader::MarshalToArray( void* data, int size ) const
 {
     return fPBHeader->SerializeToArray( data, size );
+}
+bool MonarchHeader::MarshalToStream( std::ostream* aStream ) const
+{
+    return fPBHeader->SerializeToOstream( aStream );
 }
 bool MonarchHeader::DemarshalFromArray( void* anArray, int aSize ) const
 {
     return fPBHeader->ParseFromArray( anArray, aSize );
+}
+bool MonarchHeader::DemarshalFromStream( std::istream* aStream ) const
+{
+    return fPBHeader->ParseFromIstream( aStream );
 }
 
 void MonarchHeader::SetFilename( const string& aFilename )
@@ -73,7 +81,7 @@ size_t MonarchHeader::GetRecordSize() const
     return fPBHeader->recsize();
 }
 
-std::ostream& operator<<( std::ostream& out, MonarchHeader& hdr )
+std::ostream& operator<<( std::ostream& out, const MonarchHeader& hdr )
 {
     out << "Here's the header: " << std::endl << std::endl;
     out << "\tFilename: " << hdr.GetFilename() << std::endl;

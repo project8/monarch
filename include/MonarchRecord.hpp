@@ -6,11 +6,11 @@
 
 struct MonarchRecord
 {
-  ChIdType  fCId;
-  AcqIdType fAId;
-  RecIdType fRId;
-  ClockType fTick;
-  DataType fDataPtr[];
+        ChIdType fCId;
+        AcqIdType fAId;
+        RecIdType fRId;
+        ClockType fTick;
+        DataType fDataPtr[];
 };
 
 #endif

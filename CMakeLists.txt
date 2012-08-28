@@ -49,25 +49,17 @@ set (MONARCH_PROTOBUF_HEADER_FILES
 
 set (MONARCH_HEADER_FILES 
     ${CMAKE_CURRENT_SOURCE_DIR}/include/Monarch.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/MonarchExceptions.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/MonarchHeader.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/include/MonarchIO.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/MonarchRead.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/MonarchHeader.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/include/MonarchRecord.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/MonarchSerializer.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/MonarchSim.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/MonarchTypes.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/MonarchWrite.hpp
 )
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 set (MONARCH_SOURCE_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/src/Monarch.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/MonarchExceptions.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/MonarchHeader.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/MonarchIO.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/MonarchHeader.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/src/MonarchRecord.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/MonarchSim.cpp
 )
 
 # Generate the Protocol Buffers cpp file
@@ -80,15 +72,12 @@ add_library (monarch ${MONARCH_SOURCE_FILES} ${GENERATED_PROTO_SOURCE_FILES})
 set_target_properties(monarch PROPERTIES INSTALL_NAME_DIR ${LIB_INSTALL_DIR})
 target_link_libraries (monarch ${LIBS})
 
+# Build the test executables
+add_executable (MonarchIOTest ${CMAKE_CURRENT_SOURCE_DIR}/src/MonarchIOTest.cpp)
+target_link_libraries (MonarchIOTest monarch)
+add_executable (MonarchTest ${CMAKE_CURRENT_SOURCE_DIR}/src/MonarchTest.cpp)
+target_link_libraries (MonarchTest monarch)
+
 install (FILES ${MONARCH_HEADER_FILES}  DESTINATION ${INCLUDE_INSTALL_DIR})
 install (TARGETS monarch  DESTINATION ${LIB_INSTALL_DIR})
-
-# Build the test executable
-add_executable (monarch_test ${CMAKE_CURRENT_SOURCE_DIR}/src/MonarchTest.cpp)
-target_link_libraries (monarch_test monarch)
-
-# Build the utility executable
-add_executable (eggutils ${CMAKE_CURRENT_SOURCE_DIR}/src/MonarchUtils.cpp)
-target_link_libraries (eggutils monarch)
-
-install (TARGETS eggutils monarch_test  DESTINATION ${BIN_INSTALL_DIR})
+install (TARGETS MonarchIOTest MonarchTest DESTINATION ${BIN_INSTALL_DIR})

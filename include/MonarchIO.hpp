@@ -2,12 +2,13 @@
 #define __MONARCH_IO_HPP
 
 #include "MonarchTypes.hpp"
-#include "MonarchRecord.hpp"
-#include "MonarchSerializer.hpp"
-#include "MonarchExceptions.hpp"
 
 #include <string>
 using std::string;
+
+#include <iostream>
+using std::cout;
+using std::endl;
 
 #include <cstdio>
 
@@ -31,8 +32,8 @@ class MonarchIO
         template< class XType >
         bool Write( XType* aDatum, size_t aCount );
 
-        // Read nbytes of data from the file pointer and store
-        // the result in the byte array rbuf.
+        // Read aCout bytes of data from the file pointer and store
+        // the result in the byte array anArray.
         bool Read( char* anArray, size_t aCount );
         template< class XType >
         bool Read( XType* aDatum );
@@ -52,13 +53,13 @@ template< class XType >
 inline bool MonarchIO::Write( XType* aDatum )
 {
     size_t written = fwrite( aDatum, sizeof(XType), 1, fFile );
-    return (written == sizeof(XType));
+    return (written == 1);
 }
 template< class XType >
 inline bool MonarchIO::Write( XType* aDatum, size_t aCount )
 {
     size_t written = fwrite( aDatum, sizeof(XType), aCount, fFile );
-    return (written == sizeof(XType) * aCount);
+    return (written == aCount);
 }
 
 inline bool MonarchIO::Read( char* anArray, size_t aCount )
@@ -70,13 +71,13 @@ template< class XType >
 inline bool MonarchIO::Read( XType* aDatum )
 {
     size_t read = fread( aDatum, sizeof(XType), 1, fFile );
-    return (read == sizeof(XType));
+    return (read == 1);
 }
 template< class XType >
 inline bool MonarchIO::Read( XType* aDatum, size_t aCount )
 {
     size_t read = fread( aDatum, sizeof(XType), aCount, fFile );
-    return (read == sizeof(XType) * aCount);
+    return (read == aCount);
 }
 
 #endif

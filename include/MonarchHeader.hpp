@@ -24,10 +24,12 @@ class MonarchHeader
         int ByteSize() const;
 
         //marshal a MonarchHeader to an array of data
-        bool MarshalToArray( void* anArray, int aSize );
+        bool MarshalToArray( void* anArray, int aSize ) const;
+        bool MarshalToStream( std::ostream* aStream ) const;
 
         //demarshal a MonarchHeader object from an array of data
         bool DemarshalFromArray( void* anArray, int aSize ) const;
+        bool DemarshalFromStream( std::istream* aStream ) const;
 
         //access methods
 
@@ -48,6 +50,6 @@ class MonarchHeader
 };
 
 // Pretty printing method
-std::ostream& operator<<( std::ostream& out, MonarchHeader& hdr );
+std::ostream& operator<<( std::ostream& out, const MonarchHeader& hdr );
 
 #endif
