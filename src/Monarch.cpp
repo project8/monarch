@@ -144,7 +144,10 @@ bool Monarch::ReadRecord() const
 {
     if( fIO->Read( fRecordBytes, fRecordSize ) == false )
     {
-        cout << "could not read next record" << endl;
+        if( fIO->Done() != true )
+        {
+            cout << "could not read next record" << endl;
+        }
         return false;
     }
     return true;

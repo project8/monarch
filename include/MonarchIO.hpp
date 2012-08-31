@@ -40,6 +40,9 @@ class MonarchIO
         template< class XType >
         bool Read( XType* aDatum, size_t aCount );
 
+        // File is at end
+        bool Done();
+
         // Close the file handle owned by this IO object
         bool Close();
 };

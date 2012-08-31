@@ -31,11 +31,27 @@ bool MonarchIO::Open( const string& aFilename )
     }
     return true;
 }
+bool MonarchIO::Done()
+{
+    if( fFile != NULL )
+    {
+        if( feof( fFile ) == 0 )
+        {
+            return false;
+        }
+        return true;
+    }
+    return false;
+}
 bool MonarchIO::Close()
 {
-    if( this->fFile )
+    if( fFile )
     {
-        fclose( this->fFile );
+        if( fclose( fFile ) != 0 )
+        {
+            fFile = NULL;
+            return false;
+        }
         fFile = NULL;
         return true;
     }
