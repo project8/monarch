@@ -11,22 +11,11 @@ cmake_minimum_required (VERSION 2.6)
 # define the project
 project (Monarch)
 
-# Setup the default install prefix
-# This gets set to the binary directory upon first configuring.
-# If the user changes the prefix, but leaves the flag OFF, then it will remain as the user specified.
-# If the user wants to reset the prefix to the default (i.e. the binary directory), then the flag should be set ON.
-if (NOT DEFINED SET_INSTALL_PREFIX_TO_DEFAULT)
-    set (SET_INSTALL_PREFIX_TO_DEFAULT ON)
-endif (NOT DEFINED SET_INSTALL_PREFIX_TO_DEFAULT)
-if (SET_INSTALL_PREFIX_TO_DEFAULT)
-    set (CMAKE_INSTALL_PREFIX ${PROJECT_BINARY_DIR} CACHE PATH "Install prefix" FORCE)
-    set (SET_INSTALL_PREFIX_TO_DEFAULT OFF CACHE BOOL "Reset default install path when when configuring" FORCE)
-endif (SET_INSTALL_PREFIX_TO_DEFAULT)
-
 # install subdirectories
-set (INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/include" CACHE PATH "Install directory for headers")
-set (LIB_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/lib" CACHE PATH "Install directory for libraries")
-set (BIN_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/bin" CACHE PATH "Install directory for binaries")
+set (CMAKE_INSTALL_PREFIX ${PROJECT_BINARY_DIR} CACHE PATH "Install prefix")
+set (INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/include" )
+set (LIB_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/lib" )
+set (BIN_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/bin" )
 
 # build shared libraries
 set (BUILD_SHARED_LIBS ON)
@@ -48,11 +37,11 @@ set (MONARCH_PROTOBUF_HEADER_FILES
 )
 
 set (MONARCH_HEADER_FILES 
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/MonarchTypes.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/include/Monarch.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/include/MonarchIO.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/include/MonarchHeader.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/include/MonarchRecord.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/MonarchTypes.hpp
 )
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
@@ -78,6 +67,8 @@ add_executable (MonarchIOTest ${CMAKE_CURRENT_SOURCE_DIR}/src/MonarchIOTest.cpp)
 target_link_libraries (MonarchIOTest monarch)
 add_executable (MonarchTest ${CMAKE_CURRENT_SOURCE_DIR}/src/MonarchTest.cpp)
 target_link_libraries (MonarchTest monarch)
+add_executable (MonarchInfo ${CMAKE_CURRENT_SOURCE_DIR}/src/MonarchInfo.cpp)
+target_link_libraries (MonarchInfo monarch)
 
 install (FILES ${MONARCH_HEADER_FILES}  DESTINATION ${INCLUDE_INSTALL_DIR})
 install (TARGETS monarch  DESTINATION ${LIB_INSTALL_DIR})
