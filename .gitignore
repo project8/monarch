@@ -1,15 +1,18 @@
-*.so
+# Compiled Object files
+*.slo
+*.lo
 *.o
-*~
-*.egg
-Mantis
-src/*.o
-*~
-#*
-*#
-*.h5
-*.hdf5
-*.out
-*.log
-src/MonarchHeader.pb*
-monarch_test
+
+# Compiled Dynamic libraries
+*.so
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+
+# Build
+Build/
+build/
+Install/
+install/

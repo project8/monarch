@@ -1,75 +1,67 @@
-# CMakeLists for Monarch
-# Author: N. Oblath
+##################
+# get that gravy #
+##################
 
-#############
-# Setup stuff
-#############
+cmake_minimum_required( VERSION 2.8 )
+include( $ENV{HOME}/.dmake/dmake.cmake )
 
-# minimum cmake version 2.6 required by the scripts to get Git information
-cmake_minimum_required (VERSION 2.6)
+#########
+# setup #
+#########
 
-# define the project
-project (Monarch)
+dmake_project_begin( Monarch 0 1 0 )
 
-# install subdirectories
-set (CMAKE_INSTALL_PREFIX ${PROJECT_BINARY_DIR} CACHE PATH "Install prefix")
-set (INCLUDE_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/include" )
-set (LIB_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/lib" )
-set (BIN_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/bin" )
+########################
+# monarch dependencies #
+########################
 
-# build shared libraries
-set (BUILD_SHARED_LIBS ON)
+find_package( Protobuf )
+protobuf_generate_cpp( Monarch_Protobuf_Source Monarch_Protobuf_Header ${Monarch_ROOT_DIRECTORY}/Protobuf/MonarchHeader.proto )
 
-# find Protocol Buffers
-find_package (Protobuf REQUIRED)
-include_directories(${PROTOBUF_INCLUDE_DIRS})
-set (LIBS ${LIBS} ${PROTOBUF_LIBRARIES})
+###################
+# monarch library #
+###################
 
+dmake_library_declare( Monarch . )
+dmake_library_headers( Monarch
+    MonarchTypes.hpp
+    Monarch.hpp
+    MonarchIO.hpp
+    MonarchHeader.hpp
+    MonarchRecord.hpp
+)
+list( APPEND Monarch_HEADERS ${Monarch_Protobuf_Header} )
 
-##############
-# Build things
-##############
+dmake_library_sources( Monarch
+    Monarch.cpp
+    MonarchIO.cpp
+    MonarchHeader.cpp
+    MonarchRecord.cpp
+)
+list( APPEND Monarch_SOURCES ${Monarch_Protobuf_Source} )
 
-# Lists of header and source files
+#######################
+# monarch executables #
+#######################
 
-set (MONARCH_PROTOBUF_HEADER_FILES
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/MonarchHeader.proto
+dmake_executable_declare( MonarchIOTest . )
+dmake_executable_sources( MonarchIOTest
+    MonarchIOTest.cpp
 )
 
-set (MONARCH_HEADER_FILES 
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/MonarchTypes.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/Monarch.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/MonarchIO.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/MonarchHeader.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/MonarchRecord.hpp
-)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
-
-set (MONARCH_SOURCE_FILES
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/Monarch.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/MonarchIO.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/MonarchHeader.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/MonarchRecord.cpp
+dmake_executable_declare( MonarchTest . )
+dmake_executable_sources( MonarchTest
+    MonarchTest.cpp
 )
 
-# Generate the Protocol Buffers cpp file
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
-protobuf_generate_cpp (GENERATED_PROTO_SOURCE_FILES GENERATED_PROTO_HEADER_FILES ${MONARCH_PROTOBUF_HEADER_FILES})
-install (FILES ${GENERATED_PROTO_HEADER_FILES}  DESTINATION ${INCLUDE_INSTALL_DIR})
+dmake_executable_declare( MonarchInfo . )
+dmake_executable_sources( MonarchInfo
+    MonarchInfo.cpp
+)
 
-# Build the Monarch library
-add_library (monarch ${MONARCH_SOURCE_FILES} ${GENERATED_PROTO_SOURCE_FILES})
-set_target_properties(monarch PROPERTIES INSTALL_NAME_DIR ${LIB_INSTALL_DIR})
-target_link_libraries (monarch ${LIBS})
+#####################
+# bees installation #
+#####################
 
-# Build the test executables
-add_executable (MonarchIOTest ${CMAKE_CURRENT_SOURCE_DIR}/src/MonarchIOTest.cpp)
-target_link_libraries (MonarchIOTest monarch)
-add_executable (MonarchTest ${CMAKE_CURRENT_SOURCE_DIR}/src/MonarchTest.cpp)
-target_link_libraries (MonarchTest monarch)
-add_executable (MonarchInfo ${CMAKE_CURRENT_SOURCE_DIR}/src/MonarchInfo.cpp)
-target_link_libraries (MonarchInfo monarch)
-
-install (FILES ${MONARCH_HEADER_FILES}  DESTINATION ${INCLUDE_INSTALL_DIR})
-install (TARGETS monarch  DESTINATION ${LIB_INSTALL_DIR})
-install (TARGETS MonarchIOTest MonarchTest DESTINATION ${BIN_INSTALL_DIR})
+dmake_project_end()
+target_link_libraries( Monarch ${PROTOBUF_LIBRARIES} )
