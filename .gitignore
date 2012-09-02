@@ -16,3 +16,10 @@ Build/
 build/
 Install/
 install/
+
+# Eclipse
+.project
+.cproject
+
+# GEdit
+*~
