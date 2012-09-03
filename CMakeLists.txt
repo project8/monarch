@@ -30,7 +30,9 @@ dmake_library_headers( Monarch
     MonarchHeader.hpp
     MonarchRecord.hpp
 )
-list( APPEND Monarch_HEADERS ${Monarch_Protobuf_Header} )
+dmake_library_headers_external( Monarch
+    ${Monarch_Protobuf_Header}
+)
 
 dmake_library_sources( Monarch
     Monarch.cpp
@@ -38,7 +40,10 @@ dmake_library_sources( Monarch
     MonarchHeader.cpp
     MonarchRecord.cpp
 )
-list( APPEND Monarch_SOURCES ${Monarch_Protobuf_Source} )
+dmake_library_sources_external( Monarch
+    ${Monarch_Protobuf_Source}
+)
+include_directories( ${CMAKE_CURRENT_BINARY_DIR} )
 
 #######################
 # monarch executables #
@@ -59,9 +64,10 @@ dmake_executable_sources( MonarchInfo
     MonarchInfo.cpp
 )
 
-#####################
-# bees installation #
-#####################
+########################
+# monarch installation #
+########################
 
 dmake_project_end()
+message( STATUS "*** protobuf libraries are<${PROTOBUF_LIBRARIES}>" )
 target_link_libraries( Monarch ${PROTOBUF_LIBRARIES} )
