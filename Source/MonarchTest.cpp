@@ -25,7 +25,7 @@ int main()
         return -1;
     }
 
-    MonarchRecord* tWriteRecord = tWriteTest->GetRecord();
+    MonarchRecord* tWriteRecord = tWriteTest->GetRecordOne();
 
     for( unsigned int tRecordIndex = 0; tRecordIndex < tRecordCount; tRecordIndex++ )
     {
@@ -57,7 +57,7 @@ int main()
     cout << "acquisition time <" << tReadHeader->GetAcqTime() << ">" << endl;
     cout << "record size <" << tReadHeader->GetRecordSize() << ">" << endl;
 
-    const MonarchRecord* tReadRecord = tReadTest->GetRecord();
+    const MonarchRecord* tReadRecord = tReadTest->GetRecordOne();
 
     for( unsigned int tRecordIndex = 0; tRecordIndex < tRecordCount; tRecordIndex++ )
     {

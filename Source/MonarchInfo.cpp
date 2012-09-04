@@ -21,7 +21,7 @@ int main( const int argc, const char** argv )
 
     unsigned int tRecordCount = 0;
     unsigned int tAcquisiontCount = 0;
-    const MonarchRecord* tReadRecord = tReadTest->GetRecord();
+    const MonarchRecord* tReadRecord = tReadTest->GetRecordOne();
     while( tReadTest->ReadRecord() != false )
     {
         tRecordCount = tRecordCount + 1;

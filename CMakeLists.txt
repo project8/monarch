@@ -22,25 +22,25 @@ protobuf_generate_cpp( Monarch_Protobuf_Source Monarch_Protobuf_Header ${Monarch
 # monarch library #
 ###################
 
-dmake_library_declare( Monarch . )
-dmake_library_headers( Monarch
+dmake_library_declare( MonarchCore . )
+dmake_library_headers( MonarchCore
     MonarchTypes.hpp
     Monarch.hpp
     MonarchIO.hpp
     MonarchHeader.hpp
     MonarchRecord.hpp
 )
-dmake_library_headers_external( Monarch
+dmake_library_headers_external( MonarchCore
     ${Monarch_Protobuf_Header}
 )
 
-dmake_library_sources( Monarch
+dmake_library_sources( MonarchCore
     Monarch.cpp
     MonarchIO.cpp
     MonarchHeader.cpp
     MonarchRecord.cpp
 )
-dmake_library_sources_external( Monarch
+dmake_library_sources_external( MonarchCore
     ${Monarch_Protobuf_Source}
 )
 include_directories( ${CMAKE_CURRENT_BINARY_DIR} )
@@ -69,5 +69,4 @@ dmake_executable_sources( MonarchInfo
 ########################
 
 dmake_project_end()
-message( STATUS "*** protobuf libraries are<${PROTOBUF_LIBRARIES}>" )
-target_link_libraries( Monarch ${PROTOBUF_LIBRARIES} )
+target_link_libraries( MonarchCore ${PROTOBUF_LIBRARIES} )

@@ -8,9 +8,13 @@ Monarch::Monarch() :
     fState( eClosed ),
     fIO( NULL ),
     fHeader( NULL ),
-    fRecord( NULL ),
-    fRecordBytes( NULL ),
-    fRecordSize( 0 )
+    fRecordSize( 0 ),
+    fRecordOne( NULL ),
+    fRecordOneBytes( NULL ),
+    fRecordTwo( NULL ),
+    fRecordTwoBytes( NULL ),
+    fReadFunction( &Monarch::ReadRecordOne ),
+    fWriteFunction( &Monarch::WriteRecordOne )
 {
 }
 Monarch::~Monarch()
@@ -27,12 +31,18 @@ Monarch::~Monarch()
         fHeader = NULL;
     }
 
-    if( fRecordBytes != NULL )
+    if( fRecordOneBytes != NULL )
     {
-        fRecord->~MonarchRecord();
-        delete[] fRecordBytes;
-        fRecordBytes = NULL;
-        fRecordSize = 0;
+        fRecordOne->~MonarchRecord();
+        delete[] fRecordOneBytes;
+        fRecordOneBytes = NULL;
+    }
+
+    if( fRecordTwoBytes != NULL )
+    {
+        fRecordTwo->~MonarchRecord();
+        delete[] fRecordTwoBytes;
+        fRecordTwoBytes = NULL;
     }
 }
 
@@ -100,8 +110,29 @@ bool Monarch::ReadHeader() const
     delete[] tHeaderBuffer;
 
     fRecordSize = sizeof(ChIdType) + sizeof(AcqIdType) + sizeof(RecIdType) + sizeof(ClockType) + fHeader->GetRecordSize();
-    fRecordBytes = new char[fRecordSize];
-    fRecord = new( fRecordBytes ) MonarchRecord();
+
+    if( fHeader->GetAcqMode() == sOneChannel )
+    {
+        fRecordOneBytes = new char[fRecordSize];
+        fRecordOne = new( fRecordOneBytes ) MonarchRecord();
+
+        fRecordTwoBytes = NULL;
+        fRecordTwo = NULL;
+
+        fWriteFunction = &Monarch::WriteRecordOne;
+        fReadFunction = &Monarch::ReadRecordOne;
+    }
+    if( fHeader->GetAcqMode() == sTwoChannel )
+    {
+        fRecordOneBytes = new char[fRecordSize];
+        fRecordOne = new( fRecordOneBytes ) MonarchRecord();
+
+        fRecordTwoBytes = new char[fRecordSize];
+        fRecordTwo = new( fRecordTwoBytes ) MonarchRecord();
+
+        fWriteFunction = &Monarch::WriteRecordTwo;
+        fReadFunction = &Monarch::ReadRecordTwo;
+    }
 
     fState = eReady;
     return true;
@@ -133,8 +164,29 @@ bool Monarch::WriteHeader()
     delete[] tHeaderBuffer;
 
     fRecordSize = sizeof(ChIdType) + sizeof(AcqIdType) + sizeof(RecIdType) + sizeof(ClockType) + fHeader->GetRecordSize();
-    fRecordBytes = new char[fRecordSize];
-    fRecord = new( fRecordBytes ) MonarchRecord();
+
+    if( fHeader->GetAcqMode() == sOneChannel )
+    {
+        fRecordOneBytes = new char[fRecordSize];
+        fRecordOne = new( fRecordOneBytes ) MonarchRecord();
+
+        fRecordTwoBytes = NULL;
+        fRecordTwo = NULL;
+
+        fWriteFunction = &Monarch::WriteRecordOne;
+        fReadFunction = &Monarch::ReadRecordOne;
+    }
+    if( fHeader->GetAcqMode() == sTwoChannel )
+    {
+        fRecordOneBytes = new char[fRecordSize];
+        fRecordOne = new( fRecordOneBytes ) MonarchRecord();
+
+        fRecordTwoBytes = new char[fRecordSize];
+        fRecordTwo = new( fRecordTwoBytes ) MonarchRecord();
+
+        fWriteFunction = &Monarch::WriteRecordTwo;
+        fReadFunction = &Monarch::ReadRecordTwo;
+    }
 
     fState = eReady;
     return true;
@@ -142,21 +194,64 @@ bool Monarch::WriteHeader()
 
 bool Monarch::ReadRecord() const
 {
-    if( fIO->Read( fRecordBytes, fRecordSize ) == false )
+    return (this->*fReadFunction)();
+}
+bool Monarch::ReadRecordOne() const
+{
+    if( fIO->Read( fRecordOneBytes, fRecordSize ) == false )
     {
         if( fIO->Done() != true )
         {
-            cout << "could not read next record" << endl;
+            cout << "could not read next channel one record" << endl;
         }
         return false;
     }
     return true;
 }
+bool Monarch::ReadRecordTwo() const
+{
+    if( fIO->Read( fRecordOneBytes, fRecordSize ) == false )
+    {
+        if( fIO->Done() != true )
+        {
+            cout << "could not read next channel one record" << endl;
+        }
+        return false;
+    }
+    if( fIO->Read( fRecordTwoBytes, fRecordSize ) == false )
+    {
+        if( fIO->Done() != true )
+        {
+            cout << "could not read next channel two record" << endl;
+        }
+        return false;
+    }
+    return true;
+}
+
 bool Monarch::WriteRecord()
 {
-    if( fIO->Write( fRecordBytes, fRecordSize ) == false )
+    return (this->*fWriteFunction)();
+}
+bool Monarch::WriteRecordOne()
+{
+    if( fIO->Write( fRecordOneBytes, fRecordSize ) == false )
     {
-        cout << "could not write record" << endl;
+        cout << "could not write channel one record" << endl;
+        return false;
+    }
+    return true;
+}
+bool Monarch::WriteRecordTwo()
+{
+    if( fIO->Write( fRecordOneBytes, fRecordSize ) == false )
+    {
+        cout << "could not write channel one record" << endl;
+        return false;
+    }
+    if( fIO->Write( fRecordTwoBytes, fRecordSize ) == false )
+    {
+        cout << "could not write channel two record" << endl;
         return false;
     }
     return true;
