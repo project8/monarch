@@ -19,6 +19,8 @@ int main( const int argc, const char** argv )
     cout << "acquisition time <" << tReadHeader->GetAcqTime() << ">" << endl;
     cout << "record size <" << tReadHeader->GetRecordSize() << ">" << endl;
 
+    bool tBigger;
+
     unsigned int tRecordCount = 0;
     unsigned int tAcquisiontCount = 0;
     const MonarchRecord* tReadRecord = tReadTest->GetRecordOne();
@@ -28,6 +30,15 @@ int main( const int argc, const char** argv )
         if( tReadRecord->fAId == tAcquisiontCount )
         {
             tAcquisiontCount = tAcquisiontCount + 1;
+        }
+
+        if( tReadRecord->fDataPtr[8192] > 0 )
+        {
+            tBigger = true;
+        }
+        else
+        {
+            tBigger = false;
         }
     }
     cout << "record count <" << tRecordCount << ">" << endl;
