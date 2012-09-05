@@ -31,15 +31,6 @@ int main( const int argc, const char** argv )
         {
             tAcquisiontCount = tAcquisiontCount + 1;
         }
-
-        if( tReadRecord->fDataPtr[8192] > 0 )
-        {
-            tBigger = true;
-        }
-        else
-        {
-            tBigger = false;
-        }
     }
     cout << "record count <" << tRecordCount << ">" << endl;
     cout << "acquisition count <" << tAcquisiontCount << ">" << endl;
