@@ -18,6 +18,6 @@ typedef unsigned int AcqIdType;
 typedef unsigned int ChIdType;
 typedef unsigned long int RecIdType;
 typedef clock_t ClockType;
-typedef char DataType;
+typedef unsigned char DataType;
 
 #endif // __MONARCH_TYPES_HPP

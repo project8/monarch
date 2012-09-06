@@ -49,14 +49,9 @@ include_directories( ${CMAKE_CURRENT_BINARY_DIR} )
 # monarch executables #
 #######################
 
-dmake_executable_declare( MonarchIOTest . )
-dmake_executable_sources( MonarchIOTest
-    MonarchIOTest.cpp
-)
-
-dmake_executable_declare( MonarchTest . )
-dmake_executable_sources( MonarchTest
-    MonarchTest.cpp
+dmake_executable_declare( MonarchDump . )
+dmake_executable_sources( MonarchDump
+    MonarchDump.cpp
 )
 
 dmake_executable_declare( MonarchInfo . )
