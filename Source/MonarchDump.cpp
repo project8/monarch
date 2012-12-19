@@ -16,14 +16,20 @@ int main( const int argc, const char** argv )
         return -1;
     }
 
-    ofstream tOutput( argv[2] );
-    if( tOutput.is_open() == false )
+    ofstream tOutputOne( string( "ch1_" ) + string( argv[ 2 ] ) );
+    ofstream tOutputTwo( string( "ch2_" ) + string( argv[ 2 ] ) );
+    if( tOutputOne.is_open() == false )
     {
-        cout << "could not open output file!" << endl;
+        cout << "could not open channel one output file!" << endl;
+        return -1;
+    }
+    if( tOutputTwo.is_open() == false )
+    {
+        cout << "could not open channel two output file!" << endl;
         return -1;
     }
 
-    const Monarch* tReadTest = Monarch::OpenForReading( argv[1] );
+    const Monarch* tReadTest = Monarch::OpenForReading( argv[ 1 ] );
     if( tReadTest->ReadHeader() == false )
     {
         cout << "could not read header!" << endl;
@@ -37,28 +43,55 @@ int main( const int argc, const char** argv )
     cout << "record size <" << tReadHeader->GetRecordSize() << ">" << endl;
 
     unsigned int tRecordCount = 0;
-    unsigned int tAcquisiontCount = 0;
-    const MonarchRecord* tReadRecord = tReadTest->GetRecordOne();
-    while( tReadTest->ReadRecord() != false )
+    unsigned int tAcquisitonCount = 0;
+
+    if( tReadHeader->GetAcqMode() == sOneChannel )
     {
-        tRecordCount = tRecordCount + 1;
-        if( tReadRecord->fAId == tAcquisiontCount )
+        const MonarchRecord* tReadRecord = tReadTest->GetRecordOne();
+        while( tReadTest->ReadRecord() != false )
         {
-            tAcquisiontCount = tAcquisiontCount + 1;
-            tOutput << "\n\n";
+            tRecordCount = tRecordCount + 1;
+            if( tReadRecord->fAId == tAcquisitonCount )
+            {
+                tAcquisitonCount = tAcquisitonCount + 1;
+                tOutputOne << "\n\n";
+            }
+            for( size_t tIndex = 0; tIndex < tReadHeader->GetRecordSize(); tIndex++ )
+            {
+                tOutputOne << tIndex << " " << (unsigned int) ((unsigned char) (tReadRecord->fDataPtr[ tIndex ])) << "\n";
+            }
         }
-        for( size_t tIndex = 0; tIndex < tReadHeader->GetRecordSize(); tIndex++ )
+        tOutputTwo << "(empty)\n";
+    }
+    if( tReadHeader->GetAcqMode() == sTwoChannel )
+    {
+        const MonarchRecord* tReadRecordOne = tReadTest->GetRecordOne();
+        const MonarchRecord* tReadRecordTwo = tReadTest->GetRecordTwo();
+        while( tReadTest->ReadRecord() != false )
         {
-            tOutput << tIndex << " " << (unsigned int)( (unsigned char) (tReadRecord->fDataPtr[tIndex]) ) << "\n";
+            tRecordCount = tRecordCount + 1;
+            if( tReadRecordOne->fAId == tAcquisitonCount )
+            {
+                tAcquisitonCount = tAcquisitonCount + 1;
+                tOutputOne << "\n\n";
+                tOutputTwo << "\n\n";
+            }
+            for( size_t tIndex = 0; tIndex < tReadHeader->GetRecordSize(); tIndex++ )
+            {
+                tOutputOne << tIndex << " " << (unsigned int) ((unsigned char) (tReadRecordOne->fDataPtr[ tIndex ])) << "\n";
+                tOutputTwo << tIndex << " " << (unsigned int) ((unsigned char) (tReadRecordTwo->fDataPtr[ tIndex ])) << "\n";
+            }
         }
     }
+
     cout << "record count <" << tRecordCount << ">" << endl;
-    cout << "acquisition count <" << tAcquisiontCount << ">" << endl;
+    cout << "acquisition count <" << tAcquisitonCount << ">" << endl;
 
     tReadTest->Close();
     delete tReadTest;
 
-    tOutput.close();
+    tOutputOne.close();
+    tOutputTwo.close();
 
     return 0;
 }
