@@ -25,6 +25,7 @@ int main( const int argc, const char** argv )
     while( tReadTest->ReadRecord() != false )
     {
         tRecordCount = tRecordCount + 1;
+        cout << "read record <" << tRecordCount << ">" << endl;
         if( tReadRecord->fAId == tAcquisiontCount )
         {
             tAcquisiontCount = tAcquisiontCount + 1;
