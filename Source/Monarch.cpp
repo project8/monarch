@@ -221,7 +221,7 @@ bool Monarch::ReadRecord() const
 }
 bool Monarch::ReadRecordOne() const
 {
-    if( fIO->Read( fRecordInterleaved, fInterleavedRecordSize ) == false )
+    if( fIO->Read( fRecordInterleavedBytes, fInterleavedRecordSize ) == false )
     {
         if( fIO->Done() != true )
         {
@@ -250,7 +250,7 @@ bool Monarch::ReadRecordOne() const
 }
 bool Monarch::ReadRecordTwo() const
 {
-    if( fIO->Read( fRecordInterleaved, fInterleavedRecordSize ) == false )
+    if( fIO->Read( fRecordInterleavedBytes, fInterleavedRecordSize ) == false )
     {
         if( fIO->Done() != true )
         {
