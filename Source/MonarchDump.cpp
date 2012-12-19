@@ -16,8 +16,8 @@ int main( const int argc, const char** argv )
         return -1;
     }
 
-    ofstream tOutputOne( string( "ch1_" ) + string( argv[ 2 ] ) );
-    ofstream tOutputTwo( string( "ch2_" ) + string( argv[ 2 ] ) );
+    ofstream tOutputOne( (string( "ch1_" ) + string( argv[ 2 ] )).c_str() );
+    ofstream tOutputTwo( (string( "ch2_" ) + string( argv[ 2 ] )).c_str() );
     if( tOutputOne.is_open() == false )
     {
         cout << "could not open channel one output file!" << endl;
