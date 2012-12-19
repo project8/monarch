@@ -14,10 +14,16 @@ static const AcquisitionModeType sTwoChannel = 4;
 
 typedef size_t PreludeType;
 
-typedef unsigned int AcqIdType;
-typedef unsigned int ChIdType;
-typedef unsigned long int RecIdType;
-typedef clock_t ClockType;
+/*
+ * very important note -- the first three pieces are
+ * purposefully 8 bytes to keep things from crossing the 8 byte boundary.
+ * even if it seems inefficient to use a long int for something,
+ * please don't change it, as it's this way for good reason.
+ */
+
+typedef unsigned long int AcqIdType; // 8 bytes
+typedef unsigned long int RecIdType; // 8 bytes
+typedef clock_t ClockType; // 8 bytes (alias to long int in most systems)
 typedef unsigned char DataType;
 
 #endif // __MONARCH_TYPES_HPP

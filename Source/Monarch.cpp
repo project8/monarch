@@ -8,13 +8,15 @@ Monarch::Monarch() :
     fState( eClosed ),
     fIO( NULL ),
     fHeader( NULL ),
-    fRecordSize( 0 ),
+    fInterleavedRecordSize( 0 ),
+    fRecordInterleaved( NULL ),
+    fRecordInterleavedBytes( NULL ),
+    fSplitRecordSize( 0 ),
     fRecordOne( NULL ),
     fRecordOneBytes( NULL ),
     fRecordTwo( NULL ),
     fRecordTwoBytes( NULL ),
-    fReadFunction( &Monarch::ReadRecordOne ),
-    fWriteFunction( &Monarch::WriteRecordOne )
+    fReadFunction( &Monarch::ReadRecordOne )
 {
 }
 Monarch::~Monarch()
@@ -29,6 +31,13 @@ Monarch::~Monarch()
     {
         delete fHeader;
         fHeader = NULL;
+    }
+
+    if( fRecordInterleavedBytes != NULL )
+    {
+        fRecordInterleaved->~MonarchRecord();
+        delete[] fRecordInterleavedBytes;
+        fRecordInterleavedBytes = NULL;
     }
 
     if( fRecordOneBytes != NULL )
@@ -109,29 +118,36 @@ bool Monarch::ReadHeader() const
     }
     delete[] tHeaderBuffer;
 
-    fRecordSize = sizeof(ChIdType) + sizeof(AcqIdType) + sizeof(RecIdType) + sizeof(ClockType) + fHeader->GetRecordSize();
-
     if( fHeader->GetAcqMode() == sOneChannel )
     {
-        fRecordOneBytes = new char[fRecordSize];
+        fInterleavedRecordSize = sizeof(AcqIdType) + sizeof(RecIdType) + sizeof(ClockType) + fHeader->GetRecordSize();
+        fSplitRecordSize = sizeof(AcqIdType) + sizeof(RecIdType) + sizeof(ClockType) + fHeader->GetRecordSize();
+
+        fRecordInterleavedBytes = new char[fInterleavedRecordSize];
+        fRecordInterleaved = new( fRecordInterleavedBytes ) MonarchRecord();
+
+        fRecordOneBytes = new char[fSplitRecordSize];
         fRecordOne = new( fRecordOneBytes ) MonarchRecord();
 
         fRecordTwoBytes = NULL;
         fRecordTwo = NULL;
 
-        fWriteFunction = &Monarch::WriteRecordOne;
         fReadFunction = &Monarch::ReadRecordOne;
     }
     if( fHeader->GetAcqMode() == sTwoChannel )
     {
-        fRecordOneBytes = new char[fRecordSize];
+        fInterleavedRecordSize = sizeof(AcqIdType) + sizeof(RecIdType) + sizeof(ClockType) + 2 * fHeader->GetRecordSize();
+        fSplitRecordSize = sizeof(AcqIdType) + sizeof(RecIdType) + sizeof(ClockType) + fHeader->GetRecordSize();
+        fReadFunction = &Monarch::ReadRecordTwo;
+
+        fRecordInterleavedBytes = new char[fInterleavedRecordSize];
+        fRecordInterleaved = new( fRecordInterleavedBytes ) MonarchRecord();
+
+        fRecordOneBytes = new char[fSplitRecordSize];
         fRecordOne = new( fRecordOneBytes ) MonarchRecord();
 
-        fRecordTwoBytes = new char[fRecordSize];
+        fRecordTwoBytes = new char[fSplitRecordSize];
         fRecordTwo = new( fRecordTwoBytes ) MonarchRecord();
-
-        fWriteFunction = &Monarch::WriteRecordTwo;
-        fReadFunction = &Monarch::ReadRecordTwo;
     }
 
     fState = eReady;
@@ -163,29 +179,36 @@ bool Monarch::WriteHeader()
     }
     delete[] tHeaderBuffer;
 
-    fRecordSize = sizeof(ChIdType) + sizeof(AcqIdType) + sizeof(RecIdType) + sizeof(ClockType) + fHeader->GetRecordSize();
-
     if( fHeader->GetAcqMode() == sOneChannel )
     {
-        fRecordOneBytes = new char[fRecordSize];
+        fInterleavedRecordSize = sizeof(AcqIdType) + sizeof(RecIdType) + sizeof(ClockType) + fHeader->GetRecordSize();
+        fSplitRecordSize = sizeof(AcqIdType) + sizeof(RecIdType) + sizeof(ClockType) + fHeader->GetRecordSize();
+
+        fRecordInterleavedBytes = new char[fInterleavedRecordSize];
+        fRecordInterleaved = new( fRecordInterleavedBytes ) MonarchRecord();
+
+        fRecordOneBytes = new char[fSplitRecordSize];
         fRecordOne = new( fRecordOneBytes ) MonarchRecord();
 
         fRecordTwoBytes = NULL;
         fRecordTwo = NULL;
 
-        fWriteFunction = &Monarch::WriteRecordOne;
         fReadFunction = &Monarch::ReadRecordOne;
     }
     if( fHeader->GetAcqMode() == sTwoChannel )
     {
-        fRecordOneBytes = new char[fRecordSize];
+        fInterleavedRecordSize = sizeof(AcqIdType) + sizeof(RecIdType) + sizeof(ClockType) + 2 * fHeader->GetRecordSize();
+        fSplitRecordSize = sizeof(AcqIdType) + sizeof(RecIdType) + sizeof(ClockType) + fHeader->GetRecordSize();
+        fReadFunction = &Monarch::ReadRecordTwo;
+
+        fRecordInterleavedBytes = new char[fInterleavedRecordSize];
+        fRecordInterleaved = new( fRecordInterleavedBytes ) MonarchRecord();
+
+        fRecordOneBytes = new char[fSplitRecordSize];
         fRecordOne = new( fRecordOneBytes ) MonarchRecord();
 
-        fRecordTwoBytes = new char[fRecordSize];
+        fRecordTwoBytes = new char[fSplitRecordSize];
         fRecordTwo = new( fRecordTwoBytes ) MonarchRecord();
-
-        fWriteFunction = &Monarch::WriteRecordTwo;
-        fReadFunction = &Monarch::ReadRecordTwo;
     }
 
     fState = eReady;
@@ -198,60 +221,62 @@ bool Monarch::ReadRecord() const
 }
 bool Monarch::ReadRecordOne() const
 {
-    if( fIO->Read( fRecordOneBytes, fRecordSize ) == false )
+    if( fIO->Read( fRecordInterleaved, fInterleavedRecordSize ) == false )
     {
         if( fIO->Done() != true )
         {
-            cout << "could not read next channel one record" << endl;
+            cout << "could not read next interleaved record" << endl;
         }
         return false;
     }
+
+    memcpy( fRecordOneBytes, fRecordInterleavedBytes, fInterleavedRecordSize );
+
     return true;
 }
 bool Monarch::ReadRecordTwo() const
 {
-    if( fIO->Read( fRecordOneBytes, fRecordSize ) == false )
+    if( fIO->Read( fRecordInterleaved, fInterleavedRecordSize ) == false )
     {
         if( fIO->Done() != true )
         {
-            cout << "could not read next channel one record" << endl;
+            cout << "could not read next interleaved record" << endl;
         }
         return false;
     }
-    if( fIO->Read( fRecordTwoBytes, fRecordSize ) == false )
+
+    fRecordOne->fAId = fRecordInterleaved->fAId;
+    fRecordTwo->fAId = fRecordInterleaved->fAId;
+
+    fRecordOne->fRId = fRecordInterleaved->fRId;
+    fRecordTwo->fRId = fRecordInterleaved->fRId;
+
+    fRecordOne->fTick = fRecordInterleaved->fTick;
+    fRecordTwo->fTick = fRecordInterleaved->fTick;
+
+    DataType* tRecordInterleavedPtr = fRecordInterleaved->fDataPtr;
+    DataType* tRecordOnePtr = fRecordOne->fDataPtr;
+    DataType* tRecordTwoPtr = fRecordTwo->fDataPtr;
+
+    for( unsigned int tIndex = 0; tIndex < fSplitRecordSize; tIndex++ )
     {
-        if( fIO->Done() != true )
-        {
-            cout << "could not read next channel two record" << endl;
-        }
-        return false;
+        *tRecordInterleavedPtr = *tRecordOnePtr;
+        tRecordOnePtr++;
+        tRecordInterleavedPtr++;
+
+        *tRecordInterleavedPtr = *tRecordTwoPtr;
+        tRecordTwoPtr++;
+        tRecordInterleavedPtr++;
     }
+
     return true;
 }
 
 bool Monarch::WriteRecord()
 {
-    return (this->*fWriteFunction)();
-}
-bool Monarch::WriteRecordOne()
-{
-    if( fIO->Write( fRecordOneBytes, fRecordSize ) == false )
+    if( fIO->Write( fRecordInterleavedBytes, fInterleavedRecordSize ) == false )
     {
-        cout << "could not write channel one record" << endl;
-        return false;
-    }
-    return true;
-}
-bool Monarch::WriteRecordTwo()
-{
-    if( fIO->Write( fRecordOneBytes, fRecordSize ) == false )
-    {
-        cout << "could not write channel one record" << endl;
-        return false;
-    }
-    if( fIO->Write( fRecordTwoBytes, fRecordSize ) == false )
-    {
-        cout << "could not write channel two record" << endl;
+        cout << "could not write interleaved record" << endl;
         return false;
     }
     return true;
