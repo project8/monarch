@@ -230,7 +230,21 @@ bool Monarch::ReadRecordOne() const
         return false;
     }
 
-    memcpy( fRecordOneBytes, fRecordInterleavedBytes, fInterleavedRecordSize );
+    fRecordOne->fAId = fRecordInterleaved->fAId;
+
+    fRecordOne->fRId = fRecordInterleaved->fRId;
+
+    fRecordOne->fTick = fRecordInterleaved->fTick;
+
+    DataType* tRecordInterleavedPtr = fRecordInterleaved->fDataPtr;
+    DataType* tRecordOnePtr = fRecordOne->fDataPtr;
+
+    for( unsigned int tIndex = 0; tIndex < fSplitRecordSize; tIndex++ )
+    {
+        *tRecordInterleavedPtr = *tRecordOnePtr;
+        tRecordOnePtr++;
+        tRecordInterleavedPtr++;
+    }
 
     return true;
 }
