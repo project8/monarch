@@ -5,18 +5,18 @@ using std::cout;
 using std::endl;
 
 Monarch::Monarch() :
-    fState( eClosed ),
-    fIO( NULL ),
-    fHeader( NULL ),
-    fInterleavedRecordSize( 0 ),
-    fRecordInterleaved( NULL ),
-    fRecordInterleavedBytes( NULL ),
-    fSplitRecordSize( 0 ),
-    fRecordOne( NULL ),
-    fRecordOneBytes( NULL ),
-    fRecordTwo( NULL ),
-    fRecordTwoBytes( NULL ),
-    fReadFunction( &Monarch::ReadRecordOne )
+        fState( eClosed ),
+        fIO( NULL ),
+        fHeader( NULL ),
+        fInterleavedRecordSize( 0 ),
+        fRecordInterleaved( NULL ),
+        fRecordInterleavedBytes( NULL ),
+        fSplitRecordSize( 0 ),
+        fRecordOne( NULL ),
+        fRecordOneBytes( NULL ),
+        fRecordTwo( NULL ),
+        fRecordTwoBytes( NULL ),
+        fReadFunction( &Monarch::ReadRecordOne )
 {
 }
 Monarch::~Monarch()
@@ -72,7 +72,8 @@ const Monarch* Monarch::OpenForReading( const string& aFilename )
 
     tMonarch->fState = eOpen;
     return tMonarch;
-};
+}
+;
 Monarch* Monarch::OpenForWriting( const string& aFilename )
 {
     Monarch* tMonarch = new Monarch();
@@ -90,7 +91,8 @@ Monarch* Monarch::OpenForWriting( const string& aFilename )
 
     tMonarch->fState = eOpen;
     return tMonarch;
-};
+}
+;
 
 bool Monarch::ReadHeader() const
 {
@@ -123,14 +125,11 @@ bool Monarch::ReadHeader() const
         fInterleavedRecordSize = sizeof(AcqIdType) + sizeof(RecIdType) + sizeof(ClockType) + fHeader->GetRecordSize();
         fSplitRecordSize = sizeof(AcqIdType) + sizeof(RecIdType) + sizeof(ClockType) + fHeader->GetRecordSize();
 
-        fRecordInterleavedBytes = new char[fInterleavedRecordSize];
-        fRecordInterleaved = new( fRecordInterleavedBytes ) MonarchRecord();
+        fRecordInterleavedBytes = new char[ fInterleavedRecordSize ];
+        fRecordInterleaved = new ( fRecordInterleavedBytes ) MonarchRecord();
 
-        fRecordOneBytes = new char[fSplitRecordSize];
-        fRecordOne = new( fRecordOneBytes ) MonarchRecord();
-
-        fRecordTwoBytes = NULL;
-        fRecordTwo = NULL;
+        fRecordOneBytes = new char[ fSplitRecordSize ];
+        fRecordOne = new ( fRecordOneBytes ) MonarchRecord();
 
         fReadFunction = &Monarch::ReadRecordOne;
     }
@@ -138,16 +137,17 @@ bool Monarch::ReadHeader() const
     {
         fInterleavedRecordSize = sizeof(AcqIdType) + sizeof(RecIdType) + sizeof(ClockType) + 2 * fHeader->GetRecordSize();
         fSplitRecordSize = sizeof(AcqIdType) + sizeof(RecIdType) + sizeof(ClockType) + fHeader->GetRecordSize();
+
+        fRecordInterleavedBytes = new char[ fInterleavedRecordSize ];
+        fRecordInterleaved = new ( fRecordInterleavedBytes ) MonarchRecord();
+
+        fRecordOneBytes = new char[ fSplitRecordSize ];
+        fRecordOne = new ( fRecordOneBytes ) MonarchRecord();
+
+        fRecordTwoBytes = new char[ fSplitRecordSize ];
+        fRecordTwo = new ( fRecordTwoBytes ) MonarchRecord();
+
         fReadFunction = &Monarch::ReadRecordTwo;
-
-        fRecordInterleavedBytes = new char[fInterleavedRecordSize];
-        fRecordInterleaved = new( fRecordInterleavedBytes ) MonarchRecord();
-
-        fRecordOneBytes = new char[fSplitRecordSize];
-        fRecordOne = new( fRecordOneBytes ) MonarchRecord();
-
-        fRecordTwoBytes = new char[fSplitRecordSize];
-        fRecordTwo = new( fRecordTwoBytes ) MonarchRecord();
     }
 
     fState = eReady;
@@ -182,45 +182,37 @@ bool Monarch::WriteHeader()
     if( fHeader->GetAcqMode() == sOneChannel )
     {
         fInterleavedRecordSize = sizeof(AcqIdType) + sizeof(RecIdType) + sizeof(ClockType) + fHeader->GetRecordSize();
-        fSplitRecordSize = sizeof(AcqIdType) + sizeof(RecIdType) + sizeof(ClockType) + fHeader->GetRecordSize();
 
-        fRecordInterleavedBytes = new char[fInterleavedRecordSize];
-        fRecordInterleaved = new( fRecordInterleavedBytes ) MonarchRecord();
+        fRecordInterleavedBytes = new char[ fInterleavedRecordSize ];
+        fRecordInterleaved = new ( fRecordInterleavedBytes ) MonarchRecord();
 
-        fRecordOneBytes = new char[fSplitRecordSize];
-        fRecordOne = new( fRecordOneBytes ) MonarchRecord();
-
-        fRecordTwoBytes = NULL;
-        fRecordTwo = NULL;
-
-        fReadFunction = &Monarch::ReadRecordOne;
     }
     if( fHeader->GetAcqMode() == sTwoChannel )
     {
         fInterleavedRecordSize = sizeof(AcqIdType) + sizeof(RecIdType) + sizeof(ClockType) + 2 * fHeader->GetRecordSize();
-        fSplitRecordSize = sizeof(AcqIdType) + sizeof(RecIdType) + sizeof(ClockType) + fHeader->GetRecordSize();
-        fReadFunction = &Monarch::ReadRecordTwo;
 
-        fRecordInterleavedBytes = new char[fInterleavedRecordSize];
-        fRecordInterleaved = new( fRecordInterleavedBytes ) MonarchRecord();
-
-        fRecordOneBytes = new char[fSplitRecordSize];
-        fRecordOne = new( fRecordOneBytes ) MonarchRecord();
-
-        fRecordTwoBytes = new char[fSplitRecordSize];
-        fRecordTwo = new( fRecordTwoBytes ) MonarchRecord();
+        fRecordInterleavedBytes = new char[ fInterleavedRecordSize ];
+        fRecordInterleaved = new ( fRecordInterleavedBytes ) MonarchRecord();
     }
 
     fState = eReady;
     return true;
 }
 
-bool Monarch::ReadRecord() const
+bool Monarch::ReadRecord( int anOffset ) const
 {
-    return (this->*fReadFunction)();
-}
-bool Monarch::ReadRecordOne() const
-{
+    if( anOffset != 0 )
+    {
+        long int aByteOffset = anOffset * fInterleavedRecordSize;
+        if( fIO->Seek( aByteOffset ) == false )
+        {
+            if( fIO->Done != true )
+            {
+                cout << "could not seek to requested position" << endl;
+            }
+        }
+    }
+
     if( fIO->Read( fRecordInterleavedBytes, fInterleavedRecordSize ) == false )
     {
         if( fIO->Done() != true )
@@ -230,6 +222,10 @@ bool Monarch::ReadRecordOne() const
         return false;
     }
 
+    return (this->*fReadFunction)();
+}
+bool Monarch::ReadRecordOne() const
+{
     fRecordOne->fAId = fRecordInterleaved->fAId;
 
     fRecordOne->fRId = fRecordInterleaved->fRId;
@@ -241,7 +237,7 @@ bool Monarch::ReadRecordOne() const
 
     for( unsigned int tIndex = 0; tIndex < fSplitRecordSize; tIndex++ )
     {
-        *tRecordInterleavedPtr = *tRecordOnePtr;
+        *tRecordOnePtr = *tRecordInterleavedPtr;
         tRecordOnePtr++;
         tRecordInterleavedPtr++;
     }
@@ -250,15 +246,6 @@ bool Monarch::ReadRecordOne() const
 }
 bool Monarch::ReadRecordTwo() const
 {
-    if( fIO->Read( fRecordInterleavedBytes, fInterleavedRecordSize ) == false )
-    {
-        if( fIO->Done() != true )
-        {
-            cout << "could not read next interleaved record" << endl;
-        }
-        return false;
-    }
-
     fRecordOne->fAId = fRecordInterleaved->fAId;
     fRecordTwo->fAId = fRecordInterleaved->fAId;
 
@@ -274,11 +261,11 @@ bool Monarch::ReadRecordTwo() const
 
     for( unsigned int tIndex = 0; tIndex < fSplitRecordSize; tIndex++ )
     {
-        *tRecordInterleavedPtr = *tRecordOnePtr;
+        *tRecordOnePtr = *tRecordInterleavedPtr;
         tRecordOnePtr++;
         tRecordInterleavedPtr++;
 
-        *tRecordInterleavedPtr = *tRecordTwoPtr;
+        *tRecordTwoPtr = *tRecordInterleavedPtr;
         tRecordTwoPtr++;
         tRecordInterleavedPtr++;
     }

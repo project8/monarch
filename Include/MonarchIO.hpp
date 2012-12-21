@@ -32,6 +32,9 @@ class MonarchIO
         template< class XType >
         bool Write( XType* aDatum, size_t aCount );
 
+        // Seek by offset aCount bytes
+        bool Seek( long int aCount );
+
         // Read aCout bytes of data from the file pointer and store
         // the result in the byte array anArray.
         bool Read( char* anArray, size_t aCount );
@@ -63,6 +66,12 @@ inline bool MonarchIO::Write( XType* aDatum, size_t aCount )
 {
     size_t written = fwrite( aDatum, sizeof(XType), aCount, fFile );
     return (written == aCount);
+}
+
+inline bool MonarchIO::Seek( long int aCount )
+{
+    size_t success = fseek( fFile, aCount, SEEK_CUR );
+    return( success == 0 );
 }
 
 inline bool MonarchIO::Read( char* anArray, size_t aCount )

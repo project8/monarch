@@ -13,9 +13,13 @@
 
 # Build
 Build/
+Build/*
 build/
+build/*
 Install/
+Install/*
 install/
+install/*
 
 # Eclipse
 .project
