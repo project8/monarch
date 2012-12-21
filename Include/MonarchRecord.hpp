@@ -4,12 +4,8 @@
 #include "MonarchTypes.hpp"
 #include <ctime>
 
-class MonarchRecord
+struct MonarchRecord
 {
-    public:
-        MonarchRecord();
-        ~MonarchRecord();
-
         AcqIdType fAId;
         RecIdType fRId;
         ClockType fTick;

@@ -5,12 +5,12 @@
 #include <ctime>
 
 typedef unsigned int AccessModeType;
+static const AccessModeType sReadMode = 0;
 static const AccessModeType sWriteMode = 1;
-static const AccessModeType sReadMode = 2;
 
 typedef unsigned int AcquisitionModeType;
-static const AcquisitionModeType sOneChannel = 3;
-static const AcquisitionModeType sTwoChannel = 4;
+static const AcquisitionModeType sOneChannel = 1;
+static const AcquisitionModeType sTwoChannel = 2;
 
 typedef size_t PreludeType;
 
@@ -18,7 +18,7 @@ typedef size_t PreludeType;
  * very important note -- the first three pieces are
  * purposefully 8 bytes to keep things from crossing the 8 byte boundary.
  * even if it seems inefficient to use a long int for something,
- * please don't change it, as it's this way for good reason.
+ * please don't change it!! it's this way for good reason.
  */
 
 typedef unsigned long int AcqIdType; // 8 bytes

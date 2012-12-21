@@ -52,7 +52,7 @@ class Monarch
         //this method parses the file for a next record.
         //if the record demarshalled correctly, this returns true and the record is refreshed with content.
         //when the end of the file is reached, this will return false.
-        bool ReadRecord() const;
+        bool ReadRecord( int anOffset = 1 ) const;
 
         //get the pointer to the current channel one record.
         const MonarchRecord* GetRecordOne() const;

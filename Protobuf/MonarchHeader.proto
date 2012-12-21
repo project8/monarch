@@ -1,7 +1,8 @@
 package MonarchPB;
 
 // The MonarchHeader class in protocol buffer form.
-message MonarchHeader {
+message MonarchHeader
+{
   // The name of the file this belongs to.  Seems redundant
   // but could be useful in terms of keeping track of files.
   required string filename = 1;
@@ -30,7 +31,8 @@ message MonarchHeader {
   // It's nice to know where data came from.  This flag will
   // specify that the data is either from mantis or it is
   // simulated. 
-  enum RunSource {
+  enum RunSource
+  {
     Mantis = 0;
     Simulation = 1;
   }
@@ -39,12 +41,12 @@ message MonarchHeader {
 
   // It's also nice to know if you expect this file to be
   // a background measurement or to contain an expected signal.
-  enum RunType {
+  enum RunType
+  {
     Background = 0;
     Signal = 1;
   }
   // Optionally flag the content of the data.
   optional RunType runType = 9;
-
 
 }
