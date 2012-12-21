@@ -114,9 +114,9 @@ class Monarch
         mutable char* fRecordTwoBytes;
 
         //the private read functions
-        mutable bool (Monarch::*fReadFunction)() const;
-        bool ReadRecordOne() const;
-        bool ReadRecordTwo() const;
+        mutable void (Monarch::*fReadFunction)() const;
+        void ReadRecordOne() const;
+        void ReadRecordTwo() const;
 };
 
 inline MonarchHeader* Monarch::GetHeader()

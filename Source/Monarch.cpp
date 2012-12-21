@@ -182,8 +182,6 @@ bool Monarch::WriteHeader()
 
     if( fHeader->GetAcqMode() == sOneChannel )
     {
-        cout << "allocating for one channel mode" << endl;
-
         fInterleavedRecordSize = sizeof(AcqIdType) + sizeof(RecIdType) + sizeof(ClockType) + fHeader->GetRecordSize();
 
         fRecordInterleavedBytes = new char[ fInterleavedRecordSize ];
@@ -192,8 +190,6 @@ bool Monarch::WriteHeader()
     }
     if( fHeader->GetAcqMode() == sTwoChannel )
     {
-        cout << "allocating for two channel mode" << endl;
-
         fInterleavedRecordSize = sizeof(AcqIdType) + sizeof(RecIdType) + sizeof(ClockType) + 2 * fHeader->GetRecordSize();
 
         fRecordInterleavedBytes = new char[ fInterleavedRecordSize ];
@@ -215,6 +211,7 @@ bool Monarch::ReadRecord( int anOffset ) const
             {
                 cout << "could not seek to requested position" << endl;
             }
+            return false;
         }
     }
 
@@ -227,9 +224,11 @@ bool Monarch::ReadRecord( int anOffset ) const
         return false;
     }
 
-    return (this->*fReadFunction)();
+    (this->*fReadFunction)();
+
+    return true;
 }
-bool Monarch::ReadRecordOne() const
+void Monarch::ReadRecordOne() const
 {
     fRecordOne->fAId = fRecordInterleaved->fAId;
 
@@ -247,9 +246,9 @@ bool Monarch::ReadRecordOne() const
         tRecordInterleavedPtr++;
     }
 
-    return true;
+    return;
 }
-bool Monarch::ReadRecordTwo() const
+void Monarch::ReadRecordTwo() const
 {
     fRecordOne->fAId = fRecordInterleaved->fAId;
     fRecordTwo->fAId = fRecordInterleaved->fAId;
@@ -275,7 +274,7 @@ bool Monarch::ReadRecordTwo() const
         tRecordInterleavedPtr++;
     }
 
-    return true;
+    return;
 }
 
 bool Monarch::WriteRecord()
