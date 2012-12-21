@@ -206,7 +206,7 @@ bool Monarch::ReadRecord( int anOffset ) const
         long int aByteOffset = anOffset * fInterleavedRecordSize;
         if( fIO->Seek( aByteOffset ) == false )
         {
-            if( fIO->Done != true )
+            if( fIO->Done() != true )
             {
                 cout << "could not seek to requested position" << endl;
             }
