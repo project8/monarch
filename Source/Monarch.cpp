@@ -187,12 +187,16 @@ bool Monarch::WriteHeader()
         fRecordInterleaved = new ( fRecordInterleavedBytes ) MonarchRecord();
 
     }
-    if( fHeader->GetAcqMode() == sTwoChannel )
+    else if( fHeader->GetAcqMode() == sTwoChannel )
     {
         fInterleavedRecordSize = sizeof(AcqIdType) + sizeof(RecIdType) + sizeof(ClockType) + 2 * fHeader->GetRecordSize();
 
         fRecordInterleavedBytes = new char[ fInterleavedRecordSize ];
         fRecordInterleaved = new ( fRecordInterleavedBytes ) MonarchRecord();
+    }
+    else
+    {
+        cout << "unknown channel mode" << endl;
     }
 
     fState = eReady;
