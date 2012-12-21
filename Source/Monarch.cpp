@@ -181,23 +181,25 @@ bool Monarch::WriteHeader()
 
     if( fHeader->GetAcqMode() == sOneChannel )
     {
+        cout << "allocating for one channel mode" << endl;
+
         fInterleavedRecordSize = sizeof(AcqIdType) + sizeof(RecIdType) + sizeof(ClockType) + fHeader->GetRecordSize();
 
         fRecordInterleavedBytes = new char[ fInterleavedRecordSize ];
         fRecordInterleaved = new ( fRecordInterleavedBytes ) MonarchRecord();
 
     }
-    else if( fHeader->GetAcqMode() == sTwoChannel )
+    if( fHeader->GetAcqMode() == sTwoChannel )
     {
+        cout << "allocating for two channel mode" << endl;
+
         fInterleavedRecordSize = sizeof(AcqIdType) + sizeof(RecIdType) + sizeof(ClockType) + 2 * fHeader->GetRecordSize();
 
         fRecordInterleavedBytes = new char[ fInterleavedRecordSize ];
         fRecordInterleaved = new ( fRecordInterleavedBytes ) MonarchRecord();
     }
-    else
-    {
-        cout << "unknown channel mode" << endl;
-    }
+
+    cout << "interleaved record pointer is <" << fRecordInterleaved << ">" << endl;
 
     fState = eReady;
     return true;
