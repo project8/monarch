@@ -73,7 +73,7 @@ const Monarch* Monarch::OpenForReading( const string& aFilename )
     tMonarch->fState = eOpen;
     return tMonarch;
 }
-;
+
 Monarch* Monarch::OpenForWriting( const string& aFilename )
 {
     Monarch* tMonarch = new Monarch();
@@ -90,9 +90,12 @@ Monarch* Monarch::OpenForWriting( const string& aFilename )
     tMonarch->fHeader->SetFilename( aFilename );
 
     tMonarch->fState = eOpen;
+
+    cout << "*** MONARCH OPEN ***" << endl;
+
     return tMonarch;
 }
-;
+
 
 bool Monarch::ReadHeader() const
 {
@@ -155,8 +158,6 @@ bool Monarch::ReadHeader() const
 }
 bool Monarch::WriteHeader()
 {
-    cout << "*** writing header ***" << endl;
-
     PreludeType tPrelude = fHeader->ByteSize();
     if( fIO->Write( &tPrelude ) == false )
     {
