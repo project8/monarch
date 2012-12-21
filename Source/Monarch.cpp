@@ -76,6 +76,8 @@ const Monarch* Monarch::OpenForReading( const string& aFilename )
 
 Monarch* Monarch::OpenForWriting( const string& aFilename )
 {
+    cout << "*** CALLED MONARCH OPEN FOR WRITING ***" << endl;
+
     Monarch* tMonarch = new Monarch();
 
     tMonarch->fIO = new MonarchIO( sWriteMode );
@@ -90,8 +92,6 @@ Monarch* Monarch::OpenForWriting( const string& aFilename )
     tMonarch->fHeader->SetFilename( aFilename );
 
     tMonarch->fState = eOpen;
-
-    cout << "*** MONARCH OPEN ***" << endl;
 
     return tMonarch;
 }
