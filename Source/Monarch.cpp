@@ -76,8 +76,6 @@ const Monarch* Monarch::OpenForReading( const string& aFilename )
 
 Monarch* Monarch::OpenForWriting( const string& aFilename )
 {
-    cout << "*** CALLED MONARCH OPEN FOR WRITING ***" << endl;
-
     Monarch* tMonarch = new Monarch();
 
     tMonarch->fIO = new MonarchIO( sWriteMode );
@@ -201,8 +199,6 @@ bool Monarch::WriteHeader()
         fRecordInterleavedBytes = new char[ fInterleavedRecordSize ];
         fRecordInterleaved = new ( fRecordInterleavedBytes ) MonarchRecord();
     }
-
-    cout << "interleaved record pointer is <" << fRecordInterleaved << ">" << endl;
 
     fState = eReady;
     return true;
