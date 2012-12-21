@@ -155,6 +155,8 @@ bool Monarch::ReadHeader() const
 }
 bool Monarch::WriteHeader()
 {
+    cout << "*** writing header ***" << endl;
+
     PreludeType tPrelude = fHeader->ByteSize();
     if( fIO->Write( &tPrelude ) == false )
     {
