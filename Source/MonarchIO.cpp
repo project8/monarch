@@ -16,13 +16,13 @@ MonarchIO::~MonarchIO()
 
 bool MonarchIO::Open( const string& aFilename )
 {
-    if( fMode == sWriteMode )
-    {
-        fFile = fopen( aFilename.c_str(), "wb" );
-    }
-    else if( fMode == sReadMode )
+    if( fMode == sAccessRead )
     {
         fFile = fopen( aFilename.c_str(), "rb" );
+    }
+    else if( fMode == sAccessWrite )
+    {
+        fFile = fopen( aFilename.c_str(), "wb" );
     }
 
     if( fFile == NULL )

@@ -25,20 +25,22 @@ protobuf_generate_cpp( Monarch_Protobuf_Source Monarch_Protobuf_Header ${Monarch
 dmake_library_declare( MonarchCore . )
 dmake_library_headers( MonarchCore
     MonarchTypes.hpp
-    Monarch.hpp
-    MonarchIO.hpp
+    MonarchException.hpp
     MonarchHeader.hpp
     MonarchRecord.hpp
+    MonarchIO.hpp
+    Monarch.hpp
 )
 dmake_library_headers_external( MonarchCore
     ${Monarch_Protobuf_Header}
 )
 
 dmake_library_sources( MonarchCore
-    Monarch.cpp
-    MonarchIO.cpp
+    MonarchException.cpp
     MonarchHeader.cpp
     MonarchRecord.cpp
+    MonarchIO.cpp
+    Monarch.cpp
 )
 dmake_library_sources_external( MonarchCore
     ${Monarch_Protobuf_Source}

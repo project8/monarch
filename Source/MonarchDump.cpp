@@ -30,56 +30,50 @@ int main( const int argc, const char** argv )
     }
 
     const Monarch* tReadTest = Monarch::OpenForReading( argv[ 1 ] );
-    if( tReadTest->ReadHeader() == false )
-    {
-        cout << "could not read header!" << endl;
-        return -1;
-    }
+    tReadTest->ReadHeader();
+    tReadTest->SetInterface( sInterfaceSeparate );
 
     const MonarchHeader* tReadHeader = tReadTest->GetHeader();
-    cout << "acquisition mode <" << tReadHeader->GetAcqMode() << ">" << endl;
-    cout << "acquisition rate <" << tReadHeader->GetAcqRate() << ">" << endl;
-    cout << "acquisition time <" << tReadHeader->GetAcqTime() << ">" << endl;
-    cout << "record size <" << tReadHeader->GetRecordSize() << ">" << endl;
+    cout << *tReadHeader << endl;
 
     unsigned int tRecordCount = 0;
     unsigned int tAcquisitonCount = 0;
 
-    if( tReadHeader->GetAcqMode() == sOneChannel )
+    if( tReadHeader->GetFormatMode() == sFormatSingle )
     {
-        const MonarchRecord* tReadRecord = tReadTest->GetRecordOne();
+        const MonarchRecord* tReadRecord = tReadTest->GetRecordSeparateOne();
         while( tReadTest->ReadRecord() != false )
         {
             tRecordCount = tRecordCount + 1;
-            if( tReadRecord->fAId == tAcquisitonCount )
+            if( tReadRecord->fAcquisitionId == tAcquisitonCount )
             {
                 tAcquisitonCount = tAcquisitonCount + 1;
                 tOutputOne << "\n\n";
             }
-            for( size_t tIndex = 0; tIndex < tReadHeader->GetRecordSize(); tIndex++ )
+            for( size_t tIndex = 0; tIndex < tReadHeader->GetLength(); tIndex++ )
             {
-                tOutputOne << tIndex << " " << (unsigned int) ((unsigned char) (tReadRecord->fDataPtr[ tIndex ])) << "\n";
+                tOutputOne << tIndex << " " << (unsigned int) ((unsigned char) (tReadRecord->fData[tIndex])) << "\n";
             }
         }
         tOutputTwo << "(empty)\n";
     }
-    if( tReadHeader->GetAcqMode() == sTwoChannel )
+    if( (tReadHeader->GetFormatMode() == sFormatInterleavedDual) || (tReadHeader->GetFormatMode() == sFormatSeparateDual) )
     {
-        const MonarchRecord* tReadRecordOne = tReadTest->GetRecordOne();
-        const MonarchRecord* tReadRecordTwo = tReadTest->GetRecordTwo();
+        const MonarchRecord* tReadRecordOne = tReadTest->GetRecordSeparateOne();
+        const MonarchRecord* tReadRecordTwo = tReadTest->GetRecordSeparateTwo();
         while( tReadTest->ReadRecord() != false )
         {
             tRecordCount = tRecordCount + 1;
-            if( tReadRecordOne->fAId == tAcquisitonCount )
+            if( tReadRecordOne->fAcquisitionId == tAcquisitonCount )
             {
                 tAcquisitonCount = tAcquisitonCount + 1;
                 tOutputOne << "\n\n";
                 tOutputTwo << "\n\n";
             }
-            for( size_t tIndex = 0; tIndex < tReadHeader->GetRecordSize(); tIndex++ )
+            for( size_t tIndex = 0; tIndex < tReadHeader->GetLength(); tIndex++ )
             {
-                tOutputOne << tIndex << " " << (unsigned int) ((unsigned char) (tReadRecordOne->fDataPtr[ tIndex ])) << "\n";
-                tOutputTwo << tIndex << " " << (unsigned int) ((unsigned char) (tReadRecordTwo->fDataPtr[ tIndex ])) << "\n";
+                tOutputOne << tIndex << " " << (unsigned int) ((unsigned char) (tReadRecordOne->fData[ tIndex ])) << "\n";
+                tOutputTwo << tIndex << " " << (unsigned int) ((unsigned char) (tReadRecordTwo->fData[ tIndex ])) << "\n";
             }
         }
     }

@@ -1,5 +1,5 @@
-#ifndef __MONARCH_HPP
-#define __MONARCH_HPP
+#ifndef MONARCH_HPP_
+#define MONARCH_HPP_
 
 #include "MonarchIO.hpp"
 #include "MonarchHeader.hpp"
@@ -44,24 +44,30 @@ class Monarch
         //this method parses the file for the header contents.
         //if the header demarshalled correctly, this returns true and the header may be examined, and memory is allocated for the record.
         //upon successful return monarch is in the eReady state.
-        bool ReadHeader() const;
+        void ReadHeader() const;
 
         //get the pointer to the header.
         const MonarchHeader* GetHeader() const;
 
+        //set the interface type to use
+        void SetInterface( InterfaceModeType aMode ) const;
+
         //this method parses the file for a next record.
         //if the record demarshalled correctly, this returns true and the record is refreshed with content.
         //when the end of the file is reached, this will return false.
-        bool ReadRecord( int anOffset = 0 ) const;
+        bool ReadRecord() const;
 
-        //get the pointer to the current channel one record.
-        const MonarchRecord* GetRecordOne() const;
+        //get the pointer to the current interleaved record.
+        const MonarchRecord* GetRecordInterleaved() const;
 
-        //get the pointer to the current channel two record.
-        const MonarchRecord* GetRecordTwo() const;
+        //get the pointer to the current separate channel one record.
+        const MonarchRecord* GetRecordSeparateOne() const;
+
+        //get the pointer to the current separate channel two record.
+        const MonarchRecord* GetRecordSeparateTwo() const;
 
         //close the file pointer.
-        bool Close() const;
+        void Close() const;
 
         //********************
         // methods for writing
@@ -77,20 +83,29 @@ class Monarch
         //this method marshals the current header to the file.
         //if the header marshalled correctly, this returns true, memory is allocated for the record.
         //upon successful return monarch is in the eReady state.
-        bool WriteHeader();
+        void WriteHeader();
 
         //get the pointer to the header.
         MonarchHeader* GetHeader();
+
+        //set the interface type to use.
+        void SetInterface( InterfaceModeType aMode );
 
         //this method marshals the current record into the file.
         //if the record marshalled correctly, this returns true.
         bool WriteRecord();
 
-        //get the pointer to the current record.
+        //get the pointer to the current interleaved record.
         MonarchRecord* GetRecordInterleaved();
 
+        //get the pointer to the current separate channel one record.
+        MonarchRecord* GetRecordSeparateOne();
+
+        //get the pointer to the current separate channel two record.
+        MonarchRecord* GetRecordSeparateTwo();
+
         //close the file pointer
-        bool Close();
+        void Close();
 
     private:
         //the MonarchIO class wraps a bare C file pointer.
@@ -100,46 +115,124 @@ class Monarch
         mutable MonarchHeader* fHeader;
 
         //the records
+        mutable long int fDataSize;
+
         mutable size_t fInterleavedRecordSize;
 
         mutable MonarchRecord* fRecordInterleaved;
         mutable char* fRecordInterleavedBytes;
 
-        mutable size_t fSplitRecordSize;
+        mutable size_t fSeparateRecordSize;
 
-        mutable MonarchRecord* fRecordOne;
-        mutable char* fRecordOneBytes;
+        mutable MonarchRecord* fRecordSeparateOne;
+        mutable char* fRecordSeparateOneBytes;
 
-        mutable MonarchRecord* fRecordTwo;
-        mutable char* fRecordTwoBytes;
+        mutable MonarchRecord* fRecordSeparateTwo;
+        mutable char* fRecordSeparateTwoBytes;
 
         //the private read functions
-        mutable void (Monarch::*fReadFunction)() const;
-        void ReadRecordOne() const;
-        void ReadRecordTwo() const;
+        mutable bool (Monarch::*fReadFunction)() const;
+        bool InterleavedFromSingle() const;
+        bool InterleavedFromSeparate() const;
+        bool InterleavedFromInterleaved() const;
+        bool SeparateFromSingle() const;
+        bool SeparateFromSeparate() const;
+        bool SeparateFromInterleaved() const;
+
+        //the private write functions
+        mutable bool (Monarch::*fWriteFunction)();
+        bool InterleavedToSingle();
+        bool InterleavedToSeparate();
+        bool InterleavedToInterleaved();
+        bool SeparateToSingle();
+        bool SeparateToSeparate();
+        bool SeparateToInterleaved();
+
+    private:
+#ifdef __GNUG__
+        static void Zip( const size_t aSize, const DataType* __restrict__ aRecordOne, const DataType* __restrict__ aRecordTwo, DataType* __restrict__ anInterleavedRecord );
+#else
+        static void Zip( const size_t aSize, const DataType*  aRecordOne, const DataType*  aRecordTwo, DataType*  anInterleavedRecord );
+#endif
+
+#ifdef __GNUG__
+        static void Unzip( const size_t aSize, DataType* __restrict__ aRecordOne, DataType* __restrict__ aRecordTwo, const DataType* __restrict__ anInterleavedRecord );
+#else
+        static void Unzip( const size_t aSize, DataType*  aRecordOne, DataType*  aRecordTwo, const DataType*  anInterleavedRecord );
+#endif
+
 };
 
-inline MonarchHeader* Monarch::GetHeader()
-{
-    return fHeader;
-}
 inline const MonarchHeader* Monarch::GetHeader() const
 {
     return fHeader;
 }
+inline MonarchHeader* Monarch::GetHeader()
+{
+    return fHeader;
+}
 
+inline const MonarchRecord* Monarch::GetRecordSeparateOne() const
+{
+    return fRecordSeparateOne;
+}
+inline MonarchRecord* Monarch::GetRecordSeparateOne()
+{
+    return fRecordSeparateOne;
+}
+
+inline const MonarchRecord* Monarch::GetRecordSeparateTwo() const
+{
+    return fRecordSeparateTwo;
+}
+inline MonarchRecord* Monarch::GetRecordSeparateTwo()
+{
+    return fRecordSeparateTwo;
+}
+
+inline const MonarchRecord* Monarch::GetRecordInterleaved() const
+{
+    return fRecordInterleaved;
+}
 inline MonarchRecord* Monarch::GetRecordInterleaved()
 {
     return fRecordInterleaved;
 }
 
-inline const MonarchRecord* Monarch::GetRecordOne() const
+#ifdef __GNUG__
+inline void Monarch::Zip( const size_t aSize, const DataType* __restrict__ aRecordOne, const DataType* __restrict__ aRecordTwo, DataType* __restrict__ anInterleavedRecord )
+#else
+inline void Monarch::Zip( const size_t aSize, const DataType* aRecordOne, const DataType* aRecordTwo, DataType* anInterleavedRecord )
+#endif
 {
-    return fRecordOne;
+    for( size_t anIndex = 0; anIndex < aSize; anIndex++ )
+    {
+        *anInterleavedRecord = *aRecordOne;
+        anInterleavedRecord++;
+        aRecordOne++;
+
+        *anInterleavedRecord = *aRecordTwo;
+        anInterleavedRecord++;
+        aRecordTwo++;
+    }
 }
-inline const MonarchRecord* Monarch::GetRecordTwo() const
+
+#ifdef __GNUG__
+inline void Monarch::Unzip( const size_t aSize, DataType* __restrict__ aRecordOne, DataType* __restrict__ aRecordTwo, const DataType* __restrict__ anInterleavedRecord )
+#else
+inline void Monarch::Unzip( const size_t aSize, DataType* aRecordOne, DataType* aRecordTwo, const DataType* anInterleavedRecord )
+#endif
 {
-    return fRecordTwo;
+    for( size_t anIndex = 0; anIndex < aSize; anIndex++ )
+    {
+        *aRecordOne = *anInterleavedRecord;
+        anInterleavedRecord++;
+        aRecordOne++;
+
+        *aRecordTwo = *anInterleavedRecord;
+        anInterleavedRecord++;
+        aRecordTwo++;
+    }
 }
 
 #endif

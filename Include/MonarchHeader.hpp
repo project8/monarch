@@ -6,7 +6,7 @@
 #include <string>
 using std::string;
 
-namespace MonarchPB
+namespace Protobuf
 {
     class MonarchHeader;
 }
@@ -14,7 +14,7 @@ namespace MonarchPB
 class MonarchHeader
 {
     private:
-        mutable MonarchPB::MonarchHeader* fPBHeader;
+        mutable Protobuf::MonarchHeader* fProtobufHeader;
 
     public:
         MonarchHeader();
@@ -36,17 +36,31 @@ class MonarchHeader
         void SetFilename( const string& aFilename );
         const string& GetFilename() const;
 
-        void SetAcqRate( double acqr );
-        double GetAcqRate() const;
+        void SetTimestamp( const string& aTimestamp );
+        const string& GetTimestamp() const;
 
-        void SetAcqMode( unsigned int mode );
-        unsigned int GetAcqMode() const;
+        void SetDescription( const string& aDescription );
+        const string& GetDescription() const;
 
-        void SetAcqTime( unsigned int acqt );
-        unsigned int GetAcqTime() const;
 
-        void SetRecordSize( size_t recsize );
-        size_t GetRecordSize() const;
+        void SetContentMode( ContentModeType aContentMode );
+        ContentModeType GetContentMode() const;
+
+        void SetSourceMode( SourceModeType aSourceMode );
+        SourceModeType GetSourceMode() const;
+
+        void SetFormatMode( FormatModeType aFormatMode );
+        FormatModeType GetFormatMode() const;
+
+
+        void SetRate( double aRate );
+        double GetRate() const;
+
+        void SetDuration( unsigned int aDuration );
+        unsigned int GetDuration() const;
+
+        void SetLength( unsigned int aLength );
+        unsigned int GetLength() const;
 };
 
 // Pretty printing method

@@ -11,10 +11,10 @@ class MonarchRecord
         ~MonarchRecord();
 
     public:
-        AcqIdType fAId;
-        RecIdType fRId;
-        ClockType fTick;
-        DataType fDataPtr[];
+        AcquisitionIdType fAcquisitionId;
+        RecordIdType fRecordId;
+        TimeType fTime;
+        DataType fData[];
 };
 
 #endif

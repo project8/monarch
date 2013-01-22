@@ -4,26 +4,33 @@
 // We need clock_t
 #include <ctime>
 
-typedef unsigned int AccessModeType;
-static const AccessModeType sReadMode = 0;
-static const AccessModeType sWriteMode = 1;
-
-typedef unsigned int AcquisitionModeType;
-static const AcquisitionModeType sOneChannel = 1;
-static const AcquisitionModeType sTwoChannel = 2;
-
 typedef size_t PreludeType;
 
-/*
- * very important note -- the first three pieces are
- * purposefully 8 bytes to keep things from crossing the 8 byte boundary.
- * even if it seems inefficient to use a long int for something,
- * please don't change it!! it's this way for good reason.
- */
+typedef unsigned int AccessModeType;
+static const AccessModeType sAccessRead = 0;
+static const AccessModeType sAccessWrite = 1;
 
-typedef unsigned long int AcqIdType; // 8 bytes
-typedef unsigned long int RecIdType; // 8 bytes
-typedef clock_t ClockType; // 8 bytes (alias to long int in most systems)
+typedef unsigned int InterfaceModeType;
+static const AccessModeType sInterfaceInterleaved = 0;
+static const AccessModeType sInterfaceSeparate = 1;
+
+typedef unsigned int ContentModeType;
+static const ContentModeType sContentSignal = 0;
+static const ContentModeType sContentBackground = 1;
+static const ContentModeType sContentOther = 2;
+
+typedef unsigned int SourceModeType;
+static const SourceModeType sSourceMantis = 0;
+static const SourceModeType sSourceSimulation = 1;
+
+typedef unsigned int FormatModeType;
+static const FormatModeType sFormatSingle = 0;
+static const FormatModeType sFormatSeparateDual = 1;
+static const FormatModeType sFormatInterleavedDual = 2;
+
+typedef unsigned long int AcquisitionIdType; // 8 bytes
+typedef unsigned long int RecordIdType; // 8 bytes
+typedef long int TimeType; // 8 bytes (alias to long int in most systems)
 typedef unsigned char DataType;
 
 #endif // __MONARCH_TYPES_HPP

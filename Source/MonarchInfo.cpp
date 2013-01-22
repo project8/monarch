@@ -7,25 +7,30 @@ using std::endl;
 int main( const int argc, const char** argv )
 {
     const Monarch* tReadTest = Monarch::OpenForReading( argv[1] );
+    tReadTest->ReadHeader();
 
-    if( tReadTest->ReadHeader() == false )
-    {
-        cout << "could not read header!" << endl;
-        return -1;
-    }
     const MonarchHeader* tReadHeader = tReadTest->GetHeader();
-    cout << "acquisition mode <" << tReadHeader->GetAcqMode() << ">" << endl;
-    cout << "acquisition rate <" << tReadHeader->GetAcqRate() << ">" << endl;
-    cout << "acquisition time <" << tReadHeader->GetAcqTime() << ">" << endl;
-    cout << "record size <" << tReadHeader->GetRecordSize() << ">" << endl;
+    cout << *tReadHeader << endl;
 
     unsigned int tRecordCount = 0;
     unsigned int tAcquisiontCount = 0;
-    const MonarchRecord* tReadRecord = tReadTest->GetRecordOne();
+    const MonarchRecord* tReadRecord;
+    if( tReadHeader->GetFormatMode() == sFormatSingle )
+    {
+        tReadRecord = tReadTest->GetRecordSeparateOne();
+    }
+    if( tReadHeader->GetFormatMode() == sFormatSeparateDual )
+    {
+        tReadRecord = tReadTest->GetRecordSeparateOne();
+    }
+    if( tReadHeader->GetFormatMode() == sFormatInterleavedDual )
+    {
+        tReadRecord = tReadTest->GetRecordInterleaved();
+    }
     while( tReadTest->ReadRecord() != false )
     {
         tRecordCount = tRecordCount + 1;
-        if( tReadRecord->fAId == tAcquisiontCount )
+        if( tReadRecord->fAcquisitionId == tAcquisiontCount )
         {
             tAcquisiontCount = tAcquisiontCount + 1;
         }
