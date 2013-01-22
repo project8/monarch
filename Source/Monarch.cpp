@@ -64,8 +64,8 @@ const Monarch* Monarch::OpenForReading( const string& aFilename )
     tMonarch->fIO = new MonarchIO( sAccessRead );
     if( tMonarch->fIO->Open( aFilename ) == false )
     {
-        cout << "could not open <" << aFilename << "> for reading" << endl;
         delete tMonarch;
+        throw MonarchException() << "could not open <" << aFilename << "> for reading";
         return NULL;
     }
 
@@ -83,8 +83,8 @@ Monarch* Monarch::OpenForWriting( const string& aFilename )
     tMonarch->fIO = new MonarchIO( sAccessWrite );
     if( tMonarch->fIO->Open( aFilename ) == false )
     {
-        cout << "could not open <" << aFilename << "> for reading" << endl;
         delete tMonarch;
+        throw MonarchException() << "could not open <" << aFilename << "> for reading";
         return NULL;
     }
 
@@ -132,10 +132,10 @@ void Monarch::ReadHeader() const
         fRecordSeparateOneBytes = new char[ fSeparateRecordSize ];
         fRecordSeparateOne = new ( fRecordSeparateOneBytes ) MonarchRecord();
 
-        cout << "  *format is <" << sFormatSingle << ">" << endl;
-        cout << "  *data size is <" << fDataSize << ">" << endl;
-        cout << "  *interleaved size is <" << fInterleavedRecordSize << ">" << endl;
-        cout << "  *separate size is <" << fSeparateRecordSize << ">" << endl;
+        //cout << "  *format is <" << sFormatSingle << ">" << endl;
+        //cout << "  *data size is <" << fDataSize << ">" << endl;
+        //cout << "  *interleaved size is <" << fInterleavedRecordSize << ">" << endl;
+        //cout << "  *separate size is <" << fSeparateRecordSize << ">" << endl;
 
         fReadFunction = &Monarch::SeparateFromSingle;
     }
@@ -153,10 +153,10 @@ void Monarch::ReadHeader() const
         fRecordSeparateTwoBytes = new char[ fSeparateRecordSize ];
         fRecordSeparateTwo = new ( fRecordSeparateTwoBytes ) MonarchRecord();
 
-        cout << "  *format is <" << sFormatSeparateDual << ">" << endl;
-        cout << "  *data size is <" << fDataSize << ">" << endl;
-        cout << "  *interleaved size is <" << fInterleavedRecordSize << ">" << endl;
-        cout << "  *separate size is <" << fSeparateRecordSize << ">" << endl;
+        //cout << "  *format is <" << sFormatSeparateDual << ">" << endl;
+        //cout << "  *data size is <" << fDataSize << ">" << endl;
+        //cout << "  *interleaved size is <" << fInterleavedRecordSize << ">" << endl;
+        //cout << "  *separate size is <" << fSeparateRecordSize << ">" << endl;
 
         fReadFunction = &Monarch::SeparateFromSeparate;
     }
@@ -174,10 +174,10 @@ void Monarch::ReadHeader() const
         fRecordSeparateTwoBytes = new char[ fSeparateRecordSize ];
         fRecordSeparateTwo = new ( fRecordSeparateTwoBytes ) MonarchRecord();
 
-        cout << "  *format is <" << sFormatInterleavedDual << ">" << endl;
-        cout << "  *data size is <" << fDataSize << ">" << endl;
-        cout << "  *interleaved size is <" << fInterleavedRecordSize << ">" << endl;
-        cout << "  *separate size is <" << fSeparateRecordSize << ">" << endl;
+        //cout << "  *format is <" << sFormatInterleavedDual << ">" << endl;
+        //cout << "  *data size is <" << fDataSize << ">" << endl;
+        //cout << "  *interleaved size is <" << fInterleavedRecordSize << ">" << endl;
+        //cout << "  *separate size is <" << fSeparateRecordSize << ">" << endl;
 
         fReadFunction = &Monarch::InterleavedFromInterleaved;
     }
@@ -221,10 +221,10 @@ void Monarch::WriteHeader()
         fRecordSeparateOneBytes = new char[ fSeparateRecordSize ];
         fRecordSeparateOne = new ( fRecordSeparateOneBytes ) MonarchRecord();
 
-        cout << "  *format is <" << sFormatSingle << ">" << endl;
-        cout << "  *data size is <" << fDataSize << ">" << endl;
-        cout << "  *interleaved size is <" << fInterleavedRecordSize << ">" << endl;
-        cout << "  *separate size is <" << fSeparateRecordSize << ">" << endl;
+        //cout << "  *format is <" << sFormatSingle << ">" << endl;
+        //cout << "  *data size is <" << fDataSize << ">" << endl;
+        //cout << "  *interleaved size is <" << fInterleavedRecordSize << ">" << endl;
+        //cout << "  *separate size is <" << fSeparateRecordSize << ">" << endl;
 
         fWriteFunction = &Monarch::SeparateToSingle;
     }
@@ -242,10 +242,10 @@ void Monarch::WriteHeader()
         fRecordSeparateTwoBytes = new char[ fSeparateRecordSize ];
         fRecordSeparateTwo = new ( fRecordSeparateTwoBytes ) MonarchRecord();
 
-        cout << "  *format is <" << sFormatSeparateDual << ">" << endl;
-        cout << "  *data size is <" << fDataSize << ">" << endl;
-        cout << "  *interleaved size is <" << fInterleavedRecordSize << ">" << endl;
-        cout << "  *separate size is <" << fSeparateRecordSize << ">" << endl;
+        //cout << "  *format is <" << sFormatSeparateDual << ">" << endl;
+        //cout << "  *data size is <" << fDataSize << ">" << endl;
+        //cout << "  *interleaved size is <" << fInterleavedRecordSize << ">" << endl;
+        //cout << "  *separate size is <" << fSeparateRecordSize << ">" << endl;
 
         fWriteFunction = &Monarch::SeparateToSeparate;
     }
@@ -263,10 +263,10 @@ void Monarch::WriteHeader()
         fRecordSeparateTwoBytes = new char[ fSeparateRecordSize ];
         fRecordSeparateTwo = new ( fRecordSeparateTwoBytes ) MonarchRecord();
 
-        cout << "  *format is <" << sFormatInterleavedDual << ">" << endl;
-        cout << "  *data size is <" << fDataSize << ">" << endl;
-        cout << "  *interleaved size is <" << fInterleavedRecordSize << ">" << endl;
-        cout << "  *separate size is <" << fSeparateRecordSize << ">" << endl;
+        //cout << "  *format is <" << sFormatInterleavedDual << ">" << endl;
+        //cout << "  *data size is <" << fDataSize << ">" << endl;
+        //cout << "  *interleaved size is <" << fInterleavedRecordSize << ">" << endl;
+        //cout << "  *separate size is <" << fSeparateRecordSize << ">" << endl;
 
         fWriteFunction = &Monarch::InterleavedToInterleaved;
     }
