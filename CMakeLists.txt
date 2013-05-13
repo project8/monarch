@@ -9,7 +9,7 @@ include( $ENV{HOME}/.dmake/dmake.cmake )
 # setup #
 #########
 
-dmake_project_begin( Monarch 0 1 0 )
+dmake_project_begin( Monarch 0 3 0 )
 
 ########################
 # monarch dependencies #
