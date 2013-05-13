@@ -3,6 +3,12 @@
 
 #include "MonarchException.hpp"
 
+#include <cstdlib> // for atol in parsing timestamp
+
+// for parsing timestamp
+#include <sstream>
+using std::stringstream;
+
 MonarchHeader::MonarchHeader() :
     fProtobufHeader( new Protobuf::MonarchHeader() )
 {
@@ -51,6 +57,29 @@ void MonarchHeader::SetTimestamp( const string& aTimestamp )
 const string& MonarchHeader::GetTimestamp() const
 {
     return fProtobufHeader->timestamp();
+}
+
+const string MonarchHeader::GetDateTime() const
+{
+    // This shouldn't be called very often, so parsing in place shouldn't be much of a problem
+    // If this needs to be called a lot, this strategy should be rethought
+    stringstream ss(GetTimestamp());
+    string item;
+    // first token in the timestamp is the date/time string
+    std::getline(ss, item, sRecordTimeCalSep);
+    return item;
+}
+
+TimeType MonarchHeader::GetRecordTime0() const
+{
+    // This shouldn't be called very often, so parsing in place shouldn't be much of a problem
+    // If this needs to be called a lot, this strategy should be rethought
+    std::stringstream ss(GetTimestamp());
+    string item;
+    // second token in the timestamp is the record time_0
+    std::getline(ss, item, sRecordTimeCalSep);
+    std::getline(ss, item, sRecordTimeCalSep);
+    return (long long int)atol(item.c_str());
 }
 
 void MonarchHeader::SetDescription( const string& aDescription )

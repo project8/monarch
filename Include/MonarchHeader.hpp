@@ -38,6 +38,8 @@ class MonarchHeader
 
         void SetTimestamp( const string& aTimestamp );
         const string& GetTimestamp() const;
+        const string GetDateTime() const;
+        TimeType GetRecordTime0() const;
 
         void SetDescription( const string& aDescription );
         const string& GetDescription() const;
