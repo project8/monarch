@@ -31,10 +31,10 @@ static const FormatModeType sFormatInterleavedDual = 2;
 
 typedef unsigned long int AcquisitionIdType; // 8 bytes
 typedef unsigned long int RecordIdType; // 8 bytes
-typedef long int TimeType; // 8 bytes (alias to long int in most systems)
+typedef long long int TimeType; // 8 bytes
 typedef unsigned char DataType;
 
 static const std::string sDateTimeFormat("%Y-%m-%d %H:%M:%S %z");
-static const std::string sRecordTimeCalSep(" -- ");
+static const char sRecordTimeCalSep = '#';
 
 #endif // __MONARCH_TYPES_HPP
