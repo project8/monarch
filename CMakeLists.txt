@@ -55,10 +55,16 @@ dmake_executable_declare( MonarchDump . )
 dmake_executable_sources( MonarchDump
     MonarchDump.cpp
 )
+dmake_executable_libraries( MonarchDump 
+    MonarchCore
+)
 
 dmake_executable_declare( MonarchInfo . )
 dmake_executable_sources( MonarchInfo
     MonarchInfo.cpp
+)
+dmake_executable_libraries( MonarchInfo
+    MonarchCore
 )
 
 ########################
