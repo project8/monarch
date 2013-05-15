@@ -51,12 +51,12 @@ const string& MonarchHeader::GetFilename() const
 
 void MonarchHeader::SetTimestamp( const string& aTimestamp )
 {
-    fProtobufHeader->set_timestamp( aTimestamp );
+    fProtobufHeader->set_rundate( aTimestamp );
     return;
 }
 const string& MonarchHeader::GetTimestamp() const
 {
-    return fProtobufHeader->timestamp();
+    return fProtobufHeader->rundate();
 }
 /*
 const string MonarchHeader::GetDateTime() const
@@ -84,75 +84,75 @@ TimeType MonarchHeader::GetRecordTime0() const
 */
 void MonarchHeader::SetDescription( const string& aDescription )
 {
-    fProtobufHeader->set_description( aDescription );
+    fProtobufHeader->set_runinfo( aDescription );
     return;
 }
 const string& MonarchHeader::GetDescription() const
 {
-    return fProtobufHeader->description();
+    return fProtobufHeader->runinfo();
 }
 
 
-void MonarchHeader::SetContentMode( ContentModeType aContentMode )
+void MonarchHeader::SetRunType( RunType aRunType )
 {
-    switch( aContentMode )
+    switch( aRunType )
     {
-        case sContentSignal:
-            fProtobufHeader->set_contentmode( Protobuf::MonarchHeader_ContentModes_Signal );
+        case sRunTypeSignal:
+            fProtobufHeader->set_runtype( Protobuf::MonarchHeader_RunType_Signal );
             return;
-        case sContentBackground:
-            fProtobufHeader->set_contentmode( Protobuf::MonarchHeader_ContentModes_Background );
+        case sRunTypeBackground:
+            fProtobufHeader->set_runtype( Protobuf::MonarchHeader_RunType_Background );
             return;
-        case sContentOther:
-            fProtobufHeader->set_contentmode( Protobuf::MonarchHeader_ContentModes_Other );
+        case sRunTypeOther:
+            fProtobufHeader->set_runtype( Protobuf::MonarchHeader_RunType_Other );
             return;
         default:
             throw MonarchException() << "got unknown content mode";
             return;
     }
 }
-ContentModeType MonarchHeader::GetContentMode() const
+RunType MonarchHeader::GetRunType() const
 {
-    switch( fProtobufHeader->contentmode() )
+    switch( fProtobufHeader->runtype() )
     {
-        case Protobuf::MonarchHeader_ContentModes_Signal:
-            return sContentSignal;
-        case Protobuf::MonarchHeader_ContentModes_Background:
-            return sContentBackground;
-        case Protobuf::MonarchHeader_ContentModes_Other:
-            return sContentOther;
+        case Protobuf::MonarchHeader_RunType_Signal:
+            return sRunTypeSignal;
+        case Protobuf::MonarchHeader_RunType_Background:
+            return sRunTypeBackground;
+        case Protobuf::MonarchHeader_RunType_Other:
+            return sRunTypeOther;
         default:
-            throw MonarchException() << "has unknown content mode";
-            return -1;
+            throw MonarchException() << "has unknown run type";
+            return 1000;
     }
 }
 
-void MonarchHeader::SetSourceMode( SourceModeType aSourceMode )
+void MonarchHeader::SetRunSource( RunSourceType aRunSource )
 {
-    switch( aSourceMode )
+    switch( aRunSource )
     {
         case sSourceMantis:
-            fProtobufHeader->set_sourcemode( Protobuf::MonarchHeader_SourceModes_Mantis );
+            fProtobufHeader->set_runsource( Protobuf::MonarchHeader_RunSource_Mantis );
             return;
         case sSourceSimulation:
-            fProtobufHeader->set_sourcemode( Protobuf::MonarchHeader_SourceModes_Simulation );
+            fProtobufHeader->set_runsource( Protobuf::MonarchHeader_RunSource_Simulation );
             return;
         default:
             throw MonarchException() << "got unknown source mode";
             return;
     }
 }
-SourceModeType MonarchHeader::GetSourceMode() const
+RunSourceType MonarchHeader::GetRunSource() const
 {
-    switch( fProtobufHeader->sourcemode() )
+    switch( fProtobufHeader->runsource() )
     {
-        case Protobuf::MonarchHeader_SourceModes_Mantis:
+        case Protobuf::MonarchHeader_RunSource_Mantis:
             return sSourceMantis;
-        case Protobuf::MonarchHeader_SourceModes_Simulation:
+        case Protobuf::MonarchHeader_RunSource_Simulation:
             return sSourceSimulation;
         default:
             throw MonarchException() << "has unknown source mode";
-            return -1;
+            return 1000;
     }
 }
 
@@ -161,13 +161,13 @@ void MonarchHeader::SetFormatMode( FormatModeType aFormatMode )
     switch( aFormatMode )
     {
         case sFormatSingle:
-            fProtobufHeader->set_formatmode( Protobuf::MonarchHeader_FormatModes_Single );
+            fProtobufHeader->set_formatmode( Protobuf::MonarchHeader_FormatMode_Single );
             return;
-        case sFormatSeparateDual:
-            fProtobufHeader->set_formatmode( Protobuf::MonarchHeader_FormatModes_SeparateDual );
+        case sFormatMultiSeparate:
+            fProtobufHeader->set_formatmode( Protobuf::MonarchHeader_FormatMode_MultiSeparate );
             return;
-        case sFormatInterleavedDual:
-            fProtobufHeader->set_formatmode( Protobuf::MonarchHeader_FormatModes_InterleavedDual );
+        case sFormatMultiInterleaved:
+            fProtobufHeader->set_formatmode( Protobuf::MonarchHeader_FormatMode_MultiInterleaved );
             return;
         default:
             throw MonarchException() << "got unknown format mode";
@@ -178,46 +178,46 @@ FormatModeType MonarchHeader::GetFormatMode() const
 {
     switch( fProtobufHeader->formatmode() )
     {
-        case Protobuf::MonarchHeader_FormatModes_Single:
+        case Protobuf::MonarchHeader_FormatMode_Single:
             return sFormatSingle;
-        case Protobuf::MonarchHeader_FormatModes_SeparateDual:
-            return sFormatSeparateDual;
-        case Protobuf::MonarchHeader_FormatModes_InterleavedDual:
-            return sFormatInterleavedDual;
+        case Protobuf::MonarchHeader_FormatMode_MultiSeparate:
+            return sFormatMultiSeparate;
+        case Protobuf::MonarchHeader_FormatMode_MultiInterleaved:
+            return sFormatMultiInterleaved;
         default:
             throw MonarchException() << "has unknown format mode";
             return -1;
     }
 }
 
-void MonarchHeader::SetRate( double aRate )
+void MonarchHeader::SetAcquisitionRate( double aRate )
 {
-    fProtobufHeader->set_rate( aRate );
+    fProtobufHeader->set_acqrate( aRate );
     return;
 }
-double MonarchHeader::GetRate() const
+double MonarchHeader::GetAcquisitionRate() const
 {
-    return fProtobufHeader->rate();
+    return fProtobufHeader->acqrate();
 }
 
-void MonarchHeader::SetDuration( unsigned int aDuration )
+void MonarchHeader::SetRunDuration( unsigned int aDuration )
 {
-    fProtobufHeader->set_duration( aDuration );
+    fProtobufHeader->set_acqtime( aDuration );
     return;
 }
-unsigned int MonarchHeader::GetDuration() const
+unsigned int MonarchHeader::GetRunDuration() const
 {
-    return fProtobufHeader->duration();
+    return fProtobufHeader->acqtime();
 }
 
-void MonarchHeader::SetLength( unsigned int aLength )
+void MonarchHeader::SetRecordSize( unsigned int aSize )
 {
-    fProtobufHeader->set_length( aLength );
+    fProtobufHeader->set_recsize( aSize );
     return;
 }
-unsigned int MonarchHeader::GetLength() const
+unsigned int MonarchHeader::GetRecordSize() const
 {
-    return fProtobufHeader->length();
+    return fProtobufHeader->recsize();
 }
 
 std::ostream& operator<<( std::ostream& out, const MonarchHeader& hdr )
@@ -226,11 +226,11 @@ std::ostream& operator<<( std::ostream& out, const MonarchHeader& hdr )
     out << "\tFilename: " << hdr.GetFilename() << "\n";
     out << "\tTimestamp: " << hdr.GetTimestamp() << "\n";
     out << "\tDescription: " << hdr.GetDescription() << "\n";
-    out << "\tContent Mode: " << hdr.GetContentMode() << "\n";
-    out << "\tSource Mode: " << hdr.GetSourceMode() << "\n";
+    out << "\tRun Type: " << hdr.GetRunType() << "\n";
+    out << "\tRun Source: " << hdr.GetRunSource() << "\n";
     out << "\tFormat Mode: " << hdr.GetFormatMode() << "\n";
-    out << "\tRate: " << hdr.GetRate() << "\n";
-    out << "\tDuration: " << hdr.GetDuration() << "\n";
-    out << "\tLength: " << hdr.GetLength();
+    out << "\tRate: " << hdr.GetAcquisitionRate() << "\n";
+    out << "\tDuration: " << hdr.GetRunDuration() << "\n";
+    out << "\tLength: " << hdr.GetRecordSize();
     return out;
 }

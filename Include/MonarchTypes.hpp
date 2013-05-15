@@ -15,19 +15,19 @@ typedef unsigned int InterfaceModeType;
 static const AccessModeType sInterfaceInterleaved = 0;
 static const AccessModeType sInterfaceSeparate = 1;
 
-typedef unsigned int ContentModeType;
-static const ContentModeType sContentSignal = 0;
-static const ContentModeType sContentBackground = 1;
-static const ContentModeType sContentOther = 2;
+typedef unsigned int RunType;
+static const RunType sRunTypeSignal = 0;
+static const RunType sRunTypeBackground = 1;
+static const RunType sRunTypeOther = 999;
 
-typedef unsigned int SourceModeType;
-static const SourceModeType sSourceMantis = 0;
-static const SourceModeType sSourceSimulation = 1;
+typedef unsigned int RunSourceType;
+static const RunSourceType sSourceMantis = 0;
+static const RunSourceType sSourceSimulation = 1;
 
 typedef unsigned int FormatModeType;
 static const FormatModeType sFormatSingle = 0;
-static const FormatModeType sFormatSeparateDual = 1;
-static const FormatModeType sFormatInterleavedDual = 2;
+static const FormatModeType sFormatMultiSeparate = 1;
+static const FormatModeType sFormatMultiInterleaved = 2;
 
 typedef unsigned long int AcquisitionIdType; // 8 bytes
 typedef unsigned long int RecordIdType; // 8 bytes

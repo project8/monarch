@@ -45,24 +45,26 @@ class MonarchHeader
         const string& GetDescription() const;
 
 
-        void SetContentMode( ContentModeType aContentMode );
-        ContentModeType GetContentMode() const;
+        void SetRunType( RunType aRunType );
+        RunType GetRunType() const;
 
-        void SetSourceMode( SourceModeType aSourceMode );
-        SourceModeType GetSourceMode() const;
+        void SetRunSource( RunSourceType aRunSource );
+        RunSourceType GetRunSource() const;
 
         void SetFormatMode( FormatModeType aFormatMode );
         FormatModeType GetFormatMode() const;
 
+        // Acquisition rate in MHz
+        void SetAcquisitionRate( double aRate );
+        double GetAcquisitionRate() const;
 
-        void SetRate( double aRate );
-        double GetRate() const;
+        // Run duration in ms
+        void SetRunDuration( unsigned int aDuration );
+        unsigned int GetRunDuration() const;
 
-        void SetDuration( unsigned int aDuration );
-        unsigned int GetDuration() const;
-
-        void SetLength( unsigned int aLength );
-        unsigned int GetLength() const;
+        // Record size in samples
+        void SetRecordSize( unsigned int aSize );
+        unsigned int GetRecordSize() const;
 };
 
 // Pretty printing method

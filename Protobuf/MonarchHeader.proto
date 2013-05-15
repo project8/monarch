@@ -1,35 +1,65 @@
 package Protobuf;
 
+// The MonarchHeader class in protocol buffer form.
 message MonarchHeader
 {
-  required string Filename = 1;
-  required string Timestamp = 2 [default = "(unknown)"];
-  required string Description = 3 [default = "(unknown)"];
+  // The name of the file this belongs to.  Seems redundant
+  // but could be useful in terms of keeping track of files.
+  required string filename = 1;
   
-  enum ContentModes
-  {
-    Signal = 0;
-    Background = 1;
-    Other = 2;
-  }
-  required ContentModes ContentMode = 4 [default = Signal];
+  //there is no advantage to packaging the digitizer info into
+  //a message, so it was removed to simplify the structure
   
-  enum SourceModes
+  // What is the sample rate?
+  required double acqRate = 2;
+  
+  // How many channels were used?  
+  required uint32 acqMode = 3;
+  
+  // How long did we digitize for?
+  required uint32 acqTime = 4;
+  
+  // How long are the records in bytes?
+  required uint32 recSize = 5;
+  
+  // Now things like creation date (because why not)
+  optional string runDate = 6 [default = "(unknown)"];
+  
+  // Optionally tag the run with some text description
+  optional string runInfo = 7 [default = "(unknown)"];
+
+  // It's nice to know where data came from.  This flag will
+  // specify that the data is either from mantis or it is
+  // simulated. 
+  enum RunSource
   {
     Mantis = 0;
     Simulation = 1;
   }
-  required SourceModes SourceMode = 5 [default = Mantis];
+  // Optionally flag the source of the data.
+  optional RunSource runSource = 8;
+
+  // It's also nice to know if you expect this file to be
+  // a background measurement or to contain an expected signal.
+  enum RunType
+  {
+    Background = 0;
+    Signal = 1;
+    Other = 999;
+  }
+  // Optionally flag the content of the data.
+  optional RunType runType = 9;
   
-  enum FormatModes
+  // Are the records for multiple channels separate or interleaved?
+  // This option is ignored if only one channel is recorded (see acqMode)
+  enum FormatMode
   {
     Single = 0;
-    SeparateDual = 1;
-    InterleavedDual = 2;
-  }  
-  required FormatModes FormatMode = 6; 
+    MultiSeparate = 1;
+    MultiInterleaved = 2;
+  }
+  // Optionally specify if the records are separate or interleaved; separate is the default for backwards compatibility
+  optional FormatMode formatMode = 10 [default = MultiSeparate]; 
   
-  required double Rate = 7;
-  required uint32 Duration = 8;
-  required uint32 Length = 9;
+
 }
