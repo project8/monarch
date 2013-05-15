@@ -58,7 +58,7 @@ const string& MonarchHeader::GetTimestamp() const
 {
     return fProtobufHeader->timestamp();
 }
-
+/*
 const string MonarchHeader::GetDateTime() const
 {
     // This shouldn't be called very often, so parsing in place shouldn't be much of a problem
@@ -81,7 +81,7 @@ TimeType MonarchHeader::GetRecordTime0() const
     std::getline(ss, item, sRecordTimeCalSep);
     return (long long int)atol(item.c_str());
 }
-
+*/
 void MonarchHeader::SetDescription( const string& aDescription )
 {
     fProtobufHeader->set_description( aDescription );

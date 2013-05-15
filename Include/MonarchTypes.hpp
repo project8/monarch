@@ -35,6 +35,6 @@ typedef long long int TimeType; // 8 bytes
 typedef unsigned char DataType;
 
 static const std::string sDateTimeFormat("%Y-%m-%d %H:%M:%S %z");
-static const char sRecordTimeCalSep = '#';
+//static const char sRecordTimeCalSep = '#';
 
 #endif // __MONARCH_TYPES_HPP
