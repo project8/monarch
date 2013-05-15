@@ -1,75 +1,75 @@
-##################
-# get that gravy #
-##################
-
 cmake_minimum_required( VERSION 2.8 )
-include( $ENV{HOME}/.dmake/dmake.cmake )
 
 #########
 # setup #
 #########
 
-dmake_project_begin( Monarch 0 3 0 )
+project( Monarch )
+
+include( ${CMAKE_SOURCE_DIR}/PackageBuilder.cmake )
+pbuilder_prepare_project( 0 3 0 )
+
+include_directories( ${CMAKE_SOURCE_DIR}/Include )
+
 
 ########################
 # monarch dependencies #
 ########################
 
 find_package( Protobuf )
-protobuf_generate_cpp( Monarch_Protobuf_Source Monarch_Protobuf_Header ${Monarch_ROOT_DIRECTORY}/Protobuf/MonarchHeader.proto )
+protobuf_generate_cpp( Monarch_Protobuf_Source Monarch_Protobuf_Header ${CMAKE_CURRENT_SOURCE_DIR}/Protobuf/MonarchHeader.proto )
+include_directories( ${CMAKE_CURRENT_BINARY_DIR} )
+pbuilder_add_ext_libraries( ${PROTOBUF_LIBRARIES} )
+
 
 ###################
 # monarch library #
 ###################
 
-dmake_library_declare( MonarchCore . )
-dmake_library_headers( MonarchCore
-    MonarchTypes.hpp
-    MonarchException.hpp
-    MonarchHeader.hpp
-    MonarchRecord.hpp
-    MonarchIO.hpp
-    Monarch.hpp
-)
-dmake_library_headers_external( MonarchCore
+set( MONARCHCORE_HEADERFILES
+    ${CMAKE_CURRENT_SOURCE_DIR}/Include/MonarchTypes.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Include/MonarchException.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Include/MonarchHeader.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Include/MonarchRecord.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Include/MonarchIO.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Include/Monarch.hpp
     ${Monarch_Protobuf_Header}
 )
 
-dmake_library_sources( MonarchCore
-    MonarchException.cpp
-    MonarchHeader.cpp
-    MonarchRecord.cpp
-    MonarchIO.cpp
-    Monarch.cpp
-)
-dmake_library_sources_external( MonarchCore
+set( MONARCHCORE_SOURCEFILES
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/MonarchException.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/MonarchHeader.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/MonarchRecord.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/MonarchIO.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/Monarch.cpp
     ${Monarch_Protobuf_Source}
 )
-include_directories( ${CMAKE_CURRENT_BINARY_DIR} )
+
+add_library( MonarchCore ${MONARCHCORE_SOURCEFILES} )
+target_link_libraries( MonarchCore ${EXTERNAL_LIBRARIES} )
+
+pbuilder_install_headers( ${MONARCHCORE_HEADERFILES} )
+pbuilder_install_libraries( MonarchCore )
+
 
 #######################
 # monarch executables #
 #######################
 
-dmake_executable_declare( MonarchDump . )
-dmake_executable_sources( MonarchDump
-    MonarchDump.cpp
-)
-dmake_executable_libraries( MonarchDump 
-    MonarchCore
+add_executable( MonarchDump ${CMAKE_CURRENT_SOURCE_DIR}/Source/MonarchDump.cpp )
+target_link_libraries( MonarchDump MonarchCore ${EXTERNAL_LIBRARIES})
+
+add_executable( MonarchInfo ${CMAKE_CURRENT_SOURCE_DIR}/Source/MonarchInfo.cpp )
+target_link_libraries( MonarchInfo MonarchCore ${EXTERNAL_LIBRARIES})
+
+pbuilder_install_executables (
+    MonarchDump
+    MonarchInfo
 )
 
-dmake_executable_declare( MonarchInfo . )
-dmake_executable_sources( MonarchInfo
-    MonarchInfo.cpp
-)
-dmake_executable_libraries( MonarchInfo
-    MonarchCore
-)
 
-########################
-# monarch installation #
-########################
+#######################
+# installation config #
+#######################
 
-dmake_project_end()
-target_link_libraries( MonarchCore ${PROTOBUF_LIBRARIES} )
+pbuilder_install_config_files()
