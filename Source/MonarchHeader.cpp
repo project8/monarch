@@ -235,13 +235,14 @@ std::ostream& operator<<( std::ostream& out, const MonarchHeader& hdr )
 {
     out << "Monarch Header Content: " << "\n";
     out << "\tFilename: " << hdr.GetFilename() << "\n";
+    out << "\tAcquisition Mode (# channels): " << hdr.GetAcquisitionMode() << "\n";
+    out << "\tAcquisition Rate: " << hdr.GetAcquisitionRate() << "\n";
+    out << "\tRun Duration: " << hdr.GetRunDuration() << "\n";
+    out << "\tRecord Size: " << hdr.GetRecordSize() << "\n";
     out << "\tTimestamp: " << hdr.GetTimestamp() << "\n";
     out << "\tDescription: " << hdr.GetDescription() << "\n";
     out << "\tRun Type: " << hdr.GetRunType() << "\n";
     out << "\tRun Source: " << hdr.GetRunSource() << "\n";
-    out << "\tFormat Mode: " << hdr.GetFormatMode() << "\n";
-    out << "\tRate: " << hdr.GetAcquisitionRate() << "\n";
-    out << "\tDuration: " << hdr.GetRunDuration() << "\n";
-    out << "\tLength: " << hdr.GetRecordSize();
+    out << "\tFormat Mode: " << hdr.GetFormatMode();
     return out;
 }
