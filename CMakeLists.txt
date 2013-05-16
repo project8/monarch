@@ -62,9 +62,13 @@ target_link_libraries( MonarchDump MonarchCore ${EXTERNAL_LIBRARIES})
 add_executable( MonarchInfo ${CMAKE_CURRENT_SOURCE_DIR}/Source/MonarchInfo.cpp )
 target_link_libraries( MonarchInfo MonarchCore ${EXTERNAL_LIBRARIES})
 
+add_executable( MonarchTimeCheck ${CMAKE_CURRENT_SOURCE_DIR}/Source/MonarchTimeCheck.cpp )
+target_link_libraries( MonarchTimeCheck MonarchCore ${EXTERNAL_LIBRARIES})
+
 pbuilder_install_executables (
     MonarchDump
     MonarchInfo
+    MonarchTimeCheck
 )
 
 
