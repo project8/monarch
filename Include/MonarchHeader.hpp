@@ -33,8 +33,29 @@ class MonarchHeader
 
         //access methods
 
+        // Required in protobuf header
+
         void SetFilename( const string& aFilename );
         const string& GetFilename() const;
+
+        // Acquisition mode: how many channels?
+        void SetAcquisitionMode( unsigned int aMode );
+        unsigned int GetAcquisitionMode() const;
+
+        // Acquisition rate in MHz
+        void SetAcquisitionRate( double aRate );
+        double GetAcquisitionRate() const;
+
+        // Run duration in ms
+        void SetRunDuration( unsigned int aDuration );
+        unsigned int GetRunDuration() const;
+
+        // Record size in samples
+        void SetRecordSize( unsigned int aSize );
+        unsigned int GetRecordSize() const;
+
+
+        // Optional in protobuf header
 
         void SetTimestamp( const string& aTimestamp );
         const string& GetTimestamp() const;
@@ -54,17 +75,6 @@ class MonarchHeader
         void SetFormatMode( FormatModeType aFormatMode );
         FormatModeType GetFormatMode() const;
 
-        // Acquisition rate in MHz
-        void SetAcquisitionRate( double aRate );
-        double GetAcquisitionRate() const;
-
-        // Run duration in ms
-        void SetRunDuration( unsigned int aDuration );
-        unsigned int GetRunDuration() const;
-
-        // Record size in samples
-        void SetRecordSize( unsigned int aSize );
-        unsigned int GetRecordSize() const;
 };
 
 // Pretty printing method

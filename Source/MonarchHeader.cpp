@@ -190,6 +190,17 @@ FormatModeType MonarchHeader::GetFormatMode() const
     }
 }
 
+void MonarchHeader::SetAcquisitionMode( unsigned int aMode )
+{
+    fProtobufHeader->set_acqmode( aMode );
+    return;
+}
+
+unsigned int MonarchHeader::GetAcquisitionMode() const
+{
+    return fProtobufHeader->acqmode();
+}
+
 void MonarchHeader::SetAcquisitionRate( double aRate )
 {
     fProtobufHeader->set_acqrate( aRate );

@@ -9,6 +9,7 @@ Monarch::Monarch() :
         fState( eClosed ),
         fIO( NULL ),
         fHeader( NULL ),
+        fDataSize( 0 ),
         fInterleavedRecordSize( 0 ),
         fRecordInterleaved( NULL ),
         fRecordInterleavedBytes( NULL ),
@@ -120,15 +121,15 @@ void Monarch::ReadHeader() const
     }
     delete[] tHeaderBuffer;
 
-    if( fHeader->GetFormatMode() == sFormatSingle )
+    if( fHeader->GetAcquisitionMode() == 1 /* the FormatMode is ignored for single-channel data */ )
     {
-        fDataSize = fHeader->GetLength() * sizeof(DataType);
+        fDataSize = (int)fHeader->GetRecordSize() * (int)sizeof(DataType);
 
-        fInterleavedRecordSize = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + fDataSize;
+        fInterleavedRecordSize = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + (size_t)fDataSize;
         fRecordInterleavedBytes = new char[ fInterleavedRecordSize ];
         fRecordInterleaved = new ( fRecordInterleavedBytes ) MonarchRecord();
 
-        fSeparateRecordSize = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + fDataSize;
+        fSeparateRecordSize = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + (size_t)fDataSize;
         fRecordSeparateOneBytes = new char[ fSeparateRecordSize ];
         fRecordSeparateOne = new ( fRecordSeparateOneBytes ) MonarchRecord();
 
@@ -139,15 +140,15 @@ void Monarch::ReadHeader() const
 
         fReadFunction = &Monarch::SeparateFromSingle;
     }
-    if( fHeader->GetFormatMode() == sFormatSeparateDual )
+    else if( fHeader->GetAcquisitionMode() == 2 && fHeader->GetFormatMode() == sFormatMultiSeparate )
     {
-        fDataSize = fHeader->GetLength() * sizeof(DataType);
+        fDataSize = (int)fHeader->GetRecordSize() * (int)sizeof(DataType);
 
-        fInterleavedRecordSize = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + 2 * fDataSize;
+        fInterleavedRecordSize = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + 2 * (size_t)fDataSize;
         fRecordInterleavedBytes = new char[ fInterleavedRecordSize ];
         fRecordInterleaved = new ( fRecordInterleavedBytes ) MonarchRecord();
 
-        fSeparateRecordSize = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + fDataSize;
+        fSeparateRecordSize = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + (size_t)fDataSize;
         fRecordSeparateOneBytes = new char[ fSeparateRecordSize ];
         fRecordSeparateOne = new ( fRecordSeparateOneBytes ) MonarchRecord();
         fRecordSeparateTwoBytes = new char[ fSeparateRecordSize ];
@@ -160,15 +161,15 @@ void Monarch::ReadHeader() const
 
         fReadFunction = &Monarch::SeparateFromSeparate;
     }
-    if( fHeader->GetFormatMode() == sFormatInterleavedDual )
+    else if( fHeader->GetAcquisitionMode() == 2 && fHeader->GetFormatMode() == sFormatMultiInterleaved )
     {
-        fDataSize = fHeader->GetLength() * sizeof(DataType);
+        fDataSize = (int)fHeader->GetRecordSize() * (int)sizeof(DataType);
 
-        fInterleavedRecordSize = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + 2 * fDataSize;
+        fInterleavedRecordSize = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + 2 * (size_t)fDataSize;
         fRecordInterleavedBytes = new char[ fInterleavedRecordSize ];
         fRecordInterleaved = new ( fRecordInterleavedBytes ) MonarchRecord();
 
-        fSeparateRecordSize = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + fDataSize;
+        fSeparateRecordSize = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + (size_t)fDataSize;
         fRecordSeparateOneBytes = new char[ fSeparateRecordSize ];
         fRecordSeparateOne = new ( fRecordSeparateOneBytes ) MonarchRecord();
         fRecordSeparateTwoBytes = new char[ fSeparateRecordSize ];
@@ -181,10 +182,16 @@ void Monarch::ReadHeader() const
 
         fReadFunction = &Monarch::InterleavedFromInterleaved;
     }
+    else
+    {
+        throw MonarchException() << "Unable to read a header with acquisition mode <" << fHeader->GetAcquisitionMode() << "> and format mode <" << fHeader->GetFormatMode() << ">";
+        return;
+    }
 
     fState = eReady;
     return;
 }
+
 void Monarch::WriteHeader()
 {
     PreludeType tPrelude = fHeader->ByteSize();
@@ -209,15 +216,15 @@ void Monarch::WriteHeader()
     }
     delete[] tHeaderBuffer;
 
-    if( fHeader->GetFormatMode() == sFormatSingle )
+    if( fHeader->GetAcquisitionMode() == 1 /* the FormatMode is ignored for single-channel data */ )
     {
-        fDataSize = fHeader->GetLength() * sizeof(DataType);
+        fDataSize = (int)fHeader->GetRecordSize() * (int)sizeof(DataType);
 
-        fInterleavedRecordSize = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + fDataSize;
+        fInterleavedRecordSize = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + (size_t)fDataSize;
         fRecordInterleavedBytes = new char[ fInterleavedRecordSize ];
         fRecordInterleaved = new ( fRecordInterleavedBytes ) MonarchRecord();
 
-        fSeparateRecordSize = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + fDataSize;
+        fSeparateRecordSize = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + (size_t)fDataSize;
         fRecordSeparateOneBytes = new char[ fSeparateRecordSize ];
         fRecordSeparateOne = new ( fRecordSeparateOneBytes ) MonarchRecord();
 
@@ -228,15 +235,15 @@ void Monarch::WriteHeader()
 
         fWriteFunction = &Monarch::SeparateToSingle;
     }
-    if( fHeader->GetFormatMode() == sFormatSeparateDual )
+    else if( fHeader->GetAcquisitionMode() == 2 && fHeader->GetFormatMode() == sFormatMultiSeparate )
     {
-        fDataSize = fHeader->GetLength() * sizeof(DataType);
+        fDataSize = (int)fHeader->GetRecordSize() * (int)sizeof(DataType);
 
-        fInterleavedRecordSize = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + 2 * fDataSize;
+        fInterleavedRecordSize = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + 2 * (size_t)fDataSize;
         fRecordInterleavedBytes = new char[ fInterleavedRecordSize ];
         fRecordInterleaved = new ( fRecordInterleavedBytes ) MonarchRecord();
 
-        fSeparateRecordSize = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + fDataSize;
+        fSeparateRecordSize = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + (size_t)fDataSize;
         fRecordSeparateOneBytes = new char[ fSeparateRecordSize ];
         fRecordSeparateOne = new ( fRecordSeparateOneBytes ) MonarchRecord();
         fRecordSeparateTwoBytes = new char[ fSeparateRecordSize ];
@@ -249,15 +256,15 @@ void Monarch::WriteHeader()
 
         fWriteFunction = &Monarch::SeparateToSeparate;
     }
-    if( fHeader->GetFormatMode() == sFormatInterleavedDual )
+    else if( fHeader->GetAcquisitionMode() == 2 && fHeader->GetFormatMode() == sFormatMultiInterleaved )
     {
-        fDataSize = fHeader->GetLength() * sizeof(DataType);
+        fDataSize = (int)fHeader->GetRecordSize() * (int)sizeof(DataType);
 
-        fInterleavedRecordSize = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + 2 * fDataSize;
+        fInterleavedRecordSize = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + 2 * (size_t)fDataSize;
         fRecordInterleavedBytes = new char[ fInterleavedRecordSize ];
         fRecordInterleaved = new ( fRecordInterleavedBytes ) MonarchRecord();
 
-        fSeparateRecordSize = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + fDataSize;
+        fSeparateRecordSize = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + (size_t)fDataSize;
         fRecordSeparateOneBytes = new char[ fSeparateRecordSize ];
         fRecordSeparateOne = new ( fRecordSeparateOneBytes ) MonarchRecord();
         fRecordSeparateTwoBytes = new char[ fSeparateRecordSize ];
@@ -270,6 +277,11 @@ void Monarch::WriteHeader()
 
         fWriteFunction = &Monarch::InterleavedToInterleaved;
     }
+    else
+    {
+        throw MonarchException() << "Unable to write a header with acquisition mode <" << fHeader->GetAcquisitionMode() << "> and format mode <" << fHeader->GetFormatMode() << ">";
+        return;
+    }
 
     fState = eReady;
     return;
@@ -279,66 +291,67 @@ void Monarch::SetInterface( InterfaceModeType aMode ) const
 {
     if( aMode == sInterfaceInterleaved )
     {
-        if( fHeader->GetFormatMode() == sFormatSingle )
+        if( fHeader->GetAcquisitionMode() == 1 /* the FormatMode is ignored for single-channel data */ )
         {
             fReadFunction = &Monarch::InterleavedFromSingle;
         }
-        if( fHeader->GetFormatMode() == sFormatInterleavedDual )
+        else if( fHeader->GetAcquisitionMode() == 2 && fHeader->GetFormatMode() == sFormatMultiInterleaved )
         {
             fReadFunction = &Monarch::InterleavedFromInterleaved;
         }
-        if( fHeader->GetFormatMode() == sFormatSeparateDual )
+        else if( fHeader->GetAcquisitionMode() == 2 && fHeader->GetFormatMode() == sFormatMultiSeparate )
         {
             fReadFunction = &Monarch::InterleavedFromSeparate;
         }
     }
     if( aMode == sInterfaceSeparate )
     {
-        if( fHeader->GetFormatMode() == sFormatSingle )
+        if( fHeader->GetAcquisitionMode() == 1 /* the FormatMode is ignored for single-channel data */ )
         {
             fReadFunction = &Monarch::SeparateFromSingle;
         }
-        if( fHeader->GetFormatMode() == sFormatInterleavedDual )
+        else if( fHeader->GetAcquisitionMode() == 2 && fHeader->GetFormatMode() == sFormatMultiInterleaved )
         {
             fReadFunction = &Monarch::SeparateFromInterleaved;
         }
-        if( fHeader->GetFormatMode() == sFormatSeparateDual )
+        else if( fHeader->GetAcquisitionMode() == 2 && fHeader->GetFormatMode() == sFormatMultiSeparate )
         {
             fReadFunction = &Monarch::SeparateFromSeparate;
         }
     }
     return;
 }
+
 void Monarch::SetInterface( InterfaceModeType aMode )
 {
     if( aMode == sInterfaceInterleaved )
     {
-        if( fHeader->GetFormatMode() == sFormatSingle )
+        if( fHeader->GetAcquisitionMode() == 1 /* the FormatMode is ignored for single-channel data */ )
         {
-            fWriteFunction = &Monarch::InterleavedToSingle;
+            fReadFunction = &Monarch::InterleavedFromSingle;
         }
-        if( fHeader->GetFormatMode() == sFormatInterleavedDual )
+        else if( fHeader->GetAcquisitionMode() == 2 && fHeader->GetFormatMode() == sFormatMultiInterleaved )
         {
-            fWriteFunction = &Monarch::InterleavedToInterleaved;
+            fReadFunction = &Monarch::InterleavedFromInterleaved;
         }
-        if( fHeader->GetFormatMode() == sFormatSeparateDual )
+        else if( fHeader->GetAcquisitionMode() == 2 && fHeader->GetFormatMode() == sFormatMultiSeparate )
         {
-            fWriteFunction = &Monarch::InterleavedToSeparate;
+            fReadFunction = &Monarch::InterleavedFromSeparate;
         }
     }
     if( aMode == sInterfaceSeparate )
     {
-        if( fHeader->GetFormatMode() == sFormatSingle )
+        if( fHeader->GetAcquisitionMode() == 1 /* the FormatMode is ignored for single-channel data */ )
         {
-            fWriteFunction = &Monarch::SeparateToSingle;
+            fReadFunction = &Monarch::SeparateFromSingle;
         }
-        if( fHeader->GetFormatMode() == sFormatInterleavedDual )
+        else if( fHeader->GetAcquisitionMode() == 2 && fHeader->GetFormatMode() == sFormatMultiInterleaved )
         {
-            fWriteFunction = &Monarch::SeparateToInterleaved;
+            fReadFunction = &Monarch::SeparateFromInterleaved;
         }
-        if( fHeader->GetFormatMode() == sFormatSeparateDual )
+        else if( fHeader->GetAcquisitionMode() == 2 && fHeader->GetFormatMode() == sFormatMultiSeparate )
         {
-            fWriteFunction = &Monarch::SeparateToSeparate;
+            fReadFunction = &Monarch::SeparateFromSeparate;
         }
     }
     return;
@@ -348,6 +361,7 @@ bool Monarch::ReadRecord() const
 {
     return (this->*fReadFunction)();
 }
+
 bool Monarch::InterleavedFromSingle() const
 {
     if( fIO->Read( fRecordInterleavedBytes, fInterleavedRecordSize ) == false )
@@ -361,6 +375,7 @@ bool Monarch::InterleavedFromSingle() const
 
     return true;
 }
+
 bool Monarch::InterleavedFromSeparate() const
 {
     if( fIO->Read( fRecordSeparateOneBytes, fSeparateRecordSize ) == false )
@@ -388,6 +403,7 @@ bool Monarch::InterleavedFromSeparate() const
 
     return true;
 }
+
 bool Monarch::InterleavedFromInterleaved() const
 {
     if( fIO->Read( fRecordInterleavedBytes, fInterleavedRecordSize ) == false )
@@ -401,6 +417,7 @@ bool Monarch::InterleavedFromInterleaved() const
 
     return true;
 }
+
 bool Monarch::SeparateFromSingle() const
 {
     if( fIO->Read( fRecordSeparateOneBytes, fSeparateRecordSize ) == false )
@@ -414,6 +431,7 @@ bool Monarch::SeparateFromSingle() const
 
     return true;
 }
+
 bool Monarch::SeparateFromSeparate() const
 {
     if( fIO->Read( fRecordSeparateOneBytes, fSeparateRecordSize ) == false )
@@ -436,6 +454,7 @@ bool Monarch::SeparateFromSeparate() const
 
     return true;
 }
+
 bool Monarch::SeparateFromInterleaved() const
 {
     if( fIO->Read( fRecordInterleavedBytes, fInterleavedRecordSize ) == false )
@@ -462,6 +481,7 @@ bool Monarch::WriteRecord()
 {
     return (this->*fWriteFunction)();
 }
+
 bool Monarch::InterleavedToSingle()
 {
     if( fIO->Write( fRecordInterleavedBytes, fInterleavedRecordSize ) == false )
@@ -472,6 +492,7 @@ bool Monarch::InterleavedToSingle()
 
     return true;
 }
+
 bool Monarch::InterleavedToSeparate()
 {
     fRecordSeparateOne->fTime = fRecordInterleaved->fTime;
@@ -496,6 +517,7 @@ bool Monarch::InterleavedToSeparate()
 
     return true;
 }
+
 bool Monarch::InterleavedToInterleaved()
 {
     if( fIO->Write( fRecordInterleavedBytes, fInterleavedRecordSize ) == false )
@@ -506,6 +528,7 @@ bool Monarch::InterleavedToInterleaved()
 
     return true;
 }
+
 bool Monarch::SeparateToSingle()
 {
     if( fIO->Write( fRecordSeparateOneBytes, fSeparateRecordSize ) == false )
@@ -516,6 +539,7 @@ bool Monarch::SeparateToSingle()
 
     return true;
 }
+
 bool Monarch::SeparateToSeparate()
 {
     if( fIO->Write( fRecordSeparateOneBytes, fSeparateRecordSize ) == false )
@@ -532,6 +556,7 @@ bool Monarch::SeparateToSeparate()
 
     return true;
 }
+
 bool Monarch::SeparateToInterleaved()
 {
     fRecordInterleaved->fTime = fRecordSeparateOne->fTime;
@@ -556,6 +581,7 @@ void Monarch::Close() const
     }
     return;
 }
+
 void Monarch::Close()
 {
     if( fIO->Close() == false )

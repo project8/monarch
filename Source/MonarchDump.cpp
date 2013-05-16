@@ -12,7 +12,7 @@ int main( const int argc, const char** argv )
     if( argc < 3 )
     {
         cout << "usage:" << endl;
-        cout << "  MonarchDump <input monarch file> <output text file>" << endl;
+        cout << "  MonarchDump <input egg file> <output text file>" << endl;
         return -1;
     }
 
@@ -50,14 +50,14 @@ int main( const int argc, const char** argv )
                 tAcquisitonCount = tAcquisitonCount + 1;
                 tOutputOne << "\n\n";
             }
-            for( size_t tIndex = 0; tIndex < tReadHeader->GetLength(); tIndex++ )
+            for( unsigned int tIndex = 0; tIndex < tReadHeader->GetRecordSize(); tIndex++ )
             {
                 tOutputOne << tIndex << " " << (unsigned int) ((unsigned char) (tReadRecord->fData[tIndex])) << "\n";
             }
         }
         tOutputTwo << "(empty)\n";
     }
-    if( (tReadHeader->GetFormatMode() == sFormatInterleavedDual) || (tReadHeader->GetFormatMode() == sFormatSeparateDual) )
+    if( (tReadHeader->GetFormatMode() == sFormatMultiInterleaved) || (tReadHeader->GetFormatMode() == sFormatMultiSeparate) )
     {
         const MonarchRecord* tReadRecordOne = tReadTest->GetRecordSeparateOne();
         const MonarchRecord* tReadRecordTwo = tReadTest->GetRecordSeparateTwo();
@@ -70,7 +70,7 @@ int main( const int argc, const char** argv )
                 tOutputOne << "\n\n";
                 tOutputTwo << "\n\n";
             }
-            for( size_t tIndex = 0; tIndex < tReadHeader->GetLength(); tIndex++ )
+            for( unsigned int tIndex = 0; tIndex < tReadHeader->GetRecordSize(); tIndex++ )
             {
                 tOutputOne << tIndex << " " << (unsigned int) ((unsigned char) (tReadRecordOne->fData[ tIndex ])) << "\n";
                 tOutputTwo << tIndex << " " << (unsigned int) ((unsigned char) (tReadRecordTwo->fData[ tIndex ])) << "\n";

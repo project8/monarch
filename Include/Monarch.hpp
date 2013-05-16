@@ -42,8 +42,9 @@ class Monarch
         static const Monarch* OpenForReading( const string& filename );
 
         //this method parses the file for the header contents.
-        //if the header demarshalled correctly, this returns true and the header may be examined, and memory is allocated for the record.
+        //if the header demarshalled correctly, this returns and the header may be examined, and memory is allocated for the record.
         //upon successful return monarch is in the eReady state.
+        //an exception is thrown if the header is not read.
         void ReadHeader() const;
 
         //get the pointer to the header.
