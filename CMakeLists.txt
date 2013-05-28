@@ -77,3 +77,5 @@ pbuilder_install_executables (
 #######################
 
 pbuilder_install_config_files()
+
+pbuilder_variables_for_parent()

@@ -3,6 +3,13 @@
 # Parts of this script are based on work done by Sebastian Voecking and Marco Haag in the Kasper package
 # Convenient macros and default variable settings for the Katydid build.
 
+# check if this is a stand-alone build
+set( PBUILDER_STANDALONE FALSE CACHE INTERNAL "Flag for whether or not this is a stand-alone build" )
+if( ${CMAKE_SOURCE_DIR} STREQUAL ${PROJECT_SOURCE_DIR} )
+    set( PBUILDER_STANDALONE TRUE )
+endif( ${CMAKE_SOURCE_DIR} STREQUAL ${PROJECT_SOURCE_DIR} )
+
+# preprocessor defintion for debug build
 if ("${CMAKE_BUILD_TYPE}" STREQUAL "DEBUG")
     add_definitions(-D${PROJECT_NAME}_DEBUG)
 else ("${CMAKE_BUILD_TYPE}" STREQUAL "DEBUG")
@@ -133,4 +140,13 @@ macro (pbuilder_install_config_files)
         file (REMOVE ${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}Config.cmake.tmp)
         file (RENAME ${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}Config.cmake.ppp ${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}Config.cmake)
     endif (EXISTS ${PROJECT_SOURCE_DIR}/${PROJECT_NAME}Config.cmake.in)
+endmacro ()
+
+macro (pbuilder_variables_for_parent)
+    if (NOT ${PBUILDER_STANDALONE})
+        get_property (LIBRARIES GLOBAL PROPERTY ${PROJECT_NAME}_LIBRARIES)
+        set (${PROJECT_NAME}_LIBRARIES ${LIBRARIES} PARENT_SCOPE)
+        set (${PROJECT_NAME}_LIBRARY_DIR ${LIB_INSTALL_DIR} PARENT_SCOPE)
+        set (${PROJECT_NAME}_INCLUDE_DIR ${INCLUDE_INSTALL_DIR} PARENT_SCOPE)
+    endif (NOT ${PBUILDER_STANDALONE})
 endmacro ()
