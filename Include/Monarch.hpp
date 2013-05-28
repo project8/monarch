@@ -56,7 +56,7 @@ class Monarch
         //this method parses the file for a next record.
         //if the record demarshalled correctly, this returns true and the record is refreshed with content.
         //when the end of the file is reached, this will return false.
-        bool ReadRecord() const;
+        bool ReadRecord( int anOffset = 0 ) const;
 
         //get the pointer to the current interleaved record.
         const MonarchRecord* GetRecordInterleaved() const;
@@ -132,13 +132,13 @@ class Monarch
         mutable char* fRecordSeparateTwoBytes;
 
         //the private read functions
-        mutable bool (Monarch::*fReadFunction)() const;
-        bool InterleavedFromSingle() const;
-        bool InterleavedFromSeparate() const;
-        bool InterleavedFromInterleaved() const;
-        bool SeparateFromSingle() const;
-        bool SeparateFromSeparate() const;
-        bool SeparateFromInterleaved() const;
+        mutable bool (Monarch::*fReadFunction)( int anOffset ) const;
+        bool InterleavedFromSingle( int anOffset ) const;
+        bool InterleavedFromSeparate( int anOffset ) const;
+        bool InterleavedFromInterleaved( int anOffset ) const;
+        bool SeparateFromSingle( int anOffset ) const;
+        bool SeparateFromSeparate( int anOffset ) const;
+        bool SeparateFromInterleaved( int anOffset ) const;
 
         //the private write functions
         mutable bool (Monarch::*fWriteFunction)();

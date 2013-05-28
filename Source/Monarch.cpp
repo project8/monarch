@@ -357,13 +357,26 @@ void Monarch::SetInterface( InterfaceModeType aMode )
     return;
 }
 
-bool Monarch::ReadRecord() const
+bool Monarch::ReadRecord( int anOffset ) const
 {
-    return (this->*fReadFunction)();
+    return (this->*fReadFunction)( anOffset );
 }
 
-bool Monarch::InterleavedFromSingle() const
+bool Monarch::InterleavedFromSingle( int anOffset ) const
 {
+    if( anOffset != 0 )
+    {
+        long int aByteOffset = anOffset * fInterleavedRecordSize;
+        if( fIO->Seek( aByteOffset ) == false )
+        {
+            if( fIO->Done() != true )
+            {
+                cout << "could not seek to requested position" << endl;
+            }
+            return false;
+        }
+    }
+
     if( fIO->Read( fRecordInterleavedBytes, fInterleavedRecordSize ) == false )
     {
         if( fIO->Done() != true )
@@ -376,8 +389,21 @@ bool Monarch::InterleavedFromSingle() const
     return true;
 }
 
-bool Monarch::InterleavedFromSeparate() const
+bool Monarch::InterleavedFromSeparate( int anOffset ) const
 {
+    if( anOffset != 0 )
+    {
+        long int aByteOffset = anOffset * 2 * fSeparateRecordSize;
+        if( fIO->Seek( aByteOffset ) == false )
+        {
+            if( fIO->Done() != true )
+            {
+                cout << "could not seek to requested position" << endl;
+            }
+            return false;
+        }
+    }
+
     if( fIO->Read( fRecordSeparateOneBytes, fSeparateRecordSize ) == false )
     {
         if( fIO->Done() != true )
@@ -404,8 +430,21 @@ bool Monarch::InterleavedFromSeparate() const
     return true;
 }
 
-bool Monarch::InterleavedFromInterleaved() const
+bool Monarch::InterleavedFromInterleaved( int anOffset ) const
 {
+    if( anOffset != 0 )
+    {
+        long int aByteOffset = anOffset * fInterleavedRecordSize;
+        if( fIO->Seek( aByteOffset ) == false )
+        {
+            if( fIO->Done() != true )
+            {
+                cout << "could not seek to requested position" << endl;
+            }
+            return false;
+        }
+    }
+
     if( fIO->Read( fRecordInterleavedBytes, fInterleavedRecordSize ) == false )
     {
         if( fIO->Done() != true )
@@ -418,8 +457,21 @@ bool Monarch::InterleavedFromInterleaved() const
     return true;
 }
 
-bool Monarch::SeparateFromSingle() const
+bool Monarch::SeparateFromSingle( int anOffset ) const
 {
+    if( anOffset != 0 )
+    {
+        long int aByteOffset = anOffset * fSeparateRecordSize;
+        if( fIO->Seek( aByteOffset ) == false )
+        {
+            if( fIO->Done() != true )
+            {
+                cout << "could not seek to requested position" << endl;
+            }
+            return false;
+        }
+    }
+
     if( fIO->Read( fRecordSeparateOneBytes, fSeparateRecordSize ) == false )
     {
         if( fIO->Done() != true )
@@ -432,8 +484,21 @@ bool Monarch::SeparateFromSingle() const
     return true;
 }
 
-bool Monarch::SeparateFromSeparate() const
+bool Monarch::SeparateFromSeparate( int anOffset ) const
 {
+    if( anOffset != 0 )
+    {
+        long int aByteOffset = anOffset * 2 * fSeparateRecordSize;
+        if( fIO->Seek( aByteOffset ) == false )
+        {
+            if( fIO->Done() != true )
+            {
+                cout << "could not seek to requested position" << endl;
+            }
+            return false;
+        }
+    }
+
     if( fIO->Read( fRecordSeparateOneBytes, fSeparateRecordSize ) == false )
     {
         if( fIO->Done() != true )
@@ -455,8 +520,21 @@ bool Monarch::SeparateFromSeparate() const
     return true;
 }
 
-bool Monarch::SeparateFromInterleaved() const
+bool Monarch::SeparateFromInterleaved( int anOffset ) const
 {
+    if( anOffset != 0 )
+    {
+        long int aByteOffset = anOffset * fInterleavedRecordSize;
+        if( fIO->Seek( aByteOffset ) == false )
+        {
+            if( fIO->Done() != true )
+            {
+                cout << "could not seek to requested position" << endl;
+            }
+            return false;
+        }
+    }
+
     if( fIO->Read( fRecordInterleavedBytes, fInterleavedRecordSize ) == false )
     {
         if( fIO->Done() != true )
