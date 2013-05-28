@@ -6,7 +6,7 @@ cmake_minimum_required( VERSION 2.8 )
 
 project( Monarch )
 
-include( ${CMAKE_SOURCE_DIR}/PackageBuilder.cmake )
+include( ${PROJECT_SOURCE_DIR}/PackageBuilder.cmake )
 pbuilder_prepare_project( 0 3 0 )
 
 include_directories( ${CMAKE_SOURCE_DIR}/Include )
