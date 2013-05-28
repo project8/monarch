@@ -328,30 +328,30 @@ void Monarch::SetInterface( InterfaceModeType aMode )
     {
         if( fHeader->GetAcquisitionMode() == 1 /* the FormatMode is ignored for single-channel data */ )
         {
-            fReadFunction = &Monarch::InterleavedFromSingle;
+            fWriteFunction = &Monarch::InterleavedToSingle;
         }
         else if( fHeader->GetAcquisitionMode() == 2 && fHeader->GetFormatMode() == sFormatMultiInterleaved )
         {
-            fReadFunction = &Monarch::InterleavedFromInterleaved;
+            fWriteFunction = &Monarch::InterleavedToInterleaved;
         }
         else if( fHeader->GetAcquisitionMode() == 2 && fHeader->GetFormatMode() == sFormatMultiSeparate )
         {
-            fReadFunction = &Monarch::InterleavedFromSeparate;
+            fWriteFunction = &Monarch::InterleavedToSeparate;
         }
     }
     if( aMode == sInterfaceSeparate )
     {
         if( fHeader->GetAcquisitionMode() == 1 /* the FormatMode is ignored for single-channel data */ )
         {
-            fReadFunction = &Monarch::SeparateFromSingle;
+            fWriteFunction = &Monarch::SeparateToSingle;
         }
         else if( fHeader->GetAcquisitionMode() == 2 && fHeader->GetFormatMode() == sFormatMultiInterleaved )
         {
-            fReadFunction = &Monarch::SeparateFromInterleaved;
+            fWriteFunction = &Monarch::SeparateToInterleaved;
         }
         else if( fHeader->GetAcquisitionMode() == 2 && fHeader->GetFormatMode() == sFormatMultiSeparate )
         {
-            fReadFunction = &Monarch::SeparateFromSeparate;
+            fWriteFunction = &Monarch::SeparateToSeparate;
         }
     }
     return;
