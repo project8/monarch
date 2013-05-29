@@ -180,7 +180,7 @@ void Monarch::ReadHeader() const
         //cout << "  *interleaved size is <" << fInterleavedRecordSize << ">" << endl;
         //cout << "  *separate size is <" << fSeparateRecordSize << ">" << endl;
 
-        fReadFunction = &Monarch::InterleavedFromInterleaved;
+        fReadFunction = &Monarch::SeparateFromInterleaved;
     }
     else
     {
