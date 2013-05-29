@@ -59,7 +59,7 @@ message MonarchHeader
     MultiInterleaved = 2;
   }
   // Optionally specify if the records are separate or interleaved; separate is the default for backwards compatibility
-  optional FormatMode formatMode = 10 [default = MultiSeparate]; 
+  optional FormatMode formatMode = 10 [default = MultiInterleaved]; 
   
 
 }
