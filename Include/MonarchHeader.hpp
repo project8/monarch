@@ -39,8 +39,8 @@ class MonarchHeader
         const string& GetFilename() const;
 
         // Acquisition mode: how many channels?
-        void SetAcquisitionMode( unsigned int aMode );
-        unsigned int GetAcquisitionMode() const;
+        void SetAcquisitionMode( AcquisitionModeType aMode );
+        AcquisitionModeType GetAcquisitionMode() const;
 
         // Acquisition rate in MHz
         void SetAcquisitionRate( double aRate );

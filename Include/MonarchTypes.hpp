@@ -15,6 +15,10 @@ typedef unsigned int InterfaceModeType;
 static const AccessModeType sInterfaceInterleaved = 0;
 static const AccessModeType sInterfaceSeparate = 1;
 
+typedef unsigned int AcquisitionModeType;
+static const AcquisitionModeType sOneChannel = 1;
+static const AcquisitionModeType sTwoChannel = 2;
+
 typedef unsigned int RunType;
 static const RunType sRunTypeSignal = 0;
 static const RunType sRunTypeBackground = 1;
@@ -29,8 +33,8 @@ static const FormatModeType sFormatSingle = 0;
 static const FormatModeType sFormatMultiSeparate = 1;
 static const FormatModeType sFormatMultiInterleaved = 2;
 
-typedef unsigned long int AcquisitionIdType; // 8 bytes
-typedef unsigned long int RecordIdType; // 8 bytes
+typedef unsigned long int AcquisitionIdType; // 4 bytes
+typedef unsigned long int RecordIdType; // 4 bytes
 typedef long long int TimeType; // 8 bytes
 typedef unsigned char DataType;
 
