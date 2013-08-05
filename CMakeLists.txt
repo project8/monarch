@@ -40,7 +40,6 @@ set( MONARCHCORE_HEADERFILES
 set( MONARCHCORE_SOURCEFILES
     ${CMAKE_CURRENT_SOURCE_DIR}/Source/MonarchException.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Source/MonarchHeader.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/Source/MonarchRecord.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Source/MonarchIO.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Source/Monarch.cpp
     ${Monarch_Protobuf_Source}
