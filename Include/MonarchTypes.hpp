@@ -33,8 +33,8 @@ static const FormatModeType sFormatSingle = 0;
 static const FormatModeType sFormatMultiSeparate = 1;
 static const FormatModeType sFormatMultiInterleaved = 2;
 
-typedef unsigned long int AcquisitionIdType; // 4 bytes
-typedef unsigned long int RecordIdType; // 4 bytes
+typedef unsigned long int AcquisitionIdType; // 8 bytes
+typedef unsigned long int RecordIdType; // 8 bytes
 typedef long long int TimeType; // 8 bytes
 typedef unsigned char DataType;
 
