@@ -18,7 +18,7 @@ struct is_same<T,T>  //specialization
    static const bool value = true;
 };
 
-template<bool> struct static_assert {};
+template<bool> struct static_assert;
 template<> struct static_assert<true> {};  //specialization
 
 typedef size_t PreludeType;
