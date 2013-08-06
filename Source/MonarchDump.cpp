@@ -1,5 +1,7 @@
 #include "Monarch.hpp"
 
+#include <cstdlib>
+
 #include <fstream>
 using std::ofstream;
 
