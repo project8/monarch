@@ -7,7 +7,7 @@ cmake_minimum_required( VERSION 2.8 )
 project( Monarch )
 
 include( ${PROJECT_SOURCE_DIR}/PackageBuilder.cmake )
-pbuilder_prepare_project( 2 0 0 )
+pbuilder_prepare_project( 2 2 0 )
 
 include_directories( ${CMAKE_SOURCE_DIR}/Include )
 
@@ -40,7 +40,6 @@ set( MONARCHCORE_HEADERFILES
 set( MONARCHCORE_SOURCEFILES
     ${CMAKE_CURRENT_SOURCE_DIR}/Source/MonarchException.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Source/MonarchHeader.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/Source/MonarchRecord.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Source/MonarchIO.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Source/Monarch.cpp
     ${Monarch_Protobuf_Source}

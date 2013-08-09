@@ -2,34 +2,50 @@
 #define __MONARCH_TYPES_HPP
 
 // We need clock_t
+#include <stdint.h>
 #include <ctime>
 #include <string>
 #include <stdint.h>
 
+template<typename T, typename U>
+struct is_same
+{
+    static const bool value = false;
+};
+
+template<typename T>
+struct is_same<T,T>  //specialization
+{
+   static const bool value = true;
+};
+
+template<bool> struct staticassert;
+template<> struct staticassert<true> {};  //specialization
+
 typedef size_t PreludeType;
 
-typedef unsigned int AccessModeType;
+typedef uint32_t AccessModeType;
 static const AccessModeType sAccessRead = 0;
 static const AccessModeType sAccessWrite = 1;
 
-typedef unsigned int InterfaceModeType;
+typedef uint32_t InterfaceModeType;
 static const AccessModeType sInterfaceInterleaved = 0;
 static const AccessModeType sInterfaceSeparate = 1;
 
-typedef unsigned int AcquisitionModeType;
+typedef uint32_t AcquisitionModeType;
 static const AcquisitionModeType sOneChannel = 1;
 static const AcquisitionModeType sTwoChannel = 2;
 
-typedef unsigned int RunType;
+typedef uint32_t RunType;
 static const RunType sRunTypeSignal = 0;
 static const RunType sRunTypeBackground = 1;
 static const RunType sRunTypeOther = 999;
 
-typedef unsigned int RunSourceType;
+typedef uint32_t RunSourceType;
 static const RunSourceType sSourceMantis = 0;
 static const RunSourceType sSourceSimulation = 1;
 
-typedef unsigned int FormatModeType;
+typedef uint32_t FormatModeType;
 static const FormatModeType sFormatSingle = 0;
 static const FormatModeType sFormatMultiSeparate = 1;
 static const FormatModeType sFormatMultiInterleaved = 2;

@@ -1,5 +1,7 @@
 #include "Monarch.hpp"
 
+#include <cstdlib>
+
 #include <fstream>
 using std::ofstream;
 
@@ -12,7 +14,8 @@ int main( const int argc, const char** argv )
     if( argc < 3 )
     {
         cout << "usage:" << endl;
-        cout << "  MonarchDump <input egg file> <output text file>" << endl;
+        cout << "  MonarchDump <input egg file> <output text file> <# of records per channel [optional]>" << endl;
+        cout << "# of records is optional; the default is 1; use 0 to dump the whole file" << endl;
         return -1;
     }
 
@@ -29,6 +32,12 @@ int main( const int argc, const char** argv )
         return -1;
     }
 
+    unsigned int nRecords = 1;
+    if( argc >= 4 )
+    {
+        nRecords = atoi( argv[3] );
+    }
+
     const Monarch* tReadTest = Monarch::OpenForReading( argv[ 1 ] );
     tReadTest->ReadHeader();
     tReadTest->SetInterface( sInterfaceSeparate );
@@ -42,9 +51,11 @@ int main( const int argc, const char** argv )
     if( tReadHeader->GetFormatMode() == sFormatSingle )
     {
         const MonarchRecord* tReadRecord = tReadTest->GetRecordSeparateOne();
+        unsigned int tRecordsPerChannel = 0;
         while( tReadTest->ReadRecord() != false )
         {
-            tRecordCount = tRecordCount + 1;
+            tRecordCount++;
+            tRecordsPerChannel++;
             if( tReadRecord->fAcquisitionId == tAcquisitonCount )
             {
                 tAcquisitonCount = tAcquisitonCount + 1;
@@ -54,6 +65,8 @@ int main( const int argc, const char** argv )
             {
                 tOutputOne << tIndex << " " << (unsigned int) ((unsigned char) (tReadRecord->fData[tIndex])) << "\n";
             }
+            if (nRecords != 0 && tRecordsPerChannel >= nRecords)
+                break;
         }
         tOutputTwo << "(empty)\n";
     }
@@ -61,9 +74,11 @@ int main( const int argc, const char** argv )
     {
         const MonarchRecord* tReadRecordOne = tReadTest->GetRecordSeparateOne();
         const MonarchRecord* tReadRecordTwo = tReadTest->GetRecordSeparateTwo();
+        unsigned int tRecordsPerChannel = 0;
         while( tReadTest->ReadRecord() != false )
         {
             tRecordCount = tRecordCount + 1;
+            tRecordsPerChannel++;
             if( tReadRecordOne->fAcquisitionId == tAcquisitonCount )
             {
                 tAcquisitonCount = tAcquisitonCount + 1;
@@ -75,6 +90,8 @@ int main( const int argc, const char** argv )
                 tOutputOne << tIndex << " " << (unsigned int) ((unsigned char) (tReadRecordOne->fData[ tIndex ])) << "\n";
                 tOutputTwo << tIndex << " " << (unsigned int) ((unsigned char) (tReadRecordTwo->fData[ tIndex ])) << "\n";
             }
+            if (nRecords != 0 && tRecordsPerChannel >= nRecords)
+                break;
         }
     }
 
