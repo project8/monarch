@@ -74,6 +74,7 @@ const Monarch* Monarch::OpenForReading( const string& aFilename )
     tMonarch->fHeader->SetFilename( aFilename );
 
     tMonarch->fState = eOpen;
+
     return tMonarch;
 }
 
@@ -279,7 +280,7 @@ void Monarch::WriteHeader()
     }
     else
     {
-        throw MonarchException() << "Unable to write a header with acquisition mode <" << fHeader->GetAcquisitionMode() << "> and format mode <" << fHeader->GetFormatMode() << ">";
+        throw MonarchException() << "unable to write a header with acquisition mode <" << fHeader->GetAcquisitionMode() << "> and format mode <" << fHeader->GetFormatMode() << ">";
         return;
     }
 
@@ -577,8 +578,6 @@ bool Monarch::InterleavedToSeparate()
     fRecordSeparateTwo->fTime = fRecordInterleaved->fTime;
     fRecordSeparateOne->fRecordId = fRecordInterleaved->fRecordId;
     fRecordSeparateTwo->fRecordId = fRecordInterleaved->fRecordId;
-    fRecordSeparateOne->fTime = fRecordInterleaved->fTime;
-    fRecordSeparateTwo->fTime = fRecordInterleaved->fTime;
     Unzip( fDataSize, fRecordSeparateOne->fData, fRecordSeparateTwo->fData, fRecordInterleaved->fData );
 
     if( fIO->Write( fRecordSeparateOneBytes, fSeparateRecordSize ) == false )

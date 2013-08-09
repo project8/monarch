@@ -70,9 +70,9 @@ class Monarch
         //close the file pointer.
         void Close() const;
 
-        //********************
-        // methods for writing
-        //********************
+        //*********************************
+        // methods for writing (none const)
+        //*********************************
 
     public:
 
@@ -82,7 +82,7 @@ class Monarch
         static Monarch* OpenForWriting( const string& filename );
 
         //this method marshals the current header to the file.
-        //if the header marshalled correctly, this returns true, memory is allocated for the record.
+        //if the header marshalled correctly, this returns true, memory is allocated for the record(s).
         //upon successful return monarch is in the eReady state.
         void WriteHeader();
 

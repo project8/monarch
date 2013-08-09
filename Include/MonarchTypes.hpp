@@ -4,6 +4,7 @@
 // We need clock_t
 #include <ctime>
 #include <string>
+#include <stdint.h>
 
 typedef size_t PreludeType;
 
@@ -33,12 +34,11 @@ static const FormatModeType sFormatSingle = 0;
 static const FormatModeType sFormatMultiSeparate = 1;
 static const FormatModeType sFormatMultiInterleaved = 2;
 
-typedef unsigned long int AcquisitionIdType; // 4 bytes
-typedef unsigned long int RecordIdType; // 4 bytes
-typedef long long int TimeType; // 8 bytes
-typedef unsigned char DataType;
+typedef uint32_t AcquisitionIdType; // 4 bytes
+typedef uint32_t RecordIdType; // 4 bytes
+typedef uint64_t TimeType; // 8 bytes
+typedef uint8_t DataType; // 1 byte
 
 static const std::string sDateTimeFormat("%Y-%m-%d %H:%M:%S %z");
-//static const char sRecordTimeCalSep = '#';
 
 #endif // __MONARCH_TYPES_HPP
