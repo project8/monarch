@@ -9,7 +9,7 @@ project( Monarch )
 include( ${PROJECT_SOURCE_DIR}/PackageBuilder.cmake )
 pbuilder_prepare_project( 2 2 0 )
 
-include_directories( ${CMAKE_SOURCE_DIR}/Include )
+include_directories( ${PROJECT_SOURCE_DIR}/Include )
 
 
 ########################
