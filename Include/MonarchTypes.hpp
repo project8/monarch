@@ -55,6 +55,4 @@ typedef uint64_t RecordIdType; // 8 bytes
 typedef time_nsec_type TimeType; // 8 bytes
 typedef uint8_t DataType; // 1 byte
 
-static const std::string sDateTimeFormat("%Y-%m-%d %H:%M:%S %z");
-
 #endif // __MONARCH_TYPES_HPP
