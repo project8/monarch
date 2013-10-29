@@ -22,6 +22,16 @@ protobuf_generate_cpp( Monarch_Protobuf_Source Monarch_Protobuf_Header ${CMAKE_C
 include_directories( ${CMAKE_CURRENT_BINARY_DIR} )
 pbuilder_add_ext_libraries( ${PROTOBUF_LIBRARIES} )
 
+add_subdirectory (libthorax)
+pbuilder_add_ext_libraries (${libthorax_LIBRARIES})
+# add to the RPATH to be used when installing, but only if it's not a system directory
+list (FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${libthorax_LIBRARY_DIR}" isSystemDir)
+if ("${isSystemDir}" STREQUAL "-1")
+   list (APPEND CMAKE_INSTALL_RPATH ${libthorax_LIBRARY_DIR})
+endif ("${isSystemDir}" STREQUAL "-1")
+include_directories (${PROJECT_SOURCE_DIR}/libthorax/cpp)
+include_directories (${PROJECT_SOURCE_DIR}/libthorax)
+
 
 ###################
 # monarch library #

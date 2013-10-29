@@ -2,10 +2,10 @@
 #define __MONARCH_TYPES_HPP
 
 // We need clock_t
-#include <stdint.h>
 #include <ctime>
 #include <string>
-#include <stdint.h>
+
+#include "thorax.hh"
 
 template<typename T, typename U>
 struct is_same
@@ -52,7 +52,7 @@ static const FormatModeType sFormatMultiInterleaved = 2;
 
 typedef uint64_t AcquisitionIdType; // 8 bytes
 typedef uint64_t RecordIdType; // 8 bytes
-typedef uint64_t TimeType; // 8 bytes
+typedef time_nsec_type TimeType; // 8 bytes
 typedef uint8_t DataType; // 1 byte
 
 static const std::string sDateTimeFormat("%Y-%m-%d %H:%M:%S %z");
