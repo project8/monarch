@@ -1,8 +1,6 @@
 #ifndef __MONARCH_TYPES_HPP
 #define __MONARCH_TYPES_HPP
 
-// We need clock_t
-#include <ctime>
 #include <string>
 
 #include "thorax.hh"
@@ -50,9 +48,10 @@ static const FormatModeType sFormatSingle = 0;
 static const FormatModeType sFormatMultiSeparate = 1;
 static const FormatModeType sFormatMultiInterleaved = 2;
 
-typedef uint64_t AcquisitionIdType; // 8 bytes
-typedef uint64_t RecordIdType; // 8 bytes
+// re-typdefing for aesthetic purposes
+typedef acquisition_id_type AcquisitionIdType; // 8 bytes
+typedef record_id_type RecordIdType; // 8 bytes
 typedef time_nsec_type TimeType; // 8 bytes
-typedef uint8_t DataType; // 1 byte
+typedef data_type DataType; // 1 byte
 
 #endif // __MONARCH_TYPES_HPP
