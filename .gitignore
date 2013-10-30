@@ -11,11 +11,15 @@
 *.la
 *.a
 
+# Mac
+.DS_Store
+
 # Build
 Build/
 Build/*
 build/
 build/*
+cbuild*/
 Install/
 Install/*
 install/
