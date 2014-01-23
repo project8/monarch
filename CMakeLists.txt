@@ -16,11 +16,14 @@ include_directories( ${PROJECT_SOURCE_DIR}/Include )
 # monarch dependencies #
 ########################
 
+set( PROTO_FILES
+    ${CMAKE_CURRENT_SOURCE_DIR}/Protobuf/MonarchHeader.proto
+)
 find_package( Protobuf )
 include_directories( ${PROTOBUF_INCLUDE_DIR} )
-protobuf_generate_cpp( Monarch_Protobuf_Source Monarch_Protobuf_Header ${CMAKE_CURRENT_SOURCE_DIR}/Protobuf/MonarchHeader.proto )
-include_directories( ${CMAKE_CURRENT_BINARY_DIR} )
 pbuilder_add_ext_libraries( ${PROTOBUF_LIBRARIES} )
+protobuf_generate_cpp( Monarch_Protobuf_Source Monarch_Protobuf_Header ${PROTO_FILES} )
+include_directories( ${CMAKE_CURRENT_BINARY_DIR} )
 
 add_subdirectory (libthorax)
 pbuilder_add_submodule_libraries (${libthorax_LIBRARIES})
