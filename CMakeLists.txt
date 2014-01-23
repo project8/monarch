@@ -9,7 +9,7 @@ project( Monarch )
 include( ${PROJECT_SOURCE_DIR}/PackageBuilder.cmake )
 pbuilder_prepare_project( 2 2 0 )
 
-include_directories( ${PROJECT_SOURCE_DIR}/Include )
+include_directories( ${PROJECT_SOURCE_DIR}/Source )
 
 
 ########################
@@ -41,20 +41,22 @@ include_directories (${PROJECT_SOURCE_DIR}/libthorax)
 ###################
 
 set( MONARCHCORE_HEADERFILES
-    ${CMAKE_CURRENT_SOURCE_DIR}/Source/MonarchTypes.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/Monarch.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Source/MonarchException.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Source/MonarchHeader.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/Source/MonarchRecord.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Source/MonarchIO.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/Source/Monarch.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/MonarchLogger.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/MonarchRecord.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/MonarchTypes.hpp
     ${Monarch_Protobuf_Header}
 )
 
 set( MONARCHCORE_SOURCEFILES
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/Monarch.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Source/MonarchException.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Source/MonarchHeader.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Source/MonarchIO.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/Source/Monarch.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/MonarchLogger.cpp
     ${Monarch_Protobuf_Source}
 )
 
