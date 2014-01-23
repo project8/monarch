@@ -38,12 +38,12 @@ include_directories (${PROJECT_SOURCE_DIR}/libthorax)
 ###################
 
 set( MONARCHCORE_HEADERFILES
-    ${CMAKE_CURRENT_SOURCE_DIR}/Include/MonarchTypes.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/Include/MonarchException.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/Include/MonarchHeader.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/Include/MonarchRecord.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/Include/MonarchIO.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/Include/Monarch.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/MonarchTypes.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/MonarchException.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/MonarchHeader.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/MonarchRecord.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/MonarchIO.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/Monarch.hpp
     ${Monarch_Protobuf_Header}
 )
 
