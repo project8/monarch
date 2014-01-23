@@ -8,7 +8,7 @@
 #include <string>
 using std::string;
 
-namespace Monarch
+namespace monarch
 {
 
     class Monarch

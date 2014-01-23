@@ -12,7 +12,7 @@ using std::endl;
 
 #include <cstdio>
 
-namespace Monarch
+namespace monarch
 {
 
     class MonarchIO

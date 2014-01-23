@@ -5,7 +5,7 @@
 
 #include "thorax.hh"
 
-namespace Monarch
+namespace monarch
 {
 
     template<typename T, typename U>

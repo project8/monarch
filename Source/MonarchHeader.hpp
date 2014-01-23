@@ -11,7 +11,7 @@ namespace Protobuf
     class MonarchHeader;
 }
 
-namespace Monarch
+namespace monarch
 {
 
     class MonarchHeader
@@ -80,6 +80,6 @@ namespace Monarch
 }
 
 // Pretty printing method
-std::ostream& operator<<( std::ostream& out, const Monarch::MonarchHeader& hdr );
+std::ostream& operator<<( std::ostream& out, const monarch::MonarchHeader& hdr );
 
 #endif

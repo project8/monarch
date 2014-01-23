@@ -212,7 +212,7 @@ void logger::Log(ELevel level, const string& message, const Location& loc)
 
 #include <iomanip>
 
-namespace Monarch
+namespace monarch
 {
     struct MonarchLogger::Private
     {

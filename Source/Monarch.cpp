@@ -1,11 +1,7 @@
 #include "Monarch.hpp"
 #include "MonarchException.hpp"
 
-#include <iostream>
-using std::cout;
-using std::endl;
-
-namespace Monarch
+namespace monarch
 {
 
     Monarch::Monarch() :

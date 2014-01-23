@@ -9,7 +9,7 @@
 #include <sstream>
 using std::stringstream;
 
-namespace Monarch
+namespace monarch
 {
 
     MonarchHeader::MonarchHeader() :
@@ -236,7 +236,7 @@ TimeType MonarchHeader::GetRecordTime0() const
 
 }
 
-std::ostream& operator<<( std::ostream& out, const Monarch::MonarchHeader& hdr )
+std::ostream& operator<<( std::ostream& out, const monarch::MonarchHeader& hdr )
 {
     out << "Monarch Header Content: " << "\n";
     out << "\tFilename: " << hdr.GetFilename() << "\n";

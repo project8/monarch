@@ -6,29 +6,28 @@
  */
 
 #include "Monarch.hpp"
+#include "MonarchLogger.hpp"
 
 #include <fstream>
 using std::ofstream;
 
-#include <iostream>
-using std::cout;
-using std::endl;
+using namespace monarch;
 
-using namespace Monarch;
+MLOGGER( mlog, "MonarchTimeCheck" );
 
 int main( const int argc, const char** argv )
 {
     if( argc < 3 )
     {
-        cout << "usage:" << endl;
-        cout << "  MonarchTimeCheck <input egg file> <output text file>" << endl;
+        MINFO( mlog, "usage:\n"
+            << "  MonarchTimeCheck <input egg file> <output text file>" );
         return -1;
     }
 
     ofstream tOutput( argv[ 2 ] );
     if( tOutput.is_open() == false )
     {
-        cout << "could not open output file!" << endl;
+        MERROR( mlog, "could not open output file!" );
         return -1;
     }
 
@@ -56,7 +55,7 @@ int main( const int argc, const char** argv )
     }
     else
     {
-        cout << "Unable to read a header with acquisition mode <" << tReadHeader->GetAcquisitionMode() << "> and format mode <" << tReadHeader->GetFormatMode() << ">" << endl;
+        MERROR( mlog, "Unable to read a header with acquisition mode <" << tReadHeader->GetAcquisitionMode() << "> and format mode <" << tReadHeader->GetFormatMode() << ">" );
         return -1;
     }
 
@@ -70,7 +69,7 @@ int main( const int argc, const char** argv )
     // read first record
     if (! tReadTest->ReadRecord())
     {
-        cout << "No records in the file" << endl;
+        MERROR( mlog, "No records in the file" );
         return -1;
     }
     tRecordCount = 1;
@@ -103,8 +102,8 @@ int main( const int argc, const char** argv )
 
         //cout << "  record " << tRecordCount << ": time offset: " << tReadRecord->fTime << " ns" << endl;
     }
-    cout << "record count <" << tRecordCount << ">" << endl;
-    cout << "acquisition count <" << tAcquisitionCount << ">" << endl;
+    MINFO( mlog, "record count <" << tRecordCount << ">" );
+    MINFO( mlog, "acquisition count <" << tAcquisitionCount << ">" );
 
     tReadTest->Close();
     delete tReadTest;

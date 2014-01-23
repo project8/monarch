@@ -1,17 +1,16 @@
 #include "Monarch.hpp"
+#include "MonarchLogger.hpp"
 
-#include <iostream>
-using std::cout;
-using std::endl;
+using namespace monarch;
 
-using namespace Monarch;
+MLOGGER( mlog, "MonarchInfo" );
 
 int main( const int argc, const char** argv )
 {
     if( argc < 2 )
     {
-        cout << "usage:" << endl;
-        cout << "  MonarchInfo <input egg file>" << endl;
+        MINFO( mlog, "usage:\n"
+            << "  MonarchInfo <input egg file>" );
         return -1;
     }
 
@@ -38,7 +37,7 @@ int main( const int argc, const char** argv )
     }
     else
     {
-        cout << "Unable to read a header with acquisition mode <" << tReadHeader->GetAcquisitionMode() << "> and format mode <" << tReadHeader->GetFormatMode() << ">" << endl;
+        MERROR( mlog, "Unable to read a header with acquisition mode <" << tReadHeader->GetAcquisitionMode() << "> and format mode <" << tReadHeader->GetFormatMode() << ">" );
         return -1;
     }
     while( tReadTest->ReadRecord() != false )
@@ -50,8 +49,8 @@ int main( const int argc, const char** argv )
         }
         //cout << "  record " << tRecordCount << ": time offset: " << tReadRecord->fTime << " ns" << endl;
     }
-    cout << "record count <" << tRecordCount << ">" << endl;
-    cout << "acquisition count <" << tAcquisiontCount << ">" << endl;
+    MINFO( mlog, "record count <" << tRecordCount << ">" );
+    MINFO( mlog, "acquisition count <" << tAcquisiontCount << ">" );
 
     tReadTest->Close();
     delete tReadTest;

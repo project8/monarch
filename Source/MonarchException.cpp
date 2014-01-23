@@ -1,6 +1,6 @@
 #include "MonarchException.hpp"
 
-namespace Monarch
+namespace monarch
 {
 
     MonarchException::MonarchException() :

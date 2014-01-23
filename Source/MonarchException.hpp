@@ -7,7 +7,7 @@ using std::exception;
 #include <sstream>
 using std::stringstream;
 
-namespace Monarch
+namespace monarch
 {
 
     class MonarchException :

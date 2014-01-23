@@ -1,6 +1,6 @@
 #include "MonarchIO.hpp"
 
-namespace Monarch
+namespace monarch
 {
 
     MonarchIO::MonarchIO( AccessModeType aMode ) :

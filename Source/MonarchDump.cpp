@@ -1,23 +1,22 @@
 #include "Monarch.hpp"
+#include "MonarchLogger.hpp"
 
 #include <cstdlib>
 
 #include <fstream>
 using std::ofstream;
 
-#include <iostream>
-using std::cout;
-using std::endl;
+using namespace monarch;
 
-using namespace Monarch;
+MLOGGER( mlog, "MonarchDump" );
 
 int main( const int argc, const char** argv )
 {
     if( argc < 3 )
     {
-        cout << "usage:" << endl;
-        cout << "  MonarchDump <input egg file> <output text file> <# of records per channel [optional]>" << endl;
-        cout << "# of records is optional; the default is 1; use 0 to dump the whole file" << endl;
+        MINFO( mlog, "usage:\n"
+            << "  MonarchDump <input egg file> <output text file> <# of records per channel [optional]>\n"
+            << "# of records is optional; the default is 1; use 0 to dump the whole file" );
         return -1;
     }
 
@@ -25,12 +24,12 @@ int main( const int argc, const char** argv )
     ofstream tOutputTwo( (string( argv[ 2 ] ) + string( "_ch2.txt" )).c_str() );
     if( tOutputOne.is_open() == false )
     {
-        cout << "could not open channel one output file!" << endl;
+        MERROR( mlog, "could not open channel one output file!" );
         return -1;
     }
     if( tOutputTwo.is_open() == false )
     {
-        cout << "could not open channel two output file!" << endl;
+        MERROR( mlog, "could not open channel two output file!" );
         return -1;
     }
 
@@ -97,8 +96,8 @@ int main( const int argc, const char** argv )
         }
     }
 
-    cout << "record count <" << tRecordCount << ">" << endl;
-    cout << "acquisition count <" << tAcquisitonCount << ">" << endl;
+    MINFO( mlog, "record count <" << tRecordCount << ">" );
+    MINFO( mlog, "acquisition count <" << tAcquisitonCount << ">" );
 
     tReadTest->Close();
     delete tReadTest;

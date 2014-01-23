@@ -3,7 +3,7 @@
 
 #include "MonarchTypes.hpp"
 
-namespace Monarch
+namespace monarch
 {
 
     struct MonarchRecord

@@ -67,7 +67,7 @@
 /**
  * The standard monarch namespace.
  */
-namespace Monarch {
+namespace monarch {
 
     /**
      * The Monarch logger.
@@ -239,18 +239,18 @@ namespace Monarch {
 
 // PRIVATE MACROS
 
-#define __MDEFAULT_LOGGER        Monarch::MonarchLogger::GetRootLogger()
+#define __MDEFAULT_LOGGER        monarch::MonarchLogger::GetRootLogger()
 
-#define __MLOG_LOCATION         Monarch::MonarchLogger::Location(__FILE__, __FUNC__, __LINE__)
+#define __MLOG_LOCATION         monarch::MonarchLogger::Location(__FILE__, __FUNC__, __LINE__)
 
 #define __MLOG_LOG_4(I,L,M,O) \
         { \
-    if (I.IsLevelEnabled(Monarch::MonarchLogger::e##L)) { \
+    if (I.IsLevelEnabled(monarch::MonarchLogger::e##L)) { \
         static bool _sLoggerMarker = false; \
         if (!O || !_sLoggerMarker) { \
             _sLoggerMarker = true; \
             std::ostringstream stream; stream << M; \
-            I.Log(Monarch::MonarchLogger::e##L, stream.str(), __MLOG_LOCATION); \
+            I.Log(monarch::MonarchLogger::e##L, stream.str(), __MLOG_LOCATION); \
         } \
     } \
         }
@@ -306,7 +306,7 @@ namespace Monarch {
 
 // PUBLIC MACROS
 
-#define MLOGGER(I,K)      static Monarch::MonarchLogger I(K);
+#define MLOGGER(I,K)      static monarch::MonarchLogger I(K);
 
 #define MLOG(...)         macro_dispatcher(__MLOG_LOG_, __VA_ARGS__)(__VA_ARGS__)
 #define MTRACE(...)       macro_dispatcher(__MLOG_TRACE_, __VA_ARGS__)(__VA_ARGS__)
