@@ -3,12 +3,17 @@
 
 #include "MonarchTypes.hpp"
 
-struct MonarchRecord
+namespace Monarch
 {
-        AcquisitionIdType fAcquisitionId;
-        RecordIdType fRecordId;
-        TimeType fTime;
-        DataType fData[];
-};
+
+    struct MonarchRecord
+    {
+            AcquisitionIdType fAcquisitionId;
+            RecordIdType fRecordId;
+            TimeType fTime;
+            DataType fData[];
+    };
+
+}
 
 #endif

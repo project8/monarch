@@ -9,6 +9,8 @@ using std::ofstream;
 using std::cout;
 using std::endl;
 
+using namespace Monarch;
+
 int main( const int argc, const char** argv )
 {
     if( argc < 3 )

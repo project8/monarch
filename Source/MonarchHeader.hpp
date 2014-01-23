@@ -11,70 +11,75 @@ namespace Protobuf
     class MonarchHeader;
 }
 
-class MonarchHeader
+namespace Monarch
 {
-    private:
-        mutable Protobuf::MonarchHeader* fProtobufHeader;
 
-    public:
-        MonarchHeader();
-        ~MonarchHeader();
+    class MonarchHeader
+    {
+        private:
+            mutable Protobuf::MonarchHeader* fProtobufHeader;
 
-        //size of monarch header in bytes (fixed by .proto definition)
-        int ByteSize() const;
+        public:
+            MonarchHeader();
+            ~MonarchHeader();
 
-        //marshal a MonarchHeader to an array of data
-        bool MarshalToArray( void* anArray, int aSize ) const;
-        bool MarshalToStream( std::ostream* aStream ) const;
+            //size of monarch header in bytes (fixed by .proto definition)
+            int ByteSize() const;
 
-        //demarshal a MonarchHeader object from an array of data
-        bool DemarshalFromArray( void* anArray, int aSize ) const;
-        bool DemarshalFromStream( std::istream* aStream ) const;
+            //marshal a MonarchHeader to an array of data
+            bool MarshalToArray( void* anArray, int aSize ) const;
+            bool MarshalToStream( std::ostream* aStream ) const;
 
-        //access methods
+            //demarshal a MonarchHeader object from an array of data
+            bool DemarshalFromArray( void* anArray, int aSize ) const;
+            bool DemarshalFromStream( std::istream* aStream ) const;
 
-        // Required in protobuf header
+            //access methods
 
-        void SetFilename( const string& aFilename );
-        const string& GetFilename() const;
+            // Required in protobuf header
 
-        // Acquisition mode: how many channels?
-        void SetAcquisitionMode( AcquisitionModeType aMode );
-        AcquisitionModeType GetAcquisitionMode() const;
+            void SetFilename( const string& aFilename );
+            const string& GetFilename() const;
 
-        // Acquisition rate in MHz
-        void SetAcquisitionRate( double aRate );
-        double GetAcquisitionRate() const;
+            // Acquisition mode: how many channels?
+            void SetAcquisitionMode( AcquisitionModeType aMode );
+            AcquisitionModeType GetAcquisitionMode() const;
 
-        // Run duration in ms
-        void SetRunDuration( unsigned int aDuration );
-        unsigned int GetRunDuration() const;
+            // Acquisition rate in MHz
+            void SetAcquisitionRate( double aRate );
+            double GetAcquisitionRate() const;
 
-        // Record size in samples
-        void SetRecordSize( unsigned int aSize );
-        unsigned int GetRecordSize() const;
+            // Run duration in ms
+            void SetRunDuration( unsigned int aDuration );
+            unsigned int GetRunDuration() const;
+
+            // Record size in samples
+            void SetRecordSize( unsigned int aSize );
+            unsigned int GetRecordSize() const;
 
 
-        // Optional in protobuf header
+            // Optional in protobuf header
 
-        void SetTimestamp( const string& aTimestamp );
-        const string& GetTimestamp() const;
+            void SetTimestamp( const string& aTimestamp );
+            const string& GetTimestamp() const;
 
-        void SetDescription( const string& aDescription );
-        const string& GetDescription() const;
+            void SetDescription( const string& aDescription );
+            const string& GetDescription() const;
 
-        void SetRunType( RunType aRunType );
-        RunType GetRunType() const;
+            void SetRunType( RunType aRunType );
+            RunType GetRunType() const;
 
-        void SetRunSource( RunSourceType aRunSource );
-        RunSourceType GetRunSource() const;
+            void SetRunSource( RunSourceType aRunSource );
+            RunSourceType GetRunSource() const;
 
-        void SetFormatMode( FormatModeType aFormatMode );
-        FormatModeType GetFormatMode() const;
+            void SetFormatMode( FormatModeType aFormatMode );
+            FormatModeType GetFormatMode() const;
 
-};
+    };
+
+}
 
 // Pretty printing method
-std::ostream& operator<<( std::ostream& out, const MonarchHeader& hdr );
+std::ostream& operator<<( std::ostream& out, const Monarch::MonarchHeader& hdr );
 
 #endif

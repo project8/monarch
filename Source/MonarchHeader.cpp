@@ -9,56 +9,59 @@
 #include <sstream>
 using std::stringstream;
 
-MonarchHeader::MonarchHeader() :
-    fProtobufHeader( new Protobuf::MonarchHeader() )
+namespace Monarch
 {
-}
-MonarchHeader::~MonarchHeader()
-{
-    delete fProtobufHeader;
-}
 
-int MonarchHeader::ByteSize() const
-{
-    return fProtobufHeader->ByteSize();
-}
-bool MonarchHeader::MarshalToArray( void* data, int size ) const
-{
-    return fProtobufHeader->SerializeToArray( data, size );
-}
-bool MonarchHeader::MarshalToStream( std::ostream* aStream ) const
-{
-    return fProtobufHeader->SerializeToOstream( aStream );
-}
-bool MonarchHeader::DemarshalFromArray( void* anArray, int aSize ) const
-{
-    return fProtobufHeader->ParseFromArray( anArray, aSize );
-}
-bool MonarchHeader::DemarshalFromStream( std::istream* aStream ) const
-{
-    return fProtobufHeader->ParseFromIstream( aStream );
-}
+    MonarchHeader::MonarchHeader() :
+            fProtobufHeader( new Protobuf::MonarchHeader() )
+    {
+    }
+    MonarchHeader::~MonarchHeader()
+    {
+        delete fProtobufHeader;
+    }
 
-void MonarchHeader::SetFilename( const string& aFilename )
-{
-    fProtobufHeader->set_filename( aFilename );
-    return;
-}
-const string& MonarchHeader::GetFilename() const
-{
-    return fProtobufHeader->filename();
-}
+    int MonarchHeader::ByteSize() const
+    {
+        return fProtobufHeader->ByteSize();
+    }
+    bool MonarchHeader::MarshalToArray( void* data, int size ) const
+    {
+        return fProtobufHeader->SerializeToArray( data, size );
+    }
+    bool MonarchHeader::MarshalToStream( std::ostream* aStream ) const
+    {
+        return fProtobufHeader->SerializeToOstream( aStream );
+    }
+    bool MonarchHeader::DemarshalFromArray( void* anArray, int aSize ) const
+    {
+        return fProtobufHeader->ParseFromArray( anArray, aSize );
+    }
+    bool MonarchHeader::DemarshalFromStream( std::istream* aStream ) const
+    {
+        return fProtobufHeader->ParseFromIstream( aStream );
+    }
 
-void MonarchHeader::SetTimestamp( const string& aTimestamp )
-{
-    fProtobufHeader->set_rundate( aTimestamp );
-    return;
-}
-const string& MonarchHeader::GetTimestamp() const
-{
-    return fProtobufHeader->rundate();
-}
-/*
+    void MonarchHeader::SetFilename( const string& aFilename )
+    {
+        fProtobufHeader->set_filename( aFilename );
+        return;
+    }
+    const string& MonarchHeader::GetFilename() const
+    {
+        return fProtobufHeader->filename();
+    }
+
+    void MonarchHeader::SetTimestamp( const string& aTimestamp )
+    {
+        fProtobufHeader->set_rundate( aTimestamp );
+        return;
+    }
+    const string& MonarchHeader::GetTimestamp() const
+    {
+        return fProtobufHeader->rundate();
+    }
+    /*
 const string MonarchHeader::GetDateTime() const
 {
     // This shouldn't be called very often, so parsing in place shouldn't be much of a problem
@@ -81,157 +84,159 @@ TimeType MonarchHeader::GetRecordTime0() const
     std::getline(ss, item, sRecordTimeCalSep);
     return (long long int)atol(item.c_str());
 }
-*/
-void MonarchHeader::SetDescription( const string& aDescription )
-{
-    fProtobufHeader->set_runinfo( aDescription );
-    return;
-}
-const string& MonarchHeader::GetDescription() const
-{
-    return fProtobufHeader->runinfo();
-}
-
-
-void MonarchHeader::SetRunType( RunType aRunType )
-{
-    switch( aRunType )
+     */
+    void MonarchHeader::SetDescription( const string& aDescription )
     {
-        case sRunTypeSignal:
-            fProtobufHeader->set_runtype( Protobuf::MonarchHeader_RunType_Signal );
-            return;
-        case sRunTypeBackground:
-            fProtobufHeader->set_runtype( Protobuf::MonarchHeader_RunType_Background );
-            return;
-        case sRunTypeOther:
-            fProtobufHeader->set_runtype( Protobuf::MonarchHeader_RunType_Other );
-            return;
-        default:
-            throw MonarchException() << "got unknown content mode";
-            return;
+        fProtobufHeader->set_runinfo( aDescription );
+        return;
     }
-}
-RunType MonarchHeader::GetRunType() const
-{
-    switch( fProtobufHeader->runtype() )
+    const string& MonarchHeader::GetDescription() const
     {
-        case Protobuf::MonarchHeader_RunType_Signal:
-            return sRunTypeSignal;
-        case Protobuf::MonarchHeader_RunType_Background:
-            return sRunTypeBackground;
-        case Protobuf::MonarchHeader_RunType_Other:
-            return sRunTypeOther;
-        default:
-            throw MonarchException() << "has unknown run type";
-            return 1000;
+        return fProtobufHeader->runinfo();
     }
-}
 
-void MonarchHeader::SetRunSource( RunSourceType aRunSource )
-{
-    switch( aRunSource )
+
+    void MonarchHeader::SetRunType( RunType aRunType )
     {
-        case sSourceMantis:
-            fProtobufHeader->set_runsource( Protobuf::MonarchHeader_RunSource_Mantis );
-            return;
-        case sSourceSimulation:
-            fProtobufHeader->set_runsource( Protobuf::MonarchHeader_RunSource_Simulation );
-            return;
-        default:
-            throw MonarchException() << "got unknown source mode";
-            return;
+        switch( aRunType )
+        {
+            case sRunTypeSignal:
+                fProtobufHeader->set_runtype( Protobuf::MonarchHeader_RunType_Signal );
+                return;
+            case sRunTypeBackground:
+                fProtobufHeader->set_runtype( Protobuf::MonarchHeader_RunType_Background );
+                return;
+            case sRunTypeOther:
+                fProtobufHeader->set_runtype( Protobuf::MonarchHeader_RunType_Other );
+                return;
+            default:
+                throw MonarchException() << "got unknown content mode";
+                return;
+        }
     }
-}
-RunSourceType MonarchHeader::GetRunSource() const
-{
-    switch( fProtobufHeader->runsource() )
+    RunType MonarchHeader::GetRunType() const
     {
-        case Protobuf::MonarchHeader_RunSource_Mantis:
-            return sSourceMantis;
-        case Protobuf::MonarchHeader_RunSource_Simulation:
-            return sSourceSimulation;
-        default:
-            throw MonarchException() << "has unknown source mode";
-            return 1000;
+        switch( fProtobufHeader->runtype() )
+        {
+            case Protobuf::MonarchHeader_RunType_Signal:
+                return sRunTypeSignal;
+            case Protobuf::MonarchHeader_RunType_Background:
+                return sRunTypeBackground;
+            case Protobuf::MonarchHeader_RunType_Other:
+                return sRunTypeOther;
+            default:
+                throw MonarchException() << "has unknown run type";
+                return 1000;
+        }
     }
-}
 
-void MonarchHeader::SetFormatMode( FormatModeType aFormatMode )
-{
-    switch( aFormatMode )
+    void MonarchHeader::SetRunSource( RunSourceType aRunSource )
     {
-        case sFormatSingle:
-            fProtobufHeader->set_formatmode( Protobuf::MonarchHeader_FormatMode_Single );
-            return;
-        case sFormatMultiSeparate:
-            fProtobufHeader->set_formatmode( Protobuf::MonarchHeader_FormatMode_MultiSeparate );
-            return;
-        case sFormatMultiInterleaved:
-            fProtobufHeader->set_formatmode( Protobuf::MonarchHeader_FormatMode_MultiInterleaved );
-            return;
-        default:
-            throw MonarchException() << "got unknown format mode";
-            return;
+        switch( aRunSource )
+        {
+            case sSourceMantis:
+                fProtobufHeader->set_runsource( Protobuf::MonarchHeader_RunSource_Mantis );
+                return;
+            case sSourceSimulation:
+                fProtobufHeader->set_runsource( Protobuf::MonarchHeader_RunSource_Simulation );
+                return;
+            default:
+                throw MonarchException() << "got unknown source mode";
+                return;
+        }
     }
-}
-FormatModeType MonarchHeader::GetFormatMode() const
-{
-    switch( fProtobufHeader->formatmode() )
+    RunSourceType MonarchHeader::GetRunSource() const
     {
-        case Protobuf::MonarchHeader_FormatMode_Single:
-            return sFormatSingle;
-        case Protobuf::MonarchHeader_FormatMode_MultiSeparate:
-            return sFormatMultiSeparate;
-        case Protobuf::MonarchHeader_FormatMode_MultiInterleaved:
-            return sFormatMultiInterleaved;
-        default:
-            throw MonarchException() << "has unknown format mode";
-            return -1;
+        switch( fProtobufHeader->runsource() )
+        {
+            case Protobuf::MonarchHeader_RunSource_Mantis:
+                return sSourceMantis;
+            case Protobuf::MonarchHeader_RunSource_Simulation:
+                return sSourceSimulation;
+            default:
+                throw MonarchException() << "has unknown source mode";
+                return 1000;
+        }
     }
+
+    void MonarchHeader::SetFormatMode( FormatModeType aFormatMode )
+    {
+        switch( aFormatMode )
+        {
+            case sFormatSingle:
+                fProtobufHeader->set_formatmode( Protobuf::MonarchHeader_FormatMode_Single );
+                return;
+            case sFormatMultiSeparate:
+                fProtobufHeader->set_formatmode( Protobuf::MonarchHeader_FormatMode_MultiSeparate );
+                return;
+            case sFormatMultiInterleaved:
+                fProtobufHeader->set_formatmode( Protobuf::MonarchHeader_FormatMode_MultiInterleaved );
+                return;
+            default:
+                throw MonarchException() << "got unknown format mode";
+                return;
+        }
+    }
+    FormatModeType MonarchHeader::GetFormatMode() const
+    {
+        switch( fProtobufHeader->formatmode() )
+        {
+            case Protobuf::MonarchHeader_FormatMode_Single:
+                return sFormatSingle;
+            case Protobuf::MonarchHeader_FormatMode_MultiSeparate:
+                return sFormatMultiSeparate;
+            case Protobuf::MonarchHeader_FormatMode_MultiInterleaved:
+                return sFormatMultiInterleaved;
+            default:
+                throw MonarchException() << "has unknown format mode";
+                return -1;
+        }
+    }
+
+    void MonarchHeader::SetAcquisitionMode( unsigned int aMode )
+    {
+        fProtobufHeader->set_acqmode( aMode );
+        return;
+    }
+
+    unsigned int MonarchHeader::GetAcquisitionMode() const
+    {
+        return fProtobufHeader->acqmode();
+    }
+
+    void MonarchHeader::SetAcquisitionRate( double aRate )
+    {
+        fProtobufHeader->set_acqrate( aRate );
+        return;
+    }
+    double MonarchHeader::GetAcquisitionRate() const
+    {
+        return fProtobufHeader->acqrate();
+    }
+
+    void MonarchHeader::SetRunDuration( unsigned int aDuration )
+    {
+        fProtobufHeader->set_acqtime( aDuration );
+        return;
+    }
+    unsigned int MonarchHeader::GetRunDuration() const
+    {
+        return fProtobufHeader->acqtime();
+    }
+
+    void MonarchHeader::SetRecordSize( unsigned int aSize )
+    {
+        fProtobufHeader->set_recsize( aSize );
+        return;
+    }
+    unsigned int MonarchHeader::GetRecordSize() const
+    {
+        return fProtobufHeader->recsize();
+    }
+
 }
 
-void MonarchHeader::SetAcquisitionMode( unsigned int aMode )
-{
-    fProtobufHeader->set_acqmode( aMode );
-    return;
-}
-
-unsigned int MonarchHeader::GetAcquisitionMode() const
-{
-    return fProtobufHeader->acqmode();
-}
-
-void MonarchHeader::SetAcquisitionRate( double aRate )
-{
-    fProtobufHeader->set_acqrate( aRate );
-    return;
-}
-double MonarchHeader::GetAcquisitionRate() const
-{
-    return fProtobufHeader->acqrate();
-}
-
-void MonarchHeader::SetRunDuration( unsigned int aDuration )
-{
-    fProtobufHeader->set_acqtime( aDuration );
-    return;
-}
-unsigned int MonarchHeader::GetRunDuration() const
-{
-    return fProtobufHeader->acqtime();
-}
-
-void MonarchHeader::SetRecordSize( unsigned int aSize )
-{
-    fProtobufHeader->set_recsize( aSize );
-    return;
-}
-unsigned int MonarchHeader::GetRecordSize() const
-{
-    return fProtobufHeader->recsize();
-}
-
-std::ostream& operator<<( std::ostream& out, const MonarchHeader& hdr )
+std::ostream& operator<<( std::ostream& out, const Monarch::MonarchHeader& hdr )
 {
     out << "Monarch Header Content: " << "\n";
     out << "\tFilename: " << hdr.GetFilename() << "\n";

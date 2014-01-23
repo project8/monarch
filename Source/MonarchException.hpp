@@ -7,26 +7,31 @@ using std::exception;
 #include <sstream>
 using std::stringstream;
 
-class MonarchException :
-    public exception
+namespace Monarch
 {
-    public:
-        MonarchException();
-        MonarchException( const MonarchException& aCopy );
-        virtual ~MonarchException() throw();
 
-    public:
-        virtual const char* what() const throw();
+    class MonarchException :
+            public exception
+            {
+                public:
+            MonarchException();
+            MonarchException( const MonarchException& aCopy );
+            virtual ~MonarchException() throw();
 
-        template< class XType >
-        MonarchException& operator<< ( const XType& aReference )
-        {
-            fStream << aReference;
-            return *this;
-        }
+                public:
+            virtual const char* what() const throw();
 
-    private:
-        stringstream fStream;
-};
+            template< class XType >
+            MonarchException& operator<< ( const XType& aReference )
+            {
+                    fStream << aReference;
+                    return *this;
+            }
+
+                private:
+            stringstream fStream;
+            };
+
+}
 
 #endif
