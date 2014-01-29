@@ -62,13 +62,13 @@ namespace monarch
             bool ReadRecord( int anOffset = 0 ) const;
 
             //get the pointer to the current interleaved record.
-            const MonarchRecord* GetRecordInterleaved() const;
+            const MonarchRecordBytes* GetRecordInterleaved() const;
 
             //get the pointer to the current separate channel one record.
-            const MonarchRecord* GetRecordSeparateOne() const;
+            const MonarchRecordBytes* GetRecordSeparateOne() const;
 
             //get the pointer to the current separate channel two record.
-            const MonarchRecord* GetRecordSeparateTwo() const;
+            const MonarchRecordBytes* GetRecordSeparateTwo() const;
 
             //close the file pointer.
             void Close() const;
@@ -100,13 +100,13 @@ namespace monarch
             bool WriteRecord();
 
             //get the pointer to the current interleaved record.
-            MonarchRecord* GetRecordInterleaved();
+            MonarchRecordBytes* GetRecordInterleaved();
 
             //get the pointer to the current separate channel one record.
-            MonarchRecord* GetRecordSeparateOne();
+            MonarchRecordBytes* GetRecordSeparateOne();
 
             //get the pointer to the current separate channel two record.
-            MonarchRecord* GetRecordSeparateTwo();
+            MonarchRecordBytes* GetRecordSeparateTwo();
 
             //close the file pointer
             void Close();
@@ -118,20 +118,33 @@ namespace monarch
             //the header
             mutable MonarchHeader* fHeader;
 
-            //the records
-            mutable long int fDataSize;
+            //size of the native type of the records in bytes
+            mutable size_t fDataTypeSize;
 
-            mutable size_t fInterleavedRecordSize;
+            //number of bytes in the data array in a record
+            mutable size_t fDataNBytes;
+            //number of samples in the data array in a record
+            mutable size_t fDataSize;
 
-            mutable MonarchRecord* fRecordInterleaved;
+            //number of bytes in an interleaved record
+            mutable size_t fInterleavedRecordNBytes;
+
+            //pointer to a MonarchRecordBytes occupying the interleaved record
+            mutable MonarchRecordBytes* fRecordInterleaved;
+            //pointer to the bytes that hold the interleaved record
             mutable char* fRecordInterleavedBytes;
 
-            mutable size_t fSeparateRecordSize;
+            //number of bytes in a separate record
+            mutable size_t fSeparateRecordNBytes;
 
-            mutable MonarchRecord* fRecordSeparateOne;
+            //pointer to a MonarchRecordBytes occupying the first separate record
+            mutable MonarchRecordBytes* fRecordSeparateOne;
+            //pointer to the bytes that hold the first separate record
             mutable char* fRecordSeparateOneBytes;
 
-            mutable MonarchRecord* fRecordSeparateTwo;
+            //pointer to a MonarchRecordBytes occupying the second separate record
+            mutable MonarchRecordBytes* fRecordSeparateTwo;
+            //pointer to the bytes that hold the second separate record
             mutable char* fRecordSeparateTwoBytes;
 
             //the private read functions
@@ -154,15 +167,15 @@ namespace monarch
 
         private:
 #ifdef __GNUG__
-            static void Zip( const size_t aSize, const DataType* __restrict__ aRecordOne, const DataType* __restrict__ aRecordTwo, DataType* __restrict__ anInterleavedRecord );
+            static void Zip( const size_t aSize, const size_t aDataTypeSize, const char* __restrict__ aRecordOne, const char* __restrict__ aRecordTwo, char* __restrict__ anInterleavedRecord );
 #else
-            static void Zip( const size_t aSize, const DataType*  aRecordOne, const DataType*  aRecordTwo, DataType*  anInterleavedRecord );
+            static void Zip( const size_t aSize, const size_t aDataTypeSize, const char*  aRecordOne, const char*  aRecordTwo, char*  anInterleavedRecord );
 #endif
 
 #ifdef __GNUG__
-            static void Unzip( const size_t aSize, DataType* __restrict__ aRecordOne, DataType* __restrict__ aRecordTwo, const DataType* __restrict__ anInterleavedRecord );
+            static void Unzip( const size_t aSize, const size_t aDataTypeSize, char* __restrict__ aRecordOne, char* __restrict__ aRecordTwo, const char* __restrict__ anInterleavedRecord );
 #else
-            static void Unzip( const size_t aSize, DataType*  aRecordOne, DataType*  aRecordTwo, const DataType*  anInterleavedRecord );
+            static void Unzip( const size_t aSize, const size_t aDataTypeSize, char*  aRecordOne, char*  aRecordTwo, const char*  anInterleavedRecord );
 #endif
 
     };
@@ -176,66 +189,66 @@ namespace monarch
         return fHeader;
     }
 
-    inline const MonarchRecord* Monarch::GetRecordSeparateOne() const
+    inline const MonarchRecordBytes* Monarch::GetRecordSeparateOne() const
     {
         return fRecordSeparateOne;
     }
-    inline MonarchRecord* Monarch::GetRecordSeparateOne()
+    inline MonarchRecordBytes* Monarch::GetRecordSeparateOne()
     {
         return fRecordSeparateOne;
     }
 
-    inline const MonarchRecord* Monarch::GetRecordSeparateTwo() const
+    inline const MonarchRecordBytes* Monarch::GetRecordSeparateTwo() const
     {
         return fRecordSeparateTwo;
     }
-    inline MonarchRecord* Monarch::GetRecordSeparateTwo()
+    inline MonarchRecordBytes* Monarch::GetRecordSeparateTwo()
     {
         return fRecordSeparateTwo;
     }
 
-    inline const MonarchRecord* Monarch::GetRecordInterleaved() const
+    inline const MonarchRecordBytes* Monarch::GetRecordInterleaved() const
     {
         return fRecordInterleaved;
     }
-    inline MonarchRecord* Monarch::GetRecordInterleaved()
+    inline MonarchRecordBytes* Monarch::GetRecordInterleaved()
     {
         return fRecordInterleaved;
     }
 
 #ifdef __GNUG__
-    inline void Monarch::Zip( const size_t aSize, const DataType* __restrict__ aRecordOne, const DataType* __restrict__ aRecordTwo, DataType* __restrict__ anInterleavedRecord )
+    inline void Monarch::Zip( const size_t aSize, const size_t aDataTypeSize, const char* __restrict__ aRecordOne, const char* __restrict__ aRecordTwo, char* __restrict__ anInterleavedRecord )
 #else
-    inline void Monarch::Zip( const size_t aSize, const DataType* aRecordOne, const DataType* aRecordTwo, DataType* anInterleavedRecord )
+    inline void Monarch::Zip( const size_t aSize, const size_t aDataTypeSize, const char* aRecordOne, const char* aRecordTwo, char* anInterleavedRecord )
 #endif
     {
         for( size_t anIndex = 0; anIndex < aSize; anIndex++ )
         {
             *anInterleavedRecord = *aRecordOne;
-            anInterleavedRecord++;
-            aRecordOne++;
+            anInterleavedRecord += aDataTypeSize;
+            aRecordOne += aDataTypeSize;
 
             *anInterleavedRecord = *aRecordTwo;
-            anInterleavedRecord++;
-            aRecordTwo++;
+            anInterleavedRecord += aDataTypeSize;
+            aRecordTwo += aDataTypeSize;
         }
     }
 
 #ifdef __GNUG__
-    inline void Monarch::Unzip( const size_t aSize, DataType* __restrict__ aRecordOne, DataType* __restrict__ aRecordTwo, const DataType* __restrict__ anInterleavedRecord )
+    inline void Monarch::Unzip( const size_t aSize, const size_t aDataTypeSize, char* __restrict__ aRecordOne, char* __restrict__ aRecordTwo, const char* __restrict__ anInterleavedRecord )
 #else
-    inline void Monarch::Unzip( const size_t aSize, DataType* aRecordOne, DataType* aRecordTwo, const DataType* anInterleavedRecord )
+    inline void Monarch::Unzip( const size_t aSize, const size_t aDataTypeSize, char* aRecordOne, char* aRecordTwo, const char* anInterleavedRecord )
 #endif
     {
         for( size_t anIndex = 0; anIndex < aSize; anIndex++ )
         {
             *aRecordOne = *anInterleavedRecord;
-            anInterleavedRecord++;
-            aRecordOne++;
+            anInterleavedRecord += aDataTypeSize;
+            aRecordOne += aDataTypeSize;
 
             *aRecordTwo = *anInterleavedRecord;
-            anInterleavedRecord++;
-            aRecordTwo++;
+            anInterleavedRecord += aDataTypeSize;
+            aRecordTwo += aDataTypeSize;
         }
     }
 

@@ -8,11 +8,13 @@ namespace monarch
                 fState( eClosed ),
                 fIO( NULL ),
                 fHeader( NULL ),
+                fDataTypeSize( 1 ),
+                fDataNBytes( 0 ),
                 fDataSize( 0 ),
-                fInterleavedRecordSize( 0 ),
+                fInterleavedRecordNBytes( 0 ),
                 fRecordInterleaved( NULL ),
                 fRecordInterleavedBytes( NULL ),
-                fSeparateRecordSize( 0 ),
+                fSeparateRecordNBytes( 0 ),
                 fRecordSeparateOne( NULL ),
                 fRecordSeparateOneBytes( NULL ),
                 fRecordSeparateTwo( NULL ),
@@ -121,16 +123,19 @@ namespace monarch
         }
         delete[] tHeaderBuffer;
 
+        fDataTypeSize = fHeader->GetDataTypeSize();
+
         if( fHeader->GetAcquisitionMode() == 1 /* the FormatMode is ignored for single-channel data */ )
         {
-            fDataSize = (int)fHeader->GetRecordSize() * (int)sizeof(DataType);
+            fDataSize = fHeader->GetRecordSize();
+            fDataNBytes = fDataSize * fDataTypeSize;
 
-            fInterleavedRecordSize = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + (size_t)fDataSize;
-            fRecordInterleavedBytes = new char[ fInterleavedRecordSize ];
+            fInterleavedRecordNBytes = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + fDataNBytes;
+            fRecordInterleavedBytes = new char[ fInterleavedRecordNBytes ];
             fRecordInterleaved = new ( fRecordInterleavedBytes ) MonarchRecord();
 
-            fSeparateRecordSize = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + (size_t)fDataSize;
-            fRecordSeparateOneBytes = new char[ fSeparateRecordSize ];
+            fSeparateRecordNBytes = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + fDataNBytes;
+            fRecordSeparateOneBytes = new char[ fSeparateRecordNBytes ];
             fRecordSeparateOne = new ( fRecordSeparateOneBytes ) MonarchRecord();
 
             //cout << "  *format is <" << sFormatSingle << ">" << endl;
@@ -142,16 +147,17 @@ namespace monarch
         }
         else if( fHeader->GetAcquisitionMode() == 2 && fHeader->GetFormatMode() == sFormatMultiSeparate )
         {
-            fDataSize = (int)fHeader->GetRecordSize() * (int)sizeof(DataType);
+            fDataSize = fHeader->GetRecordSize();
+            fDataNBytes = fDataSize * fDataTypeSize;
 
-            fInterleavedRecordSize = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + 2 * (size_t)fDataSize;
-            fRecordInterleavedBytes = new char[ fInterleavedRecordSize ];
+            fInterleavedRecordNBytes = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + 2 * fDataNBytes;
+            fRecordInterleavedBytes = new char[ fInterleavedRecordNBytes ];
             fRecordInterleaved = new ( fRecordInterleavedBytes ) MonarchRecord();
 
-            fSeparateRecordSize = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + (size_t)fDataSize;
-            fRecordSeparateOneBytes = new char[ fSeparateRecordSize ];
+            fSeparateRecordNBytes = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + (size_t)fDataNBytes;
+            fRecordSeparateOneBytes = new char[ fSeparateRecordNBytes ];
             fRecordSeparateOne = new ( fRecordSeparateOneBytes ) MonarchRecord();
-            fRecordSeparateTwoBytes = new char[ fSeparateRecordSize ];
+            fRecordSeparateTwoBytes = new char[ fSeparateRecordNBytes ];
             fRecordSeparateTwo = new ( fRecordSeparateTwoBytes ) MonarchRecord();
 
             //cout << "  *format is <" << sFormatSeparateDual << ">" << endl;
@@ -163,16 +169,17 @@ namespace monarch
         }
         else if( fHeader->GetAcquisitionMode() == 2 && fHeader->GetFormatMode() == sFormatMultiInterleaved )
         {
-            fDataSize = (int)fHeader->GetRecordSize() * (int)sizeof(DataType);
+            fDataSize = fHeader->GetRecordSize();
+            fDataNBytes = fDataSize * fDataTypeSize;
 
-            fInterleavedRecordSize = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + 2 * (size_t)fDataSize;
-            fRecordInterleavedBytes = new char[ fInterleavedRecordSize ];
+            fInterleavedRecordNBytes = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + 2 * fDataNBytes;
+            fRecordInterleavedBytes = new char[ fInterleavedRecordNBytes ];
             fRecordInterleaved = new ( fRecordInterleavedBytes ) MonarchRecord();
 
-            fSeparateRecordSize = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + (size_t)fDataSize;
-            fRecordSeparateOneBytes = new char[ fSeparateRecordSize ];
+            fSeparateRecordNBytes = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + fDataNBytes;
+            fRecordSeparateOneBytes = new char[ fSeparateRecordNBytes ];
             fRecordSeparateOne = new ( fRecordSeparateOneBytes ) MonarchRecord();
-            fRecordSeparateTwoBytes = new char[ fSeparateRecordSize ];
+            fRecordSeparateTwoBytes = new char[ fSeparateRecordNBytes ];
             fRecordSeparateTwo = new ( fRecordSeparateTwoBytes ) MonarchRecord();
 
             //cout << "  *format is <" << sFormatInterleavedDual << ">" << endl;
@@ -216,16 +223,19 @@ namespace monarch
         }
         delete[] tHeaderBuffer;
 
+        fDataTypeSize = fHeader->GetDataTypeSize();
+
         if( fHeader->GetAcquisitionMode() == 1 /* the FormatMode is ignored for single-channel data */ )
         {
-            fDataSize = (int)fHeader->GetRecordSize() * (int)sizeof(DataType);
+            fDataSize = fHeader->GetRecordSize();
+            fDataNBytes = fDataSize * fDataTypeSize;
 
-            fInterleavedRecordSize = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + (size_t)fDataSize;
-            fRecordInterleavedBytes = new char[ fInterleavedRecordSize ];
+            fInterleavedRecordNBytes = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + fDataNBytes;
+            fRecordInterleavedBytes = new char[ fInterleavedRecordNBytes ];
             fRecordInterleaved = new ( fRecordInterleavedBytes ) MonarchRecord();
 
-            fSeparateRecordSize = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + (size_t)fDataSize;
-            fRecordSeparateOneBytes = new char[ fSeparateRecordSize ];
+            fSeparateRecordNBytes = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + fDataNBytes;
+            fRecordSeparateOneBytes = new char[ fSeparateRecordNBytes ];
             fRecordSeparateOne = new ( fRecordSeparateOneBytes ) MonarchRecord();
 
             //cout << "  *format is <" << sFormatSingle << ">" << endl;
@@ -237,16 +247,17 @@ namespace monarch
         }
         else if( fHeader->GetAcquisitionMode() == 2 && fHeader->GetFormatMode() == sFormatMultiSeparate )
         {
-            fDataSize = (int)fHeader->GetRecordSize() * (int)sizeof(DataType);
+            fDataSize = fHeader->GetRecordSize();
+            fDataNBytes = fDataSize * fDataTypeSize;
 
-            fInterleavedRecordSize = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + 2 * (size_t)fDataSize;
-            fRecordInterleavedBytes = new char[ fInterleavedRecordSize ];
+            fInterleavedRecordNBytes = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + 2 * fDataNBytes;
+            fRecordInterleavedBytes = new char[ fInterleavedRecordNBytes ];
             fRecordInterleaved = new ( fRecordInterleavedBytes ) MonarchRecord();
 
-            fSeparateRecordSize = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + (size_t)fDataSize;
-            fRecordSeparateOneBytes = new char[ fSeparateRecordSize ];
+            fSeparateRecordNBytes = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + fDataNBytes;
+            fRecordSeparateOneBytes = new char[ fSeparateRecordNBytes ];
             fRecordSeparateOne = new ( fRecordSeparateOneBytes ) MonarchRecord();
-            fRecordSeparateTwoBytes = new char[ fSeparateRecordSize ];
+            fRecordSeparateTwoBytes = new char[ fSeparateRecordNBytes ];
             fRecordSeparateTwo = new ( fRecordSeparateTwoBytes ) MonarchRecord();
 
             //cout << "  *format is <" << sFormatSeparateDual << ">" << endl;
@@ -258,16 +269,17 @@ namespace monarch
         }
         else if( fHeader->GetAcquisitionMode() == 2 && fHeader->GetFormatMode() == sFormatMultiInterleaved )
         {
-            fDataSize = (int)fHeader->GetRecordSize() * (int)sizeof(DataType);
+            fDataSize = fHeader->GetRecordSize();
+            fDataNBytes = fDataSize * fDataTypeSize;
 
-            fInterleavedRecordSize = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + 2 * (size_t)fDataSize;
-            fRecordInterleavedBytes = new char[ fInterleavedRecordSize ];
+            fInterleavedRecordNBytes = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + 2 * fDataNBytes;
+            fRecordInterleavedBytes = new char[ fInterleavedRecordNBytes ];
             fRecordInterleaved = new ( fRecordInterleavedBytes ) MonarchRecord();
 
-            fSeparateRecordSize = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + (size_t)fDataSize;
-            fRecordSeparateOneBytes = new char[ fSeparateRecordSize ];
+            fSeparateRecordNBytes = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + fDataNBytes;
+            fRecordSeparateOneBytes = new char[ fSeparateRecordNBytes ];
             fRecordSeparateOne = new ( fRecordSeparateOneBytes ) MonarchRecord();
-            fRecordSeparateTwoBytes = new char[ fSeparateRecordSize ];
+            fRecordSeparateTwoBytes = new char[ fSeparateRecordNBytes ];
             fRecordSeparateTwo = new ( fRecordSeparateTwoBytes ) MonarchRecord();
 
             //cout << "  *format is <" << sFormatInterleavedDual << ">" << endl;
@@ -366,7 +378,7 @@ namespace monarch
     {
         if( anOffset != 0 )
         {
-            long int aByteOffset = anOffset * fInterleavedRecordSize;
+            long int aByteOffset = anOffset * fInterleavedRecordNBytes;
             if( fIO->Seek( aByteOffset ) == false )
             {
                 if( fIO->Done() != true )
@@ -377,7 +389,7 @@ namespace monarch
             }
         }
 
-        if( fIO->Read( fRecordInterleavedBytes, fInterleavedRecordSize ) == false )
+        if( fIO->Read( fRecordInterleavedBytes, fInterleavedRecordNBytes ) == false )
         {
             if( fIO->Done() != true )
             {
@@ -393,7 +405,7 @@ namespace monarch
     {
         if( anOffset != 0 )
         {
-            long int aByteOffset = anOffset * 2 * fSeparateRecordSize;
+            long int aByteOffset = anOffset * 2 * fSeparateRecordNBytes;
             if( fIO->Seek( aByteOffset ) == false )
             {
                 if( fIO->Done() != true )
@@ -404,7 +416,7 @@ namespace monarch
             }
         }
 
-        if( fIO->Read( fRecordSeparateOneBytes, fSeparateRecordSize ) == false )
+        if( fIO->Read( fRecordSeparateOneBytes, fSeparateRecordNBytes ) == false )
         {
             if( fIO->Done() != true )
             {
@@ -413,7 +425,7 @@ namespace monarch
             return false;
         }
 
-        if( fIO->Read( fRecordSeparateTwoBytes, fSeparateRecordSize ) == false )
+        if( fIO->Read( fRecordSeparateTwoBytes, fSeparateRecordNBytes ) == false )
         {
             if( fIO->Done() != true )
             {
@@ -425,7 +437,7 @@ namespace monarch
         fRecordInterleaved->fTime = fRecordSeparateOne->fTime;
         fRecordInterleaved->fRecordId = fRecordSeparateOne->fRecordId;
         fRecordInterleaved->fTime = fRecordSeparateOne->fTime;
-        Zip( fDataSize, fRecordSeparateOne->fData, fRecordSeparateTwo->fData, fRecordInterleaved->fData );
+        Zip( fDataSize, fDataTypeSize, fRecordSeparateOne->fData, fRecordSeparateTwo->fData, fRecordInterleaved->fData );
 
         return true;
     }
@@ -434,7 +446,7 @@ namespace monarch
     {
         if( anOffset != 0 )
         {
-            long int aByteOffset = anOffset * fInterleavedRecordSize;
+            long int aByteOffset = anOffset * fInterleavedRecordNBytes;
             if( fIO->Seek( aByteOffset ) == false )
             {
                 if( fIO->Done() != true )
@@ -445,7 +457,7 @@ namespace monarch
             }
         }
 
-        if( fIO->Read( fRecordInterleavedBytes, fInterleavedRecordSize ) == false )
+        if( fIO->Read( fRecordInterleavedBytes, fInterleavedRecordNBytes ) == false )
         {
             if( fIO->Done() != true )
             {
@@ -461,7 +473,7 @@ namespace monarch
     {
         if( anOffset != 0 )
         {
-            long int aByteOffset = anOffset * fSeparateRecordSize;
+            long int aByteOffset = anOffset * fSeparateRecordNBytes;
             if( fIO->Seek( aByteOffset ) == false )
             {
                 if( fIO->Done() != true )
@@ -472,7 +484,7 @@ namespace monarch
             }
         }
 
-        if( fIO->Read( fRecordSeparateOneBytes, fSeparateRecordSize ) == false )
+        if( fIO->Read( fRecordSeparateOneBytes, fSeparateRecordNBytes ) == false )
         {
             if( fIO->Done() != true )
             {
@@ -488,7 +500,7 @@ namespace monarch
     {
         if( anOffset != 0 )
         {
-            long int aByteOffset = anOffset * 2 * fSeparateRecordSize;
+            long int aByteOffset = anOffset * 2 * fSeparateRecordNBytes;
             if( fIO->Seek( aByteOffset ) == false )
             {
                 if( fIO->Done() != true )
@@ -499,7 +511,7 @@ namespace monarch
             }
         }
 
-        if( fIO->Read( fRecordSeparateOneBytes, fSeparateRecordSize ) == false )
+        if( fIO->Read( fRecordSeparateOneBytes, fSeparateRecordNBytes ) == false )
         {
             if( fIO->Done() != true )
             {
@@ -508,7 +520,7 @@ namespace monarch
             return false;
         }
 
-        if( fIO->Read( fRecordSeparateTwoBytes, fSeparateRecordSize ) == false )
+        if( fIO->Read( fRecordSeparateTwoBytes, fSeparateRecordNBytes ) == false )
         {
             if( fIO->Done() != true )
             {
@@ -524,7 +536,7 @@ namespace monarch
     {
         if( anOffset != 0 )
         {
-            long int aByteOffset = anOffset * fInterleavedRecordSize;
+            long int aByteOffset = anOffset * fInterleavedRecordNBytes;
             if( fIO->Seek( aByteOffset ) == false )
             {
                 if( fIO->Done() != true )
@@ -535,7 +547,7 @@ namespace monarch
             }
         }
 
-        if( fIO->Read( fRecordInterleavedBytes, fInterleavedRecordSize ) == false )
+        if( fIO->Read( fRecordInterleavedBytes, fInterleavedRecordNBytes ) == false )
         {
             if( fIO->Done() != true )
             {
@@ -550,7 +562,7 @@ namespace monarch
         fRecordSeparateTwo->fRecordId = fRecordInterleaved->fRecordId;
         fRecordSeparateOne->fTime = fRecordInterleaved->fTime;
         fRecordSeparateTwo->fTime = fRecordInterleaved->fTime;
-        Unzip( fDataSize, fRecordSeparateOne->fData, fRecordSeparateTwo->fData, fRecordInterleaved->fData );
+        Unzip( fDataSize, fDataTypeSize, fRecordSeparateOne->fData, fRecordSeparateTwo->fData, fRecordInterleaved->fData );
 
         return true;
     }
@@ -562,7 +574,7 @@ namespace monarch
 
     bool Monarch::InterleavedToSingle()
     {
-        if( fIO->Write( fRecordInterleavedBytes, fInterleavedRecordSize ) == false )
+        if( fIO->Write( fRecordInterleavedBytes, fInterleavedRecordNBytes ) == false )
         {
             throw MonarchException() << "could not write single record";
             return false;
@@ -577,15 +589,15 @@ namespace monarch
         fRecordSeparateTwo->fTime = fRecordInterleaved->fTime;
         fRecordSeparateOne->fRecordId = fRecordInterleaved->fRecordId;
         fRecordSeparateTwo->fRecordId = fRecordInterleaved->fRecordId;
-        Unzip( fDataSize, fRecordSeparateOne->fData, fRecordSeparateTwo->fData, fRecordInterleaved->fData );
+        Unzip( fDataSize, fDataTypeSize, fRecordSeparateOne->fData, fRecordSeparateTwo->fData, fRecordInterleaved->fData );
 
-        if( fIO->Write( fRecordSeparateOneBytes, fSeparateRecordSize ) == false )
+        if( fIO->Write( fRecordSeparateOneBytes, fSeparateRecordNBytes ) == false )
         {
             throw MonarchException() << "could not write next channel one record";
             return false;
         }
 
-        if( fIO->Write( fRecordSeparateTwoBytes, fSeparateRecordSize ) == false )
+        if( fIO->Write( fRecordSeparateTwoBytes, fSeparateRecordNBytes ) == false )
         {
             throw MonarchException() << "could not write next channel two record";
             return false;
@@ -596,7 +608,7 @@ namespace monarch
 
     bool Monarch::InterleavedToInterleaved()
     {
-        if( fIO->Write( fRecordInterleavedBytes, fInterleavedRecordSize ) == false )
+        if( fIO->Write( fRecordInterleavedBytes, fInterleavedRecordNBytes ) == false )
         {
             throw MonarchException() << "could not write interleaved record";
             return false;
@@ -607,7 +619,7 @@ namespace monarch
 
     bool Monarch::SeparateToSingle()
     {
-        if( fIO->Write( fRecordSeparateOneBytes, fSeparateRecordSize ) == false )
+        if( fIO->Write( fRecordSeparateOneBytes, fSeparateRecordNBytes ) == false )
         {
             throw MonarchException() << "could not write single record";
             return false;
@@ -618,13 +630,13 @@ namespace monarch
 
     bool Monarch::SeparateToSeparate()
     {
-        if( fIO->Write( fRecordSeparateOneBytes, fSeparateRecordSize ) == false )
+        if( fIO->Write( fRecordSeparateOneBytes, fSeparateRecordNBytes ) == false )
         {
             throw MonarchException() << "could not write next channel one record";
             return false;
         }
 
-        if( fIO->Write( fRecordSeparateTwoBytes, fSeparateRecordSize ) == false )
+        if( fIO->Write( fRecordSeparateTwoBytes, fSeparateRecordNBytes ) == false )
         {
             throw MonarchException() << "could not write next channel two record";
             return false;
@@ -638,9 +650,9 @@ namespace monarch
         fRecordInterleaved->fTime = fRecordSeparateOne->fTime;
         fRecordInterleaved->fRecordId = fRecordSeparateOne->fRecordId;
         fRecordInterleaved->fTime = fRecordSeparateOne->fTime;
-        Zip( fDataSize, fRecordSeparateOne->fData, fRecordSeparateTwo->fData, fRecordInterleaved->fData );
+        Zip( fDataSize, fDataTypeSize, fRecordSeparateOne->fData, fRecordSeparateTwo->fData, fRecordInterleaved->fData );
 
-        if( fIO->Write( fRecordInterleavedBytes, fInterleavedRecordSize ) == false )
+        if( fIO->Write( fRecordInterleavedBytes, fInterleavedRecordNBytes ) == false )
         {
             throw MonarchException() << "could not write interleaved record";
             return false;
