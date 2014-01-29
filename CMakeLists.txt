@@ -8,6 +8,7 @@ project( Monarch )
 
 include( ${PROJECT_SOURCE_DIR}/PackageBuilder.cmake )
 pbuilder_prepare_project( 2 2 0 )
+cmake_policy (SET CMP0011 NEW)
 
 include_directories( ${PROJECT_SOURCE_DIR}/Source )
 

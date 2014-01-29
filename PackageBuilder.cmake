@@ -3,6 +3,9 @@
 # Parts of this script are based on work done by Sebastian Voecking and Marco Haag in the Kasper package
 # Convenient macros and default variable settings for the Katydid build.
 
+# policy on how if-statements work
+cmake_policy( SET CMP0012 NEW )
+
 # check if this is a stand-alone build
 set( PBUILDER_STANDALONE FALSE CACHE INTERNAL "Flag for whether or not this is a stand-alone build" )
 if( ${CMAKE_SOURCE_DIR} STREQUAL ${PROJECT_SOURCE_DIR} )
@@ -149,6 +152,7 @@ endmacro ()
 
 macro (pbuilder_variables_for_parent)
     if (NOT ${PBUILDER_STANDALONE})
+        message(STATUS "in monarch's var for par: ${PROJECT_NAME}")
         get_property (LIBRARIES GLOBAL PROPERTY ${PROJECT_NAME}_LIBRARIES)
         set (${PROJECT_NAME}_LIBRARIES ${LIBRARIES} ${SUBMODULE_LIBRARIES} PARENT_SCOPE)
         set (${PROJECT_NAME}_LIBRARY_DIR ${LIB_INSTALL_DIR} PARENT_SCOPE)
