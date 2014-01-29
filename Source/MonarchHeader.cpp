@@ -234,6 +234,16 @@ TimeType MonarchHeader::GetRecordTime0() const
         return fProtobufHeader->recsize();
     }
 
+    void MonarchHeader::SetDataTypeSize( unsigned aSize )
+    {
+        fProtobufHeader->set_datatypesize( aSize );
+        return;
+    }
+    unsigned MonarchHeader::GetDataTypeSize() const
+    {
+        return fProtobufHeader->datatypesize();
+    }
+
 }
 
 std::ostream& operator<<( std::ostream& out, const monarch::MonarchHeader& hdr )
@@ -248,6 +258,7 @@ std::ostream& operator<<( std::ostream& out, const monarch::MonarchHeader& hdr )
     out << "\tDescription: " << hdr.GetDescription() << "\n";
     out << "\tRun Type: " << hdr.GetRunType() << "\n";
     out << "\tRun Source: " << hdr.GetRunSource() << "\n";
-    out << "\tFormat Mode: " << hdr.GetFormatMode();
+    out << "\tFormat Mode: " << hdr.GetFormatMode() << "\n";
+    out << "\tData Type Size: " << hdr.GetDataTypeSize();
     return out;
 }

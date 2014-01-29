@@ -75,6 +75,9 @@ namespace monarch
             void SetFormatMode( FormatModeType aFormatMode );
             FormatModeType GetFormatMode() const;
 
+            void SetDataTypeSize( unsigned aSize );
+            unsigned GetDataTypeSize() const;
+
     };
 
 }

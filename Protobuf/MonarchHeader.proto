@@ -61,5 +61,8 @@ message MonarchHeader
   // Optionally specify if the records are separate or interleaved; separate is the default for backwards compatibility
   optional FormatMode formatMode = 10 [default = MultiInterleaved]; 
   
+  // What is the size of the integer data type used to make the data? (default in Monarch is 1)
+  optional uint32 dataTypeSize = 11 [default = 1];
+  
 
 }
