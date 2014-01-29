@@ -5,7 +5,7 @@
 
 namespace monarch
 {
-
+    template< typename DataType >
     struct MonarchRecord
     {
             AcquisitionIdType fAcquisitionId;
@@ -13,6 +13,8 @@ namespace monarch
             TimeType fTime;
             DataType fData[];
     };
+
+    typedef MonarchRecord< char > MonarchRecordBytes;
 
 }
 
