@@ -16,6 +16,24 @@ namespace monarch
 
     typedef MonarchRecord< char > MonarchRecordBytes;
 
+    struct MonarchRecordDataInterface
+    {
+            MonarchRecordDataInterface( const char* aData, size_t aDataTypeSize )
+            {
+                fData = aData;
+                fDataTypeSize = aDataTypeSize;
+            }
+
+            template< typename DataType >
+            DataType at( unsigned index ) const
+            {
+                return (DataType)( fData[ index * fDataTypeSize ] );
+            }
+
+            const char* fData;
+            size_t fDataTypeSize;
+    };
+
 }
 
 #endif

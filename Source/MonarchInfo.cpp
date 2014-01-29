@@ -22,7 +22,7 @@ int main( const int argc, const char** argv )
 
     unsigned int tRecordCount = 0;
     unsigned int tAcquisiontCount = 0;
-    const MonarchRecord* tReadRecord;
+    const MonarchRecordBytes* tReadRecord;
     if( tReadHeader->GetAcquisitionMode() == 1 /* the FormatMode is ignored for single-channel data */ )
     {
         tReadRecord = tReadTest->GetRecordSeparateOne();

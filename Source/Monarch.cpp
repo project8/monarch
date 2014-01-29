@@ -39,21 +39,21 @@ namespace monarch
 
         if( fRecordInterleavedBytes != NULL )
         {
-            fRecordInterleaved->~MonarchRecord();
+            fRecordInterleaved->~MonarchRecordBytes();
             delete[] fRecordInterleavedBytes;
             fRecordInterleavedBytes = NULL;
         }
 
         if( fRecordSeparateOneBytes != NULL )
         {
-            fRecordSeparateOne->~MonarchRecord();
+            fRecordSeparateOne->~MonarchRecordBytes();
             delete[] fRecordSeparateOneBytes;
             fRecordSeparateOneBytes = NULL;
         }
 
         if( fRecordSeparateTwoBytes != NULL )
         {
-            fRecordSeparateTwo->~MonarchRecord();
+            fRecordSeparateTwo->~MonarchRecordBytes();
             delete[] fRecordSeparateTwoBytes;
             fRecordSeparateTwoBytes = NULL;
         }
@@ -132,11 +132,11 @@ namespace monarch
 
             fInterleavedRecordNBytes = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + fDataNBytes;
             fRecordInterleavedBytes = new char[ fInterleavedRecordNBytes ];
-            fRecordInterleaved = new ( fRecordInterleavedBytes ) MonarchRecord();
+            fRecordInterleaved = new ( fRecordInterleavedBytes ) MonarchRecordBytes();
 
             fSeparateRecordNBytes = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + fDataNBytes;
             fRecordSeparateOneBytes = new char[ fSeparateRecordNBytes ];
-            fRecordSeparateOne = new ( fRecordSeparateOneBytes ) MonarchRecord();
+            fRecordSeparateOne = new ( fRecordSeparateOneBytes ) MonarchRecordBytes();
 
             //cout << "  *format is <" << sFormatSingle << ">" << endl;
             //cout << "  *data size is <" << fDataSize << ">" << endl;
@@ -152,13 +152,13 @@ namespace monarch
 
             fInterleavedRecordNBytes = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + 2 * fDataNBytes;
             fRecordInterleavedBytes = new char[ fInterleavedRecordNBytes ];
-            fRecordInterleaved = new ( fRecordInterleavedBytes ) MonarchRecord();
+            fRecordInterleaved = new ( fRecordInterleavedBytes ) MonarchRecordBytes();
 
             fSeparateRecordNBytes = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + (size_t)fDataNBytes;
             fRecordSeparateOneBytes = new char[ fSeparateRecordNBytes ];
-            fRecordSeparateOne = new ( fRecordSeparateOneBytes ) MonarchRecord();
+            fRecordSeparateOne = new ( fRecordSeparateOneBytes ) MonarchRecordBytes();
             fRecordSeparateTwoBytes = new char[ fSeparateRecordNBytes ];
-            fRecordSeparateTwo = new ( fRecordSeparateTwoBytes ) MonarchRecord();
+            fRecordSeparateTwo = new ( fRecordSeparateTwoBytes ) MonarchRecordBytes();
 
             //cout << "  *format is <" << sFormatSeparateDual << ">" << endl;
             //cout << "  *data size is <" << fDataSize << ">" << endl;
@@ -174,13 +174,13 @@ namespace monarch
 
             fInterleavedRecordNBytes = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + 2 * fDataNBytes;
             fRecordInterleavedBytes = new char[ fInterleavedRecordNBytes ];
-            fRecordInterleaved = new ( fRecordInterleavedBytes ) MonarchRecord();
+            fRecordInterleaved = new ( fRecordInterleavedBytes ) MonarchRecordBytes();
 
             fSeparateRecordNBytes = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + fDataNBytes;
             fRecordSeparateOneBytes = new char[ fSeparateRecordNBytes ];
-            fRecordSeparateOne = new ( fRecordSeparateOneBytes ) MonarchRecord();
+            fRecordSeparateOne = new ( fRecordSeparateOneBytes ) MonarchRecordBytes();
             fRecordSeparateTwoBytes = new char[ fSeparateRecordNBytes ];
-            fRecordSeparateTwo = new ( fRecordSeparateTwoBytes ) MonarchRecord();
+            fRecordSeparateTwo = new ( fRecordSeparateTwoBytes ) MonarchRecordBytes();
 
             //cout << "  *format is <" << sFormatInterleavedDual << ">" << endl;
             //cout << "  *data size is <" << fDataSize << ">" << endl;
@@ -232,11 +232,11 @@ namespace monarch
 
             fInterleavedRecordNBytes = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + fDataNBytes;
             fRecordInterleavedBytes = new char[ fInterleavedRecordNBytes ];
-            fRecordInterleaved = new ( fRecordInterleavedBytes ) MonarchRecord();
+            fRecordInterleaved = new ( fRecordInterleavedBytes ) MonarchRecordBytes();
 
             fSeparateRecordNBytes = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + fDataNBytes;
             fRecordSeparateOneBytes = new char[ fSeparateRecordNBytes ];
-            fRecordSeparateOne = new ( fRecordSeparateOneBytes ) MonarchRecord();
+            fRecordSeparateOne = new ( fRecordSeparateOneBytes ) MonarchRecordBytes();
 
             //cout << "  *format is <" << sFormatSingle << ">" << endl;
             //cout << "  *data size is <" << fDataSize << ">" << endl;
@@ -252,13 +252,13 @@ namespace monarch
 
             fInterleavedRecordNBytes = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + 2 * fDataNBytes;
             fRecordInterleavedBytes = new char[ fInterleavedRecordNBytes ];
-            fRecordInterleaved = new ( fRecordInterleavedBytes ) MonarchRecord();
+            fRecordInterleaved = new ( fRecordInterleavedBytes ) MonarchRecordBytes();
 
             fSeparateRecordNBytes = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + fDataNBytes;
             fRecordSeparateOneBytes = new char[ fSeparateRecordNBytes ];
-            fRecordSeparateOne = new ( fRecordSeparateOneBytes ) MonarchRecord();
+            fRecordSeparateOne = new ( fRecordSeparateOneBytes ) MonarchRecordBytes();
             fRecordSeparateTwoBytes = new char[ fSeparateRecordNBytes ];
-            fRecordSeparateTwo = new ( fRecordSeparateTwoBytes ) MonarchRecord();
+            fRecordSeparateTwo = new ( fRecordSeparateTwoBytes ) MonarchRecordBytes();
 
             //cout << "  *format is <" << sFormatSeparateDual << ">" << endl;
             //cout << "  *data size is <" << fDataSize << ">" << endl;
@@ -274,13 +274,13 @@ namespace monarch
 
             fInterleavedRecordNBytes = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + 2 * fDataNBytes;
             fRecordInterleavedBytes = new char[ fInterleavedRecordNBytes ];
-            fRecordInterleaved = new ( fRecordInterleavedBytes ) MonarchRecord();
+            fRecordInterleaved = new ( fRecordInterleavedBytes ) MonarchRecordBytes();
 
             fSeparateRecordNBytes = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + fDataNBytes;
             fRecordSeparateOneBytes = new char[ fSeparateRecordNBytes ];
-            fRecordSeparateOne = new ( fRecordSeparateOneBytes ) MonarchRecord();
+            fRecordSeparateOne = new ( fRecordSeparateOneBytes ) MonarchRecordBytes();
             fRecordSeparateTwoBytes = new char[ fSeparateRecordNBytes ];
-            fRecordSeparateTwo = new ( fRecordSeparateTwoBytes ) MonarchRecord();
+            fRecordSeparateTwo = new ( fRecordSeparateTwoBytes ) MonarchRecordBytes();
 
             //cout << "  *format is <" << sFormatInterleavedDual << ">" << endl;
             //cout << "  *data size is <" << fDataSize << ">" << endl;

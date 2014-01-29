@@ -40,7 +40,7 @@ int main( const int argc, const char** argv )
     TimeType tRecordSize = (TimeType)tReadHeader->GetRecordSize();
     TimeType tBinWidthNS = (TimeType)(1000. / tReadHeader->GetAcquisitionRate()); // in ns
 
-    const MonarchRecord* tReadRecord;
+    const MonarchRecordBytes* tReadRecord;
     if( tReadHeader->GetAcquisitionMode() == 1 /* the FormatMode is ignored for single-channel data */ )
     {
         tReadRecord = tReadTest->GetRecordSeparateOne();

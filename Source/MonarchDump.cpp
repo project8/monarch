@@ -47,24 +47,25 @@ int main( const int argc, const char** argv )
     cout << *tReadHeader << endl;
 
     unsigned int tRecordCount = 0;
-    unsigned int tAcquisitonCount = 0;
+    unsigned int tAcquisitionCount = 0;
 
     if( tReadHeader->GetFormatMode() == sFormatSingle )
     {
-        const MonarchRecord* tReadRecord = tReadTest->GetRecordSeparateOne();
+        const MonarchRecordBytes* tReadRecord = tReadTest->GetRecordSeparateOne();
+        const MonarchRecordDataInterface tData( tReadRecord->fData, tReadHeader->GetDataTypeSize() );
         unsigned int tRecordsPerChannel = 0;
         while( tReadTest->ReadRecord() != false )
         {
             tRecordCount++;
             tRecordsPerChannel++;
-            if( tReadRecord->fAcquisitionId == tAcquisitonCount )
+            if( tReadRecord->fAcquisitionId == tAcquisitionCount )
             {
-                tAcquisitonCount = tAcquisitonCount + 1;
+                tAcquisitionCount = tAcquisitionCount + 1;
                 tOutputOne << "\n\n";
             }
             for( unsigned int tIndex = 0; tIndex < tReadHeader->GetRecordSize(); tIndex++ )
             {
-                tOutputOne << tIndex << " " << (unsigned int) ((unsigned char) (tReadRecord->fData[tIndex])) << "\n";
+                tOutputOne << tIndex << " " << tData.at< uint64_t >( tIndex ) << "\n";
             }
             if (nRecords != 0 && tRecordsPerChannel >= nRecords)
                 break;
@@ -73,23 +74,25 @@ int main( const int argc, const char** argv )
     }
     if( (tReadHeader->GetFormatMode() == sFormatMultiInterleaved) || (tReadHeader->GetFormatMode() == sFormatMultiSeparate) )
     {
-        const MonarchRecord* tReadRecordOne = tReadTest->GetRecordSeparateOne();
-        const MonarchRecord* tReadRecordTwo = tReadTest->GetRecordSeparateTwo();
+        const MonarchRecordBytes* tReadRecordOne = tReadTest->GetRecordSeparateOne();
+        const MonarchRecordDataInterface tDataOne( tReadRecordOne->fData, tReadHeader->GetDataTypeSize() );
+        const MonarchRecordBytes* tReadRecordTwo = tReadTest->GetRecordSeparateTwo();
+        const MonarchRecordDataInterface tDataTwo( tReadRecordTwo->fData, tReadHeader->GetDataTypeSize() );
         unsigned int tRecordsPerChannel = 0;
         while( tReadTest->ReadRecord() != false )
         {
             tRecordCount = tRecordCount + 1;
             tRecordsPerChannel++;
-            if( tReadRecordOne->fAcquisitionId == tAcquisitonCount )
+            if( tReadRecordOne->fAcquisitionId == tAcquisitionCount )
             {
-                tAcquisitonCount = tAcquisitonCount + 1;
+                tAcquisitionCount = tAcquisitionCount + 1;
                 tOutputOne << "\n\n";
                 tOutputTwo << "\n\n";
             }
             for( unsigned int tIndex = 0; tIndex < tReadHeader->GetRecordSize(); tIndex++ )
             {
-                tOutputOne << tIndex << " " << (unsigned int) ((unsigned char) (tReadRecordOne->fData[ tIndex ])) << "\n";
-                tOutputTwo << tIndex << " " << (unsigned int) ((unsigned char) (tReadRecordTwo->fData[ tIndex ])) << "\n";
+                tOutputOne << tIndex << " " << tDataOne.at< uint64_t >( tIndex ) << "\n";
+                tOutputTwo << tIndex << " " << tDataTwo.at< uint64_t >( tIndex ) << "\n";
             }
             if (nRecords != 0 && tRecordsPerChannel >= nRecords)
                 break;
@@ -97,7 +100,7 @@ int main( const int argc, const char** argv )
     }
 
     MINFO( mlog, "record count <" << tRecordCount << ">" );
-    MINFO( mlog, "acquisition count <" << tAcquisitonCount << ">" );
+    MINFO( mlog, "acquisition count <" << tAcquisitionCount << ">" );
 
     tReadTest->Close();
     delete tReadTest;
