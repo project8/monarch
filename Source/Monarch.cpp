@@ -131,11 +131,11 @@ namespace monarch
             fDataNBytes = fDataSize * fDataTypeSize;
 
             fInterleavedRecordNBytes = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + fDataNBytes;
-            fRecordInterleavedBytes = new char[ fInterleavedRecordNBytes ];
+            fRecordInterleavedBytes = new byte_type[ fInterleavedRecordNBytes ];
             fRecordInterleaved = new ( fRecordInterleavedBytes ) MonarchRecordBytes();
 
             fSeparateRecordNBytes = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + fDataNBytes;
-            fRecordSeparateOneBytes = new char[ fSeparateRecordNBytes ];
+            fRecordSeparateOneBytes = new byte_type[ fSeparateRecordNBytes ];
             fRecordSeparateOne = new ( fRecordSeparateOneBytes ) MonarchRecordBytes();
 
             //cout << "  *format is <" << sFormatSingle << ">" << endl;
@@ -151,13 +151,13 @@ namespace monarch
             fDataNBytes = fDataSize * fDataTypeSize;
 
             fInterleavedRecordNBytes = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + 2 * fDataNBytes;
-            fRecordInterleavedBytes = new char[ fInterleavedRecordNBytes ];
+            fRecordInterleavedBytes = new byte_type[ fInterleavedRecordNBytes ];
             fRecordInterleaved = new ( fRecordInterleavedBytes ) MonarchRecordBytes();
 
             fSeparateRecordNBytes = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + (size_t)fDataNBytes;
-            fRecordSeparateOneBytes = new char[ fSeparateRecordNBytes ];
+            fRecordSeparateOneBytes = new byte_type[ fSeparateRecordNBytes ];
             fRecordSeparateOne = new ( fRecordSeparateOneBytes ) MonarchRecordBytes();
-            fRecordSeparateTwoBytes = new char[ fSeparateRecordNBytes ];
+            fRecordSeparateTwoBytes = new byte_type[ fSeparateRecordNBytes ];
             fRecordSeparateTwo = new ( fRecordSeparateTwoBytes ) MonarchRecordBytes();
 
             //cout << "  *format is <" << sFormatSeparateDual << ">" << endl;
@@ -173,13 +173,13 @@ namespace monarch
             fDataNBytes = fDataSize * fDataTypeSize;
 
             fInterleavedRecordNBytes = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + 2 * fDataNBytes;
-            fRecordInterleavedBytes = new char[ fInterleavedRecordNBytes ];
+            fRecordInterleavedBytes = new byte_type[ fInterleavedRecordNBytes ];
             fRecordInterleaved = new ( fRecordInterleavedBytes ) MonarchRecordBytes();
 
             fSeparateRecordNBytes = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + fDataNBytes;
-            fRecordSeparateOneBytes = new char[ fSeparateRecordNBytes ];
+            fRecordSeparateOneBytes = new byte_type[ fSeparateRecordNBytes ];
             fRecordSeparateOne = new ( fRecordSeparateOneBytes ) MonarchRecordBytes();
-            fRecordSeparateTwoBytes = new char[ fSeparateRecordNBytes ];
+            fRecordSeparateTwoBytes = new byte_type[ fSeparateRecordNBytes ];
             fRecordSeparateTwo = new ( fRecordSeparateTwoBytes ) MonarchRecordBytes();
 
             //cout << "  *format is <" << sFormatInterleavedDual << ">" << endl;
@@ -231,11 +231,11 @@ namespace monarch
             fDataNBytes = fDataSize * fDataTypeSize;
 
             fInterleavedRecordNBytes = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + fDataNBytes;
-            fRecordInterleavedBytes = new char[ fInterleavedRecordNBytes ];
+            fRecordInterleavedBytes = new byte_type[ fInterleavedRecordNBytes ];
             fRecordInterleaved = new ( fRecordInterleavedBytes ) MonarchRecordBytes();
 
             fSeparateRecordNBytes = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + fDataNBytes;
-            fRecordSeparateOneBytes = new char[ fSeparateRecordNBytes ];
+            fRecordSeparateOneBytes = new byte_type[ fSeparateRecordNBytes ];
             fRecordSeparateOne = new ( fRecordSeparateOneBytes ) MonarchRecordBytes();
 
             //cout << "  *format is <" << sFormatSingle << ">" << endl;
@@ -251,13 +251,13 @@ namespace monarch
             fDataNBytes = fDataSize * fDataTypeSize;
 
             fInterleavedRecordNBytes = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + 2 * fDataNBytes;
-            fRecordInterleavedBytes = new char[ fInterleavedRecordNBytes ];
+            fRecordInterleavedBytes = new byte_type[ fInterleavedRecordNBytes ];
             fRecordInterleaved = new ( fRecordInterleavedBytes ) MonarchRecordBytes();
 
             fSeparateRecordNBytes = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + fDataNBytes;
-            fRecordSeparateOneBytes = new char[ fSeparateRecordNBytes ];
+            fRecordSeparateOneBytes = new byte_type[ fSeparateRecordNBytes ];
             fRecordSeparateOne = new ( fRecordSeparateOneBytes ) MonarchRecordBytes();
-            fRecordSeparateTwoBytes = new char[ fSeparateRecordNBytes ];
+            fRecordSeparateTwoBytes = new byte_type[ fSeparateRecordNBytes ];
             fRecordSeparateTwo = new ( fRecordSeparateTwoBytes ) MonarchRecordBytes();
 
             //cout << "  *format is <" << sFormatSeparateDual << ">" << endl;
@@ -273,13 +273,13 @@ namespace monarch
             fDataNBytes = fDataSize * fDataTypeSize;
 
             fInterleavedRecordNBytes = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + 2 * fDataNBytes;
-            fRecordInterleavedBytes = new char[ fInterleavedRecordNBytes ];
+            fRecordInterleavedBytes = new byte_type[ fInterleavedRecordNBytes ];
             fRecordInterleaved = new ( fRecordInterleavedBytes ) MonarchRecordBytes();
 
             fSeparateRecordNBytes = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + fDataNBytes;
-            fRecordSeparateOneBytes = new char[ fSeparateRecordNBytes ];
+            fRecordSeparateOneBytes = new byte_type[ fSeparateRecordNBytes ];
             fRecordSeparateOne = new ( fRecordSeparateOneBytes ) MonarchRecordBytes();
-            fRecordSeparateTwoBytes = new char[ fSeparateRecordNBytes ];
+            fRecordSeparateTwoBytes = new byte_type[ fSeparateRecordNBytes ];
             fRecordSeparateTwo = new ( fRecordSeparateTwoBytes ) MonarchRecordBytes();
 
             //cout << "  *format is <" << sFormatInterleavedDual << ">" << endl;

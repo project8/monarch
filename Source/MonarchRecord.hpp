@@ -14,11 +14,11 @@ namespace monarch
             DataType fData[];
     };
 
-    typedef MonarchRecord< char > MonarchRecordBytes;
+    typedef MonarchRecord< byte_type > MonarchRecordBytes;
 
     struct MonarchRecordDataInterface
     {
-            MonarchRecordDataInterface( const char* aData, size_t aDataTypeSize )
+            MonarchRecordDataInterface( const byte_type* aData, size_t aDataTypeSize )
             {
                 fData = aData;
                 fDataTypeSize = aDataTypeSize;
@@ -30,7 +30,7 @@ namespace monarch
                 return (DataType)( fData[ index * fDataTypeSize ] );
             }
 
-            const char* fData;
+            const byte_type* fData;
             size_t fDataTypeSize;
     };
 

@@ -132,7 +132,7 @@ namespace monarch
             //pointer to a MonarchRecordBytes occupying the interleaved record
             mutable MonarchRecordBytes* fRecordInterleaved;
             //pointer to the bytes that hold the interleaved record
-            mutable char* fRecordInterleavedBytes;
+            mutable byte_type* fRecordInterleavedBytes;
 
             //number of bytes in a separate record
             mutable size_t fSeparateRecordNBytes;
@@ -140,12 +140,12 @@ namespace monarch
             //pointer to a MonarchRecordBytes occupying the first separate record
             mutable MonarchRecordBytes* fRecordSeparateOne;
             //pointer to the bytes that hold the first separate record
-            mutable char* fRecordSeparateOneBytes;
+            mutable byte_type* fRecordSeparateOneBytes;
 
             //pointer to a MonarchRecordBytes occupying the second separate record
             mutable MonarchRecordBytes* fRecordSeparateTwo;
             //pointer to the bytes that hold the second separate record
-            mutable char* fRecordSeparateTwoBytes;
+            mutable byte_type* fRecordSeparateTwoBytes;
 
             //the private read functions
             mutable bool (Monarch::*fReadFunction)( int anOffset ) const;
@@ -167,15 +167,15 @@ namespace monarch
 
         private:
 #ifdef __GNUG__
-            static void Zip( const size_t aSize, const size_t aDataTypeSize, const char* __restrict__ aRecordOne, const char* __restrict__ aRecordTwo, char* __restrict__ anInterleavedRecord );
+            static void Zip( const size_t aSize, const size_t aDataTypeSize, const byte_type* __restrict__ aRecordOne, const byte_type* __restrict__ aRecordTwo, byte_type* __restrict__ anInterleavedRecord );
 #else
-            static void Zip( const size_t aSize, const size_t aDataTypeSize, const char*  aRecordOne, const char*  aRecordTwo, char*  anInterleavedRecord );
+            static void Zip( const size_t aSize, const size_t aDataTypeSize, const byte_type*  aRecordOne, const byte_type*  aRecordTwo, byte_type*  anInterleavedRecord );
 #endif
 
 #ifdef __GNUG__
-            static void Unzip( const size_t aSize, const size_t aDataTypeSize, char* __restrict__ aRecordOne, char* __restrict__ aRecordTwo, const char* __restrict__ anInterleavedRecord );
+            static void Unzip( const size_t aSize, const size_t aDataTypeSize, byte_type* __restrict__ aRecordOne, byte_type* __restrict__ aRecordTwo, const byte_type* __restrict__ anInterleavedRecord );
 #else
-            static void Unzip( const size_t aSize, const size_t aDataTypeSize, char*  aRecordOne, char*  aRecordTwo, const char*  anInterleavedRecord );
+            static void Unzip( const size_t aSize, const size_t aDataTypeSize, byte_type*  aRecordOne, byte_type*  aRecordTwo, const byte_type*  anInterleavedRecord );
 #endif
 
     };
@@ -217,9 +217,9 @@ namespace monarch
     }
 
 #ifdef __GNUG__
-    inline void Monarch::Zip( const size_t aSize, const size_t aDataTypeSize, const char* __restrict__ aRecordOne, const char* __restrict__ aRecordTwo, char* __restrict__ anInterleavedRecord )
+    inline void Monarch::Zip( const size_t aSize, const size_t aDataTypeSize, const byte_type* __restrict__ aRecordOne, const byte_type* __restrict__ aRecordTwo, byte_type* __restrict__ anInterleavedRecord )
 #else
-    inline void Monarch::Zip( const size_t aSize, const size_t aDataTypeSize, const char* aRecordOne, const char* aRecordTwo, char* anInterleavedRecord )
+    inline void Monarch::Zip( const size_t aSize, const size_t aDataTypeSize, const byte_type* aRecordOne, const byte_type* aRecordTwo, byte_type* anInterleavedRecord )
 #endif
     {
         for( size_t anIndex = 0; anIndex < aSize; anIndex++ )
@@ -235,9 +235,9 @@ namespace monarch
     }
 
 #ifdef __GNUG__
-    inline void Monarch::Unzip( const size_t aSize, const size_t aDataTypeSize, char* __restrict__ aRecordOne, char* __restrict__ aRecordTwo, const char* __restrict__ anInterleavedRecord )
+    inline void Monarch::Unzip( const size_t aSize, const size_t aDataTypeSize, byte_type* __restrict__ aRecordOne, byte_type* __restrict__ aRecordTwo, const byte_type* __restrict__ anInterleavedRecord )
 #else
-    inline void Monarch::Unzip( const size_t aSize, const size_t aDataTypeSize, char* aRecordOne, char* aRecordTwo, const char* anInterleavedRecord )
+    inline void Monarch::Unzip( const size_t aSize, const size_t aDataTypeSize, byte_type* aRecordOne, byte_type* aRecordTwo, const byte_type* anInterleavedRecord )
 #endif
     {
         for( size_t anIndex = 0; anIndex < aSize; anIndex++ )

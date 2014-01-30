@@ -29,7 +29,7 @@ namespace monarch
 
             // Write nbytes of data from the byte array wbuf to the
             // current position of the file pointer.
-            bool Write( char* anArray, size_t aCount );
+            bool Write( byte_type* anArray, size_t aCount );
             template< class XType >
             bool Write( XType* aDatum );
             template< class XType >
@@ -40,7 +40,7 @@ namespace monarch
 
             // Read aCout bytes of data from the file pointer and store
             // the result in the byte array anArray.
-            bool Read( char* anArray, size_t aCount );
+            bool Read( byte_type* anArray, size_t aCount );
             template< class XType >
             bool Read( XType* aDatum );
             template< class XType >
@@ -53,10 +53,10 @@ namespace monarch
             bool Close();
     };
 
-    inline bool MonarchIO::Write( char* anArray, size_t aCount )
+    inline bool MonarchIO::Write( byte_type* anArray, size_t aCount )
     {
-        size_t written = fwrite( anArray, sizeof(char), aCount, fFile );
-        return (written == sizeof(char) * aCount);
+        size_t written = fwrite( anArray, sizeof(byte_type), aCount, fFile );
+        return (written == sizeof(byte_type) * aCount);
     }
     template< class XType >
     inline bool MonarchIO::Write( XType* aDatum )
@@ -77,10 +77,10 @@ namespace monarch
         return( success == 0 );
     }
 
-    inline bool MonarchIO::Read( char* anArray, size_t aCount )
+    inline bool MonarchIO::Read( byte_type* anArray, size_t aCount )
     {
-        size_t read = fread( anArray, sizeof(char), aCount, fFile );
-        return (read == sizeof(char) * aCount);
+        size_t read = fread( anArray, sizeof(byte_type), aCount, fFile );
+        return (read == sizeof(byte_type) * aCount);
     }
     template< class XType >
     inline bool MonarchIO::Read( XType* aDatum )

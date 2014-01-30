@@ -55,7 +55,6 @@ namespace monarch
     typedef acquisition_id_type AcquisitionIdType; // 8 bytes
     typedef record_id_type RecordIdType; // 8 bytes
     typedef time_nsec_type TimeType; // 8 bytes
-    typedef data_type DataType; // 1 byte
 
 }
 
