@@ -51,8 +51,9 @@ int main( const int argc, const char** argv )
 
     if( tReadHeader->GetFormatMode() == sFormatSingle )
     {
+        const unsigned tDataTypeSize = tReadHeader->GetDataTypeSize();
         const MonarchRecordBytes* tReadRecord = tReadTest->GetRecordSeparateOne();
-        const MonarchRecordDataInterface tData( tReadRecord->fData, tReadHeader->GetDataTypeSize() );
+        const MonarchRecordDataInterface< uint64_t > tData( tReadRecord->fData, tDataTypeSize );
         unsigned int tRecordsPerChannel = 0;
         while( tReadTest->ReadRecord() != false )
         {
@@ -65,7 +66,7 @@ int main( const int argc, const char** argv )
             }
             for( unsigned int tIndex = 0; tIndex < tReadHeader->GetRecordSize(); tIndex++ )
             {
-                tOutputOne << tIndex << " " << tData.at< uint64_t >( tIndex ) << "\n";
+                tOutputOne << tIndex << " " << tData.at( tIndex ) << "\n";
             }
             if (nRecords != 0 && tRecordsPerChannel >= nRecords)
                 break;
@@ -74,10 +75,11 @@ int main( const int argc, const char** argv )
     }
     if( (tReadHeader->GetFormatMode() == sFormatMultiInterleaved) || (tReadHeader->GetFormatMode() == sFormatMultiSeparate) )
     {
+        const unsigned tDataTypeSize = tReadHeader->GetDataTypeSize();
         const MonarchRecordBytes* tReadRecordOne = tReadTest->GetRecordSeparateOne();
-        const MonarchRecordDataInterface tDataOne( tReadRecordOne->fData, tReadHeader->GetDataTypeSize() );
+        const MonarchRecordDataInterface< uint64_t > tDataOne( tReadRecordOne->fData, tDataTypeSize );
         const MonarchRecordBytes* tReadRecordTwo = tReadTest->GetRecordSeparateTwo();
-        const MonarchRecordDataInterface tDataTwo( tReadRecordTwo->fData, tReadHeader->GetDataTypeSize() );
+        const MonarchRecordDataInterface< uint64_t > tDataTwo( tReadRecordTwo->fData , tDataTypeSize);
         unsigned int tRecordsPerChannel = 0;
         while( tReadTest->ReadRecord() != false )
         {
@@ -91,8 +93,8 @@ int main( const int argc, const char** argv )
             }
             for( unsigned int tIndex = 0; tIndex < tReadHeader->GetRecordSize(); tIndex++ )
             {
-                tOutputOne << tIndex << " " << tDataOne.at< uint64_t >( tIndex ) << "\n";
-                tOutputTwo << tIndex << " " << tDataTwo.at< uint64_t >( tIndex ) << "\n";
+                tOutputOne << tIndex << " " << tDataOne.at( tIndex ) << "\n";
+                tOutputTwo << tIndex << " " << tDataTwo.at( tIndex ) << "\n";
             }
             if (nRecords != 0 && tRecordsPerChannel >= nRecords)
                 break;

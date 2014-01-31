@@ -1,6 +1,7 @@
 #ifndef MONARCHRECORD_HPP_
 #define MONARCHRECORD_HPP_
 
+#include "MonarchException.hpp"
 #include "MonarchTypes.hpp"
 
 namespace monarch
@@ -16,22 +17,67 @@ namespace monarch
 
     typedef MonarchRecord< byte_type > MonarchRecordBytes;
 
-    struct MonarchRecordDataInterface
+    template< typename ReturnType >
+    class MonarchRecordDataInterface
     {
-            MonarchRecordDataInterface( const byte_type* aData, size_t aDataTypeSize )
+        public:
+            MonarchRecordDataInterface( const byte_type* aData, unsigned aDataTypeSize ) :
+                fByteData( aData )
             {
-                fData = aData;
-                fDataTypeSize = aDataTypeSize;
+                SetDataTypeSize( aDataTypeSize );
+            }
+            ~MonarchRecordDataInterface()
+            {
             }
 
-            template< typename DataType >
-            DataType at( unsigned index ) const
+            ReturnType at( unsigned index ) const
             {
-                return (DataType)( fData[ index * fDataTypeSize ] );
+                return (this->*fArrayFcn)( index );
             }
 
-            const byte_type* fData;
-            size_t fDataTypeSize;
+            void SetDataTypeSize( unsigned aDataTypeSize )
+            {
+                if( aDataTypeSize == 1 ) fArrayFcn = &MonarchRecordDataInterface< ReturnType >::at_1_byte;
+                else if( aDataTypeSize == 2 )  fArrayFcn = &MonarchRecordDataInterface< ReturnType >::at_2_byte;
+                else if( aDataTypeSize == 4 )  fArrayFcn = &MonarchRecordDataInterface< ReturnType >::at_4_byte;
+                else if( aDataTypeSize == 8 )  fArrayFcn = &MonarchRecordDataInterface< ReturnType >::at_8_byte;
+                else
+                {
+                    throw MonarchException() << "unable to make a record data interface with data type size " << aDataTypeSize;
+                }
+                return;
+            }
+
+        private:
+            ReturnType at_1_byte( unsigned index ) const
+            {
+                return fByteData[ index ];
+            }
+
+            ReturnType at_2_byte( unsigned index ) const
+            {
+                return fTwoBytesData[ index ];
+            }
+
+            ReturnType at_4_byte( unsigned index ) const
+            {
+                return fFourBytesData[ index ];
+            }
+
+            ReturnType at_8_byte( unsigned index ) const
+            {
+                return fEightBytesData[ index ];
+            }
+
+            ReturnType (MonarchRecordDataInterface::*fArrayFcn)( unsigned ) const;
+
+            union
+            {
+                const byte_type* fByteData;
+                const uint16_t* fTwoBytesData;
+                const uint32_t* fFourBytesData;
+                const uint64_t* fEightBytesData;
+            };
     };
 
 }
