@@ -18,7 +18,7 @@ int main( const int argc, const char** argv )
     tReadTest->ReadHeader();
 
     const MonarchHeader* tReadHeader = tReadTest->GetHeader();
-    cout << *tReadHeader << endl;
+    MINFO( mlog, *tReadHeader );
 
     unsigned int tRecordCount = 0;
     unsigned int tAcquisiontCount = 0;
