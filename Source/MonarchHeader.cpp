@@ -244,6 +244,35 @@ TimeType MonarchHeader::GetRecordTime0() const
         return fProtobufHeader->datatypesize();
     }
 
+    void MonarchHeader::SetBitDepth( unsigned aBitDepth )
+    {
+        fProtobufHeader->set_bitdepth( aBitDepth );
+        return;
+    }
+    unsigned MonarchHeader::GetBitDepth() const
+    {
+        return fProtobufHeader->bitdepth();
+    }
+
+    void MonarchHeader::SetVoltageMin( double aVoltage )
+    {
+        fProtobufHeader->set_voltagemin( aVoltage );
+        return;
+    }
+    double MonarchHeader::GetVoltageMin() const
+    {
+        return fProtobufHeader->voltagemin();
+    }
+
+    void MonarchHeader::SetVoltageRange( double aVoltage )
+    {
+        fProtobufHeader->set_voltagerange( aVoltage );
+        return;
+    }
+    double MonarchHeader::GetVoltageRange() const
+    {
+        return fProtobufHeader->voltagerange();
+    }
 }
 
 std::ostream& operator<<( std::ostream& out, const monarch::MonarchHeader& hdr )
@@ -251,14 +280,17 @@ std::ostream& operator<<( std::ostream& out, const monarch::MonarchHeader& hdr )
     out << "Monarch Header Content: " << "\n";
     out << "\tFilename: " << hdr.GetFilename() << "\n";
     out << "\tAcquisition Mode (# channels): " << hdr.GetAcquisitionMode() << "\n";
-    out << "\tAcquisition Rate: " << hdr.GetAcquisitionRate() << "\n";
-    out << "\tRun Duration: " << hdr.GetRunDuration() << "\n";
+    out << "\tAcquisition Rate: " << hdr.GetAcquisitionRate() << " MHz\n";
+    out << "\tRun Duration: " << hdr.GetRunDuration() << " s\n";
     out << "\tRecord Size: " << hdr.GetRecordSize() << "\n";
     out << "\tTimestamp: " << hdr.GetTimestamp() << "\n";
     out << "\tDescription: " << hdr.GetDescription() << "\n";
     out << "\tRun Type: " << hdr.GetRunType() << "\n";
     out << "\tRun Source: " << hdr.GetRunSource() << "\n";
     out << "\tFormat Mode: " << hdr.GetFormatMode() << "\n";
-    out << "\tData Type Size: " << hdr.GetDataTypeSize();
+    out << "\tData Type Size: " << hdr.GetDataTypeSize() << " bytes\n";
+    out << "\tBit Depth: " << hdr.GetBitDepth() << " bits\n";
+    out << "\tVoltage Min: " << hdr.GetVoltageMin() << " V\n";
+    out << "\tVoltage Range: " << hdr.GetVoltageRange() << " V\n";
     return out;
 }

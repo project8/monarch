@@ -64,5 +64,14 @@ message MonarchHeader
   // What is the size of the integer data type used to make the data? (default in Monarch is 1)
   optional uint32 dataTypeSize = 11 [default = 1];
   
+  // What is the bit depth of the digitizer that produced the data? (default in Monarch is 8)
+  optional uint32 bitDepth = 12 [default = 8];
+  
+  // What is the minimum voltage of the digitizer that produced the data? (units: V; default in Monarch is -0.25 V)
+  optional double voltageMin = 13 [default = -0.25];
+  
+  // What is the voltage range of the digitizer that produced the data? (units: V; default in Monarch is 0.5 V)
+  optional double voltageRange = 14 [default = 0.5];
+  
 
 }

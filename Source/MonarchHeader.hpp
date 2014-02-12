@@ -78,6 +78,15 @@ namespace monarch
             void SetDataTypeSize( unsigned aSize );
             unsigned GetDataTypeSize() const;
 
+            void SetBitDepth( unsigned aBitDepth );
+            unsigned GetBitDepth() const;
+
+            void SetVoltageMin( double aVoltage );
+            double GetVoltageMin() const;
+
+            void SetVoltageRange( double aVoltage );
+            double GetVoltageRange() const;
+
     };
 
 }
