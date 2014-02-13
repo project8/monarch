@@ -239,9 +239,10 @@ namespace monarch
             fRecordSeparateOne = new ( fRecordSeparateOneBytes ) MonarchRecordBytes();
 
             //cout << "  *format is <" << sFormatSingle << ">" << endl;
-            //cout << "  *data size is <" << fDataSize << ">" << endl;
-            //cout << "  *interleaved size is <" << fInterleavedRecordSize << ">" << endl;
-            //cout << "  *separate size is <" << fSeparateRecordSize << ">" << endl;
+            //cout << "  *data type size is <" << fDataTypeSize << ">" << endl;
+            //cout << "  *data size is <" << fDataSize << "> and # of data bytes is <" << fDataNBytes << ">" << endl;
+            //cout << "  *interleaved # of bytes is <" << fInterleavedRecordNBytes << ">" << endl;
+            //cout << "  *separate # of bytes is <" << fSeparateRecordNBytes << ">" << endl;
 
             fWriteFunction = &Monarch::SeparateToSingle;
         }
@@ -260,10 +261,10 @@ namespace monarch
             fRecordSeparateTwoBytes = new byte_type[ fSeparateRecordNBytes ];
             fRecordSeparateTwo = new ( fRecordSeparateTwoBytes ) MonarchRecordBytes();
 
-            //cout << "  *format is <" << sFormatSeparateDual << ">" << endl;
-            //cout << "  *data size is <" << fDataSize << ">" << endl;
-            //cout << "  *interleaved size is <" << fInterleavedRecordSize << ">" << endl;
-            //cout << "  *separate size is <" << fSeparateRecordSize << ">" << endl;
+            //cout << "  *format is <" << sFormatMultiSeparate << ">" << endl;
+            //cout << "  *data size is <" << fDataSize << "> and # of data bytes is <" << fDataNBytes << ">" << endl;
+            //cout << "  *interleaved # of bytes is <" << fInterleavedRecordNBytes << ">" << endl;
+            //cout << "  *separate # of bytes is <" << fSeparateRecordNBytes << ">" << endl;
 
             fWriteFunction = &Monarch::SeparateToSeparate;
         }
@@ -282,10 +283,10 @@ namespace monarch
             fRecordSeparateTwoBytes = new byte_type[ fSeparateRecordNBytes ];
             fRecordSeparateTwo = new ( fRecordSeparateTwoBytes ) MonarchRecordBytes();
 
-            //cout << "  *format is <" << sFormatInterleavedDual << ">" << endl;
-            //cout << "  *data size is <" << fDataSize << ">" << endl;
-            //cout << "  *interleaved size is <" << fInterleavedRecordSize << ">" << endl;
-            //cout << "  *separate size is <" << fSeparateRecordSize << ">" << endl;
+            //cout << "  *format is <" << sFormatMultiInterleaved << ">" << endl;
+            //cout << "  *data size is <" << fDataSize << "> and # of data bytes is <" << fDataNBytes << ">" << endl;
+            //cout << "  *interleaved # of bytes is <" << fInterleavedRecordNBytes << ">" << endl;
+            //cout << "  *separate # of bytes is <" << fSeparateRecordNBytes << ">" << endl;
 
             fWriteFunction = &Monarch::InterleavedToInterleaved;
         }
