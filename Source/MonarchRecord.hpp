@@ -48,6 +48,11 @@ namespace monarch
                 return;
             }
 
+            void SetData( const byte_type* aData )
+            {
+                fByteData = aData;
+            }
+
         private:
             ReturnType at_1_byte( unsigned index ) const
             {
