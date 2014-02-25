@@ -130,11 +130,11 @@ namespace monarch
             fDataSize = fHeader->GetRecordSize();
             fDataNBytes = fDataSize * fDataTypeSize;
 
-            fInterleavedRecordNBytes = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + fDataNBytes;
+            fInterleavedRecordNBytes = sizeof(AcquisitionIdType) + sizeof(RecordIdType) + sizeof(TimeType) + fDataNBytes;
             fRecordInterleavedBytes = new byte_type[ fInterleavedRecordNBytes ];
             fRecordInterleaved = new ( fRecordInterleavedBytes ) MonarchRecordBytes();
 
-            fSeparateRecordNBytes = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + fDataNBytes;
+            fSeparateRecordNBytes = sizeof(AcquisitionIdType) + sizeof(RecordIdType) + sizeof(TimeType) + fDataNBytes;
             fRecordSeparateOneBytes = new byte_type[ fSeparateRecordNBytes ];
             fRecordSeparateOne = new ( fRecordSeparateOneBytes ) MonarchRecordBytes();
 
@@ -150,11 +150,11 @@ namespace monarch
             fDataSize = fHeader->GetRecordSize();
             fDataNBytes = fDataSize * fDataTypeSize;
 
-            fInterleavedRecordNBytes = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + 2 * fDataNBytes;
+            fInterleavedRecordNBytes = sizeof(AcquisitionIdType) + sizeof(RecordIdType) + sizeof(TimeType) + 2 * fDataNBytes;
             fRecordInterleavedBytes = new byte_type[ fInterleavedRecordNBytes ];
             fRecordInterleaved = new ( fRecordInterleavedBytes ) MonarchRecordBytes();
 
-            fSeparateRecordNBytes = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + (size_t)fDataNBytes;
+            fSeparateRecordNBytes = sizeof(AcquisitionIdType) + sizeof(RecordIdType) + sizeof(TimeType) + (size_t)fDataNBytes;
             fRecordSeparateOneBytes = new byte_type[ fSeparateRecordNBytes ];
             fRecordSeparateOne = new ( fRecordSeparateOneBytes ) MonarchRecordBytes();
             fRecordSeparateTwoBytes = new byte_type[ fSeparateRecordNBytes ];
@@ -172,11 +172,11 @@ namespace monarch
             fDataSize = fHeader->GetRecordSize();
             fDataNBytes = fDataSize * fDataTypeSize;
 
-            fInterleavedRecordNBytes = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + 2 * fDataNBytes;
+            fInterleavedRecordNBytes = sizeof(AcquisitionIdType) + sizeof(RecordIdType) + sizeof(TimeType) + 2 * fDataNBytes;
             fRecordInterleavedBytes = new byte_type[ fInterleavedRecordNBytes ];
             fRecordInterleaved = new ( fRecordInterleavedBytes ) MonarchRecordBytes();
 
-            fSeparateRecordNBytes = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + fDataNBytes;
+            fSeparateRecordNBytes = sizeof(AcquisitionIdType) + sizeof(RecordIdType) + sizeof(TimeType) + fDataNBytes;
             fRecordSeparateOneBytes = new byte_type[ fSeparateRecordNBytes ];
             fRecordSeparateOne = new ( fRecordSeparateOneBytes ) MonarchRecordBytes();
             fRecordSeparateTwoBytes = new byte_type[ fSeparateRecordNBytes ];
@@ -230,11 +230,11 @@ namespace monarch
             fDataSize = fHeader->GetRecordSize();
             fDataNBytes = fDataSize * fDataTypeSize;
 
-            fInterleavedRecordNBytes = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + fDataNBytes;
+            fInterleavedRecordNBytes = sizeof(AcquisitionIdType) + sizeof(RecordIdType) + sizeof(TimeType) + fDataNBytes;
             fRecordInterleavedBytes = new byte_type[ fInterleavedRecordNBytes ];
             fRecordInterleaved = new ( fRecordInterleavedBytes ) MonarchRecordBytes();
 
-            fSeparateRecordNBytes = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + fDataNBytes;
+            fSeparateRecordNBytes = sizeof(AcquisitionIdType) + sizeof(RecordIdType) + sizeof(TimeType) + fDataNBytes;
             fRecordSeparateOneBytes = new byte_type[ fSeparateRecordNBytes ];
             fRecordSeparateOne = new ( fRecordSeparateOneBytes ) MonarchRecordBytes();
 
@@ -251,11 +251,11 @@ namespace monarch
             fDataSize = fHeader->GetRecordSize();
             fDataNBytes = fDataSize * fDataTypeSize;
 
-            fInterleavedRecordNBytes = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + 2 * fDataNBytes;
+            fInterleavedRecordNBytes = sizeof(AcquisitionIdType) + sizeof(RecordIdType) + sizeof(TimeType) + 2 * fDataNBytes;
             fRecordInterleavedBytes = new byte_type[ fInterleavedRecordNBytes ];
             fRecordInterleaved = new ( fRecordInterleavedBytes ) MonarchRecordBytes();
 
-            fSeparateRecordNBytes = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + fDataNBytes;
+            fSeparateRecordNBytes = sizeof(AcquisitionIdType) + sizeof(RecordIdType) + sizeof(TimeType) + fDataNBytes;
             fRecordSeparateOneBytes = new byte_type[ fSeparateRecordNBytes ];
             fRecordSeparateOne = new ( fRecordSeparateOneBytes ) MonarchRecordBytes();
             fRecordSeparateTwoBytes = new byte_type[ fSeparateRecordNBytes ];
@@ -273,11 +273,11 @@ namespace monarch
             fDataSize = fHeader->GetRecordSize();
             fDataNBytes = fDataSize * fDataTypeSize;
 
-            fInterleavedRecordNBytes = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + 2 * fDataNBytes;
+            fInterleavedRecordNBytes = sizeof(AcquisitionIdType) + sizeof(RecordIdType) + sizeof(TimeType) + 2 * fDataNBytes;
             fRecordInterleavedBytes = new byte_type[ fInterleavedRecordNBytes ];
             fRecordInterleaved = new ( fRecordInterleavedBytes ) MonarchRecordBytes();
 
-            fSeparateRecordNBytes = sizeof(TimeType) + sizeof(RecordIdType) + sizeof(TimeType) + fDataNBytes;
+            fSeparateRecordNBytes = sizeof(AcquisitionIdType) + sizeof(RecordIdType) + sizeof(TimeType) + fDataNBytes;
             fRecordSeparateOneBytes = new byte_type[ fSeparateRecordNBytes ];
             fRecordSeparateOne = new ( fRecordSeparateOneBytes ) MonarchRecordBytes();
             fRecordSeparateTwoBytes = new byte_type[ fSeparateRecordNBytes ];
