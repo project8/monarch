@@ -19,6 +19,9 @@
 
 // UTILITY MACROS
 
+#ifndef LOGGER_UTILITY_MACROS_
+#define LOGGER_UTILITY_MACROS_
+
 #define STRINGIFY(x) #x
 #define TOSTRING(x) STRINGIFY(x)
 #define __FILE_LINE__      __FILE__ "(" TOSTRING(__LINE__) ")"
@@ -44,6 +47,9 @@
 #define macro_dispatcher_(func, nargs) macro_dispatcher__(func, nargs)
 #define macro_dispatcher__(func, nargs) func ## nargs
 
+#endif  /* LOGGER_UTILITY_MACROS_ */
+
+
 // COLOR DEFINITIONS
 #define COLOR_NORMAL "0"
 #define COLOR_BRIGHT "1"
@@ -67,7 +73,8 @@
 /**
  * The standard monarch namespace.
  */
-namespace monarch {
+namespace monarch
+{
 
     /**
      * The Monarch logger.
@@ -274,11 +281,11 @@ namespace monarch {
 #define __MLOG_ERROR_2(I,M)     __MLOG_LOG_4(I,Error,M,false)
 #define __MLOG_ERROR_1(M)       __MLOG_LOG_4(__MDEFAULT_LOGGER,Error,M,false)
 
-#define __MLOG_FATAL_2(I,M)     __MTLOG_LOG_4(I,Fatal,M,false)
-#define __MLOG_FATAL_1(M)       __MTLOG_LOG_4(__MTDEFAULT_LOGGER,Fatal,M,false)
+#define __MLOG_FATAL_2(I,M)     __MLOG_LOG_4(I,Fatal,M,false)
+#define __MLOG_FATAL_1(M)       __MLOG_LOG_4(__MDEFAULT_LOGGER,Fatal,M,false)
 
-#define __MLOG_ASSERT_3(I,C,M)  if (!(C)) { __MTLOG_ERROR_2(I,M) }
-#define __MLOG_ASSERT_2(C,M)    __MTLOG_ASSERT_3(__MTDEFAULT_LOGGER,C,M)
+#define __MLOG_ASSERT_3(I,C,M)  if (!(C)) { __MLOG_ERROR_2(I,M) }
+#define __MLOG_ASSERT_2(C,M)    __MLOG_ASSERT_3(__MDEFAULT_LOGGER,C,M)
 
 
 #define __MLOG_LOG_ONCE_3(I,L,M)     __MLOG_LOG_4(I,L,M,true)
