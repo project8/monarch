@@ -210,6 +210,7 @@ void logger::Log(ELevel level, const string& message, const Location& loc)
  * Fallback solution for systems without log4cxx.
  */
 
+#include <cstdio>
 #include <iomanip>
 #include <sys/time.h>
 #include <time.h>
