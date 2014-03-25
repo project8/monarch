@@ -7,7 +7,7 @@ cmake_minimum_required( VERSION 2.8 )
 project( Monarch )
 
 include( ${PROJECT_SOURCE_DIR}/PackageBuilder.cmake )
-pbuilder_prepare_project( 2 5 0 )
+pbuilder_prepare_project( 2 5 1 )
 cmake_policy (SET CMP0011 NEW)
 
 include_directories( ${PROJECT_SOURCE_DIR}/Source )
@@ -16,6 +16,13 @@ include_directories( ${PROJECT_SOURCE_DIR}/Source )
 ########################
 # monarch dependencies #
 ########################
+
+# if git is used, get the commit SHA1
+find_package( Git )
+if( GIT_FOUND )
+    execute_process( COMMAND ${GIT_EXECUTABLE} rev-parse -q HEAD  OUTPUT_VARIABLE Monarch_GIT_COMMIT  OUTPUT_STRIP_TRAILING_WHITESPACE )
+    execute_process( COMMAND ${GIT_EXECUTABLE} describe --tags --long  OUTPUT_VARIABLE Monarch_GIT_DESCRIBE  OUTPUT_STRIP_TRAILING_WHITESPACE )
+endif( GIT_FOUND )
 
 set( PROTO_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/Protobuf/MonarchHeader.proto
@@ -58,7 +65,14 @@ set( MONARCHCORE_SOURCEFILES
     ${CMAKE_CURRENT_SOURCE_DIR}/Source/MonarchHeader.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Source/MonarchIO.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/Source/MonarchLogger.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Source/MonarchVersion.cpp
     ${Monarch_Protobuf_Source}
+)
+
+configure_file( ${CMAKE_CURRENT_SOURCE_DIR}/Source/MonarchVersion.hpp.in ${CMAKE_CURRENT_BINARY_DIR}/MonarchVersion.hpp )
+set( MONARCHCORE_HEADERFILES
+    ${MONARCHCORE_HEADERFILES}
+    ${CMAKE_CURRENT_BINARY_DIR}/MonarchVersion.hpp
 )
 
 add_library( MonarchCore ${MONARCHCORE_SOURCEFILES} )
