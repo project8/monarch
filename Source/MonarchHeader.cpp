@@ -281,7 +281,7 @@ std::ostream& operator<<( std::ostream& out, const monarch::MonarchHeader& hdr )
     out << "\tFilename: " << hdr.GetFilename() << "\n";
     out << "\tAcquisition Mode (# channels): " << hdr.GetAcquisitionMode() << "\n";
     out << "\tAcquisition Rate: " << hdr.GetAcquisitionRate() << " MHz\n";
-    out << "\tRun Duration: " << hdr.GetRunDuration() << " s\n";
+    out << "\tRun Duration: " << hdr.GetRunDuration() << " ms\n";
     out << "\tRecord Size: " << hdr.GetRecordSize() << "\n";
     out << "\tTimestamp: " << hdr.GetTimestamp() << "\n";
     out << "\tDescription: " << hdr.GetDescription() << "\n";
