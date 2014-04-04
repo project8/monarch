@@ -148,60 +148,63 @@ namespace {
 
 }
 
-struct logger::Private
+namespace monarch
 {
-        void log(const LevelPtr& level, const string& message, const Location& loc)
-        {
-            fLogger->forcedLog(level, message, ::log4cxx::spi::LocationInfo(loc.fFileName, loc.fFunctionName, loc.fLineNumber));
-        }
 
-        static LevelPtr level2Ptr(ELevel level)
-        {
-            switch(level)
+    struct MonarchLogger::Private
+    {
+            void log(const LevelPtr& level, const string& message, const Location& loc)
             {
-                case eTrace : return Level::getTrace();
-                case eDebug : return Level::getDebug();
-                case eInfo  : return Level::getInfo();
-                case eWarn  : return Level::getWarn();
-                case eError : return Level::getError();
-                case eFatal : return Level::getFatal();
-                default     : return Level::getOff();
+                fLogger->forcedLog(level, message, ::log4cxx::spi::LocationInfo(loc.fFileName, loc.fFunctionName, loc.fLineNumber));
             }
-        }
 
-        LoggerPtr fLogger;
-};
+            static LevelPtr level2Ptr(ELevel level)
+            {
+                switch(level)
+                {
+                    case eTrace : return Level::getTrace();
+                    case eDebug : return Level::getDebug();
+                    case eInfo  : return Level::getInfo();
+                    case eWarn  : return Level::getWarn();
+                    case eError : return Level::getError();
+                    case eFatal : return Level::getFatal();
+                    default     : return Level::getOff();
+                }
+            }
 
-logger::logger(const char* name) : fPrivate(new Private())
-{
-    fPrivate->fLogger = (name == 0) ? Logger::getRootLogger() : Logger::getLogger(name);
+            LoggerPtr fLogger;
+    };
+
+    MonarchLogger::MonarchLogger(const char* name) : fPrivate(new Private())
+    {
+        fPrivate->fLogger = (name == 0) ? Logger::getRootLogger() : Logger::getLogger(name);
+    }
+
+    MonarchLogger::MonarchLogger(const std::string& name) : fPrivate(new Private())
+    {
+        fPrivate->fLogger = Logger::getLogger(name);
+    }
+
+    MonarchLogger::~MonarchLogger()
+    {
+        delete fPrivate;
+    }
+
+    bool MonarchLogger::IsLevelEnabled(ELevel level) const
+    {
+        return fPrivate->fLogger->isEnabledFor( Private::level2Ptr(level) );
+    }
+
+    void MonarchLogger::SetLevel(ELevel level) const
+    {
+        fPrivate->fLogger->setLevel( Private::level2Ptr(level) );
+    }
+
+    void MonarchLogger::Log(ELevel level, const string& message, const Location& loc)
+    {
+        fPrivate->log(Private::level2Ptr(level), message, loc);
+    }
 }
-
-logger::logger(const std::string& name) : fPrivate(new Private())
-{
-    fPrivate->fLogger = Logger::getLogger(name);
-}
-
-logger::~logger()
-{
-    delete fPrivate;
-}
-
-bool logger::IsLevelEnabled(ELevel level) const
-{
-    return fPrivate->fLogger->isEnabledFor( Private::level2Ptr(level) );
-}
-
-void logger::SetLevel(ELevel level) const
-{
-    fPrivate->fLogger->setLevel( Private::level2Ptr(level) );
-}
-
-void logger::Log(ELevel level, const string& message, const Location& loc)
-{
-    fPrivate->log(Private::level2Ptr(level), message, loc);
-}
-
 
 
 #else
