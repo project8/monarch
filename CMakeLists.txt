@@ -10,7 +10,7 @@ include( ${PROJECT_SOURCE_DIR}/PackageBuilder.cmake )
 pbuilder_prepare_project( 2 6 1 )
 cmake_policy (SET CMP0011 NEW)
 
-include_directories( ${PROJECT_SOURCE_DIR}/Source )
+include_directories( BEFORE ${PROJECT_SOURCE_DIR}/Source )
 
 
 ########################
@@ -27,7 +27,7 @@ endif( GIT_FOUND )
 find_package( Protobuf )
 include_directories( ${PROTOBUF_INCLUDE_DIR} )
 pbuilder_add_ext_libraries( ${PROTOBUF_LIBRARIES} )
-include_directories( ${CMAKE_CURRENT_BINARY_DIR}/Protobuf )
+include_directories( BEFORE ${CMAKE_CURRENT_BINARY_DIR}/Protobuf )
 add_subdirectory( Protobuf )
 
 add_subdirectory( libthorax )
@@ -37,7 +37,7 @@ list( FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${libthorax_LIBRARY_DIR}" i
 if ( "${isSystemDir}" STREQUAL "-1" )
    list( APPEND CMAKE_INSTALL_RPATH ${libthorax_LIBRARY_DIR} )
 endif( "${isSystemDir}" STREQUAL "-1" )
-include_directories(
+include_directories( BEFORE 
     ${PROJECT_SOURCE_DIR}/libthorax/cpp
     ${PROJECT_SOURCE_DIR}/libthorax
 )
@@ -71,7 +71,7 @@ set( MONARCHCORE_HEADERFILES
     ${MONARCHCORE_HEADERFILES}
     ${CMAKE_CURRENT_BINARY_DIR}/MonarchVersion.hpp
 )
-include_directories( ${CMAKE_CURRENT_BINARY_DIR} )
+include_directories( BEFORE ${CMAKE_CURRENT_BINARY_DIR} )
 
 add_library( MonarchCore ${MONARCHCORE_SOURCEFILES} )
 target_link_libraries( MonarchCore MonarchProto ${EXTERNAL_LIBRARIES} )
