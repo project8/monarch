@@ -20,19 +20,6 @@ int main( const int argc, const char** argv )
         return -1;
     }
 
-    ofstream tOutputOne( (string( argv[ 2 ] ) + string( "_ch1.txt" )).c_str() );
-    ofstream tOutputTwo( (string( argv[ 2 ] ) + string( "_ch2.txt" )).c_str() );
-    if( tOutputOne.is_open() == false )
-    {
-        MERROR( mlog, "could not open channel one output file!" );
-        return -1;
-    }
-    if( tOutputTwo.is_open() == false )
-    {
-        MERROR( mlog, "could not open channel two output file!" );
-        return -1;
-    }
-
     unsigned int nRecords = 1;
     if( argc >= 4 )
     {
@@ -51,6 +38,15 @@ int main( const int argc, const char** argv )
 
     if( tReadHeader->GetFormatMode() == sFormatSingle )
     {
+        ofstream tOutputOne( (string( argv[ 2 ] ) + string( "_ch1.txt" )).c_str() );
+        if( tOutputOne.is_open() == false )
+        {
+            MERROR( mlog, "could not open channel one output file!" );
+            tReadTest->Close();
+            delete tReadTest;
+            return -1;
+        }
+
         const unsigned tDataTypeSize = tReadHeader->GetDataTypeSize();
         const MonarchRecordBytes* tReadRecord = tReadTest->GetRecordSeparateOne();
         const MonarchRecordDataInterface< uint64_t > tData( tReadRecord->fData, tDataTypeSize );
@@ -71,10 +67,28 @@ int main( const int argc, const char** argv )
             if (nRecords != 0 && tRecordsPerChannel >= nRecords)
                 break;
         }
-        tOutputTwo << "(empty)\n";
+
+        tOutputOne.close();
     }
     if( (tReadHeader->GetFormatMode() == sFormatMultiInterleaved) || (tReadHeader->GetFormatMode() == sFormatMultiSeparate) )
     {
+        ofstream tOutputOne( (string( argv[ 2 ] ) + string( "_ch1.txt" )).c_str() );
+        ofstream tOutputTwo( (string( argv[ 2 ] ) + string( "_ch2.txt" )).c_str() );
+        if( tOutputOne.is_open() == false )
+        {
+            MERROR( mlog, "could not open channel one output file!" );
+            tReadTest->Close();
+            delete tReadTest;
+            return -1;
+        }
+        if( tOutputTwo.is_open() == false )
+        {
+            MERROR( mlog, "could not open channel two output file!" );
+            tReadTest->Close();
+            delete tReadTest;
+            return -1;
+        }
+
         const unsigned tDataTypeSize = tReadHeader->GetDataTypeSize();
         const MonarchRecordBytes* tReadRecordOne = tReadTest->GetRecordSeparateOne();
         const MonarchRecordDataInterface< uint64_t > tDataOne( tReadRecordOne->fData, tDataTypeSize );
@@ -99,6 +113,9 @@ int main( const int argc, const char** argv )
             if (nRecords != 0 && tRecordsPerChannel >= nRecords)
                 break;
         }
+
+        tOutputOne.close();
+        tOutputTwo.close();
     }
 
     MINFO( mlog, "record count <" << tRecordCount << ">" );
@@ -106,9 +123,6 @@ int main( const int argc, const char** argv )
 
     tReadTest->Close();
     delete tReadTest;
-
-    tOutputOne.close();
-    tOutputTwo.close();
 
     return 0;
 }
