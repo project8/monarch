@@ -40,14 +40,21 @@ int main( const int argc, const char** argv )
         MERROR( mlog, "Unable to read a header with acquisition mode <" << tReadHeader->GetAcquisitionMode() << "> and format mode <" << tReadHeader->GetFormatMode() << ">" );
         return -1;
     }
-    while( tReadTest->ReadRecord() != false )
+    try
     {
-        tRecordCount = tRecordCount + 1;
-        if( tReadRecord->fAcquisitionId == tAcquisiontCount )
+        while( tReadTest->ReadRecord() != false )
         {
-            tAcquisiontCount = tAcquisiontCount + 1;
+            tRecordCount = tRecordCount + 1;
+            if( tReadRecord->fAcquisitionId == tAcquisiontCount )
+            {
+                tAcquisiontCount = tAcquisiontCount + 1;
+            }
+            //cout << "  record " << tRecordCount << ": time offset: " << tReadRecord->fTime << " ns" << endl;
         }
-        //cout << "  record " << tRecordCount << ": time offset: " << tReadRecord->fTime << " ns" << endl;
+    }
+    catch (MonarchException& e)
+    {
+        MWARN( mlog, "Something went wrong during the reading of records!" << "\n\t" << e.what() );
     }
     MINFO( mlog, "record count <" << tRecordCount << ">" );
     MINFO( mlog, "acquisition count <" << tAcquisiontCount << ">" );
