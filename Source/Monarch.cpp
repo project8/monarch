@@ -87,7 +87,7 @@ namespace monarch
         if( tMonarch->fIO->Open( aFilename ) == false )
         {
             delete tMonarch;
-            throw MonarchException() << "could not open <" << aFilename << "> for reading";
+            throw MonarchException() << "could not open <" << aFilename << "> for writing";
             return NULL;
         }
 
