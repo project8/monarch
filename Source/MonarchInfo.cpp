@@ -1,6 +1,8 @@
 #include "Monarch.hpp"
 #include "MonarchLogger.hpp"
 
+#include <cstring>
+
 using namespace monarch;
 
 MLOGGER( mlog, "MonarchInfo" );
