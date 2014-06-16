@@ -10,15 +10,36 @@ int main( const int argc, const char** argv )
     if( argc < 2 )
     {
         MINFO( mlog, "usage:\n"
-            << "  MonarchInfo <input egg file>" );
+            << "  MonarchInfo [-h] <input egg file>\n"
+            << "      -h: (optional) header only; does not check number of records" );
         return -1;
     }
 
-    const Monarch* tReadTest = Monarch::OpenForReading( argv[1] );
+    unsigned tFileArg = 1;
+    bool tCheckRecords = true;
+    if( strcmp( argv[1], "-h" ) == 0 )
+    {
+        if( argc < 3 )
+        {
+            MERROR( mlog, "no filename provided" );
+            return -1;
+        }
+        ++tFileArg;
+        tCheckRecords = false;
+    }
+
+    const Monarch* tReadTest = Monarch::OpenForReading( argv[tFileArg] );
     tReadTest->ReadHeader();
 
     const MonarchHeader* tReadHeader = tReadTest->GetHeader();
     MINFO( mlog, *tReadHeader );
+
+    if( ! tCheckRecords )
+    {
+        tReadTest->Close();
+        delete tReadTest;
+        return 0;
+    }
 
     unsigned int tRecordCount = 0;
     unsigned int tAcquisiontCount = 0;
