@@ -35,7 +35,7 @@ int main( const int argc, const char** argv )
     tReadTest->ReadHeader();
 
     const MonarchHeader* tReadHeader = tReadTest->GetHeader();
-    cout << *tReadHeader << endl;
+    MINFO( mlog, *tReadHeader );
 
     TimeType tRecordSize = (TimeType)tReadHeader->GetRecordSize();
     TimeType tBinWidthNS = (TimeType)(1000. / tReadHeader->GetAcquisitionRate()); // in ns
