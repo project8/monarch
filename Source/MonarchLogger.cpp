@@ -15,211 +15,27 @@
 
 #include "MonarchLogger.hpp"
 
+#include <algorithm>
+#include <cstdio>
 #include <cstdlib>
 #include <cstring>
-
-using namespace std;
-
-static const string skEndColor =   COLOR_PREFIX COLOR_NORMAL COLOR_SUFFIX;
-static const string skFatalColor = COLOR_PREFIX COLOR_BRIGHT COLOR_SEPARATOR COLOR_FOREGROUND_RED    COLOR_SUFFIX;
-static const string skErrorColor = COLOR_PREFIX COLOR_BRIGHT COLOR_SEPARATOR COLOR_FOREGROUND_RED    COLOR_SUFFIX;
-static const string skWarnColor =  COLOR_PREFIX COLOR_BRIGHT COLOR_SEPARATOR COLOR_FOREGROUND_YELLOW COLOR_SUFFIX;
-static const string skInfoColor =  COLOR_PREFIX COLOR_BRIGHT COLOR_SEPARATOR COLOR_FOREGROUND_GREEN  COLOR_SUFFIX;
-static const string skDebugColor = COLOR_PREFIX COLOR_BRIGHT COLOR_SEPARATOR COLOR_FOREGROUND_CYAN   COLOR_SUFFIX;
-static const string skOtherColor = COLOR_PREFIX COLOR_BRIGHT COLOR_SEPARATOR COLOR_FOREGROUND_WHITE  COLOR_SUFFIX;
-
-
-#if defined(LOG4CXX_FOUND)
-
-/*
- * Default implementation for systems with the 'log4cxx' library installed.
- */
-
-#include <log4cxx/logstring.h>
-#include <log4cxx/basicconfigurator.h>
-#include <log4cxx/propertyconfigurator.h>
-#include <log4cxx/patternlayout.h>
-#include <log4cxx/level.h>
-#include <log4cxx/consoleappender.h>
-#include <log4cxx/logmanager.h>
-#include <log4cxx/logger.h>
-
-using namespace log4cxx;
-
-#ifndef _LOG4CXX_COLORED_PATTERN_LAYOUT_H
-#define _LOG4CXX_COLORED_PATTERN_LAYOUT_H
-
-namespace log4cxx {
-
-    class LOG4CXX_EXPORT ColoredPatternLayout : public PatternLayout
-    {
-        public:
-            DECLARE_LOG4CXX_OBJECT(ColoredPatternLayout)
-        BEGIN_LOG4CXX_CAST_MAP()
-        LOG4CXX_CAST_ENTRY(ColoredPatternLayout)
-        LOG4CXX_CAST_ENTRY_CHAIN(Layout)
-        END_LOG4CXX_CAST_MAP()
-
-        ColoredPatternLayout() : PatternLayout() {}
-            ColoredPatternLayout(const LogString& pattern) : PatternLayout(pattern) {};
-            virtual ~ColoredPatternLayout() {}
-
-        protected:
-            virtual void format(LogString& output, const spi::LoggingEventPtr& event, helpers::Pool& pool) const;
-            virtual std::string getColor(const LevelPtr& level) const;
-
-    };
-
-    LOG4CXX_PTR_DEF(ColoredPatternLayout);
-
-}
-
-#endif /* _LOG4CXX_COLORED_PATTERN_LAYOUT_H */
-
-IMPLEMENT_LOG4CXX_OBJECT(ColoredPatternLayout)
-
-void ColoredPatternLayout::format(LogString& output, const spi::LoggingEventPtr& event, helpers::Pool& pool) const
-{
-    PatternLayout::format(output, event, pool);
-    output = getColor(event->getLevel()) + output + skEndColor;
-    return;
-}
-
-string ColoredPatternLayout::getColor(const LevelPtr& level) const
-{
-    switch(level->toInt())
-    {
-        case Level::FATAL_INT:
-            return skFatalColor;
-            break;
-        case Level::ERROR_INT:
-            return skErrorColor;
-            break;
-        case Level::WARN_INT:
-            return skWarnColor;
-            break;
-        case Level::INFO_INT:
-            return skInfoColor;
-            break;
-        case Level::DEBUG_INT:
-            return skDebugColor;
-            break;
-        case Level::TRACE_INT:
-            return skDebugColor;
-            break;
-        default:
-            return skOtherColor;
-    }
-}
-
-namespace {
-
-    struct StaticInitializer {
-            StaticInitializer() {
-
-                if (LogManager::getLoggerRepository()->isConfigured())
-                    return;
-                //        AppenderList appenders = Logger::getRootLogger()->getAllAppenders();
-
-                char* envLoggerConfig;
-                envLoggerConfig = getenv("LOGGER_CONFIGURATION");
-                if (envLoggerConfig != 0) {
-                    PropertyConfigurator::configure(envLoggerConfig);
-                }
-                else {
-#ifdef LOGGER_CONFIGURATION
-                    PropertyConfigurator::configure(LOGGER_CONFIGURATION);
-#else
-                    LogManager::getLoggerRepository()->setConfigured(true);
-                    LoggerPtr root = Logger::getRootLogger();
-#ifdef NDEBUG
-                    Logger::getRootLogger()->setLevel(Level::getInfo());
-#endif
-                    static const LogString TTCC_CONVERSION_PATTERN(LOG4CXX_STR("%r [%-5p] %16c: %m%n"));
-                    LayoutPtr layout(new PatternLayout(TTCC_CONVERSION_PATTERN));
-                    //                LayoutPtr layout(new ColoredPatternLayout(TTCC_CONVERSION_PATTERN));
-                    AppenderPtr appender(new ConsoleAppender(layout));
-                    root->addAppender(appender);
-#endif
-                }
-
-            }
-    } static sLoggerInitializer;
-
-}
-
-namespace monarch
-{
-
-    struct MonarchLogger::Private
-    {
-            void log(const LevelPtr& level, const string& message, const Location& loc)
-            {
-                fLogger->forcedLog(level, message, ::log4cxx::spi::LocationInfo(loc.fFileName, loc.fFunctionName, loc.fLineNumber));
-            }
-
-            static LevelPtr level2Ptr(ELevel level)
-            {
-                switch(level)
-                {
-                    case eTrace : return Level::getTrace();
-                    case eDebug : return Level::getDebug();
-                    case eInfo  : return Level::getInfo();
-                    case eWarn  : return Level::getWarn();
-                    case eError : return Level::getError();
-                    case eFatal : return Level::getFatal();
-                    default     : return Level::getOff();
-                }
-            }
-
-            LoggerPtr fLogger;
-    };
-
-    MonarchLogger::MonarchLogger(const char* name) : fPrivate(new Private())
-    {
-        fPrivate->fLogger = (name == 0) ? Logger::getRootLogger() : Logger::getLogger(name);
-    }
-
-    MonarchLogger::MonarchLogger(const std::string& name) : fPrivate(new Private())
-    {
-        fPrivate->fLogger = Logger::getLogger(name);
-    }
-
-    MonarchLogger::~MonarchLogger()
-    {
-        delete fPrivate;
-    }
-
-    bool MonarchLogger::IsLevelEnabled(ELevel level) const
-    {
-        return fPrivate->fLogger->isEnabledFor( Private::level2Ptr(level) );
-    }
-
-    void MonarchLogger::SetLevel(ELevel level) const
-    {
-        fPrivate->fLogger->setLevel( Private::level2Ptr(level) );
-    }
-
-    void MonarchLogger::Log(ELevel level, const string& message, const Location& loc)
-    {
-        fPrivate->log(Private::level2Ptr(level), message, loc);
-    }
-}
-
-
-#else
-
-/**
- * Fallback solution for systems without log4cxx.
- */
-
-#include <cstdio>
 #include <iomanip>
+#include <iterator>
 #include <sys/time.h>
 #include <time.h>
 
+using namespace std;
+
 namespace monarch
 {
+    const string& EndColor() {static string* color = new string(COLOR_PREFIX COLOR_NORMAL COLOR_SUFFIX); return *color;}
+    const string& FatalColor() {static string* color = new string(COLOR_PREFIX COLOR_BRIGHT COLOR_SEPARATOR COLOR_FOREGROUND_RED   COLOR_SUFFIX); return *color;}
+    const string& ErrorColor() {static string* color = new string(COLOR_PREFIX COLOR_BRIGHT COLOR_SEPARATOR COLOR_FOREGROUND_RED   COLOR_SUFFIX); return *color;}
+    const string& WarnColor() {static string* color = new string(COLOR_PREFIX COLOR_BRIGHT COLOR_SEPARATOR COLOR_FOREGROUND_YELLOW COLOR_SUFFIX); return *color;}
+    const string& InfoColor() {static string* color = new string(COLOR_PREFIX COLOR_BRIGHT COLOR_SEPARATOR COLOR_FOREGROUND_GREEN  COLOR_SUFFIX); return *color;}
+    const string& DebugColor() {static string* color = new string(COLOR_PREFIX COLOR_BRIGHT COLOR_SEPARATOR COLOR_FOREGROUND_CYAN  COLOR_SUFFIX); return *color;}
+    const string& OtherColor() {static string* color = new string(COLOR_PREFIX COLOR_BRIGHT COLOR_SEPARATOR COLOR_FOREGROUND_WHITE COLOR_SUFFIX); return *color;}
+
     struct MonarchLogger::Private
     {
             static char sDateTimeFormat[16];
@@ -237,6 +53,7 @@ namespace monarch
 
             const char* fLogger;
             bool fColored;
+            ELevel fThreshold;
 
             static const char* level2Str(ELevel level)
             {
@@ -256,33 +73,57 @@ namespace monarch
             {
                 switch(level)
                 {
-                    case eTrace : return skDebugColor; break;
-                    case eDebug : return skDebugColor; break;
-                    case eInfo  : return skInfoColor; break;
-                    case eWarn  : return skWarnColor; break;
-                    case eError : return skErrorColor; break;
-                    case eFatal : return skFatalColor; break;
-                    default     : return skOtherColor;
+                    case eTrace : return DebugColor(); break;
+                    case eDebug : return DebugColor(); break;
+                    case eInfo  : return InfoColor(); break;
+                    case eWarn  : return WarnColor(); break;
+                    case eError : return ErrorColor(); break;
+                    case eFatal : return FatalColor(); break;
+                    default     : return OtherColor();
                 }
             }
 
 
-            void logCout(const char* level, const string& message, const Location& /*loc*/, const string& color = skOtherColor)
+            void logCout(ELevel level, const string& message, const Location& loc)
             {
                 getTimeAbsoluteStr();
                 if (fColored)
-                    cout << color << MonarchLogger::Private::sTimeBuff << " [" << setw(5) << level << "] " << setw(16) << fLogger << ": " << message << skEndColor << endl;
+                {
+                    //cout << color << KTLogger::Private::sTimeBuff << " [" << setw(5) << level << "] " << setw(16) << left << loc.fFileName << "(" << loc.fLineNumber  << "): " << message << skKTEndColor << endl;
+                    cout << Private::level2Color(level) << MonarchLogger::Private::sTimeBuff << " [" << setw(5) << Private::level2Str(level) << "] ";
+                    copy(loc.fFileName.end() - std::min< int >(loc.fFileName.size(), 16), loc.fFileName.end(), ostream_iterator<char>(cout));
+                    cout << "(" << loc.fLineNumber  << "): ";
+                    cout << message << EndColor() << endl;
+                }
                 else
-                    cout << MonarchLogger::Private::sTimeBuff << " [" << setw(5) << level << "] " << setw(16) << fLogger << ": " << message << endl;
+                {
+                    //cout << KTLogger::Private::sTimeBuff << " [" << setw(5) << level << "] " << setw(16) << left << loc.fFileName << "(" << loc.fLineNumber  << "): " << message << endl;
+                    cout << MonarchLogger::Private::sTimeBuff << " [" << setw(5) << level << "] ";
+                    copy(loc.fFileName.end() - std::min< int >(loc.fFileName.size(), 16), loc.fFileName.end(), ostream_iterator<char>(cout));
+                    cout << "(" << loc.fLineNumber  << "): ";
+                    cout << message << endl;
+                }
             }
 
-            void logCerr(const char* level, const string& message, const Location& /*loc*/, const string& color = skOtherColor)
+            void logCerr(ELevel level, const string& message, const Location& loc)
             {
                 getTimeAbsoluteStr();
                 if (fColored)
-                    cerr << color << MonarchLogger::Private::sTimeBuff << " [" << setw(5) << level << "] " << setw(16) << fLogger << ": " << message << skEndColor << endl;
+                {
+                    //cout << color << KTLogger::Private::sTimeBuff << " [" << setw(5) << level << "] " << setw(16) << left << loc.fFileName << "(" << loc.fLineNumber  << "): " << message << skKTEndColor << endl;
+                    cout << Private::level2Color(level) << MonarchLogger::Private::sTimeBuff << " [" << setw(5) << Private::level2Str(level) << "] ";
+                    copy(loc.fFileName.end() - std::min< int >(loc.fFileName.size(), 16), loc.fFileName.end(), ostream_iterator<char>(cout));
+                    cout << "(" << loc.fLineNumber  << "): ";
+                    cout << message << EndColor() << endl;
+                }
                 else
-                    cerr <<  MonarchLogger::Private::sTimeBuff << " [" << setw(5) << level << "] " << setw(16) << fLogger << ": " << message << endl;
+                {
+                    //cout << KTLogger::Private::sTimeBuff << " [" << setw(5) << level << "] " << setw(16) << left << loc.fFileName << "(" << loc.fLineNumber  << "): " << message << endl;
+                    cout << MonarchLogger::Private::sTimeBuff << " [" << setw(5) << Private::level2Str(level) << "] ";
+                    copy(loc.fFileName.end() - std::min< int >(loc.fFileName.size(), 16), loc.fFileName.end(), ostream_iterator<char>(cout));
+                    cout << "(" << loc.fLineNumber  << "): ";
+                    cout << message << endl;
+                }
             }
     };
 
@@ -303,14 +144,16 @@ namespace monarch
             fPrivate->fLogger = logName;
         }
         fPrivate->fColored = true;
-        sprintf(MonarchLogger::Private::sDateTimeFormat,  "%%FT%%TZ");
+        sprintf(MonarchLogger::Private::sDateTimeFormat,  "%%T");
+        SetLevel(eDebug);
     }
 
     MonarchLogger::MonarchLogger(const std::string& name) : fPrivate(new Private())
     {
         fPrivate->fLogger = name.c_str();
         fPrivate->fColored = true;
-        sprintf(MonarchLogger::Private::sDateTimeFormat,  "%%FT%%TZ");
+        sprintf(MonarchLogger::Private::sDateTimeFormat,  "%%T");
+        SetLevel(eDebug);
     }
 
     MonarchLogger::~MonarchLogger()
@@ -320,32 +163,27 @@ namespace monarch
 
     bool MonarchLogger::IsLevelEnabled(ELevel level) const
     {
-#ifdef NDEBUG
-        return level > eDebug;
-#else
-        (void) level;
-        return true;
-#endif
+        return level >= fPrivate->fThreshold;
     }
 
-    void MonarchLogger::SetLevel(ELevel /*level*/) const
+    void MonarchLogger::SetLevel(ELevel level) const
     {
-        // TODO: implement levels for fallback logger
+#if defined(NDEBUG)
+                fPrivate->fThreshold = level >= eInfo ? level : eInfo;
+#else
+                fPrivate->fThreshold = level;
+#endif
     }
 
     void MonarchLogger::Log(ELevel level, const string& message, const Location& loc)
     {
-        const char* levelStr = Private::level2Str(level);
-
-        if (level >= eFatal)
+        if (level >= eWarn)
         {
-            fPrivate->logCerr(levelStr, message, loc, Private::level2Color(level));
+            fPrivate->logCerr(level, message, loc);
         }
         else
         {
-            fPrivate->logCout(levelStr, message, loc, Private::level2Color(level));
+            fPrivate->logCout(level, message, loc);
         }
     }
 }
-
-#endif
