@@ -1,13 +1,13 @@
 /*
- * MonarchLogger.hh
+ * MLogger.hh
  * Based on KLogger.h, from KATRIN's Kasper
  *
  *  Created on: Jan 23, 2014
  *      Author: nsoblath
  */
 
-#ifndef MONARCHLOGGER_HH_
-#define MONARCHLOGGER_HH_
+#ifndef MLOGGER_HH_
+#define MLOGGER_HH_
 
 /**
  * @file
@@ -116,7 +116,7 @@ namespace monarch
      * </pre>
      *
      */
-    class MonarchLogger
+    class MLogger
     {
         public:
             enum ELevel {
@@ -138,8 +138,8 @@ namespace monarch
             };
 
         public:
-            static MonarchLogger& GetRootLogger() {
-                static MonarchLogger rootLogger;
+            static MLogger& GetRootLogger() {
+                static MLogger rootLogger;
                 return rootLogger;
             }
 
@@ -148,11 +148,11 @@ namespace monarch
              * Standard constructor assigning a name to the logger instance.
              * @param name The logger name.
              */
-            MonarchLogger(const char* name = 0);
+            MLogger(const char* name = 0);
             /// @overload
-            MonarchLogger(const std::string& name);
+            MLogger(const std::string& name);
 
-            virtual ~MonarchLogger();
+            virtual ~MLogger();
 
             /**
              * Check whether a certain log-level is enabled.
@@ -246,18 +246,18 @@ namespace monarch
 
 // PRIVATE MACROS
 
-#define __MDEFAULT_LOGGER        monarch::MonarchLogger::GetRootLogger()
+#define __MDEFAULT_LOGGER        monarch::MLogger::GetRootLogger()
 
-#define __MLOG_LOCATION         monarch::MonarchLogger::Location(__FILE__, __FUNC__, __LINE__)
+#define __MLOG_LOCATION         monarch::MLogger::Location(__FILE__, __FUNC__, __LINE__)
 
 #define __MLOG_LOG_4(I,L,M,O) \
         { \
-    if (I.IsLevelEnabled(monarch::MonarchLogger::e##L)) { \
+    if (I.IsLevelEnabled(monarch::MLogger::e##L)) { \
         static bool _sLoggerMarker = false; \
         if (!O || !_sLoggerMarker) { \
             _sLoggerMarker = true; \
             std::ostringstream stream; stream << M; \
-            I.Log(monarch::MonarchLogger::e##L, stream.str(), __MLOG_LOCATION); \
+            I.Log(monarch::MLogger::e##L, stream.str(), __MLOG_LOCATION); \
         } \
     } \
         }
@@ -313,7 +313,7 @@ namespace monarch
 
 // PUBLIC MACROS
 
-#define MLOGGER(I,K)      static monarch::MonarchLogger I(K);
+#define MLOGGER(I,K)      static monarch::MLogger I(K);
 
 #define MLOG(...)         macro_dispatcher(__MLOG_LOG_, __VA_ARGS__)(__VA_ARGS__)
 #define MTRACE(...)       macro_dispatcher(__MLOG_TRACE_, __VA_ARGS__)(__VA_ARGS__)
@@ -332,4 +332,4 @@ namespace monarch
 #define MERROR_ONCE(...)  macro_dispatcher(__MLOG_ERROR_ONCE_, __VA_ARGS__)(__VA_ARGS__)
 #define MFATAL_ONCE(...)  macro_dispatcher(__MLOG_FATAL_ONCE_, __VA_ARGS__)(__VA_ARGS__)
 
-#endif /* MONARCHLOGGER_HH_ */
+#endif /* MLOGGER_HH_ */
