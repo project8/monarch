@@ -1,5 +1,5 @@
-#ifndef __MONARCH_TYPES_HPP
-#define __MONARCH_TYPES_HPP
+#ifndef MTYPES_HH_
+#define MTYPES_HH_
 
 #include <string>
 
@@ -22,6 +22,16 @@ namespace monarch
 
     template<bool> struct staticassert;
     template<> struct staticassert<true> {};  //specialization
+
+    // channel information
+
+    typedef unsigned DataFormatType;
+    static const DataFormatType sDigitized = 0;
+    static const DataFormatType sAnalog = 1;
+
+    // stream information
+
+    /*
 
     typedef size_t PreludeType;
 
@@ -55,7 +65,8 @@ namespace monarch
     typedef acquisition_id_type AcquisitionIdType; // 8 bytes
     typedef record_id_type RecordIdType; // 8 bytes
     typedef time_nsec_type TimeType; // 8 bytes
+    */
 
 }
 
-#endif // __MONARCH_TYPES_HPP
+#endif // MTYPES_HH_

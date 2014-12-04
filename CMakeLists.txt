@@ -48,22 +48,15 @@ include_directories( BEFORE
 ###################
 
 set( MONARCHCORE_HEADERFILES
-    Source/Monarch.hpp
-    Source/MonarchException.hpp
-    Source/MonarchHeader.hpp
-    Source/MonarchIO.hpp
-    Source/MonarchLogger.hpp
-    Source/MonarchRecord.hpp
-    Source/MonarchTypes.hpp
+    Source/MHeader.hh
+    Source/MMemberVariable.hh
+    #Source/MMonarch.hh
+    Source/MTypes.hh
 )
 
 set( MONARCHCORE_SOURCEFILES
-    Source/Monarch.cpp
-    Source/MonarchException.cpp
-    Source/MonarchHeader.cpp
-    Source/MonarchIO.cpp
-    Source/MonarchLogger.cpp
-    Source/MonarchVersion.cpp
+    #Source/Monarch.cc
+    Source/MHeader.cc
 )
 
 configure_file( Source/MonarchVersion.hpp.in ${CMAKE_CURRENT_BINARY_DIR}/MonarchVersion.hpp )
