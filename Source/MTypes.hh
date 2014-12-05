@@ -1,9 +1,16 @@
+/*
+ * MTypes.hh
+ *
+ *  Created on: Dec 4, 2014
+ *      Author: nsoblath
+ */
+
 #ifndef MTYPES_HH_
 #define MTYPES_HH_
 
 #include <string>
 
-#include "thorax.hh"
+//#include "thorax.hh"
 
 namespace monarch
 {

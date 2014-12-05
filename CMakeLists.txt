@@ -49,20 +49,22 @@ include_directories( BEFORE
 
 set( MONARCHCORE_HEADERFILES
     Source/MHeader.hh
+    Source/MLogger.hh
     Source/MMemberVariable.hh
-    #Source/MMonarch.hh
+    Source/MMonarch.hh
     Source/MTypes.hh
 )
 
 set( MONARCHCORE_SOURCEFILES
-    #Source/Monarch.cc
     Source/MHeader.cc
+    Source/MLogger.cc
+    Source/MMonarch.cc
 )
 
-configure_file( Source/MonarchVersion.hpp.in ${CMAKE_CURRENT_BINARY_DIR}/MonarchVersion.hpp )
+configure_file( Source/MVersion.hhp.in ${CMAKE_CURRENT_BINARY_DIR}/MVersion.hh )
 set( MONARCHCORE_HEADERFILES
     ${MONARCHCORE_HEADERFILES}
-    ${CMAKE_CURRENT_BINARY_DIR}/MonarchVersion.hpp
+    ${CMAKE_CURRENT_BINARY_DIR}/MVersion.hh
 )
 include_directories( BEFORE ${CMAKE_CURRENT_BINARY_DIR} )
 

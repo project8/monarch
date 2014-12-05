@@ -1,16 +1,29 @@
-#ifndef MONARCH_HPP_
-#define MONARCH_HPP_
+/*
+ * MMonarch.hh
+ *
+ *  Created on: Dec 4, 2014
+ *      Author: nsoblath
+ */
 
-#include "MonarchIO.hpp"
-#include "MonarchHeader.hpp"
-#include "MonarchRecord.hpp"
+#ifndef MMONARCH_HH_
+#define MMONARCH_HH_
+
+#include "MHeader.hh"
+
+#include "H5Cpp.h"
 
 #include <string>
-using std::string;
 
 namespace monarch
 {
+    /*!
+     @class Monarch
+     @author N. S. Oblath (v3), D. Furse (original)
 
+     @brief Egg file read/write access
+
+     @details
+    */
     class Monarch
     {
             //***********************
@@ -39,20 +52,21 @@ namespace monarch
 
         public:
 
-            //this static method opens the file for reading.
-            //if the file exists and can be read, this returns a prepared monarch pointer, and memory is allocated for the header.
-            //upon successful return monarch is in the eOpen state.
-            static const Monarch* OpenForReading( const string& filename );
+            /// This static method opens the file for reading.
+            /// If the file exists and can be read, this returns a prepared monarch pointer, and memory is allocated for the header.
+            /// Upon successful return monarch is in the eOpen state.
+            static const Monarch* OpenForReading( const std::string& filename );
 
-            //this method parses the file for the header contents.
-            //if the header demarshalled correctly, this returns and the header may be examined, and memory is allocated for the record.
-            //upon successful return monarch is in the eReady state.
-            //an exception is thrown if the header is not read.
+            /// This method extracts the header information from the file.
+            /// If the header read correctly, this returns and the header may be examined, and memory is allocated for the record.
+            /// Upon successful return monarch is in the eReady state.
+            /// An exception is thrown if the header is not read.
             void ReadHeader() const;
 
             //get the pointer to the header.
-            const MonarchHeader* GetHeader() const;
+            const MHeader* GetHeader() const;
 
+            /*
             //set the interface type to use
             void SetInterface( InterfaceModeType aMode ) const;
 
@@ -69,6 +83,7 @@ namespace monarch
 
             //get the pointer to the current separate channel two record.
             const MonarchRecordBytes* GetRecordSeparateTwo() const;
+            */
 
             //close the file pointer.
             void Close() const;
@@ -82,7 +97,7 @@ namespace monarch
             //this static method opens the file for writing.
             //if the file exists and can be written, this returns a prepared monarch pointer, and memory is allocated for the header.
             //upon successful return monarch is in the eOpen state.
-            static Monarch* OpenForWriting( const string& filename );
+            static Monarch* OpenForWriting( const std::string& filename );
 
             //this method marshals the current header to the file.
             //if the header marshalled correctly, this returns true, memory is allocated for the record(s).
@@ -90,8 +105,9 @@ namespace monarch
             void WriteHeader();
 
             //get the pointer to the header.
-            MonarchHeader* GetHeader();
+            MHeader* GetHeader();
 
+            /*
             //set the interface type to use.
             void SetInterface( InterfaceModeType aMode );
 
@@ -107,17 +123,23 @@ namespace monarch
 
             //get the pointer to the current separate channel two record.
             MonarchRecordBytes* GetRecordSeparateTwo();
-
+            */
             //close the file pointer
             void Close();
 
         private:
+            template< typename XType >
+            H5::DataType GetType( XType aObject ) const;
+
             //the MonarchIO class wraps a bare C file pointer.
-            MonarchIO* fIO;
+            //MonarchIO* fIO;
 
-            //the header
-            mutable MonarchHeader* fHeader;
+            // the HDF5 file
+            mutable H5::H5File* fFile;
 
+            // the header
+            mutable MHeader* fHeader;
+/*
             //size of the native type of the records in bytes
             mutable size_t fDataTypeSize;
 
@@ -177,18 +199,63 @@ namespace monarch
 #else
             static void Unzip( const size_t aSize, const size_t aDataTypeSize, byte_type*  aRecordOne, byte_type*  aRecordTwo, const byte_type*  anInterleavedRecord );
 #endif
-
+*/
     };
 
-    inline const MonarchHeader* Monarch::GetHeader() const
+    // specializations of GetType for known types
+    template<>
+    H5::DataType Monarch::GetType< unsigned >( unsigned ) const
     {
-        return fHeader;
+        return H5::PredType::NATIVE_UINT;
     }
-    inline MonarchHeader* Monarch::GetHeader()
+    template<>
+    H5::DataType Monarch::GetType< int >( int ) const
     {
-        return fHeader;
+        return H5::PredType::NATIVE_INT;
+    }
+    template<>
+    H5::DataType Monarch::GetType< unsigned long >( unsigned long ) const
+    {
+        return H5::PredType::NATIVE_ULONG;
+    }
+    template<>
+    H5::DataType Monarch::GetType< long >( long ) const
+    {
+        return H5::PredType::NATIVE_LONG;
+    }
+    template<>
+    H5::DataType Monarch::GetType< float >( float ) const
+    {
+        return H5::PredType::NATIVE_FLOAT;
+    }
+    template<>
+    H5::DataType Monarch::GetType< double >( double ) const
+    {
+        return H5::PredType::NATIVE_DOUBLE;
+    }
+    template<>
+    H5::DataType Monarch::GetType< const std::string& >( const std::string& aString ) const
+    {
+        return H5::StrType( H5::PredType::C_S1, aString.length() + 1 );
     }
 
+    // general GetType function for unknown types
+    template< typename XType >
+    H5::DataType Monarch::GetType( XType ) const
+    {
+        throw MException() << "Unknown type requested";
+    }
+
+
+    inline const MHeader* Monarch::GetHeader() const
+    {
+        return fHeader;
+    }
+    inline MHeader* Monarch::GetHeader()
+    {
+        return fHeader;
+    }
+/*
     inline const MonarchRecordBytes* Monarch::GetRecordSeparateOne() const
     {
         return fRecordSeparateOne;
@@ -251,7 +318,7 @@ namespace monarch
             aRecordTwo += aDataTypeSize;
         }
     }
-
+*/
 }
 
-#endif
+#endif /* MMONARCH_HH_ */

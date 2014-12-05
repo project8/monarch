@@ -1,13 +1,26 @@
-#include "Monarch.hpp"
-#include "MonarchException.hpp"
+/*
+ * MMonarch.cc
+ *
+ *  Created on: Dec 4, 2014
+ *      Author: nsoblath
+ */
+
+#include "MMonarch.hh"
+
+#include "MException.hh"
+#include "MLogger.hh"
+
+using std::string;
 
 namespace monarch
 {
+    MLOGGER( mlog, "MMonarch" );
 
     Monarch::Monarch() :
                 fState( eClosed ),
-                fIO( NULL ),
-                fHeader( NULL ),
+                //fIO( NULL ),
+                fFile( NULL ),
+                fHeader( NULL )/*,
                 fDataTypeSize( 1 ),
                 fDataNBytes( 0 ),
                 fDataSize( 0 ),
@@ -20,16 +33,21 @@ namespace monarch
                 fRecordSeparateTwo( NULL ),
                 fRecordSeparateTwoBytes( NULL ),
                 fReadFunction( &Monarch::InterleavedFromInterleaved ),
-                fWriteFunction( &Monarch::InterleavedToInterleaved )
+                fWriteFunction( &Monarch::InterleavedToInterleaved )*/
     {
+        // Turn of HDF5 automatic exception printing to allow exceptions to be handled properly
+        // And they will be handled properly, always, right????
+        H5::Exception::dontPrint();
     }
     Monarch::~Monarch()
     {
+        /*
         if( fIO != NULL )
         {
             delete fIO;
             fIO = NULL;
         }
+        */
 
         if( fHeader != NULL )
         {
@@ -37,6 +55,7 @@ namespace monarch
             fHeader = NULL;
         }
 
+        /*
         if( fRecordInterleavedBytes != NULL )
         {
             fRecordInterleaved->~MonarchRecordBytes();
@@ -57,19 +76,21 @@ namespace monarch
             delete[] fRecordSeparateTwoBytes;
             fRecordSeparateTwoBytes = NULL;
         }
+        */
     }
 
     const Monarch* Monarch::OpenForReading( const string& aFilename )
     {
         Monarch* tMonarch = new Monarch();
 
-        tMonarch->fIO = new MonarchIO( sAccessRead );
-        if( tMonarch->fIO->Open( aFilename ) == false )
+        tMonarch->fFile = new H5::H5File( aFilename.c_str(), H5F_ACC_RDONLY );
+        if( tMonarch->fFile == NULL )
         {
             delete tMonarch;
-            throw MonarchException() << "could not open <" << aFilename << "> for reading";
+            throw MException() << "Could not open <" << aFilename << "> for reading";
             return NULL;
         }
+        MDEBUG( mlog, "Opened egg file <" << aFilename << "> for reading" );
 
         tMonarch->fHeader = new MonarchHeader();
         tMonarch->fHeader->SetFilename( aFilename );
@@ -83,13 +104,14 @@ namespace monarch
     {
         Monarch* tMonarch = new Monarch();
 
-        tMonarch->fIO = new MonarchIO( sAccessWrite );
-        if( tMonarch->fIO->Open( aFilename ) == false )
+        tMonarch->fFile = new H5::H5File( aFilename.c_str(), H5F_ACC_TRUNC );
+        if( tMonarch->fFile == NULL )
         {
             delete tMonarch;
-            throw MonarchException() << "could not open <" << aFilename << "> for writing";
+            throw MException() << "Could not open <" << aFilename << "> for writing";
             return NULL;
         }
+        MDEBUG( mlog, "Opened egg file <" << aFilename << "> for writing" );
 
         tMonarch->fHeader = new MonarchHeader();
         tMonarch->fHeader->SetFilename( aFilename );
@@ -201,6 +223,24 @@ namespace monarch
 
     void Monarch::WriteHeader()
     {
+        H5::Group headerGroup = NULL;
+        try
+        {
+            headerGroup = new H5::Group( fFile->openGroup( "/header" ) );
+            // if we're still here, then the group already exists
+        }
+        catch( H5::Exception& e )
+        {
+            // if we're here, then the group doesn't exist yet
+            headerGroup = new H5::Group( fFile->createGroup( "/header" ) );
+
+            // now populate the group
+        }
+
+
+
+
+/*
         PreludeType tPrelude = fHeader->ByteSize();
         if( fIO->Write( &tPrelude ) == false )
         {
@@ -225,7 +265,8 @@ namespace monarch
 
         fDataTypeSize = fHeader->GetDataTypeSize();
 
-        if( fHeader->GetAcquisitionMode() == 1 /* the FormatMode is ignored for single-channel data */ )
+        //  the FormatMode is ignored for single-channel data
+        if( fHeader->GetAcquisitionMode() == 1 )
         {
             fDataSize = fHeader->GetRecordSize();
             fDataNBytes = fDataSize * fDataTypeSize;
@@ -295,16 +336,18 @@ namespace monarch
             throw MonarchException() << "unable to write a header with acquisition mode <" << fHeader->GetAcquisitionMode() << "> and format mode <" << fHeader->GetFormatMode() << ">";
             return;
         }
+*/
 
         fState = eReady;
         return;
     }
-
+/*
     void Monarch::SetInterface( InterfaceModeType aMode ) const
     {
         if( aMode == sInterfaceInterleaved )
         {
-            if( fHeader->GetAcquisitionMode() == 1 /* the FormatMode is ignored for single-channel data */ )
+            // the FormatMode is ignored for single-channel data
+            if( fHeader->GetAcquisitionMode() == 1 )
             {
                 fReadFunction = &Monarch::InterleavedFromSingle;
             }
@@ -319,7 +362,8 @@ namespace monarch
         }
         if( aMode == sInterfaceSeparate )
         {
-            if( fHeader->GetAcquisitionMode() == 1 /* the FormatMode is ignored for single-channel data */ )
+            // the FormatMode is ignored for single-channel data
+            if( fHeader->GetAcquisitionMode() == 1 )
             {
                 fReadFunction = &Monarch::SeparateFromSingle;
             }
@@ -339,7 +383,8 @@ namespace monarch
     {
         if( aMode == sInterfaceInterleaved )
         {
-            if( fHeader->GetAcquisitionMode() == 1 /* the FormatMode is ignored for single-channel data */ )
+            // the FormatMode is ignored for single-channel data
+            if( fHeader->GetAcquisitionMode() == 1 )
             {
                 fWriteFunction = &Monarch::InterleavedToSingle;
             }
@@ -354,7 +399,8 @@ namespace monarch
         }
         if( aMode == sInterfaceSeparate )
         {
-            if( fHeader->GetAcquisitionMode() == 1 /* the FormatMode is ignored for single-channel data */ )
+            // the FormatMode is ignored for single-channel data
+            if( fHeader->GetAcquisitionMode() == 1 )
             {
                 fWriteFunction = &Monarch::SeparateToSingle;
             }
@@ -661,22 +707,26 @@ namespace monarch
 
         return true;
     }
-
+*/
     void Monarch::Close() const
     {
+        /*
         if( fIO->Close() == false )
         {
-            throw MonarchException() << "could not close file";
+            throw MException() << "could not close file";
         }
+        */
         return;
     }
 
     void Monarch::Close()
     {
+        /*
         if( fIO->Close() == false )
         {
-            throw MonarchException() << "could not close file";
+            throw MException() << "could not close file";
         }
+        */
         return;
     }
 

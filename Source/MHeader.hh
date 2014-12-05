@@ -1,12 +1,12 @@
-#ifndef MHEADER_HH_
-#define MHEADER_HH_
-
 /*
  * MHeader.hh
  *
  *  Created on: Dec 4, 2014
  *      Author: nsoblath
  */
+
+#ifndef MHEADER_HH_
+#define MHEADER_HH_
 
 #include "MMemberVariable.hh"
 #include "MTypes.hh"
