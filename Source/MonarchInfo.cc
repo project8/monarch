@@ -1,5 +1,5 @@
-#include "Monarch.hpp"
-#include "MonarchLogger.hpp"
+#include "MMonarch.hh"
+#include "MLogger.hh"
 
 using namespace monarch;
 
@@ -31,7 +31,7 @@ int main( const int argc, const char** argv )
     const Monarch* tReadTest = Monarch::OpenForReading( argv[tFileArg] );
     tReadTest->ReadHeader();
 
-    const MonarchHeader* tReadHeader = tReadTest->GetHeader();
+    const MHeader* tReadHeader = tReadTest->GetHeader();
     MINFO( mlog, *tReadHeader );
 
     if( ! tCheckRecords )
@@ -41,10 +41,12 @@ int main( const int argc, const char** argv )
         return 0;
     }
 
+    /*
     unsigned int tRecordCount = 0;
     unsigned int tAcquisiontCount = 0;
     const MonarchRecordBytes* tReadRecord;
-    if( tReadHeader->GetAcquisitionMode() == 1 /* the FormatMode is ignored for single-channel data */ )
+    // the FormatMode is ignored for single-channel data
+    if( tReadHeader->GetAcquisitionMode() == 1 )
     {
         tReadRecord = tReadTest->GetRecordSeparateOne();
     }
@@ -79,6 +81,7 @@ int main( const int argc, const char** argv )
     }
     MINFO( mlog, "record count <" << tRecordCount << ">" );
     MINFO( mlog, "acquisition count <" << tAcquisiontCount << ">" );
+*/
 
     tReadTest->Close();
     delete tReadTest;

@@ -24,6 +24,10 @@ if( GIT_FOUND )
     execute_process( COMMAND ${GIT_EXECUTABLE} describe --tags --long  OUTPUT_VARIABLE Monarch_GIT_DESCRIBE  OUTPUT_STRIP_TRAILING_WHITESPACE )
 endif( GIT_FOUND )
 
+find_package( HDF5 COMPONENTS CXX )
+include_directories( ${HDF5_INCLUDE_DIR} )
+pbuilder_add_ext_libraries( ${HDF5_CXX_LIBRARIES} )
+
 find_package( Protobuf )
 include_directories( ${PROTOBUF_INCLUDE_DIR} )
 pbuilder_add_ext_libraries( ${PROTOBUF_LIBRARIES} )
@@ -48,6 +52,7 @@ include_directories( BEFORE
 ###################
 
 set( MONARCHCORE_HEADERFILES
+    Source/MException.hh
     Source/MHeader.hh
     Source/MLogger.hh
     Source/MMemberVariable.hh
@@ -56,12 +61,13 @@ set( MONARCHCORE_HEADERFILES
 )
 
 set( MONARCHCORE_SOURCEFILES
+    Source/MException.cc
     Source/MHeader.cc
     Source/MLogger.cc
     Source/MMonarch.cc
 )
 
-configure_file( Source/MVersion.hhp.in ${CMAKE_CURRENT_BINARY_DIR}/MVersion.hh )
+configure_file( Source/MVersion.hh.in ${CMAKE_CURRENT_BINARY_DIR}/MVersion.hh )
 set( MONARCHCORE_HEADERFILES
     ${MONARCHCORE_HEADERFILES}
     ${CMAKE_CURRENT_BINARY_DIR}/MVersion.hh
@@ -79,19 +85,19 @@ pbuilder_install_libraries( MonarchCore )
 # monarch executables #
 #######################
 
-add_executable( MonarchDump Source/MonarchDump.cpp )
-target_link_libraries( MonarchDump MonarchCore MonarchProto ${EXTERNAL_LIBRARIES})
+#add_executable( MonarchDump Source/MonarchDump.cpp )
+#target_link_libraries( MonarchDump MonarchCore MonarchProto ${EXTERNAL_LIBRARIES})
 
-add_executable( MonarchInfo Source/MonarchInfo.cpp )
+add_executable( MonarchInfo Source/MonarchInfo.cc )
 target_link_libraries( MonarchInfo MonarchCore MonarchProto ${EXTERNAL_LIBRARIES})
 
-add_executable( MonarchTimeCheck Source/MonarchTimeCheck.cpp )
-target_link_libraries( MonarchTimeCheck MonarchCore MonarchProto ${EXTERNAL_LIBRARIES})
+#add_executable( MonarchTimeCheck Source/MonarchTimeCheck.cpp )
+#target_link_libraries( MonarchTimeCheck MonarchCore MonarchProto ${EXTERNAL_LIBRARIES})
 
 pbuilder_install_executables (
-    MonarchDump
+    #MonarchDump
     MonarchInfo
-    MonarchTimeCheck
+    #MonarchTimeCheck
 )
 
 

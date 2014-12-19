@@ -7,7 +7,6 @@
 
 #include "MMonarch.hh"
 
-#include "MException.hh"
 #include "MLogger.hh"
 
 using std::string;
@@ -92,7 +91,7 @@ namespace monarch
         }
         MDEBUG( mlog, "Opened egg file <" << aFilename << "> for reading" );
 
-        tMonarch->fHeader = new MonarchHeader();
+        tMonarch->fHeader = new MHeader();
         tMonarch->fHeader->SetFilename( aFilename );
 
         tMonarch->fState = eOpen;
@@ -113,7 +112,7 @@ namespace monarch
         }
         MDEBUG( mlog, "Opened egg file <" << aFilename << "> for writing" );
 
-        tMonarch->fHeader = new MonarchHeader();
+        tMonarch->fHeader = new MHeader();
         tMonarch->fHeader->SetFilename( aFilename );
 
         tMonarch->fState = eOpen;
@@ -123,6 +122,26 @@ namespace monarch
 
     void Monarch::ReadHeader() const
     {
+        try
+        {
+            H5::Group* headerGroup = new H5::Group( fFile->openGroup( "/header" ) );
+            // if we're still here, then the group already exists
+
+            fHeader->SetSchemaVersion( headerGroup->openDataSet( "schema_version" ).r );
+            // write data
+            //WriteMetadata( headerGroup, "schema_version",   fHeader->GetSchemaVersion() );
+            //WriteMetadata( headerGroup, "filename",         fHeader->GetFilename() );
+            //WriteMetadata( headerGroup, "filename",         fHeader->GetNChannels() );
+            //WriteMetadata( headerGroup, "run_duration",     fHeader->GetRunDuration() );
+            //WriteMetadata( headerGroup, "timestamp",        fHeader->GetTimestamp() );
+            //WriteMetadata( headerGroup, "acquisition_rate", fHeader->GetDescription() );
+        }
+        catch( H5::Exception& e )
+        {
+            MERROR( mlog, "Unable to open header group:\n\t" << e.getCDetailMsg() );
+        }
+
+/*
         PreludeType tPrelude = 0;
         if( fIO->Read( &tPrelude ) == false )
         {
@@ -147,7 +166,8 @@ namespace monarch
 
         fDataTypeSize = fHeader->GetDataTypeSize();
 
-        if( fHeader->GetAcquisitionMode() == 1 /* the FormatMode is ignored for single-channel data */ )
+        // the FormatMode is ignored for single-channel data
+        if( fHeader->GetAcquisitionMode() == 1 )
         {
             fDataSize = fHeader->GetRecordSize();
             fDataNBytes = fDataSize * fDataTypeSize;
@@ -216,6 +236,7 @@ namespace monarch
             throw MonarchException() << "Unable to read a header with acquisition mode <" << fHeader->GetAcquisitionMode() << "> and format mode <" << fHeader->GetFormatMode() << ">";
             return;
         }
+*/
 
         fState = eReady;
         return;
@@ -223,18 +244,31 @@ namespace monarch
 
     void Monarch::WriteHeader()
     {
-        H5::Group headerGroup = NULL;
         try
         {
-            headerGroup = new H5::Group( fFile->openGroup( "/header" ) );
+            H5::Group* headerGroup = new H5::Group( fFile->openGroup( "/header" ) );
             // if we're still here, then the group already exists
+
+            // write data
+            WriteMetadata( headerGroup, "schema_version",   fHeader->GetSchemaVersion() );
+            WriteMetadata( headerGroup, "filename",         fHeader->GetFilename() );
+            WriteMetadata( headerGroup, "filename",         fHeader->GetNChannels() );
+            WriteMetadata( headerGroup, "run_duration",     fHeader->GetRunDuration() );
+            WriteMetadata( headerGroup, "timestamp",        fHeader->GetTimestamp() );
+            WriteMetadata( headerGroup, "acquisition_rate", fHeader->GetDescription() );
         }
         catch( H5::Exception& e )
         {
             // if we're here, then the group doesn't exist yet
-            headerGroup = new H5::Group( fFile->createGroup( "/header" ) );
+            H5::Group* headerGroup = new H5::Group( fFile->createGroup( "/header" ) );
 
             // now populate the group
+            WriteNewMetadata( headerGroup, "schema_version",   fHeader->GetSchemaVersion() );
+            WriteNewMetadata( headerGroup, "filename",         fHeader->GetFilename() );
+            WriteNewMetadata( headerGroup, "filename",         fHeader->GetNChannels() );
+            WriteNewMetadata( headerGroup, "run_duration",     fHeader->GetRunDuration() );
+            WriteNewMetadata( headerGroup, "timestamp",        fHeader->GetTimestamp() );
+            WriteNewMetadata( headerGroup, "acquisition_rate", fHeader->GetDescription() );
         }
 
 

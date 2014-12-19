@@ -8,6 +8,7 @@
 #ifndef MMONARCH_HH_
 #define MMONARCH_HH_
 
+#include "MException.hh"
 #include "MHeader.hh"
 
 #include "H5Cpp.h"
@@ -129,6 +130,23 @@ namespace monarch
 
         private:
             template< typename XType >
+            void WriteMetadata( H5::Group* a_group, std::string a_name, XType a_value );
+            template< typename XType >
+            void WriteNewMetadata( H5::Group* a_group, std::string a_name, XType a_value );
+
+            void WriteMetadata( H5::Group* a_group, std::string a_name, H5::DataType a_type, const void* a_value_ptr );
+            void WriteNewMetadata( H5::Group* a_group, std::string a_name, H5::DataType a_type, const void* a_value_ptr );
+
+            void WriteMetadata( H5::DataSet* a_dataset, H5::DataType a_type, const void* a_value_ptr );
+
+            template< typename XType >
+            XType ReadMetadata( H5::Group* a_group, std::string a_name );
+
+            void ReadMetadata( H5::Group* a_group, std::string a_name, H5::DataType a_type, void* a_value_ptr );
+
+            void ReadMetadata( H5::DataSet* a_dataset, H5::DataType a_type, void* a_value_ptr );
+
+            template< typename XType >
             H5::DataType GetType( XType aObject ) const;
 
             //the MonarchIO class wraps a bare C file pointer.
@@ -201,6 +219,69 @@ namespace monarch
 #endif
 */
     };
+
+    template< typename XType >
+    void Monarch::WriteMetadata( H5::Group* a_group, std::string a_name, XType a_value )
+    {
+        WriteMetadata( a_group, a_name, GetType( a_value ), &a_value );
+        return;
+    }
+
+    template< typename XType >
+    void Monarch::WriteNewMetadata( H5::Group* a_group, std::string a_name, XType a_value )
+    {
+        WriteMetadata( a_group, a_name, GetType( a_value ), &a_value );
+        return;
+    }
+
+    inline void Monarch::WriteMetadata( H5::Group* a_group, std::string a_name, H5::DataType a_type, const void* a_value_ptr )
+    {
+        H5::DataSpace dspace( H5S_SCALAR );
+        H5::DSetCreatPropList plist;
+        WriteMetadata( &(a_group->createDataSet(a_name.c_str(), a_type, dspace, plist )), a_type, a_value_ptr );
+        return;
+    }
+
+    inline void Monarch::WriteNewMetadata( H5::Group* a_group, std::string a_name, H5::DataType a_type, const void* a_value_ptr )
+    {
+        WriteMetadata( &(a_group->openDataSet( a_name.c_str() )), a_type, a_value_ptr );
+        return;
+    }
+
+    inline void Monarch::WriteMetadata( H5::DataSet* a_dataset, H5::DataType a_type, const void* a_value_ptr )
+    {
+        a_dataset->write( a_value_ptr, a_type );
+        return;
+    }
+
+
+    template<>
+    std::string Monarch::ReadMetadata( H5::Group* a_group, std::string a_name )
+    {
+        XType t_value;
+        WriteMetadata( a_group, a_name, GetType( t_value ), &t_value );
+        return t_value;
+    }
+
+    template< typename XType >
+    XType Monarch::ReadMetadata( H5::Group* a_group, std::string a_name )
+    {
+        XType t_value;
+        WriteMetadata( a_group, a_name, GetType( t_value ), &t_value );
+        return t_value;
+    }
+
+    inline void Monarch::ReadMetadata( H5::Group* a_group, std::string a_name, H5::DataType a_type, void* a_value_ptr )
+    {
+        ReadMetadata( &(a_group->openDataSet( a_name.c_str() )), a_type, a_value_ptr );
+        return;
+    }
+
+    inline void Monarch::ReadMetadata( H5::DataSet* a_dataset, H5::DataType a_type, void* a_value_ptr )
+    {
+        a_dataset->read( a_value_ptr, a_type );
+        return;
+    }
 
     // specializations of GetType for known types
     template<>
