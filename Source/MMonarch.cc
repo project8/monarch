@@ -127,18 +127,16 @@ namespace monarch
             H5::Group* headerGroup = new H5::Group( fFile->openGroup( "/header" ) );
             // if we're still here, then the group already exists
 
-            fHeader->SetSchemaVersion( headerGroup->openDataSet( "schema_version" ).r );
-            // write data
-            //WriteMetadata( headerGroup, "schema_version",   fHeader->GetSchemaVersion() );
-            //WriteMetadata( headerGroup, "filename",         fHeader->GetFilename() );
-            //WriteMetadata( headerGroup, "filename",         fHeader->GetNChannels() );
-            //WriteMetadata( headerGroup, "run_duration",     fHeader->GetRunDuration() );
-            //WriteMetadata( headerGroup, "timestamp",        fHeader->GetTimestamp() );
-            //WriteMetadata( headerGroup, "acquisition_rate", fHeader->GetDescription() );
+            fHeader->SetSchemaVersion( ReadMetadata< string >( headerGroup, string("schema_version") ) );
+            fHeader->SetFilename( ReadMetadata< string >( headerGroup, "filename" ) );
+            fHeader->SetNChannels( ReadMetadata< unsigned >( headerGroup, "n_channels" ) );
+            fHeader->SetRunDuration( ReadMetadata< unsigned >( headerGroup, "run_duration" ) );
+            fHeader->SetTimestamp( ReadMetadata< string >( headerGroup, "timestamp" ) );
+            fHeader->SetDescription( ReadMetadata< string >( headerGroup, "description" ) );
         }
         catch( H5::Exception& e )
         {
-            MERROR( mlog, "Unable to open header group:\n\t" << e.getCDetailMsg() );
+            MERROR( mlog, "Unable to open header group or find header data:\n\t" << e.getCDetailMsg() );
         }
 
 /*
@@ -252,10 +250,10 @@ namespace monarch
             // write data
             WriteMetadata( headerGroup, "schema_version",   fHeader->GetSchemaVersion() );
             WriteMetadata( headerGroup, "filename",         fHeader->GetFilename() );
-            WriteMetadata( headerGroup, "filename",         fHeader->GetNChannels() );
+            WriteMetadata( headerGroup, "n_channels",       fHeader->GetNChannels() );
             WriteMetadata( headerGroup, "run_duration",     fHeader->GetRunDuration() );
             WriteMetadata( headerGroup, "timestamp",        fHeader->GetTimestamp() );
-            WriteMetadata( headerGroup, "acquisition_rate", fHeader->GetDescription() );
+            WriteMetadata( headerGroup, "description",      fHeader->GetDescription() );
         }
         catch( H5::Exception& e )
         {
@@ -265,10 +263,10 @@ namespace monarch
             // now populate the group
             WriteNewMetadata( headerGroup, "schema_version",   fHeader->GetSchemaVersion() );
             WriteNewMetadata( headerGroup, "filename",         fHeader->GetFilename() );
-            WriteNewMetadata( headerGroup, "filename",         fHeader->GetNChannels() );
+            WriteNewMetadata( headerGroup, "n_channels",       fHeader->GetNChannels() );
             WriteNewMetadata( headerGroup, "run_duration",     fHeader->GetRunDuration() );
             WriteNewMetadata( headerGroup, "timestamp",        fHeader->GetTimestamp() );
-            WriteNewMetadata( headerGroup, "acquisition_rate", fHeader->GetDescription() );
+            WriteNewMetadata( headerGroup, "description",      fHeader->GetDescription() );
         }
 
 

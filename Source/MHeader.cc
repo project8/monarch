@@ -55,6 +55,7 @@ std::ostream& operator<<( std::ostream& out, const monarch::MHeader& hdr )
     out << "Monarch Header Content: " << "\n";
     out << "\tSchema Version: " << hdr.GetSchemaVersion() << "\n";
     out << "\tFilename: " << hdr.GetFilename() << "\n";
+    out << "\tNumber of Channels: " << hdr.GetNChannels() << "\n";
     out << "\tRun Duration: " << hdr.GetRunDuration() << " ms\n";
     out << "\tTimestamp: " << hdr.GetTimestamp() << "\n";
     out << "\tDescription: " << hdr.GetDescription() << "\n";

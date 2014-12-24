@@ -8,6 +8,10 @@
 #ifndef MTYPES_HH_
 #define MTYPES_HH_
 
+#include "MException.hh"
+
+#include "H5Cpp.h"
+
 #include <string>
 
 //#include "thorax.hh"
@@ -73,6 +77,86 @@ namespace monarch
     typedef record_id_type RecordIdType; // 8 bytes
     typedef time_nsec_type TimeType; // 8 bytes
     */
+
+    template< typename T >
+    struct MH5TypeAccess
+    {
+        static H5::DataType GetType( T )
+        {
+            throw MException() << "Unknown type requested";
+        }
+    };
+
+    template<>
+    struct MH5TypeAccess< unsigned >
+    {
+        static H5::DataType GetType()
+        {
+            return H5::PredType::NATIVE_UINT;
+        }
+    };
+
+    template<>
+    struct MH5TypeAccess< int >
+    {
+        static H5::DataType GetType()
+        {
+            return H5::PredType::NATIVE_INT;
+        }
+    };
+
+    template<>
+    struct MH5TypeAccess< unsigned long >
+    {
+        static H5::DataType GetType()
+        {
+            return H5::PredType::NATIVE_ULONG;
+        }
+    };
+
+    template<>
+    struct MH5TypeAccess< long >
+    {
+        static H5::DataType GetType()
+        {
+            return H5::PredType::NATIVE_LONG;
+        }
+    };
+
+    template<>
+    struct MH5TypeAccess< float >
+    {
+        static H5::DataType GetType()
+        {
+            return H5::PredType::NATIVE_FLOAT;
+        }
+    };
+
+    template<>
+    struct MH5TypeAccess< double >
+    {
+        static H5::DataType GetType()
+        {
+            return H5::PredType::NATIVE_DOUBLE;
+        }
+    };
+
+    template<>
+    struct MH5TypeAccess< std::string >
+    {
+        static H5::DataType GetType()
+        {
+            return H5::StrType( H5::PredType::C_S1, 0 );
+        }
+        static H5::DataType GetType( const std::string& aString )
+        {
+            return H5::StrType( H5::PredType::C_S1, aString.length() + 1 );
+        }
+        static H5::DataType GetType( size_t aSize )
+        {
+            return H5::StrType( H5::PredType::C_S1, aSize + 1 );
+        }
+    };
 
 }
 
