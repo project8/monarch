@@ -11,7 +11,6 @@
 
 #include <cstdlib> // for atol in parsing timestamp
 
-#include <map>
 // for parsing timestamp
 #include <sstream>
 using std::stringstream;
@@ -43,76 +42,37 @@ namespace monarch
             fSchemaVersion(),
             fFilename(),
             fNChannels( 0 ),
+            fNStreams( 0 ),
             fRunDuration( 0 ),
             fTimestamp(),
             fDescription(),
-            fStreamCount( 0 ),
             fChannelStreams()
     {
-        SetNChannels( 0 );
     }
 
     MHeader::~MHeader()
     {
     }
 
-    void MHeader::SetNChannels( unsigned aNChannels )
+    unsigned MHeader::AddStream( unsigned aRecSize )
     {
-        fNChannels = aNChannels;
-        if( aNChannels == 0 )
-        {
-            fChannelStreams.clear();
-            return;
-        }
-
-        fChannelStreams.resize( aNChannels );
-        for( unsigned iChannel = 0; iChannel < fNChannels; ++iChannel )
-        {
-            fChannelStreams[ iChannel ] = iChannel;
-        }
-
-        fStreamCount = aNChannels;
-        return;
+        MDEBUG( mlog, "Adding stream " << fNStreams << " for channel " << fNChannels << " with record size " << aRecSize );
+        fChannelStreams.push_back( fNStreams );
+        ++fNChannels;
+        return ++fNStreams;
     }
 
-    void MHeader::AssignToStream( unsigned* aChannelArray, unsigned aNChannels )
+    unsigned MHeader::AddStream( unsigned aNChannels, unsigned aRecSize )
     {
-        // Assign the channels specified in aChannelArray to stream number fStreamCount+1
-        for( unsigned iChanIndex = 0; iChanIndex < aNChannels; ++iChanIndex )
+        MDEBUG( mlog, "Adding stream " << fNStreams << " for multiple channels with record size " << aRecSize );
+        for( unsigned iNewChannel = 0; iNewChannel < aNChannels; ++iNewChannel )
         {
-            if( aChannelArray[iChanIndex] > fNChannels )
-            {
-                throw MException() << "Channel specified for stream (" << aChannelArray[iChanIndex] <<
-                        " ) is greater than current number of channels";
-            }
-            fChannelStreams[ aChannelArray[iChanIndex] ] = fStreamCount + 1;
+            MDEBUG( mlog, "Adding channel " << fNChannels );
+            fChannelStreams.push_back( fNStreams );
+            ++fNChannels;
         }
-
-        // Determine the number of streams currently in use, and renumber streams accordingly
-        std::map< unsigned, unsigned > tStreamNoConv;
-        for( unsigned iChannel = 0; iChannel < fNChannels; ++iChannel )
-        {
-            tStreamNoConv.insert( std::pair< unsigned, unsigned >( fChannelStreams[ iChannel ], 0 ) );
-        }
-
-        unsigned tRenumberedStreamNo = 0;
-        for( std::map< unsigned, unsigned >::iterator tStreamNoIt = tStreamNoConv.begin(); tStreamNoIt != tStreamNoConv.end(); ++tStreamNoIt )
-        {
-            tStreamNoIt->second = tRenumberedStreamNo++;
-        }
-
-        for( unsigned iChannel = 0; iChannel < fNChannels; ++iChannel )
-        {
-            MDEBUG( mlog, "Channel " << iChannel << "; before - " << fChannelStreams[ iChannel ] << "; after - " << tStreamNoConv[ fChannelStreams[ iChannel ] ] );
-            fChannelStreams[ iChannel ] = tStreamNoConv[ fChannelStreams[ iChannel ] ];
-        }
-
-        fStreamCount = tStreamNoConv.size();
-        MDEBUG( mlog, "Stream count is now " << fStreamCount );
-
-        return;
+        return ++fNStreams;
     }
-
 
 }
 
@@ -122,6 +82,7 @@ std::ostream& operator<<( std::ostream& out, const monarch::MHeader& hdr )
     out << "\tSchema Version: " << hdr.GetSchemaVersion() << "\n";
     out << "\tFilename: " << hdr.GetFilename() << "\n";
     out << "\tNumber of Channels: " << hdr.GetNChannels() << "\n";
+    out << "\tNumber of Streams: " << hdr.GetNStreams() << "\n";
     out << "\tRun Duration: " << hdr.GetRunDuration() << " ms\n";
     out << "\tTimestamp: " << hdr.GetTimestamp() << "\n";
     out << "\tDescription: " << hdr.GetDescription() << "\n";

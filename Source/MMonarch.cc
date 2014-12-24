@@ -130,6 +130,7 @@ namespace monarch
             fHeader->SetSchemaVersion( ReadMetadata< string >( headerGroup, string("schema_version") ) );
             fHeader->SetFilename( ReadMetadata< string >( headerGroup, "filename" ) );
             fHeader->SetNChannels( ReadMetadata< unsigned >( headerGroup, "n_channels" ) );
+            fHeader->SetNStreams( ReadMetadata< unsigned >( headerGroup, "n_streams" ) );
             fHeader->SetRunDuration( ReadMetadata< unsigned >( headerGroup, "run_duration" ) );
             fHeader->SetTimestamp( ReadMetadata< string >( headerGroup, "timestamp" ) );
             fHeader->SetDescription( ReadMetadata< string >( headerGroup, "description" ) );
@@ -244,29 +245,26 @@ namespace monarch
     {
         try
         {
-            H5::Group* headerGroup = new H5::Group( fFile->openGroup( "/header" ) );
-            // if we're still here, then the group already exists
-
-            // write data
-            WriteMetadata( headerGroup, "schema_version",   fHeader->GetSchemaVersion() );
-            WriteMetadata( headerGroup, "filename",         fHeader->GetFilename() );
-            WriteMetadata( headerGroup, "n_channels",       fHeader->GetNChannels() );
-            WriteMetadata( headerGroup, "run_duration",     fHeader->GetRunDuration() );
-            WriteMetadata( headerGroup, "timestamp",        fHeader->GetTimestamp() );
-            WriteMetadata( headerGroup, "description",      fHeader->GetDescription() );
-        }
-        catch( H5::Exception& e )
-        {
-            // if we're here, then the group doesn't exist yet
             H5::Group* headerGroup = new H5::Group( fFile->createGroup( "/header" ) );
 
             // now populate the group
-            WriteNewMetadata( headerGroup, "schema_version",   fHeader->GetSchemaVersion() );
-            WriteNewMetadata( headerGroup, "filename",         fHeader->GetFilename() );
-            WriteNewMetadata( headerGroup, "n_channels",       fHeader->GetNChannels() );
-            WriteNewMetadata( headerGroup, "run_duration",     fHeader->GetRunDuration() );
-            WriteNewMetadata( headerGroup, "timestamp",        fHeader->GetTimestamp() );
-            WriteNewMetadata( headerGroup, "description",      fHeader->GetDescription() );
+            WriteScalarMetadata( headerGroup, "schema_version",   fHeader->GetSchemaVersion() );
+            WriteScalarMetadata( headerGroup, "filename",         fHeader->GetFilename() );
+            WriteScalarMetadata( headerGroup, "n_channels",       fHeader->GetNChannels() );
+            WriteScalarMetadata( headerGroup, "n_streams",        fHeader->GetNStreams() );
+            WriteScalarMetadata( headerGroup, "run_duration",     fHeader->GetRunDuration() );
+            WriteScalarMetadata( headerGroup, "timestamp",        fHeader->GetTimestamp() );
+            WriteScalarMetadata( headerGroup, "description",      fHeader->GetDescription() );
+
+            Write1DMetadata( headerGroup, "channel_streams",  fHeader->GetChannelStreams() );
+        }
+        catch( H5::Exception& e )
+        {
+            throw MException() << "HDF5 error while writing header: \n\t" << e.getDetailMsg();
+        }
+        catch( MException& e )
+        {
+            throw( e );
         }
 
 

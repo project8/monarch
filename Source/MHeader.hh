@@ -63,6 +63,8 @@ namespace monarch
     */
     class MHeader
     {
+            friend class MMonarch;
+
         public:
             MHeader();
             ~MHeader();
@@ -71,7 +73,9 @@ namespace monarch
 
             MEMBERVARIABLEREF( std::string, Filename );
 
-            MEMBERVARIABLE_NOSET( unsigned, NChannels );
+            MEMBERVARIABLE( unsigned, NChannels );
+
+            MEMBERVARIABLE( unsigned, NStreams );
 
             // channel configuration and coherence
 
@@ -82,15 +86,16 @@ namespace monarch
             MEMBERVARIABLEREF( std::string, Description );
 
         public:
-            /// Sets the number of channels and resets the stream assignments
-            void SetNChannels( unsigned aNChannels );
-            void AssignToStream( unsigned* aChannelArray, unsigned aNChannels );
+            /// Add a stream with one channel with aRecSize samples per record
+            /// Returns the stream number (used to address the stream later)
+            unsigned AddStream( unsigned aRecSize );
+            /// Add a stream with multiple channels with aRecSize samples per record
+            /// Returns the stream number (used to address the stream later)
+            unsigned AddStream( unsigned aNChannels, unsigned aRecSize );
 
             // channel headers
 
-        private:
-            unsigned fStreamCount;
-            std::vector< unsigned > fChannelStreams;
+            MEMBERVARIABLEREF_NOSET( std::vector< unsigned >, ChannelStreams );
 
     };
 

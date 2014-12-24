@@ -132,15 +132,18 @@ namespace monarch
             void Close();
 
         private:
-            void WriteMetadata( H5::Group* a_group, const std::string& a_name, const std::string& a_value );
-            void WriteNewMetadata( H5::Group* a_group, const std::string& a_name, const std::string& a_value );
+            //void WriteMetadata( H5::Group* a_group, const std::string& a_name, const std::string& a_value );
+            //template< typename XType >
+            //void WriteMetadata( H5::Group* a_group, const std::string& a_name, XType a_value );
+            void WriteScalarMetadata( H5::Group* aGroup, const std::string& aName, const std::string& aValue );
             template< typename XType >
-            void WriteMetadata( H5::Group* a_group, const std::string& a_name, XType a_value );
-            template< typename XType >
-            void WriteNewMetadata( H5::Group* a_group, const std::string& a_name, XType a_value );
+            void WriteScalarMetadata( H5::Group* aGroup, const std::string& aName, XType aValue );
 
             template< typename XType >
-            XType ReadMetadata( H5::Group* a_group, const std::string& a_name ) const;
+            void Write1DMetadata( H5::Group* aGroup, const std::string& aName, const std::vector< XType >& aValue );
+
+            template< typename XType >
+            XType ReadMetadata( H5::Group* aGroup, const std::string& aName ) const;
 
             //the MonarchIO class wraps a bare C file pointer.
             //MonarchIO* fIO;
@@ -215,25 +218,15 @@ namespace monarch
 
     // Write functions
 
-    // Overloads for strings
+    /*
     inline void Monarch::WriteMetadata( H5::Group* a_group, const std::string& a_name, const std::string& a_value )
     {
         a_group->openDataSet( a_name.c_str() ).write( a_value, MH5TypeAccess< std::string >::GetType( a_value ) );
         MDEBUG( mlog_mmonarch, "Writing string to existing metadata: " << a_value << "; size = " << a_value.size() );
         return;
     }
-
-    inline void Monarch::WriteNewMetadata( H5::Group* a_group, const std::string& a_name, const std::string& a_value )
-    {
-        H5::DataSpace dspace( H5S_SCALAR );
-        H5::DSetCreatPropList plist;
-        H5::DataType t_type = MH5TypeAccess< std::string >::GetType( a_value );
-        a_group->createDataSet(a_name.c_str(), t_type, dspace, plist ).write( a_value, t_type );
-        MDEBUG( mlog_mmonarch, "Writing string to new metadata: " << a_value << "; size = " << a_value.size() );
-        return;
-    }
-
-    // General write functions
+    */
+    /*
     template< typename XType >
     void Monarch::WriteMetadata( H5::Group* a_group, const std::string& a_name, XType a_value )
     {
@@ -241,40 +234,73 @@ namespace monarch
         MDEBUG( mlog_mmonarch, "Writing value to existing metadata: " << a_value );
         return;
     }
+    */
 
-    template< typename XType >
-    void Monarch::WriteNewMetadata( H5::Group* a_group, const std::string& a_name, XType a_value )
+    inline void Monarch::WriteScalarMetadata( H5::Group* aGroup, const std::string& aName, const std::string& aValue )
     {
         H5::DataSpace dspace( H5S_SCALAR );
         H5::DSetCreatPropList plist;
-        H5::DataType t_type = MH5TypeAccess< XType >::GetType();
-        a_group->createDataSet(a_name.c_str(), t_type, dspace, plist ).write( &a_value, t_type );
-        MDEBUG( mlog_mmonarch, "Writing value to new metadata: " << a_value );
+        H5::DataType tType = MH5TypeAccess< std::string >::GetType( aValue );
+        aGroup->createDataSet(aName, tType, dspace, plist ).write( aValue, tType );
+        MDEBUG( mlog_mmonarch, "Writing string to new scalar metadata: " << aValue << "; size = " << aValue.size() );
         return;
     }
+
+    template< typename XType >
+    void Monarch::WriteScalarMetadata( H5::Group* aGroup, const std::string& aName, XType aValue )
+    {
+        H5::DataSpace dspace( H5S_SCALAR );
+        H5::DSetCreatPropList plist;
+        H5::DataType tType = MH5TypeAccess< XType >::GetType();
+        aGroup->createDataSet(aName, tType, dspace, plist ).write( &aValue, tType );
+        MDEBUG( mlog_mmonarch, "Writing value to new scalar metadata: " << aValue );
+        return;
+    }
+
+    template< typename XType >
+    inline void Monarch::Write1DMetadata( H5::Group* aGroup, const std::string& aName, const std::vector< XType >& aValue )
+    {
+        MDEBUG( mlog_mmonarch, "Writing vector to new 1-D metadata; size = " << aValue.size() );
+        hsize_t tDims[ 1 ] = { aValue.size() };
+        H5::DataSpace dspace( 1, tDims );
+        H5::DSetCreatPropList plist;
+        H5::DataType tType = MH5TypeAccess< XType >::GetType();
+        H5::DataSet tDataset = aGroup->createDataSet(aName, tType, dspace, plist );
+        XType* buffer = new XType( aValue.size() );
+        MWARN( mlog_mmonarch, tDims << "  " << buffer );
+        for( unsigned i = 0; i < aValue.size(); ++i )
+        {
+            buffer[ i ] = aValue[ i ];
+        }
+        tDataset.write( buffer, tType );
+        delete [] buffer;
+        return;
+    }
+
+
 
 
     // Read functions
 
     // read specialization for strings
     template<>
-    std::string Monarch::ReadMetadata( H5::Group* a_group, const std::string& a_name ) const
+    std::string Monarch::ReadMetadata( H5::Group* aGroup, const std::string& aName ) const
     {
-        std::string t_value;
-        H5::DataSet tDataset = a_group->openDataSet( a_name );
-        tDataset.read( t_value, MH5TypeAccess< std::string >::GetType( tDataset.getInMemDataSize() ) );
-        MDEBUG( mlog_mmonarch, "Reading string: " << t_value << "; size = " << t_value.size() );
-        return t_value;
+        std::string tValue;
+        H5::DataSet tDataset = aGroup->openDataSet( aName );
+        tDataset.read( tValue, MH5TypeAccess< std::string >::GetType( tDataset.getInMemDataSize() ) );
+        MDEBUG( mlog_mmonarch, "Reading string: " << tValue << "; size = " << tValue.size() );
+        return tValue;
     }
 
     // templated read function
     template< typename XType >
-    XType Monarch::ReadMetadata( H5::Group* a_group, const std::string& a_name ) const
+    XType Monarch::ReadMetadata( H5::Group* aGroup, const std::string& aName ) const
     {
-        XType t_value;
-        a_group->openDataSet( a_name ).read( &t_value, MH5TypeAccess< XType >::GetType() );
-        MDEBUG( mlog_mmonarch, "Reading value: " << t_value );
-        return t_value;
+        XType tValue;
+        aGroup->openDataSet( aName ).read( &tValue, MH5TypeAccess< XType >::GetType() );
+        MDEBUG( mlog_mmonarch, "Reading value: " << tValue );
+        return tValue;
     }
 
 

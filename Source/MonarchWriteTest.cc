@@ -20,18 +20,17 @@ int main( const int argc, const char** argv )
     MHeader* tHeader = tWriteTest->GetHeader();
     tHeader->SetSchemaVersion( "???" );
     tHeader->SetFilename( argv[1] );
-    tHeader->SetNChannels( 42 );
     tHeader->SetRunDuration( 8675309 );
     tHeader->SetTimestamp( "Stardate 33515" );
     tHeader->SetDescription( "Bigger on the inside" );
 
+    MINFO( mlog, "Adding streams" );
+    unsigned tSingleStream = tHeader->AddStream( 42 );
+    unsigned tDoubleStream = tHeader->AddStream( 2, 500 );
+
     tWriteTest->WriteHeader();
 
     MINFO( mlog, "Wrote header:\n" << *tHeader );
-
-    MINFO( mlog, "Assigning streams" );
-    unsigned channels[2] = {2, 3};
-    tHeader->AssignToStream( channels, 2 );
 
     /*
     unsigned int tRecordCount = 0;
