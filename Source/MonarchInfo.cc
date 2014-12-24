@@ -7,17 +7,18 @@ MLOGGER( mlog, "MonarchInfo" );
 
 int main( const int argc, const char** argv )
 {
-    if( argc < 2 )
+    if( strcmp( argv[1], "-h" ) == 0 || argc < 2 )
     {
         MINFO( mlog, "usage:\n"
-            << "  MonarchInfo [-h] <input egg file>\n"
-            << "      -h: (optional) header only; does not check number of records" );
+            << "  MonarchInfo [-Hh] <input egg file>\n"
+            << "      -h: print this usage information\n"
+            << "      -H: (optional) header only; does not check number of records" );
         return -1;
     }
 
     unsigned tFileArg = 1;
     bool tCheckRecords = true;
-    if( strcmp( argv[1], "-h" ) == 0 )
+    if( strcmp( argv[1], "-H" ) == 0 )
     {
         if( argc < 3 )
         {
