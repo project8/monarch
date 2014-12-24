@@ -91,12 +91,16 @@ pbuilder_install_libraries( MonarchCore )
 add_executable( MonarchInfo Source/MonarchInfo.cc )
 target_link_libraries( MonarchInfo MonarchCore MonarchProto ${EXTERNAL_LIBRARIES})
 
+add_executable( MonarchWriteTest Source/MonarchWriteTest.cc )
+target_link_libraries( MonarchWriteTest MonarchCore MonarchProto ${EXTERNAL_LIBRARIES})
+
 #add_executable( MonarchTimeCheck Source/MonarchTimeCheck.cpp )
 #target_link_libraries( MonarchTimeCheck MonarchCore MonarchProto ${EXTERNAL_LIBRARIES})
 
 pbuilder_install_executables (
     #MonarchDump
     MonarchInfo
+    MonarchWriteTest
     #MonarchTimeCheck
 )
 
