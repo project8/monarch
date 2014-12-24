@@ -140,10 +140,13 @@ namespace monarch
             void WriteScalarMetadata( H5::Group* aGroup, const std::string& aName, XType aValue );
 
             template< typename XType >
-            void Write1DMetadata( H5::Group* aGroup, const std::string& aName, const std::vector< XType >& aValue );
+            void Write1DMetadata( H5::Group* aGroup, const std::string& aName, const std::vector< XType >& anArray );
 
             template< typename XType >
-            XType ReadMetadata( H5::Group* aGroup, const std::string& aName ) const;
+            XType ReadScalarMetadata( H5::Group* aGroup, const std::string& aName ) const;
+
+            template< typename XType >
+            void Read1DMetadata( H5::Group* aGroup, const std::string& aName, std::vector< XType >& anArray ) const;
 
             //the MonarchIO class wraps a bare C file pointer.
             //MonarchIO* fIO;
@@ -258,19 +261,18 @@ namespace monarch
     }
 
     template< typename XType >
-    inline void Monarch::Write1DMetadata( H5::Group* aGroup, const std::string& aName, const std::vector< XType >& aValue )
+    inline void Monarch::Write1DMetadata( H5::Group* aGroup, const std::string& aName, const std::vector< XType >& anArray )
     {
-        MDEBUG( mlog_mmonarch, "Writing vector to new 1-D metadata; size = " << aValue.size() );
-        hsize_t tDims[ 1 ] = { aValue.size() };
+        MDEBUG( mlog_mmonarch, "Writing vector to new 1-D metadata; size = " << anArray.size() );
+        hsize_t tDims[ 1 ] = { anArray.size() };
         H5::DataSpace dspace( 1, tDims );
         H5::DSetCreatPropList plist;
         H5::DataType tType = MH5TypeAccess< XType >::GetType();
         H5::DataSet tDataset = aGroup->createDataSet(aName, tType, dspace, plist );
-        XType* buffer = new XType( aValue.size() );
-        MWARN( mlog_mmonarch, tDims << "  " << buffer );
-        for( unsigned i = 0; i < aValue.size(); ++i )
+        XType* buffer = new XType( anArray.size() );
+        for( unsigned i = 0; i < anArray.size(); ++i )
         {
-            buffer[ i ] = aValue[ i ];
+            buffer[ i ] = anArray[ i ];
         }
         tDataset.write( buffer, tType );
         delete [] buffer;
@@ -284,7 +286,7 @@ namespace monarch
 
     // read specialization for strings
     template<>
-    std::string Monarch::ReadMetadata( H5::Group* aGroup, const std::string& aName ) const
+    std::string Monarch::ReadScalarMetadata( H5::Group* aGroup, const std::string& aName ) const
     {
         std::string tValue;
         H5::DataSet tDataset = aGroup->openDataSet( aName );
@@ -295,7 +297,7 @@ namespace monarch
 
     // templated read function
     template< typename XType >
-    XType Monarch::ReadMetadata( H5::Group* aGroup, const std::string& aName ) const
+    XType Monarch::ReadScalarMetadata( H5::Group* aGroup, const std::string& aName ) const
     {
         XType tValue;
         aGroup->openDataSet( aName ).read( &tValue, MH5TypeAccess< XType >::GetType() );
@@ -303,6 +305,28 @@ namespace monarch
         return tValue;
     }
 
+    template< typename XType >
+    void Monarch::Read1DMetadata( H5::Group* aGroup, const std::string& aName, std::vector< XType >& anArray ) const
+    {
+        H5::DataSet tDataset = aGroup->openDataSet( aName );
+        H5::DataSpace tDataspace = tDataset.getSpace();
+        if( tDataspace.getSimpleExtentNdims() != 1 )
+        {
+            throw MException() << "Dataset <" << aName << "> has " << tDataspace.getSimpleExtentNdims() << " dimensions; 1 dimension was expected";
+        }
+        hsize_t tDataSize[ 1 ];
+        tDataspace.getSimpleExtentDims( tDataSize );
+        XType* buffer = new XType( tDataSize[0] );
+        MDEBUG( mlog_mmonarch, "Reading 1-D metadata to vector; size = " << tDataSize[0] );
+        tDataset.read( buffer, MH5TypeAccess< XType >::GetType() );
+        anArray.resize( tDataSize[0] );
+        for( unsigned i = 0; i < anArray.size(); ++i )
+        {
+            anArray[ i ] = buffer[ i ];
+        }
+        delete [] buffer;
+        return;
+    }
 
 
 

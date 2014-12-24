@@ -63,7 +63,7 @@ namespace monarch
     */
     class MHeader
     {
-            friend class MMonarch;
+            friend class Monarch;
 
         public:
             MHeader();

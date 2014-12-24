@@ -83,6 +83,10 @@ std::ostream& operator<<( std::ostream& out, const monarch::MHeader& hdr )
     out << "\tFilename: " << hdr.GetFilename() << "\n";
     out << "\tNumber of Channels: " << hdr.GetNChannels() << "\n";
     out << "\tNumber of Streams: " << hdr.GetNStreams() << "\n";
+    for( unsigned iChan = 0; iChan < hdr.GetNChannels(); ++iChan )
+    {
+        out << "\t\tChannel " << iChan << " --> Stream " << hdr.GetChannelStreams()[ iChan ] << "\n";
+    }
     out << "\tRun Duration: " << hdr.GetRunDuration() << " ms\n";
     out << "\tTimestamp: " << hdr.GetTimestamp() << "\n";
     out << "\tDescription: " << hdr.GetDescription() << "\n";

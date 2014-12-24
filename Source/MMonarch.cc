@@ -127,13 +127,16 @@ namespace monarch
             H5::Group* headerGroup = new H5::Group( fFile->openGroup( "/header" ) );
             // if we're still here, then the group already exists
 
-            fHeader->SetSchemaVersion( ReadMetadata< string >( headerGroup, string("schema_version") ) );
-            fHeader->SetFilename( ReadMetadata< string >( headerGroup, "filename" ) );
-            fHeader->SetNChannels( ReadMetadata< unsigned >( headerGroup, "n_channels" ) );
-            fHeader->SetNStreams( ReadMetadata< unsigned >( headerGroup, "n_streams" ) );
-            fHeader->SetRunDuration( ReadMetadata< unsigned >( headerGroup, "run_duration" ) );
-            fHeader->SetTimestamp( ReadMetadata< string >( headerGroup, "timestamp" ) );
-            fHeader->SetDescription( ReadMetadata< string >( headerGroup, "description" ) );
+            fHeader->SetSchemaVersion( ReadScalarMetadata< string >( headerGroup, string("schema_version") ) );
+            fHeader->SetFilename( ReadScalarMetadata< string >( headerGroup, "filename" ) );
+            fHeader->SetNChannels( ReadScalarMetadata< unsigned >( headerGroup, "n_channels" ) );
+            fHeader->SetNStreams( ReadScalarMetadata< unsigned >( headerGroup, "n_streams" ) );
+            fHeader->SetRunDuration( ReadScalarMetadata< unsigned >( headerGroup, "run_duration" ) );
+            fHeader->SetTimestamp( ReadScalarMetadata< string >( headerGroup, "timestamp" ) );
+            fHeader->SetDescription( ReadScalarMetadata< string >( headerGroup, "description" ) );
+
+            fHeader->fChannelStreams.clear();
+            Read1DMetadata< unsigned >( headerGroup, "channel_streams", fHeader->fChannelStreams );
         }
         catch( H5::Exception& e )
         {
