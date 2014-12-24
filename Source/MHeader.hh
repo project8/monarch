@@ -12,6 +12,7 @@
 #include "MTypes.hh"
 
 #include <string>
+#include <vector>
 
 namespace monarch
 {
@@ -70,7 +71,7 @@ namespace monarch
 
             MEMBERVARIABLEREF( std::string, Filename );
 
-            MEMBERVARIABLE( unsigned, NChannels );
+            MEMBERVARIABLE_NOSET( unsigned, NChannels );
 
             // channel configuration and coherence
 
@@ -80,10 +81,16 @@ namespace monarch
 
             MEMBERVARIABLEREF( std::string, Description );
 
+        public:
+            /// Sets the number of channels and resets the stream assignments
+            void SetNChannels( unsigned aNChannels );
+            void AssignToStream( unsigned* aChannelArray, unsigned aNChannels );
 
             // channel headers
 
-
+        private:
+            unsigned fStreamCount;
+            std::vector< unsigned > fChannelStreams;
 
     };
 

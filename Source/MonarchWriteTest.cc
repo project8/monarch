@@ -29,6 +29,9 @@ int main( const int argc, const char** argv )
 
     MINFO( mlog, "Wrote header:\n" << *tHeader );
 
+    MINFO( mlog, "Assigning streams" );
+    unsigned channels[2] = {2, 3};
+    tHeader->AssignToStream( channels, 2 );
 
     /*
     unsigned int tRecordCount = 0;
