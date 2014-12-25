@@ -54,6 +54,7 @@ include_directories( BEFORE
 set( MONARCHCORE_HEADERFILES
     Source/MException.hh
     Source/MHeader.hh
+    Source/MIToA.hh
     Source/MLogger.hh
     Source/MMemberVariable.hh
     Source/MMonarch.hh
@@ -63,6 +64,7 @@ set( MONARCHCORE_HEADERFILES
 set( MONARCHCORE_SOURCEFILES
     Source/MException.cc
     Source/MHeader.cc
+    Source/MIToA.cc
     Source/MLogger.cc
     Source/MMonarch.cc
 )
