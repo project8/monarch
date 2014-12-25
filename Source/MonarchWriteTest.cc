@@ -25,8 +25,8 @@ int main( const int argc, const char** argv )
     tHeader->SetDescription( "Bigger on the inside" );
 
     MINFO( mlog, "Adding streams" );
-    unsigned tSingleStream = tHeader->AddStream( 42 );
-    unsigned tDoubleStream = tHeader->AddStream( 2, 500 );
+    unsigned tSingleStream = tHeader->AddStream( "HHGTTG", 500, 42, 1, sDigitized, 8 );
+    unsigned tDoubleStream = tHeader->AddStream( "Um . . .", 2, 250, 500, 1, sDigitized, 8 );
 
     tWriteTest->WriteHeader();
 

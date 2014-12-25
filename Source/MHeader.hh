@@ -22,6 +22,43 @@ namespace monarch
     MLOGGER( mlog_mheader, "MHeader.hh" );
 
     /*!
+     @class MStreamHeader
+     @author N. S. Oblath
+
+     @brief Single-stream header information
+
+     @details
+    */
+    class MStreamHeader
+    {
+        public:
+            MStreamHeader();
+            MStreamHeader( const std::string& aSource, unsigned aNChannels,
+                           unsigned anAcqRate, unsigned aRecSize,
+                           unsigned aDataTypeSize, DataFormatType aDataFormat,
+                           unsigned aBitDepth );
+            MStreamHeader( const MStreamHeader& orig );
+            ~MStreamHeader();
+
+            MEMBERVARIABLE( unsigned, Number );
+
+            MEMBERVARIABLE( std::string, Source );
+
+            MEMBERVARIABLE( unsigned, NChannels );
+
+            MEMBERVARIABLE( unsigned, AcquisitionRate );
+
+            MEMBERVARIABLE( unsigned, RecordSize );
+
+            MEMBERVARIABLE( unsigned, DataTypeSize );
+
+            MEMBERVARIABLE( DataFormatType, DataFormat );
+
+            MEMBERVARIABLE( unsigned, BitDepth );
+
+    };
+
+    /*!
      @class MChannelHeader
      @author N. S. Oblath
 
@@ -33,6 +70,11 @@ namespace monarch
     {
         public:
             MChannelHeader();
+            MChannelHeader( const std::string& aSource,
+                            unsigned anAcqRate, unsigned aRecSize,
+                            unsigned aDataTypeSize, DataFormatType aDataFormat,
+                            unsigned aBitDepth );
+            MChannelHeader( const MChannelHeader& orig );
             ~MChannelHeader();
 
             MEMBERVARIABLE( unsigned, Number );
@@ -40,6 +82,8 @@ namespace monarch
             MEMBERVARIABLE( std::string, Source );
 
             MEMBERVARIABLE( unsigned, AcquisitionRate );
+
+            MEMBERVARIABLE( unsigned, RecordSize );
 
             MEMBERVARIABLE( unsigned, DataTypeSize );
 
@@ -78,29 +122,37 @@ namespace monarch
 
             MEMBERVARIABLEREF( std::string, Filename );
 
-            MEMBERVARIABLE( unsigned, NChannels );
-
-            MEMBERVARIABLE( unsigned, NStreams );
-
-            // channel configuration and coherence
-
             MEMBERVARIABLE( unsigned, RunDuration );
 
             MEMBERVARIABLEREF( std::string, Timestamp );
 
             MEMBERVARIABLEREF( std::string, Description );
 
+            MEMBERVARIABLE( unsigned, NChannels );
+
+            MEMBERVARIABLE( unsigned, NStreams );
+
+            MEMBERVARIABLEREF_NOSET( std::vector< unsigned >, ChannelStreams );
+
+            MEMBERVARIABLEREF_NOSET( std::vector< MChannelHeader >, ChannelHeaders );
+
+            MEMBERVARIABLEREF_NOSET( std::vector< MStreamHeader >, StreamHeaders );
+
+            // TODO: channel coherence
+
         public:
             /// Add a stream with one channel with aRecSize samples per record
             /// Returns the stream number (used to address the stream later)
-            unsigned AddStream( unsigned aRecSize );
+            unsigned AddStream( const std::string& aSource,
+                                unsigned anAcqRate, unsigned aRecSize,
+                                unsigned aDataTypeSize, DataFormatType aDataFormat,
+                                unsigned aBitDepth );
             /// Add a stream with multiple channels with aRecSize samples per record
             /// Returns the stream number (used to address the stream later)
-            unsigned AddStream( unsigned aNChannels, unsigned aRecSize );
-
-            // channel headers
-
-            MEMBERVARIABLEREF_NOSET( std::vector< unsigned >, ChannelStreams );
+            unsigned AddStream( const std::string& aSource, unsigned aNChannels,
+                                unsigned anAcqRate, unsigned aRecSize,
+                                unsigned aDataTypeSize, DataFormatType aDataFormat,
+                                unsigned aBitDepth );
 
         public:
             void WriteToHDF5( H5::Group* aGroup ) const;
@@ -210,7 +262,9 @@ namespace monarch
 
 }
 
-// Pretty printing method
+// Pretty printing methods
+std::ostream& operator<<( std::ostream& out, const monarch::MStreamHeader& hdr );
+std::ostream& operator<<( std::ostream& out, const monarch::MChannelHeader& hdr );
 std::ostream& operator<<( std::ostream& out, const monarch::MHeader& hdr );
 
 #endif
