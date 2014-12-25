@@ -33,14 +33,17 @@ namespace monarch
     {
         public:
             MStreamHeader();
-            MStreamHeader( const std::string& aSource, unsigned aNChannels,
+            MStreamHeader( const std::string& aSource, unsigned aNumber, unsigned aNChannels,
                            unsigned anAcqRate, unsigned aRecSize,
                            unsigned aDataTypeSize, DataFormatType aDataFormat,
                            unsigned aBitDepth );
             MStreamHeader( const MStreamHeader& orig );
             ~MStreamHeader();
 
-            MEMBERVARIABLE( unsigned, Number );
+            MEMBERVARIABLE( char*, Label );
+
+            MEMBERVARIABLE_NOSET( unsigned, Number );
+            void SetNumber( unsigned aNumber ); /// In addition to setting the number, sets the label to "stream[aNumber]"
 
             MEMBERVARIABLE( std::string, Source );
 
@@ -56,6 +59,10 @@ namespace monarch
 
             MEMBERVARIABLE( unsigned, BitDepth );
 
+        public:
+            void WriteToHDF5( H5::Group* aGroup ) const;
+            void ReadFromHDF5( const H5::Group* aGroup );
+
     };
 
     /*!
@@ -70,14 +77,17 @@ namespace monarch
     {
         public:
             MChannelHeader();
-            MChannelHeader( const std::string& aSource,
+            MChannelHeader( const std::string& aSource, unsigned aNumber,
                             unsigned anAcqRate, unsigned aRecSize,
                             unsigned aDataTypeSize, DataFormatType aDataFormat,
                             unsigned aBitDepth );
             MChannelHeader( const MChannelHeader& orig );
             ~MChannelHeader();
 
-            MEMBERVARIABLE( unsigned, Number );
+            MEMBERVARIABLE( char*, Label );
+
+            MEMBERVARIABLE_NOSET( unsigned, Number );
+            void SetNumber( unsigned aNumber ); /// In addition to setting the number, sets the label to "channel[aNumber]"
 
             MEMBERVARIABLE( std::string, Source );
 
@@ -98,6 +108,10 @@ namespace monarch
             MEMBERVARIABLE( double, FrequencyMin );
 
             MEMBERVARIABLE( double, FrequencyRange );
+
+        public:
+            void WriteToHDF5( H5::Group* aGroup ) const;
+            void ReadFromHDF5( const H5::Group* aGroup );
 
     };
 
@@ -158,47 +172,50 @@ namespace monarch
             void WriteToHDF5( H5::Group* aGroup ) const;
             void ReadFromHDF5( const H5::Group* aGroup );
 
-        private:
-            void WriteScalarToHDF5( H5::Group* aGroup, const std::string& aName, const std::string& aValue ) const;
+        public:
+            //void WriteChannelHeaderToHDF5( H5::Group* aGroup, unsigned aHeaderNumber, const MChannelHeader& aHeader ) const;
+            //void WriteStreamHeaderToHDF5( H5::Group* aGroup, unsigned aHeaderNumber, const MStreamHeader& aHeader ) const;
+
+            static void WriteScalarToHDF5( H5::Group* aGroup, const std::string& aName, const std::string& aValue );
             template< typename XType >
-            void WriteScalarToHDF5( H5::Group* aGroup, const std::string& aName, XType aValue ) const;
+            static void WriteScalarToHDF5( H5::Group* aGroup, const std::string& aName, XType aValue );
 
             template< typename XType >
-            void Write1DToHDF5( H5::Group* aGroup, const std::string& aName, const std::vector< XType >& anArray ) const;
+            static void Write1DToHDF5( H5::Group* aGroup, const std::string& aName, const std::vector< XType >& anArray );
 
             template< typename XType >
-            XType ReadScalarFromHDF5( const H5::Group* aGroup, const std::string& aName );
+            static XType ReadScalarFromHDF5( const H5::Group* aGroup, const std::string& aName );
 
             template< typename XType >
-            void Read1DFromHDF5( const H5::Group* aGroup, const std::string& aName, std::vector< XType >& anArray );
+            static void Read1DFromHDF5( const H5::Group* aGroup, const std::string& aName, std::vector< XType >& anArray );
 
     };
 
-    inline void MHeader::WriteScalarToHDF5( H5::Group* aGroup, const std::string& aName, const std::string& aValue ) const
+    inline void MHeader::WriteScalarToHDF5( H5::Group* aGroup, const std::string& aName, const std::string& aValue )
     {
         H5::DataSpace dspace( H5S_SCALAR );
         H5::DSetCreatPropList plist;
         H5::DataType tType = MH5TypeAccess< std::string >::GetType( aValue );
         aGroup->createDataSet(aName, tType, dspace, plist ).write( aValue, tType );
-        MDEBUG( mlog_mheader, "Writing string to new scalar metadata: " << aValue << "; size = " << aValue.size() );
+        MDEBUG( mlog_mheader, "Writing string to new scalar metadata <" << aName << ">: " << aValue << "; size = " << aValue.size() );
         return;
     }
 
     template< typename XType >
-    void MHeader::WriteScalarToHDF5( H5::Group* aGroup, const std::string& aName, XType aValue ) const
+    void MHeader::WriteScalarToHDF5( H5::Group* aGroup, const std::string& aName, XType aValue )
     {
         H5::DataSpace dspace( H5S_SCALAR );
         H5::DSetCreatPropList plist;
         H5::DataType tType = MH5TypeAccess< XType >::GetType();
         aGroup->createDataSet(aName, tType, dspace, plist ).write( &aValue, tType );
-        MDEBUG( mlog_mheader, "Writing value to new scalar metadata: " << aValue );
+        MDEBUG( mlog_mheader, "Writing value to new scalar metadata <" << aName << ">: " << aValue );
         return;
     }
 
     template< typename XType >
-    inline void MHeader::Write1DToHDF5( H5::Group* aGroup, const std::string& aName, const std::vector< XType >& anArray ) const
+    inline void MHeader::Write1DToHDF5( H5::Group* aGroup, const std::string& aName, const std::vector< XType >& anArray )
     {
-        MDEBUG( mlog_mheader, "Writing vector to new 1-D metadata; size = " << anArray.size() );
+        MDEBUG( mlog_mheader, "Writing vector to new 1-D metadata <" << aName << ">; size = " << anArray.size() );
         hsize_t tDims[ 1 ] = { anArray.size() };
         H5::DataSpace dspace( 1, tDims );
         H5::DSetCreatPropList plist;
@@ -223,7 +240,7 @@ namespace monarch
         std::string tValue;
         H5::DataSet tDataset = aGroup->openDataSet( aName );
         tDataset.read( tValue, MH5TypeAccess< std::string >::GetType( tDataset.getInMemDataSize() ) );
-        MDEBUG( mlog_mheader, "Reading string: " << tValue << "; size = " << tValue.size() );
+        MDEBUG( mlog_mheader, "Reading string <" << aName << ">: " << tValue << "; size = " << tValue.size() );
         return tValue;
     }
 
@@ -233,7 +250,7 @@ namespace monarch
     {
         XType tValue;
         aGroup->openDataSet( aName ).read( &tValue, MH5TypeAccess< XType >::GetType() );
-        MDEBUG( mlog_mheader, "Reading value: " << tValue );
+        MDEBUG( mlog_mheader, "Reading value <" << aName << ">: " << tValue );
         return tValue;
     }
 
@@ -249,7 +266,7 @@ namespace monarch
         hsize_t tDataSize[ 1 ];
         tDataspace.getSimpleExtentDims( tDataSize );
         XType* buffer = new XType( tDataSize[0] );
-        MDEBUG( mlog_mheader, "Reading 1-D metadata to vector; size = " << tDataSize[0] );
+        MDEBUG( mlog_mheader, "Reading 1-D metadata <" << aName << "> to vector; size = " << tDataSize[0] );
         tDataset.read( buffer, MH5TypeAccess< XType >::GetType() );
         anArray.resize( tDataSize[0] );
         for( unsigned i = 0; i < anArray.size(); ++i )

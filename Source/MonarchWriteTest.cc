@@ -15,22 +15,24 @@ int main( const int argc, const char** argv )
         return -1;
     }
 
-    Monarch* tWriteTest = Monarch::OpenForWriting( argv[1] );
+    try
+    {
+        Monarch* tWriteTest = Monarch::OpenForWriting( argv[1] );
 
-    MHeader* tHeader = tWriteTest->GetHeader();
-    tHeader->SetSchemaVersion( "???" );
-    tHeader->SetFilename( argv[1] );
-    tHeader->SetRunDuration( 8675309 );
-    tHeader->SetTimestamp( "Stardate 33515" );
-    tHeader->SetDescription( "Bigger on the inside" );
+        MHeader* tHeader = tWriteTest->GetHeader();
+        tHeader->SetSchemaVersion( "???" );
+        tHeader->SetFilename( argv[1] );
+        tHeader->SetRunDuration( 8675309 );
+        tHeader->SetTimestamp( "Stardate 33515" );
+        tHeader->SetDescription( "Bigger on the inside" );
 
-    MINFO( mlog, "Adding streams" );
-    unsigned tSingleStream = tHeader->AddStream( "HHGTTG", 500, 42, 1, sDigitized, 8 );
-    unsigned tDoubleStream = tHeader->AddStream( "Um . . .", 2, 250, 500, 1, sDigitized, 8 );
+        MINFO( mlog, "Adding streams" );
+        unsigned tSingleStream = tHeader->AddStream( "HHGTTG", 500, 42, 1, sDigitized, 8 );
+        unsigned tDoubleStream = tHeader->AddStream( "Um . . .", 2, 250, 500, 1, sDigitized, 8 );
 
-    tWriteTest->WriteHeader();
+        tWriteTest->WriteHeader();
 
-    MINFO( mlog, "Wrote header:\n" << *tHeader );
+        MINFO( mlog, "Wrote header:\n" << *tHeader );
 
     /*
     unsigned int tRecordCount = 0;
@@ -74,10 +76,16 @@ int main( const int argc, const char** argv )
     MINFO( mlog, "acquisition count <" << tAcquisiontCount << ">" );
 */
 
-    tWriteTest->Close();
-    MINFO( mlog, "File closed" );
+        tWriteTest->Close();
+        MINFO( mlog, "File closed" );
 
-    delete tWriteTest;
+        delete tWriteTest;
+
+    }
+    catch( MException& e )
+    {
+        MERROR( mlog, "Exception thrown during write test:\n" << e.what() );
+    }
 
     return 0;
 }
