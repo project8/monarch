@@ -127,16 +127,7 @@ namespace monarch
             H5::Group* headerGroup = new H5::Group( fFile->openGroup( "/header" ) );
             // if we're still here, then the group already exists
 
-            fHeader->SetSchemaVersion( ReadScalarMetadata< string >( headerGroup, string("schema_version") ) );
-            fHeader->SetFilename( ReadScalarMetadata< string >( headerGroup, "filename" ) );
-            fHeader->SetNChannels( ReadScalarMetadata< unsigned >( headerGroup, "n_channels" ) );
-            fHeader->SetNStreams( ReadScalarMetadata< unsigned >( headerGroup, "n_streams" ) );
-            fHeader->SetRunDuration( ReadScalarMetadata< unsigned >( headerGroup, "run_duration" ) );
-            fHeader->SetTimestamp( ReadScalarMetadata< string >( headerGroup, "timestamp" ) );
-            fHeader->SetDescription( ReadScalarMetadata< string >( headerGroup, "description" ) );
-
-            fHeader->fChannelStreams.clear();
-            Read1DMetadata< unsigned >( headerGroup, "channel_streams", fHeader->fChannelStreams );
+            fHeader->ReadFromHDF5( headerGroup );
         }
         catch( H5::Exception& e )
         {
@@ -250,16 +241,7 @@ namespace monarch
         {
             H5::Group* headerGroup = new H5::Group( fFile->createGroup( "/header" ) );
 
-            // now populate the group
-            WriteScalarMetadata( headerGroup, "schema_version",   fHeader->GetSchemaVersion() );
-            WriteScalarMetadata( headerGroup, "filename",         fHeader->GetFilename() );
-            WriteScalarMetadata( headerGroup, "n_channels",       fHeader->GetNChannels() );
-            WriteScalarMetadata( headerGroup, "n_streams",        fHeader->GetNStreams() );
-            WriteScalarMetadata( headerGroup, "run_duration",     fHeader->GetRunDuration() );
-            WriteScalarMetadata( headerGroup, "timestamp",        fHeader->GetTimestamp() );
-            WriteScalarMetadata( headerGroup, "description",      fHeader->GetDescription() );
-
-            Write1DMetadata( headerGroup, "channel_streams",  fHeader->GetChannelStreams() );
+            fHeader->WriteToHDF5( headerGroup );
         }
         catch( H5::Exception& e )
         {
@@ -271,7 +253,12 @@ namespace monarch
         }
 
 
+        // Setup a group for each stream
+        // That group will contain a group for each acquisition, which will be named using the acq'n number via fast conversion to string
 
+        // Also setup buffer arrays for each stream based on the record sizes
+        // (note: need to save record sizes in the header!)
+        // (note: need to add stream header info; also, when setting stream, add optional map object that can set optional attributes)
 
 /*
         PreludeType tPrelude = fHeader->ByteSize();
