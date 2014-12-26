@@ -122,14 +122,44 @@ namespace monarch
 
     void Monarch::ReadHeader() const
     {
+        // Read the header information from the file (run header, plus all stream and channel headers)
         try
         {
             fHeader->ReadFromHDF5( fFile );
         }
         catch( H5::Exception& e )
         {
-            MERROR( mlog, "Unable to open header group or find header data:\n\t" << e.getCDetailMsg() );
+            throw MException() << "HDF5 error while reading the header:\n\t" << e.getCDetailMsg();
         }
+        catch( MException& e )
+        {
+            throw( e );
+        }
+
+
+        H5::Group tStreamsGroup = fHeader->GetStreamsGroup();
+
+        try
+        {
+            // Create the stream objects based on the configuration from the header
+            for( MHeader::MStreamHeaders::iterator streamIt = fHeader->GetStreamHeaders().begin();
+                    streamIt != fHeader->GetStreamHeaders().end();
+                    ++streamIt )
+            {
+                fStreams.push_back( MStream( *streamIt, tStreamsGroup ) );
+            }
+        }
+        catch( H5::Exception& e )
+        {
+            throw MException() << "HDF5 error while creating stream objects for reading:\n\t" << e.getDetailMsg();
+        }
+        catch( MException& e )
+        {
+            throw( e );
+        }
+
+
+
 
 /*
         PreludeType tPrelude = 0;
@@ -234,13 +264,15 @@ namespace monarch
 
     void Monarch::WriteHeader()
     {
+        // Write the header to the file
+        // This will create the following groups: run, streams, and channels
         try
         {
             fHeader->WriteToHDF5( fFile );
         }
         catch( H5::Exception& e )
         {
-            throw MException() << "HDF5 error while writing header: \n\t" << e.getDetailMsg();
+            throw MException() << "HDF5 error while writing header:\n\t" << e.getDetailMsg();
         }
         catch( MException& e )
         {
@@ -248,10 +280,27 @@ namespace monarch
         }
 
 
-        // Setup a group for each stream
-        // That group will contain a group for each acquisition, which will be named using the acq'n number via fast conversion to string
+        H5::Group tStreamsGroup = fHeader->GetStreamsGroup();
 
-        // Also setup buffer arrays for each stream based on the record sizes
+        try
+        {
+            // Create the stream objects based on the configuration from the header
+            for( MHeader::MStreamHeaders::iterator streamIt = fHeader->GetStreamHeaders().begin();
+                    streamIt != fHeader->GetStreamHeaders().end();
+                    ++streamIt )
+            {
+                fStreams.push_back( MStream( *streamIt, tStreamsGroup ) );
+            }
+        }
+        catch( H5::Exception& e )
+        {
+            throw MException() << "HDF5 error while creating stream objects:\n\t" << e.getDetailMsg();
+        }
+        catch( MException& e )
+        {
+            throw( e );
+        }
+
 
 /*
         PreludeType tPrelude = fHeader->ByteSize();

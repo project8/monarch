@@ -11,6 +11,7 @@
 #include "MException.hh"
 #include "MHeader.hh"
 #include "MLogger.hh"
+#include "MStream.hh"
 
 #include "H5Cpp.h"
 
@@ -70,6 +71,9 @@ namespace monarch
             //get the pointer to the header.
             const MHeader* GetHeader() const;
 
+            //get the pointer to a particular stream
+            const MStream* GetStream( unsigned stream ) const;
+
             /*
             //set the interface type to use
             void SetInterface( InterfaceModeType aMode ) const;
@@ -111,6 +115,9 @@ namespace monarch
             //get the pointer to the header.
             MHeader* GetHeader();
 
+            //get the pointer to a particular stream
+            MStream* GetStream( unsigned stream );
+
             /*
             //set the interface type to use.
             void SetInterface( InterfaceModeType aMode );
@@ -140,6 +147,9 @@ namespace monarch
 
             // the header
             mutable MHeader* fHeader;
+
+            // the streams
+            mutable std::vector< MStream > fStreams;
 /*
             //size of the native type of the records in bytes
             mutable size_t fDataTypeSize;
