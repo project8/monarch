@@ -24,7 +24,7 @@ namespace monarch
             byte_type* GetData();
 
         private:
-            byte_type fData[];
+            byte_type* fData;
 
     };
 

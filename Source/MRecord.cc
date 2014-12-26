@@ -12,8 +12,7 @@ namespace monarch
     MRecordBytes::MRecordBytes( unsigned aNBytes ) :
             fRecordId( 0 ),
             fTime( 0 ),
-            fOwnsData( true ),
-            fData( NULL )
+            fOwnsData( true )
     {
         fData = new byte_type[ aNBytes ];
     }
