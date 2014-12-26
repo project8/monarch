@@ -60,8 +60,8 @@ namespace monarch
             MEMBERVARIABLE( unsigned, BitDepth );
 
         public:
-            void WriteToHDF5( H5::Group* aGroup ) const;
-            void ReadFromHDF5( const H5::Group* aGroup );
+            void WriteToHDF5( H5::CommonFG* aParent ) const;
+            void ReadFromHDF5( const H5::CommonFG* aParent, const std::string& aLabel );
 
     };
 
@@ -110,8 +110,8 @@ namespace monarch
             MEMBERVARIABLE( double, FrequencyRange );
 
         public:
-            void WriteToHDF5( H5::Group* aGroup ) const;
-            void ReadFromHDF5( const H5::Group* aGroup );
+            void WriteToHDF5( H5::CommonFG* aParent ) const;
+            void ReadFromHDF5( const H5::CommonFG* aParent, const std::string& aLabel );
 
     };
 
@@ -169,8 +169,8 @@ namespace monarch
                                 unsigned aBitDepth );
 
         public:
-            void WriteToHDF5( H5::Group* aGroup ) const;
-            void ReadFromHDF5( const H5::Group* aGroup );
+            void WriteToHDF5( H5::CommonFG* aParent ) const;
+            void ReadFromHDF5( const H5::CommonFG* aParent );
 
         public:
             //void WriteChannelHeaderToHDF5( H5::Group* aGroup, unsigned aHeaderNumber, const MChannelHeader& aHeader ) const;

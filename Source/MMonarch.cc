@@ -124,10 +124,7 @@ namespace monarch
     {
         try
         {
-            H5::Group* headerGroup = new H5::Group( fFile->openGroup( "/header" ) );
-            // if we're still here, then the group already exists
-
-            fHeader->ReadFromHDF5( headerGroup );
+            fHeader->ReadFromHDF5( fFile );
         }
         catch( H5::Exception& e )
         {
@@ -239,9 +236,7 @@ namespace monarch
     {
         try
         {
-            H5::Group* headerGroup = new H5::Group( fFile->createGroup( "/header" ) );
-
-            fHeader->WriteToHDF5( headerGroup );
+            fHeader->WriteToHDF5( fFile );
         }
         catch( H5::Exception& e )
         {
@@ -257,8 +252,6 @@ namespace monarch
         // That group will contain a group for each acquisition, which will be named using the acq'n number via fast conversion to string
 
         // Also setup buffer arrays for each stream based on the record sizes
-        // (note: need to save record sizes in the header!)
-        // (note: need to add stream header info; also, when setting stream, add optional map object that can set optional attributes)
 
 /*
         PreludeType tPrelude = fHeader->ByteSize();
