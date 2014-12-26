@@ -74,9 +74,9 @@ namespace monarch
 
     // re-typdefing for aesthetic purposes
     typedef acquisition_id_type AcquisitionIdType; // 8 bytes
+    */
     typedef record_id_type RecordIdType; // 8 bytes
     typedef time_nsec_type TimeType; // 8 bytes
-    */
 
     template< typename T >
     struct MH5TypeAccess

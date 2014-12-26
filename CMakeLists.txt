@@ -58,6 +58,7 @@ set( MONARCHCORE_HEADERFILES
     Source/MLogger.hh
     Source/MMemberVariable.hh
     Source/MMonarch.hh
+    Source/MRecord.hh
     Source/MTypes.hh
 )
 
