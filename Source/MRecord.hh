@@ -2,16 +2,41 @@
 #define MRECORD_HH_
 
 #include "MException.hh"
+#include "MMemberVariable.hh"
 #include "MTypes.hh"
 
 namespace monarch
 {
-    struct MRecordBytes
+    class MRecordBytes
     {
-            RecordIdType fRecordId;
-            TimeType fTime;
+        public:
+            MRecordBytes( unsigned aNBytes = 1 );
+            MRecordBytes( byte_type* aDataPtr );
+            ~MRecordBytes();
+
+            MEMBERVARIABLE( RecordIdType, RecordId );
+            MEMBERVARIABLE( TimeType, Time );
+
+            MEMBERVARIABLE_NOSET( bool, OwnsData );
+
+        public:
+            const byte_type* GetData() const;
+            byte_type* GetData();
+
+        private:
             byte_type fData[];
+
     };
+
+    inline const byte_type* MRecordBytes::GetData() const
+    {
+        return fData;
+    }
+
+    inline byte_type* MRecordBytes::GetData()
+    {
+        return fData;
+    }
 
     template< typename ReturnType >
     class MRecordDataInterface

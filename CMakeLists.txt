@@ -68,6 +68,7 @@ set( MONARCHCORE_SOURCEFILES
     Source/MIToA.cc
     Source/MLogger.cc
     Source/MMonarch.cc
+    Source/MRecord.cc
 )
 
 configure_file( Source/MVersion.hh.in ${CMAKE_CURRENT_BINARY_DIR}/MVersion.hh )

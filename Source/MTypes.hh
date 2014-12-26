@@ -42,6 +42,10 @@ namespace monarch
 
     // stream information
 
+    typedef uint32_t MultiChannelFormatType;
+    static const MultiChannelFormatType sInterleaved;
+    static const MultiChannelFormatType sSeparate;
+
     /*
 
     typedef size_t PreludeType;
@@ -72,9 +76,9 @@ namespace monarch
     static const FormatModeType sFormatMultiSeparate = 1;
     static const FormatModeType sFormatMultiInterleaved = 2;
 
+    */
     // re-typdefing for aesthetic purposes
     typedef acquisition_id_type AcquisitionIdType; // 8 bytes
-    */
     typedef record_id_type RecordIdType; // 8 bytes
     typedef time_nsec_type TimeType; // 8 bytes
 
