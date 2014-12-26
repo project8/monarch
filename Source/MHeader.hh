@@ -126,7 +126,9 @@ namespace monarch
     */
     class MHeader
     {
-            friend class Monarch;
+        public:
+            typedef std::vector< MChannelHeader > MChannelHeaders;
+            typedef std::vector< MStreamHeader > MStreamHeaders;
 
         public:
             MHeader();
@@ -172,6 +174,20 @@ namespace monarch
             void WriteToHDF5( H5::CommonFG* aParent ) const;
             void ReadFromHDF5( const H5::CommonFG* aParent );
 
+            const H5::Group* GetRunHeaderGroup() const;
+            H5::Group* GetRunHeaderGroup();
+
+            const H5::Group* GetStreamsGroup() const;
+            H5::Group* GetStreamsGroup();
+
+            const H5::Group* GetChannelsGroup() const;
+            H5::Group* GetChannelsGroup();
+
+        private:
+            H5::Group* fRunHeaderGroup;
+            H5::Group* fStreamsGroup;
+            H5::Group* fChannelsGroup;
+
         public:
             //void WriteChannelHeaderToHDF5( H5::Group* aGroup, unsigned aHeaderNumber, const MChannelHeader& aHeader ) const;
             //void WriteStreamHeaderToHDF5( H5::Group* aGroup, unsigned aHeaderNumber, const MStreamHeader& aHeader ) const;
@@ -190,6 +206,37 @@ namespace monarch
             static void Read1DFromHDF5( const H5::Group* aGroup, const std::string& aName, std::vector< XType >& anArray );
 
     };
+
+    inline const H5::Group* MHeader::GetRunHeaderGroup() const
+    {
+        return fRunHeaderGroup;
+    }
+
+    inline H5::Group* MHeader::GetRunHeaderGroup()
+    {
+        return fRunHeaderGroup;
+    }
+
+    inline const H5::Group* MHeader::GetStreamsGroup() const
+    {
+        return fStreamsGroup;
+    }
+
+    inline H5::Group* MHeader::GetStreamsGroup()
+    {
+        return fStreamsGroup;
+    }
+
+    inline const H5::Group* MHeader::GetChannelsGroup() const
+    {
+        return fChannelsGroup;
+    }
+
+    inline H5::Group* MHeader::GetChannelsGroup()
+    {
+        return fChannelsGroup;
+    }
+
 
     inline void MHeader::WriteScalarToHDF5( H5::Group* aGroup, const std::string& aName, const std::string& aValue )
     {
