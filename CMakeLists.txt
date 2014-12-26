@@ -59,6 +59,7 @@ set( MONARCHCORE_HEADERFILES
     Source/MMemberVariable.hh
     Source/MMonarch.hh
     Source/MRecord.hh
+    Source/MStream.hh
     Source/MTypes.hh
 )
 
@@ -69,6 +70,7 @@ set( MONARCHCORE_SOURCEFILES
     Source/MLogger.cc
     Source/MMonarch.cc
     Source/MRecord.cc
+    Source/MStream.cc
 )
 
 configure_file( Source/MVersion.hh.in ${CMAKE_CURRENT_BINARY_DIR}/MVersion.hh )

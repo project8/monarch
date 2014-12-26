@@ -14,7 +14,7 @@
 
 #include <string>
 
-//#include "thorax.hh"
+#include "thorax.hh"
 
 namespace monarch
 {
@@ -43,8 +43,8 @@ namespace monarch
     // stream information
 
     typedef uint32_t MultiChannelFormatType;
-    static const MultiChannelFormatType sInterleaved;
-    static const MultiChannelFormatType sSeparate;
+    static const MultiChannelFormatType sInterleaved = 0;
+    static const MultiChannelFormatType sSeparate = 1;
 
     /*
 
