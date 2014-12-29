@@ -9,15 +9,23 @@
 
 namespace monarch
 {
-    MRecordBytes::MRecordBytes( unsigned aNBytes ) :
+    MRecord::MRecord( unsigned aNBytes ) :
             fRecordId( 0 ),
             fTime( 0 ),
             fOwnsData( true )
     {
-        fData = new byte_type[ aNBytes ];
+        if( aNBytes == 0 )
+        {
+            fData = NULL;
+            fOwnsData = false;
+        }
+        else
+        {
+            fData = new byte_type[ aNBytes ];
+        }
     }
 
-    MRecordBytes::MRecordBytes( byte_type* aDataPtr ) :
+    MRecord::MRecord( byte_type* aDataPtr ) :
             fRecordId( 0 ),
             fTime( 0 ),
             fOwnsData( false ),
@@ -25,9 +33,25 @@ namespace monarch
     {
     }
 
-    MRecordBytes::~MRecordBytes()
+    MRecord::~MRecord()
     {
         if( fOwnsData ) delete [] fData;
+    }
+
+    void MRecord::SetData( unsigned aNBytes )
+    {
+        if( fOwnsData ) delete [] fData;
+        fOwnsData = true;
+        fData = new byte_type[ aNBytes ];
+        return;
+    }
+
+    void MRecord::SetData( byte_type* aDataPtr )
+    {
+        if( fOwnsData ) delete [] fData;
+        fOwnsData = false;
+        fData = aDataPtr;
+        return;
     }
 
 }

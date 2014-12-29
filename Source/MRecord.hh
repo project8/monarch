@@ -7,12 +7,12 @@
 
 namespace monarch
 {
-    class MRecordBytes
+    class MRecord
     {
         public:
-            MRecordBytes( unsigned aNBytes = 1 );
-            MRecordBytes( byte_type* aDataPtr );
-            ~MRecordBytes();
+            MRecord( unsigned aNBytes = 0 );
+            MRecord( byte_type* aDataPtr );
+            ~MRecord();
 
             MEMBERVARIABLE( RecordIdType, RecordId );
             MEMBERVARIABLE( TimeType, Time );
@@ -23,17 +23,20 @@ namespace monarch
             const byte_type* GetData() const;
             byte_type* GetData();
 
+            void SetData( unsigned aNBytes );
+            void SetData( byte_type* aDataPtr );
+
         private:
             byte_type* fData;
 
     };
 
-    inline const byte_type* MRecordBytes::GetData() const
+    inline const byte_type* MRecord::GetData() const
     {
         return fData;
     }
 
-    inline byte_type* MRecordBytes::GetData()
+    inline byte_type* MRecord::GetData()
     {
         return fData;
     }
