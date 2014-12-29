@@ -33,7 +33,7 @@ namespace monarch
     {
         public:
             MStreamHeader();
-            MStreamHeader( const std::string& aSource, unsigned aNumber, unsigned aNChannels,
+            MStreamHeader( const std::string& aSource, unsigned aNumber, unsigned aNChannels, MultiChannelFormatType aFormat,
                            unsigned anAcqRate, unsigned aRecSize,
                            unsigned aDataTypeSize, DataFormatType aDataFormat,
                            unsigned aBitDepth );
@@ -48,6 +48,8 @@ namespace monarch
             MEMBERVARIABLE( std::string, Source );
 
             MEMBERVARIABLE( unsigned, NChannels );
+
+            MEMBERVARIABLE( MultiChannelFormatType, ChannelFormat );
 
             MEMBERVARIABLE( unsigned, AcquisitionRate );
 
@@ -165,7 +167,7 @@ namespace monarch
                                 unsigned aBitDepth );
             /// Add a stream with multiple channels with aRecSize samples per record
             /// Returns the stream number (used to address the stream later)
-            unsigned AddStream( const std::string& aSource, unsigned aNChannels,
+            unsigned AddStream( const std::string& aSource, unsigned aNChannels, MultiChannelFormatType aFormat,
                                 unsigned anAcqRate, unsigned aRecSize,
                                 unsigned aDataTypeSize, DataFormatType aDataFormat,
                                 unsigned aBitDepth );

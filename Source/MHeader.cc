@@ -30,6 +30,7 @@ namespace monarch
             fNumber( 0 ),
             fSource(),
             fNChannels( 0 ),
+            fChannelFormat( sSeparate ),
             fAcquisitionRate( 0 ),
             fRecordSize( 0 ),
             fDataTypeSize( 0 ),
@@ -38,7 +39,7 @@ namespace monarch
     {
     }
 
-    MStreamHeader::MStreamHeader( const std::string& aSource, unsigned aNumber, unsigned aNChannels,
+    MStreamHeader::MStreamHeader( const std::string& aSource, unsigned aNumber, unsigned aNChannels, MultiChannelFormatType aFormat,
                     unsigned anAcqRate, unsigned aRecSize,
                     unsigned aDataTypeSize, DataFormatType aDataFormat,
                     unsigned aBitDepth ) :
@@ -46,6 +47,7 @@ namespace monarch
             fNumber( 0 ),
             fSource( aSource ),
             fNChannels( aNChannels ),
+            fChannelFormat( aFormat ),
             fAcquisitionRate( anAcqRate ),
             fRecordSize( aRecSize ),
             fDataTypeSize( aDataTypeSize ),
@@ -60,6 +62,7 @@ namespace monarch
             fNumber( 0 ),
             fSource( orig.fSource ),
             fNChannels( orig.fNChannels ),
+            fChannelFormat( orig.fChannelFormat ),
             fAcquisitionRate( orig.fAcquisitionRate ),
             fRecordSize( orig.fRecordSize ),
             fDataTypeSize( orig.fDataTypeSize ),
@@ -95,6 +98,7 @@ namespace monarch
         MHeader::WriteScalarToHDF5( &tThisStreamGroup, "number", fNumber );
         MHeader::WriteScalarToHDF5( &tThisStreamGroup, "source", fSource );
         MHeader::WriteScalarToHDF5( &tThisStreamGroup, "n_channels", fNChannels );
+        MHeader::WriteScalarToHDF5( &tThisStreamGroup, "channel_format", fChannelFormat );
         MHeader::WriteScalarToHDF5( &tThisStreamGroup, "acquisition_rate", fAcquisitionRate );
         MHeader::WriteScalarToHDF5( &tThisStreamGroup, "record_size", fRecordSize );
         MHeader::WriteScalarToHDF5( &tThisStreamGroup, "data_type_size", fDataTypeSize );
@@ -111,6 +115,8 @@ namespace monarch
 
         SetNumber( MHeader::ReadScalarFromHDF5< unsigned >( &tThisStreamGroup, "number" ) );
         SetSource( MHeader::ReadScalarFromHDF5< string >( &tThisStreamGroup, "source" ) );
+        SetNChannels( MHeader::ReadScalarFromHDF5< unsigned >( &tThisStreamGroup, "n_channels" ) );
+        SetChannelFormat( MHeader::ReadScalarFromHDF5< MultiChannelFormatType >( &tThisStreamGroup, "channel_format" ) );
         SetAcquisitionRate( MHeader::ReadScalarFromHDF5< unsigned >( &tThisStreamGroup, "acquisition_rate" ) );
         SetRecordSize( MHeader::ReadScalarFromHDF5< unsigned >( &tThisStreamGroup, "record_size" ) );
         SetDataTypeSize( MHeader::ReadScalarFromHDF5< unsigned >( &tThisStreamGroup, "data_type_size" ) );
@@ -272,7 +278,7 @@ namespace monarch
         return ++fNStreams;
     }
 
-    unsigned MHeader::AddStream( const std::string& aSource, unsigned aNChannels,
+    unsigned MHeader::AddStream( const std::string& aSource, unsigned aNChannels, MultiChannelFormatType aFormat,
                                  unsigned anAcqRate, unsigned aRecSize,
                                  unsigned aDataTypeSize, DataFormatType aDataFormat,
                                  unsigned aBitDepth )
@@ -285,7 +291,7 @@ namespace monarch
             fChannelHeaders.push_back( MChannelHeader( aSource, fNChannels, anAcqRate, aRecSize, aDataTypeSize, aDataFormat, aBitDepth ) );
             ++fNChannels;
         }
-        fStreamHeaders.push_back( MStreamHeader( aSource, fNStreams, aNChannels, anAcqRate, aRecSize, aDataTypeSize, aDataFormat, aBitDepth ) );
+        fStreamHeaders.push_back( MStreamHeader( aSource, fNStreams, aNChannels, aFormat, anAcqRate, aRecSize, aDataTypeSize, aDataFormat, aBitDepth ) );
         return ++fNStreams;
     }
 
@@ -383,6 +389,7 @@ std::ostream& operator<<( std::ostream& out, const monarch::MStreamHeader& hdr )
     out << "\tStream Number: " << hdr.GetNumber() << '\n';
     out << "\tSource: " << hdr.GetSource() << '\n';
     out << "\tNumber of Channels: " << hdr.GetNChannels() << '\n';
+    out << "\tChannel Format: " << hdr.GetChannelFormat() << '\n';
     out << "\tAcquisition Rate: " << hdr.GetAcquisitionRate() << " MHz\n";
     out << "\tRecord Size: " << hdr.GetRecordSize() << " samples\n";
     out << "\tData Type Size: " << hdr.GetDataTypeSize() << " bytes\n";
