@@ -59,6 +59,10 @@ namespace monarch
 
 namespace monarch
 {
+    //******************************
+    // Integer-to-string conversions
+    //******************************
+
     /// Quickly convert a 32-bit unsigned integer to a char array (buffer should already be allocated)
     void u32toa( uint32_t value, char* buffer );
     /// Quickly convert a 32-bit signed integer to a char array (buffer should already be allocated)
@@ -68,6 +72,12 @@ namespace monarch
     /// Quickly convert a 64-bit signed integer to a char array (buffer should already be allocated)
     void i64toa( int64_t value, char* buffer );
 
+
+
+
+    //******************
+    // Utility functions
+    //******************
 
     inline unsigned CountDecimalDigit32( uint32_t n )
     {
