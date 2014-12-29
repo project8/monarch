@@ -186,9 +186,9 @@ namespace monarch
             H5::Group* GetChannelsGroup();
 
         private:
-            H5::Group* fRunHeaderGroup;
-            H5::Group* fStreamsGroup;
-            H5::Group* fChannelsGroup;
+            mutable H5::Group* fRunHeaderGroup;
+            mutable H5::Group* fStreamsGroup;
+            mutable H5::Group* fChannelsGroup;
 
         public:
             //void WriteChannelHeaderToHDF5( H5::Group* aGroup, unsigned aHeaderNumber, const MChannelHeader& aHeader ) const;

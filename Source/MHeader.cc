@@ -273,7 +273,7 @@ namespace monarch
         MDEBUG( mlog, "Adding stream " << fNStreams << " for channel " << fNChannels << " with record size " << aRecSize );
         fChannelStreams.push_back( fNStreams );
         fChannelHeaders.push_back( MChannelHeader( aSource, fNChannels, anAcqRate, aRecSize, aDataTypeSize, aDataFormat, aBitDepth ) );
-        fStreamHeaders.push_back( MStreamHeader( aSource, fNStreams, 1, anAcqRate, aRecSize, aDataTypeSize, aDataFormat, aBitDepth ) );
+        fStreamHeaders.push_back( MStreamHeader( aSource, fNStreams, 1, sSeparate, anAcqRate, aRecSize, aDataTypeSize, aDataFormat, aBitDepth ) );
         ++fNChannels;
         return ++fNStreams;
     }
