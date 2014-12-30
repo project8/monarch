@@ -22,8 +22,18 @@ namespace monarch
     class MStream
     {
         public:
+            enum Mode
+            {
+                kRead,
+                kWrite
+            };
+
+        public:
             MStream( const MStreamHeader& aHeader, H5::CommonFG* aH5StreamParentLoc );
             virtual ~MStream();
+
+            MEMBERVARIABLE( Mode, Mode );
+
 
             //********************************
             // methods for reading (all const)
@@ -31,12 +41,14 @@ namespace monarch
 
         public:
             // get the pointer to the stream record
-            const MRecordBytes* GetStreamRecord() const;
+            const MRecord* GetStreamRecord() const;
             // get the pointer to a particular channel record
-            const MRecordBytes* GetChannelRecord( unsigned aChannel ) const;
+            const MRecord* GetChannelRecord( unsigned aChannel ) const;
 
             // read the next record from the file
-            void ReadRecord() const;
+            bool ReadRecord() const;
+
+            void Close() const;
 
 
             //*********************************
@@ -45,30 +57,74 @@ namespace monarch
 
         public:
             // get the pointer to the stream record
-            MRecordBytes* GetStreamRecord();
+            MRecord* GetStreamRecord();
             // get the pointer to a particular channel record
-            MRecordBytes* GetChannelRecord( unsigned aChannel );
+            MRecord* GetChannelRecord( unsigned aChannel );
 
             // write the record contents to the file
-            void WriteRecord( bool aIsNewAcquisition );
+            bool WriteRecord( bool aIsNewAcquisition );
+
+            void Close();
 
 
-
-
-
-
-            MEMBERVARIABLE( AcquisitionIdType, AcquisitionID );
+        public:
+            unsigned GetDataTypeSize() const           { return fDataTypeSize;  }
+            unsigned GetStreamRecordNBytes() const     { return fStrRecNBytes;  }
+            unsigned GetSreamRecordSize() const        { return fStrRecSize;    }
+            unsigned GetChannelRecordNBytes() const    { return fChanRecNBytes; }
+            unsigned GetChannelRecordSize() const      { return fChanRecSize;   }
+            unsigned GetNChannels() const              { return fNChannels;     }
+            unsigned GetNAcquisitions() const          { return fNAcquisitions; }
+            AcquisitionIdType GetAcquisitionId() const { return fAcquisitionId; }
+            unsigned GetRecordCount() const            { return fRecordCount;   }
+            unsigned GetNRecordsInAcquisition() const  { return fNRecordsInAcq; }
+            bool GetIsInterleaved() const              { return fInterleaved;   }
 
         private:
-            mutable MRecordBytes fStreamRecord;
+            void ZipChannels(); // for writing
+            void UnzipChannels() const; // for reading
 
-            unsigned fNChannels;
-            mutable MRecordBytes* fChannelRecords;
+            mutable unsigned fDataTypeSize;
 
+            mutable unsigned fStrRecNBytes;
+            mutable unsigned fStrRecSize;
+
+            mutable unsigned fChanRecNBytes;
+            mutable unsigned fChanRecSize;
+
+            mutable MRecord fStreamRecord;
+
+            mutable unsigned fNChannels;
+            mutable MRecord* fChannelRecords;
+
+            mutable unsigned fNAcquisitions;
+            mutable AcquisitionIdType fAcquisitionId;
+
+            mutable unsigned fRecordCount;
+            mutable unsigned fNRecordsInAcq;
+
+            mutable bool fInterleaved;
 
         private:
-            H5::CommonFG* fH5StreamParentLoc;
-            H5::CommonFG* fH5CurrentAcqLoc;
+            void FinalizeCurrentAcq(); // for writing
+            void FinalizeStream(); // for writing
+
+            mutable H5::CommonFG* fH5StreamParentLoc;
+            mutable H5::Group* fH5AcqLoc;
+            mutable H5::DataSet* fH5CurrentAcqDataSet;
+
+            mutable char fAcqNameBuffer[ 10 ];
+
+            mutable H5::DataType fDataTypeInFile;
+            mutable H5::DataType fDataTypeUser;
+
+            enum { N_DATA_DIMS = 2 };
+            mutable hsize_t fDataDims[ N_DATA_DIMS ];
+            mutable hsize_t fDataDims1Rec[ N_DATA_DIMS ];
+            mutable hsize_t fMaxDataDims[ N_DATA_DIMS ];
+            mutable hsize_t fDataChunkDims[ N_DATA_DIMS ];
+            mutable hsize_t fDataOffset[ N_DATA_DIMS ];
+
     };
 
 } /* namespace monarch */
