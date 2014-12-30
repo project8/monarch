@@ -137,12 +137,12 @@ namespace monarch
         }
 
 
-        H5::Group tStreamsGroup = fHeader->GetStreamsGroup();
+        H5::Group* tStreamsGroup = fHeader->GetStreamsGroup();
 
         try
         {
             // Create the stream objects based on the configuration from the header
-            for( MHeader::MStreamHeaders::iterator streamIt = fHeader->GetStreamHeaders().begin();
+            for( MHeader::MStreamHeaders::const_iterator streamIt = fHeader->GetStreamHeaders().begin();
                     streamIt != fHeader->GetStreamHeaders().end();
                     ++streamIt )
             {
@@ -280,12 +280,12 @@ namespace monarch
         }
 
 
-        H5::Group tStreamsGroup = fHeader->GetStreamsGroup();
+        H5::Group* tStreamsGroup = fHeader->GetStreamsGroup();
 
         try
         {
             // Create the stream objects based on the configuration from the header
-            for( MHeader::MStreamHeaders::iterator streamIt = fHeader->GetStreamHeaders().begin();
+            for( MHeader::MStreamHeaders::const_iterator streamIt = fHeader->GetStreamHeaders().begin();
                     streamIt != fHeader->GetStreamHeaders().end();
                     ++streamIt )
             {
@@ -772,6 +772,10 @@ namespace monarch
 */
     void Monarch::Close() const
     {
+        for( std::vector< MStream >::iterator streamIt = fStreams.begin(); streamIt != fStreams.end(); ++streamIt )
+        {
+            streamIt->Close();
+        }
         /*
         if( fIO->Close() == false )
         {
@@ -783,6 +787,10 @@ namespace monarch
 
     void Monarch::Close()
     {
+        for( std::vector< MStream >::iterator streamIt = fStreams.begin(); streamIt != fStreams.end(); ++streamIt )
+        {
+            streamIt->Close();
+        }
         /*
         if( fIO->Close() == false )
         {
