@@ -27,8 +27,9 @@ int main( const int argc, const char** argv )
         tHeader->SetDescription( "Bigger on the inside" );
 
         MINFO( mlog, "Adding streams" );
-        unsigned tSingleStream = tHeader->AddStream( "HHGTTG", 500, 42, 1, sDigitized, 8 );
-        unsigned tDoubleStream = tHeader->AddStream( "Um . . .", 2, 250, 500, 1, sDigitized, 8 );
+        unsigned tSingleStream = tHeader->AddStream( "1-channel device", 500, 10, 1, sDigitized, 8 );
+        unsigned tDoubleStream = tHeader->AddStream( "2-channel device", 2, sInterleaved, 250, 5, 1, sDigitized, 8 );
+        unsigned tTripleStream = tHeader->AddStream( "3-channel device", 3, sSeparate, 100, 5, 1, sDigitized, 8 );
 
         tWriteTest->WriteHeader();
 
