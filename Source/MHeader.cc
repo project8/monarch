@@ -357,6 +357,10 @@ namespace monarch
             fStreamHeaders.clear();
             fStreamsGroup = new H5::Group( aParent->openGroup( "streams" ) );
             hsize_t nStreams = fStreamsGroup->getNumObjs();
+            if( nStreams != fNStreams )
+            {
+                throw MException() << "Number of streams <" << fNStreams << "> disagrees with the number of objects in the stream group <" << nStreams << ">";
+            }
             for( hsize_t iStream = 0; iStream < nStreams; ++iStream )
             {
                 string tStreamLabel = fStreamsGroup->getObjnameByIdx( iStream );

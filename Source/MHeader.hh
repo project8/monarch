@@ -294,6 +294,7 @@ namespace monarch
         for( unsigned i = 0; i < anArray.size(); ++i )
         {
             buffer[ i ] = anArray[ i ];
+            std::cout << "writing bin " << i << ": " << buffer[i] << " <-- " << anArray[i] << std::endl;
         }
         aGroup->createDataSet(aName, tType, dspace, plist ).write( buffer, tType );
         delete [] buffer;

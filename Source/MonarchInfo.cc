@@ -29,63 +29,70 @@ int main( const int argc, const char** argv )
         tCheckRecords = false;
     }
 
-    const Monarch* tReadTest = Monarch::OpenForReading( argv[tFileArg] );
-    tReadTest->ReadHeader();
-
-    const MHeader* tReadHeader = tReadTest->GetHeader();
-    MINFO( mlog, *tReadHeader );
-
-    if( ! tCheckRecords )
-    {
-        tReadTest->Close();
-        delete tReadTest;
-        return 0;
-    }
-
-    /*
-    unsigned int tRecordCount = 0;
-    unsigned int tAcquisiontCount = 0;
-    const MonarchRecordBytes* tReadRecord;
-    // the FormatMode is ignored for single-channel data
-    if( tReadHeader->GetAcquisitionMode() == 1 )
-    {
-        tReadRecord = tReadTest->GetRecordSeparateOne();
-    }
-    else if( tReadHeader->GetAcquisitionMode() == 2 && tReadHeader->GetFormatMode() == sFormatMultiSeparate )
-    {
-        tReadRecord = tReadTest->GetRecordSeparateOne();
-    }
-    else if( tReadHeader->GetAcquisitionMode() == 2 && tReadHeader->GetFormatMode() == sFormatMultiInterleaved )
-    {
-        tReadRecord = tReadTest->GetRecordInterleaved();
-    }
-    else
-    {
-        MERROR( mlog, "Unable to read a header with acquisition mode <" << tReadHeader->GetAcquisitionMode() << "> and format mode <" << tReadHeader->GetFormatMode() << ">" );
-        return -1;
-    }
     try
     {
-        while( tReadTest->ReadRecord() != false )
-        {
-            tRecordCount = tRecordCount + 1;
-            if( tReadRecord->fAcquisitionId == tAcquisiontCount )
-            {
-                tAcquisiontCount = tAcquisiontCount + 1;
-            }
-            //cout << "  record " << tRecordCount << ": time offset: " << tReadRecord->fTime << " ns" << endl;
-        }
-    }
-    catch (MonarchException& e)
-    {
-        MWARN( mlog, "Something went wrong during the reading of records!" << "\n\t" << e.what() );
-    }
-    MINFO( mlog, "record count <" << tRecordCount << ">" );
-    MINFO( mlog, "acquisition count <" << tAcquisiontCount << ">" );
-*/
+        const Monarch* tReadTest = Monarch::OpenForReading( argv[tFileArg] );
+        tReadTest->ReadHeader();
 
-    tReadTest->Close();
-    delete tReadTest;
+        const MHeader* tReadHeader = tReadTest->GetHeader();
+        MINFO( mlog, *tReadHeader );
+
+        if( ! tCheckRecords )
+        {
+            tReadTest->Close();
+            delete tReadTest;
+            return 0;
+        }
+
+        /*
+        unsigned int tRecordCount = 0;
+        unsigned int tAcquisiontCount = 0;
+        const MonarchRecordBytes* tReadRecord;
+        // the FormatMode is ignored for single-channel data
+        if( tReadHeader->GetAcquisitionMode() == 1 )
+        {
+            tReadRecord = tReadTest->GetRecordSeparateOne();
+        }
+        else if( tReadHeader->GetAcquisitionMode() == 2 && tReadHeader->GetFormatMode() == sFormatMultiSeparate )
+        {
+            tReadRecord = tReadTest->GetRecordSeparateOne();
+        }
+        else if( tReadHeader->GetAcquisitionMode() == 2 && tReadHeader->GetFormatMode() == sFormatMultiInterleaved )
+        {
+            tReadRecord = tReadTest->GetRecordInterleaved();
+        }
+        else
+        {
+            MERROR( mlog, "Unable to read a header with acquisition mode <" << tReadHeader->GetAcquisitionMode() << "> and format mode <" << tReadHeader->GetFormatMode() << ">" );
+            return -1;
+        }
+        try
+        {
+            while( tReadTest->ReadRecord() != false )
+            {
+                tRecordCount = tRecordCount + 1;
+                if( tReadRecord->fAcquisitionId == tAcquisiontCount )
+                {
+                    tAcquisiontCount = tAcquisiontCount + 1;
+                }
+                //cout << "  record " << tRecordCount << ": time offset: " << tReadRecord->fTime << " ns" << endl;
+            }
+        }
+        catch (MonarchException& e)
+        {
+            MWARN( mlog, "Something went wrong during the reading of records!" << "\n\t" << e.what() );
+        }
+        MINFO( mlog, "record count <" << tRecordCount << ">" );
+        MINFO( mlog, "acquisition count <" << tAcquisiontCount << ">" );
+    */
+
+        tReadTest->Close();
+        delete tReadTest;
+    }
+    catch( MException& e )
+    {
+        MERROR( mlog, "Exception thrown during file reading:\n" << e.what() );
+    }
 
     return 0;
 }

@@ -155,7 +155,12 @@ namespace monarch
 
     MStream::~MStream()
     {
-        Close();
+        delete fH5CurrentAcqDataSet;
+        fH5CurrentAcqDataSet = NULL;
+        delete fH5AcqLoc;
+        fH5AcqLoc = NULL;
+        delete fH5StreamParentLoc;
+        fH5StreamParentLoc = NULL;
 
         delete [] fChannelRecords;
     }
@@ -214,6 +219,8 @@ namespace monarch
 
     void MStream::Close() const
     {
+        MDEBUG( mlog, "const MStream::Close()" );
+
         delete fH5CurrentAcqDataSet;
         fH5CurrentAcqDataSet = NULL;
         delete fH5AcqLoc;
@@ -298,6 +305,7 @@ namespace monarch
 
     void MStream::Close()
     {
+        MDEBUG( mlog, "non-const MStream::Close()" );
         FinalizeStream();
 
         delete fH5CurrentAcqDataSet;

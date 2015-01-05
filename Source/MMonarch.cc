@@ -779,11 +779,14 @@ namespace monarch
 */
     void Monarch::Close() const
     {
+        MDEBUG( mlog, "const Monarch::Close()" );
         try
         {
             for( std::vector< MStream* >::iterator streamIt = fStreams.begin(); streamIt != fStreams.end(); ++streamIt )
             {
-                (*streamIt)->Close();
+                const_cast< const MStream* >(*streamIt)->Close();
+                delete *streamIt;
+                *streamIt = NULL;
             }
         }
         catch( H5::Exception& e )
@@ -801,11 +804,14 @@ namespace monarch
 
     void Monarch::Close()
     {
+        MDEBUG( mlog, "non-const Monarch::Close()" );
         try
         {
             for( std::vector< MStream* >::iterator streamIt = fStreams.begin(); streamIt != fStreams.end(); ++streamIt )
             {
                 (*streamIt)->Close();
+                delete *streamIt;
+                *streamIt = NULL;
             }
         }
         catch( H5::Exception& e )
