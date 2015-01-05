@@ -266,7 +266,7 @@ namespace monarch
                 tPropList.setChunk( N_DATA_DIMS, fDataChunkDims );
 
                 u32toa( fAcquisitionId, fAcqNameBuffer );
-                fH5CurrentAcqDataSet = new H5::DataSet( fH5StreamParentLoc->createDataSet( fAcqNameBuffer, fDataTypeInFile, H5::DataSpace( N_DATA_DIMS, fDataDims, fMaxDataDims ), tPropList ) );
+                fH5CurrentAcqDataSet = new H5::DataSet( fH5AcqLoc->createDataSet( fAcqNameBuffer, fDataTypeInFile, H5::DataSpace( N_DATA_DIMS, fDataDims, fMaxDataDims ), tPropList ) );
             }
             else
             {
@@ -275,13 +275,15 @@ namespace monarch
                 fH5CurrentAcqDataSet->extend( fDataDims );
             }
 
+            MDEBUG( mlog, "Writing acq. " << fAcquisitionId << ", record " << fRecordCount );
+
             // Write data in stream record to disk
             if( fInterleaved )
             {
                 ZipChannels();
             }
 
-            fDataOffset[ 0 ] = fNRecordsInAcq;
+            fDataOffset[ 0 ] = fRecordCount;
 
             H5::DataSpace writeSpace( N_DATA_DIMS, fDataDims1Rec, NULL );
             H5::DataSpace fileSpace = fH5CurrentAcqDataSet->getSpace();
@@ -332,10 +334,11 @@ namespace monarch
     {
         if( fH5CurrentAcqDataSet == NULL ) return;
 
+        fNRecordsInAcq = fRecordCount;
+
         H5::DataType tType = MH5TypeAccess< unsigned >::GetType();
         fH5CurrentAcqDataSet->createAttribute( "n_records", tType, H5::DataSpace( H5S_SCALAR ) ).write( tType, &fNRecordsInAcq );
-
-        fNRecordsInAcq = fRecordCount + 1;
+        MDEBUG( mlog, "Finalizing acq. " << fAcquisitionId << " with " << fNRecordsInAcq << " records" );
 
         fRecordCount = 0;
         delete fH5CurrentAcqDataSet;
@@ -350,9 +353,10 @@ namespace monarch
 
         if( fH5AcqLoc == NULL ) return;
 
-        fNAcquisitions = fAcquisitionId + 1;
+        fNAcquisitions = fAcquisitionId;
         H5::DataType tType = MH5TypeAccess< unsigned >::GetType();
         fH5AcqLoc->createAttribute( "n_acquisitions", tType, H5::DataSpace( H5S_SCALAR ) ).write( tType, &fNAcquisitions );
+        MDEBUG( mlog, "Finalizing stream with " << fNAcquisitions << " acquisitions" );
 
         return;
     }

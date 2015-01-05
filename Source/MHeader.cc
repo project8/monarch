@@ -275,7 +275,7 @@ namespace monarch
         fChannelHeaders.push_back( MChannelHeader( aSource, fNChannels, anAcqRate, aRecSize, aDataTypeSize, aDataFormat, aBitDepth ) );
         fStreamHeaders.push_back( MStreamHeader( aSource, fNStreams, 1, sSeparate, anAcqRate, aRecSize, aDataTypeSize, aDataFormat, aBitDepth ) );
         ++fNChannels;
-        return ++fNStreams;
+        return fNStreams++;
     }
 
     unsigned MHeader::AddStream( const std::string& aSource, unsigned aNChannels, MultiChannelFormatType aFormat,
@@ -292,7 +292,7 @@ namespace monarch
             ++fNChannels;
         }
         fStreamHeaders.push_back( MStreamHeader( aSource, fNStreams, aNChannels, aFormat, anAcqRate, aRecSize, aDataTypeSize, aDataFormat, aBitDepth ) );
-        return ++fNStreams;
+        return fNStreams++;
     }
 
     void MHeader::WriteToHDF5( H5::CommonFG* aParent ) const
