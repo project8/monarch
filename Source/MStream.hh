@@ -109,7 +109,7 @@ namespace monarch
             void FinalizeCurrentAcq(); // for writing
             void FinalizeStream(); // for writing
 
-            mutable H5::CommonFG* fH5StreamParentLoc;
+            mutable H5::Group* fH5StreamParentLoc;
             mutable H5::Group* fH5AcqLoc;
             mutable H5::DataSet* fH5CurrentAcqDataSet;
 

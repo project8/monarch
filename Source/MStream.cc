@@ -33,7 +33,7 @@ namespace monarch
 {
     MLOGGER( mlog, "MStream" );
 
-    MStream::MStream( const MStreamHeader& aHeader, H5::CommonFG* aH5StreamParentLoc ) :
+    MStream::MStream( const MStreamHeader& aHeader, H5::CommonFG* aH5StreamsLoc ) :
             fMode( kRead ),
             fAcquisitionId( 0 ),
             fNAcquisitions( 0 ),
@@ -48,10 +48,11 @@ namespace monarch
             fRecordCount( 0 ),
             fNRecordsInAcq( 0 ),
             fInterleaved( aHeader.GetChannelFormat() == sInterleaved ),
-            fH5StreamParentLoc( aH5StreamParentLoc ),
+            fH5StreamParentLoc( new H5::Group( aH5StreamsLoc->openGroup( aHeader.GetLabel() ) ) ),
             fH5AcqLoc( NULL ),
             fH5CurrentAcqDataSet( NULL )
     {
+        MDEBUG( mlog, "Creating stream for <" << aHeader.GetLabel() << ">" );
         std::cout << "stream record at: " << &fStreamRecord << std::endl;
         for( unsigned iChan = 0; iChan < fNChannels; ++iChan )
         {
@@ -110,6 +111,7 @@ namespace monarch
         try
         {
             fH5AcqLoc = new H5::Group( fH5StreamParentLoc->openGroup( "acquisitions" ) );
+            MDEBUG( mlog, "Opened acquisition group in <read> mode" );
             fMode = kRead;
         }
         catch( H5::Exception& e1 )
@@ -118,6 +120,7 @@ namespace monarch
             try
             {
                 fH5AcqLoc = new H5::Group( fH5StreamParentLoc->createGroup( "acquisitions" ) );
+                MDEBUG( mlog, "Opened acquisition group in <write> mode" );
                 fMode = kWrite;
             }
             catch( H5::Exception& e2 )
@@ -212,8 +215,11 @@ namespace monarch
     void MStream::Close() const
     {
         delete fH5CurrentAcqDataSet;
+        fH5CurrentAcqDataSet = NULL;
         delete fH5AcqLoc;
         fH5AcqLoc = NULL;
+        delete fH5StreamParentLoc;
+        fH5StreamParentLoc = NULL;
 
         return;
     }
@@ -295,8 +301,11 @@ namespace monarch
         FinalizeStream();
 
         delete fH5CurrentAcqDataSet;
+        fH5CurrentAcqDataSet = NULL;
         delete fH5AcqLoc;
         fH5AcqLoc = NULL;
+        delete fH5StreamParentLoc;
+        fH5StreamParentLoc = NULL;
 
         return;
     }
@@ -330,6 +339,8 @@ namespace monarch
     void MStream::FinalizeStream()
     {
         FinalizeCurrentAcq();
+
+        if( fH5AcqLoc == NULL ) return;
 
         fNAcquisitions = fAcquisitionId + 1;
         H5::DataType tType = MH5TypeAccess< unsigned >::GetType();
