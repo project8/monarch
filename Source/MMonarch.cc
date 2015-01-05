@@ -152,7 +152,7 @@ namespace monarch
                     streamIt != fHeader->GetStreamHeaders().end();
                     ++streamIt )
             {
-                fStreams.push_back( MStream( *streamIt, tStreamsGroup ) );
+                fStreams.push_back( new MStream( *streamIt, tStreamsGroup ) );
             }
         }
         catch( H5::Exception& e )
