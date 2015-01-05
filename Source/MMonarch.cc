@@ -54,6 +54,12 @@ namespace monarch
             fHeader = NULL;
         }
 
+        while( ! fStreams.empty() )
+        {
+            delete fStreams.back();
+            fStreams.pop_back();
+        }
+
         /*
         if( fRecordInterleavedBytes != NULL )
         {
@@ -129,7 +135,7 @@ namespace monarch
         }
         catch( H5::Exception& e )
         {
-            throw MException() << "HDF5 error while reading the header:\n\t" << e.getCDetailMsg();
+            throw MException() << "HDF5 error while reading the header:\n\t" << e.getCDetailMsg() << " (function: " << e.getFuncName() << ")";
         }
         catch( MException& e )
         {
@@ -151,7 +157,7 @@ namespace monarch
         }
         catch( H5::Exception& e )
         {
-            throw MException() << "HDF5 error while creating stream objects for reading:\n\t" << e.getDetailMsg();
+            throw MException() << "HDF5 error while creating stream objects for reading:\n\t" << e.getDetailMsg() << " (function: " << e.getFuncName() << ")";
         }
         catch( MException& e )
         {
@@ -272,7 +278,7 @@ namespace monarch
         }
         catch( H5::Exception& e )
         {
-            throw MException() << "HDF5 error while writing header:\n\t" << e.getDetailMsg();
+            throw MException() << "HDF5 error while writing header:\n\t" << e.getDetailMsg() << " (function: " << e.getFuncName() << ")";
         }
         catch( MException& e )
         {
@@ -289,12 +295,13 @@ namespace monarch
                     streamIt != fHeader->GetStreamHeaders().end();
                     ++streamIt )
             {
-                fStreams.push_back( MStream( *streamIt, tStreamsGroup ) );
+                std::cout << "creating stream for " << streamIt->GetLabel() << std::endl;
+                fStreams.push_back( new MStream( *streamIt, tStreamsGroup ) );
             }
         }
         catch( H5::Exception& e )
         {
-            throw MException() << "HDF5 error while creating stream objects:\n\t" << e.getDetailMsg();
+            throw MException() << "HDF5 error while creating stream objects:\n\t" << e.getDetailMsg() << " (function: " << e.getFuncName() << ")";
         }
         catch( MException& e )
         {
@@ -772,9 +779,16 @@ namespace monarch
 */
     void Monarch::Close() const
     {
-        for( std::vector< MStream >::iterator streamIt = fStreams.begin(); streamIt != fStreams.end(); ++streamIt )
+        try
         {
-            streamIt->Close();
+            for( std::vector< MStream* >::iterator streamIt = fStreams.begin(); streamIt != fStreams.end(); ++streamIt )
+            {
+                (*streamIt)->Close();
+            }
+        }
+        catch( H5::Exception& e )
+        {
+            throw MException() << "Error while closing: " << e.getDetailMsg() << " (function: " << e.getFuncName() << ")";
         }
         /*
         if( fIO->Close() == false )
@@ -787,9 +801,16 @@ namespace monarch
 
     void Monarch::Close()
     {
-        for( std::vector< MStream >::iterator streamIt = fStreams.begin(); streamIt != fStreams.end(); ++streamIt )
+        try
         {
-            streamIt->Close();
+            for( std::vector< MStream* >::iterator streamIt = fStreams.begin(); streamIt != fStreams.end(); ++streamIt )
+            {
+                (*streamIt)->Close();
+            }
+        }
+        catch( H5::Exception& e )
+        {
+            throw MException() << "Error while closing: " << e.getDetailMsg() << " (function: " << e.getFuncName() << ")";
         }
         /*
         if( fIO->Close() == false )

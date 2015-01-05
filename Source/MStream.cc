@@ -52,6 +52,11 @@ namespace monarch
             fH5AcqLoc( NULL ),
             fH5CurrentAcqDataSet( NULL )
     {
+        std::cout << "stream record at: " << &fStreamRecord << std::endl;
+        for( unsigned iChan = 0; iChan < fNChannels; ++iChan )
+        {
+            std::cout << "channel " << iChan << " record at: " << &(fChannelRecords[iChan]) << std::endl;
+        }
         if( aHeader.GetDataFormat() == sDigitized )
         {
             switch( fDataTypeSize )
@@ -275,7 +280,7 @@ namespace monarch
         }
         catch( H5::Exception& e )
         {
-            MERROR( mlog, "HDF5 error while writing a record:\n\t" << e.getCDetailMsg() );
+            MERROR( mlog, "HDF5 error while writing a record:\n\t" << e.getCDetailMsg() << " (function: " << e.getFuncName() << ")" );
         }
         catch( MException& e )
         {

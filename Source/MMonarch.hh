@@ -149,7 +149,7 @@ namespace monarch
             mutable MHeader* fHeader;
 
             // the streams
-            mutable std::vector< MStream > fStreams;
+            mutable std::vector< MStream* > fStreams;
 /*
             //size of the native type of the records in bytes
             mutable size_t fDataTypeSize;
@@ -241,6 +241,15 @@ namespace monarch
     inline MHeader* Monarch::GetHeader()
     {
         return fHeader;
+    }
+
+    inline const MStream* Monarch::GetStream( unsigned iStream ) const
+    {
+        return fStreams.at( iStream );
+    }
+    inline MStream* Monarch::GetStream( unsigned iStream )
+    {
+        return fStreams.at( iStream );
     }
 /*
     inline const MonarchRecordBytes* Monarch::GetRecordSeparateOne() const

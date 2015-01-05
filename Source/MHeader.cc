@@ -351,7 +351,7 @@ namespace monarch
             SetDescription( ReadScalarFromHDF5< string >( fRunHeaderGroup, "description" ) );
 
             fChannelStreams.clear();
-            Read1DFromHDF5< unsigned >( fRunHeaderGroup, "channel_streams", fChannelStreams );
+            Read1DFromHDF5< std::vector< unsigned > >( fRunHeaderGroup, "channel_streams", fChannelStreams );
 
             MDEBUG( mlog, "Reading stream headers" );
             fStreamHeaders.clear();

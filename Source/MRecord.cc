@@ -7,6 +7,8 @@
 
 #include "MRecord.hh"
 
+#include <iostream>
+
 namespace monarch
 {
     MRecord::MRecord( unsigned aNBytes ) :
@@ -35,7 +37,8 @@ namespace monarch
 
     MRecord::~MRecord()
     {
-        if( fOwnsData ) delete [] fData;
+        std::cout << "deleting record at " << this << std::endl;
+        if( fOwnsData && fData != NULL ) delete [] fData;
     }
 
     void MRecord::SetData( unsigned aNBytes )
