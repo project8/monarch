@@ -37,6 +37,7 @@ namespace monarch
             fMode( kRead ),
             fAcquisitionId( 0 ),
             fNAcquisitions( 0 ),
+            fRecordsAccessed( false ),
             fDataTypeSize( aHeader.GetDataTypeSize() ),
             fStrRecNBytes( aHeader.GetNChannels() * aHeader.GetRecordSize() * aHeader.GetDataTypeSize() ),
             fStrRecSize( aHeader.GetNChannels() * aHeader.GetRecordSize() ),
@@ -108,10 +109,20 @@ namespace monarch
 
         // Determine if we're in read or write mode
         // and get/create the acquisitions group
+        // Nested exceptions are used so that the outer try block can be used to determine whether we're reading or writing
         try
         {
             fH5AcqLoc = new H5::Group( fH5StreamParentLoc->openGroup( "acquisitions" ) );
             MDEBUG( mlog, "Opened acquisition group in <read> mode" );
+            try
+            {
+                fH5AcqLoc->openAttribute( "n_acquisitions" ).read( MH5TypeAccess< unsigned >::GetType(), &fNAcquisitions );
+            }
+            catch( H5::Exception& e2 )
+            {
+                throw;
+            }
+            MDEBUG( mlog, "\tNumber of acquisitions found: " << fNAcquisitions );
             fMode = kRead;
         }
         catch( H5::Exception& e1 )
@@ -182,10 +193,11 @@ namespace monarch
     bool MStream::ReadRecord() const
     {
         ++fRecordCount;
-        if( fRecordCount == fNRecordsInAcq )
+        if( fRecordCount == fNRecordsInAcq || fH5CurrentAcqDataSet == NULL )
         {
             // Move to the next acquisition
-            ++fAcquisitionId;
+            if( fRecordsAccessed ) ++fAcquisitionId;
+            else fRecordsAccessed = true;
             fRecordCount = 0;
 
             delete fH5CurrentAcqDataSet;
@@ -193,13 +205,13 @@ namespace monarch
 
             if( fAcquisitionId == fNAcquisitions )
             {
+                // end of file reached
                 return false;
             }
 
             u32toa( fAcquisitionId, fAcqNameBuffer );
             fH5CurrentAcqDataSet = new H5::DataSet( fH5AcqLoc->openDataSet( fAcqNameBuffer ) );
             fH5CurrentAcqDataSet->openAttribute( "n_records" ).read( MH5TypeAccess< unsigned >::GetType(), &fNRecordsInAcq );
-
         }
 
         fDataOffset[ 0 ] = fRecordCount;
@@ -257,7 +269,8 @@ namespace monarch
             {
                 FinalizeCurrentAcq();
 
-                ++fAcquisitionId;
+                if( fRecordsAccessed ) ++fAcquisitionId;
+                else fRecordsAccessed = true;
 
                 // Setup the new dataset
                 fDataDims[ 0 ] = 1;
@@ -353,7 +366,7 @@ namespace monarch
 
         if( fH5AcqLoc == NULL ) return;
 
-        fNAcquisitions = fAcquisitionId;
+        fNAcquisitions = ( fAcquisitionId + 1 ) * (unsigned)fRecordsAccessed;
         H5::DataType tType = MH5TypeAccess< unsigned >::GetType();
         fH5AcqLoc->createAttribute( "n_acquisitions", tType, H5::DataSpace( H5S_SCALAR ) ).write( tType, &fNAcquisitions );
         MDEBUG( mlog, "Finalizing stream with " << fNAcquisitions << " acquisitions" );

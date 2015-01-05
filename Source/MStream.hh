@@ -84,6 +84,8 @@ namespace monarch
             void ZipChannels(); // for writing
             void UnzipChannels() const; // for reading
 
+            mutable bool fRecordsAccessed;
+
             mutable unsigned fDataTypeSize;
 
             mutable unsigned fStrRecNBytes;
