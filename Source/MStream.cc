@@ -118,15 +118,14 @@ namespace monarch
             MDEBUG( mlog, "Opened acquisition group in <read> mode" );
             try
             {
-                fH5AcqLoc->openAttribute( "n_acquisitions" ).read( MH5TypeAccess< unsigned >::GetType(), &fNAcquisitions );
+                fH5StreamParentLoc->openAttribute( "n_acquisitions" ).read( MH5TypeAccess< unsigned >::GetType(), &fNAcquisitions );
                 fH5StreamParentLoc->openAttribute( "n_records" ).read( MH5TypeAccess< unsigned >::GetType(), &fNRecordsInFile );
+                BuildIndex();
             }
             catch( H5::Exception& e2 )
             {
                 throw;
             }
-            fRecordIndex.resize( fNRecordsInFile );
-            BuildIndex();
             MDEBUG( mlog, "\tNumber of acquisitions found: " << fNAcquisitions << "; Number of records found: " << fNRecordsInFile );
             fMode = kRead;
         }
@@ -258,13 +257,14 @@ namespace monarch
 
         fRecordCountInFile = fRecordCountInFile + anOffset;
         unsigned nextAcq = fRecordIndex.at( fRecordCountInFile ).first;
-        unsigned nextRecInAcq = fRecordIndex.at( fRecordCountInFile ).second;
+        fRecordCountInAcq = fRecordIndex.at( fRecordCountInFile ).second;
+        MDEBUG( mlog, "Going to record " << fRecordCountInFile << " -- " << nextAcq << " -- " << fRecordCountInAcq );
 
         if( nextAcq != fAcquisitionId || ! fRecordsAccessed )
         {
+            // go to a new acquisition
             fRecordsAccessed = true;
             fAcquisitionId = nextAcq;
-            fRecordCountInAcq = nextRecInAcq;
             delete fH5CurrentAcqDataSet;
             u32toa( fAcquisitionId, fAcqNameBuffer );
             fH5CurrentAcqDataSet = new H5::DataSet( fH5AcqLoc->openDataSet( fAcqNameBuffer ) );
@@ -456,12 +456,14 @@ namespace monarch
 
     void MStream::BuildIndex() const
     {
+        fRecordIndex.resize( fNRecordsInFile );
         unsigned tNRecInAcq;
         unsigned iRecInFile = 0;
         for( unsigned iAcq = 0; iAcq < fNAcquisitions; ++iAcq )
         {
-            u32toa( fAcquisitionId, fAcqNameBuffer );
+            u32toa( iAcq, fAcqNameBuffer );
             fH5AcqLoc->openDataSet( fAcqNameBuffer ).openAttribute( "n_records" ).read( MH5TypeAccess< unsigned >::GetType(), &tNRecInAcq );
+            MDEBUG( mlog, "Acquisition <" << fAcqNameBuffer << "> has " << tNRecInAcq << " records" );
             for( unsigned iRecInAcq = 0; iRecInAcq < tNRecInAcq; ++iRecInAcq )
             {
                 fRecordIndex.at( iRecInFile ).first = iAcq;
@@ -498,7 +500,7 @@ namespace monarch
 
         fNAcquisitions = ( fAcquisitionId + 1 ) * (unsigned)fRecordsAccessed;
         H5::DataType tType = MH5TypeAccess< unsigned >::GetType();
-        fH5AcqLoc->createAttribute( "n_acquisitions", tType, H5::DataSpace( H5S_SCALAR ) ).write( tType, &fNAcquisitions );
+        fH5StreamParentLoc->createAttribute( "n_acquisitions", tType, H5::DataSpace( H5S_SCALAR ) ).write( tType, &fNAcquisitions );
         fH5StreamParentLoc->createAttribute( "n_records", tType, H5::DataSpace( H5S_SCALAR) ).write( tType, &fRecordCountInFile );
         MDEBUG( mlog, "Finalizing stream with " << fNAcquisitions << " acquisitions and " << fRecordCountInFile << " records" );
 
