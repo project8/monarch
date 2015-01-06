@@ -192,9 +192,6 @@ namespace monarch
             mutable H5::Group* fChannelsGroup;
 
         public:
-            //void WriteChannelHeaderToHDF5( H5::H5Location* aLoc, unsigned aHeaderNumber, const MChannelHeader& aHeader ) const;
-            //void WriteStreamHeaderToHDF5( H5::H5Location* aLoc, unsigned aHeaderNumber, const MStreamHeader& aHeader ) const;
-
             static void WriteScalarToHDF5( H5::H5Location* aLoc, const std::string& aName, const std::string& aValue );
             template< typename XType >
             static void WriteScalarToHDF5( H5::H5Location* aLoc, const std::string& aName, XType aValue );
@@ -234,12 +231,7 @@ namespace monarch
     inline void MHeader::WriteScalarToHDF5( H5::H5Location* aLoc, const std::string& aName, const std::string& aValue )
     {
         H5::DataType tType = MH5Type< std::string >::H5( aValue );
-        //aLoc->createAttribute( aName, MH5Type< std::string >::H5( aValue ), H5::DataSpace( H5S_SCALAR ) ).write( MH5Type< std::string >::Native( aValue ), aValue );
         aLoc->createAttribute( aName, tType, H5::DataSpace( H5S_SCALAR ) ).write( tType, aValue );
-        //H5::DataSpace dspace( H5S_SCALAR );
-        //H5::DSetCreatPropList plist;
-        //H5::DataType tType = MH5Type< std::string >::GetType( aValue );
-        //aGroup->createDataSet(aName, tType, dspace, plist ).write( aValue, tType );
         MDEBUG( mlog_mheader, "Writing string to new scalar metadata <" << aName << ">: " << aValue << "; size = " << aValue.size() );
         return;
     }
@@ -247,37 +239,11 @@ namespace monarch
     template< typename XType >
     void MHeader::WriteScalarToHDF5( H5::H5Location* aLoc, const std::string& aName, XType aValue )
     {
-        //H5::DataType tType = MH5Type< XType >::GetType();
         aLoc->createAttribute( aName, MH5Type< XType >::H5(), H5::DataSpace( H5S_SCALAR ) ).write( MH5Type< XType >::Native(), &aValue );
-        //H5::DataSpace dspace( H5S_SCALAR );
-        //H5::DSetCreatPropList plist;
-        //H5::DataType tType = MH5Type< XType >::GetType();
-        //aGroup->createDataSet(aName, tType, dspace, plist ).write( &aValue, tType );
         MDEBUG( mlog_mheader, "Writing value to new scalar metadata <" << aName << ">: " << aValue );
         return;
     }
 
-    /*
-    template< typename XType >
-    inline void MHeader::Write1DToHDF5( H5::H5Location* aLoc, const std::string& aName, const std::vector< XType >& anArray )
-    {
-        // NOTE: old code; not fixed for writing attributes to locations
-        MDEBUG( mlog_mheader, "Writing vector to new 1-D metadata <" << aName << ">; size = " << anArray.size() );
-        hsize_t tDims[ 1 ] = { anArray.size() };
-        H5::DataSpace dspace( 1, tDims );
-        H5::DSetCreatPropList plist;
-        H5::DataType tType = MH5Type< XType >::GetType();
-        H5::DataSet tDataset = aGroup->createDataSet(aName, tType, dspace, plist );
-        XType* buffer = new XType( anArray.size() );
-        for( unsigned i = 0; i < anArray.size(); ++i )
-        {
-            buffer[ i ] = anArray[ i ];
-        }
-        tDataset.write( buffer, tType ); std::cout << buffer << std::endl;
-        delete [] buffer;
-        return;
-    }
-    */
     template< typename XArrayType >
     inline void MHeader::Write1DToHDF5( H5::H5Location* aLoc, const std::string& aName, const XArrayType& anArray )
     {
@@ -294,17 +260,6 @@ namespace monarch
             std::cout << "writing bin " << i << ": " << buffer[i] << " <-- " << anArray[i] << std::endl;
         }
         aLoc->createAttribute( aName, tTypeH5, dspace ).write( tTypeNative, buffer );
-
-        //H5::DataSpace dspace( 1, tDims );
-        //H5::DSetCreatPropList plist;
-        //H5::DataType tType = MH5Type< XValueType >::GetType();
-        //XValueType* buffer = new XValueType( anArray.size() );
-        //for( unsigned i = 0; i < anArray.size(); ++i )
-        //{
-        //    buffer[ i ] = anArray[ i ];
-        //    std::cout << "writing bin " << i << ": " << buffer[i] << " <-- " << anArray[i] << std::endl;
-        //}
-        //aGroup->createDataSet(aName, tType, dspace, plist ).write( buffer, tType );
         delete [] buffer;
         return;
     }
@@ -320,9 +275,6 @@ namespace monarch
         H5::Attribute* tAttr = new H5::Attribute( aLoc->openAttribute( aName ) );
         tAttr->read( tAttr->getDataType(), tValue );
         delete tAttr;
-        //H5::DataSet* tDataset = new H5::DataSet( aGroup->openDataSet( aName ) );
-        //tDataset->read( tValue, MH5Type< std::string >::GetType( tDataset->getInMemDataSize() ) );
-        //delete tDataset;
         MDEBUG( mlog_mheader, "Reading string <" << aName << ">: " << tValue << "; size = " << tValue.size() );
         return tValue;
     }
@@ -335,42 +287,14 @@ namespace monarch
         H5::Attribute* tAttr = new H5::Attribute( aLoc->openAttribute( aName ) );
         tAttr->read( tAttr->getDataType(), &tValue );
         delete tAttr;
-        //aGroup->openDataSet( aName ).read( &tValue, MH5Type< XType >::GetType() );
         MDEBUG( mlog_mheader, "Reading value <" << aName << ">: " << tValue );
         return tValue;
     }
 
-    /*
-    template< typename XType >
-    void MHeader::Read1DFromHDF5( const H5::H5Location* aLoc, const std::string& aName, std::vector< XType >& anArray )
-    {
-        // NOTE: old code; not fixed for reading attributes from locations
-        H5::DataSet tDataset = aGroup->openDataSet( aName );
-        H5::DataSpace tDataspace = tDataset.getSpace();
-        if( tDataspace.getSimpleExtentNdims() != 1 )
-        {
-            throw MException() << "Dataset <" << aName << "> has " << tDataspace.getSimpleExtentNdims() << " dimensions; 1 dimension was expected";
-        }
-        hsize_t tDataSize[ 1 ];
-        tDataspace.getSimpleExtentDims( tDataSize );
-        XType* buffer = new XType( tDataSize[0] );
-        MDEBUG( mlog_mheader, "Reading 1-D metadata <" << aName << "> to vector; size = " << tDataSize[0] );
-        tDataset.read( buffer, MH5Type< XType >::GetType() );
-        anArray.resize( tDataSize[0] );
-        for( unsigned i = 0; i < anArray.size(); ++i )
-        {
-            anArray[ i ] = buffer[ i ];
-        }
-        delete [] buffer;
-        return;
-    }
-    */
     template< typename XArrayType >
     void MHeader::Read1DFromHDF5( const H5::H5Location* aLoc, const std::string& aName, XArrayType& anArray )
     {
         typedef typename XArrayType::value_type XValueType;
-        //H5::Attribute* tAttr = new H5::Attribute( aLoc->openAttribute( aName ) );
-        //H5::DataSpace* tDataspace = new H5::DataSpace( tAttr->getSpace() );
         H5::Attribute tAttr( aLoc->openAttribute( aName ) );
         H5::DataSpace tDataspace( tAttr.getSpace() );
         if( tDataspace.getSimpleExtentNdims() != 1 )
@@ -379,25 +303,9 @@ namespace monarch
         }
         hsize_t tDims[ 1 ];
         tDataspace.getSimpleExtentDims( tDims );
-        //H5::ArrayType tType( MH5Type< XValueType >::GetType(), 1, tDims );
         XValueType* buffer = new XValueType( tDims[0] );
         MDEBUG( mlog_mheader, "Reading 1-D metadata <" << aName << "> to vector; size = " << tDims[0] );
         tAttr.read( tAttr.getDataType(), buffer );
-        //delete tDataspace;
-        //delete tAttr;
-        //H5::DataSet* tDataset = new H5::DataSet( aGroup->openDataSet( aName ) );
-        //H5::DataSpace tDataspace = tDataset->getSpace();
-        //if( tDataspace.getSimpleExtentNdims() != 1 )
-        //{
-        //    throw MException() << "Dataset <" << aName << "> has " << tDataspace.getSimpleExtentNdims() << " dimensions; 1 dimension was expected";
-        //}
-        //hsize_t tDataSize[ 1 ];
-        //tDataspace.getSimpleExtentDims( tDataSize );
-        //XValueType* buffer = new XValueType( tDataSize[0] );
-        //MDEBUG( mlog_mheader, "Reading 1-D metadata <" << aName << "> to vector; size = " << tDataSize[0] );
-        //tDataset->read( buffer, MH5Type< XValueType >::GetType() );
-        //delete tDataset;
-        //anArray.resize( tDataSize[0] );
         for( unsigned i = 0; i < anArray.size(); ++i )
         {
             anArray[ i ] = buffer[ i ];

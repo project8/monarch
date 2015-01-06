@@ -62,12 +62,7 @@ namespace monarch
             fH5DataSpaceUser( NULL )
     {
         MDEBUG( mlog, "Creating stream for <" << aHeader.GetLabel() << ">" );
-        std::cout << "stream record at: " << &fStreamRecord << std::endl;
 
-        for( unsigned iChan = 0; iChan < fNChannels; ++iChan )
-        {
-            std::cout << "channel " << iChan << " record at: " << &(fChannelRecords[iChan]) << std::endl;
-        }
         if( aHeader.GetDataFormat() == sDigitized )
         {
             switch( fDataTypeSize )
@@ -274,38 +269,9 @@ namespace monarch
             tAttr.read( tAttr.getDataType(), &fNRecordsInAcq );
         }
 
-        /*
-        ++fRecordCountInAcq;
-        if( fRecordCountInAcq == fNRecordsInAcq || fH5CurrentAcqDataSet == NULL )
-        {
-            // Move to the next acquisition
-            if( fRecordsAccessed ) ++fAcquisitionId;
-            else fRecordsAccessed = true;
-            fRecordCountInAcq = 0;
-
-            delete fH5CurrentAcqDataSet;
-            fH5CurrentAcqDataSet = NULL;
-
-            if( fAcquisitionId == fNAcquisitions )
-            {
-                // end of file reached
-                return false;
-            }
-
-            u32toa( fAcquisitionId, fAcqNameBuffer );
-            fH5CurrentAcqDataSet = new H5::DataSet( fH5AcqLoc->openDataSet( fAcqNameBuffer ) );
-            std::cout << "size of dataset: " << sizeof(*fH5CurrentAcqDataSet) << std::endl;
-            fH5CurrentAcqDataSet->openAttribute( "n_records" ).read( MH5TypeAccess< unsigned >::GetType(), &fNRecordsInAcq );
-        }
-        */
-
         fDataOffset[ 0 ] = fRecordCountInAcq;
 
         (this->*fDoReadRecord)();
-        //H5::DataSpace readSpace( N_DATA_DIMS, fDataDims1Rec, NULL );
-        //H5::DataSpace fileSpace = fH5CurrentAcqDataSet->getSpace();
-        //fileSpace.selectHyperslab( H5S_SELECT_SET, fDataDims1Rec, fDataOffset );
-        //fH5CurrentAcqDataSet->read( fStreamRecord.GetData(), fDataTypeUser, readSpace, fileSpace );
 
         return true;
     }
@@ -355,7 +321,6 @@ namespace monarch
 
                 // Setup the new dataset
                 fStrDataDims[ 0 ] = 1;
-                //H5::DataSpace* tExtDataspace = new H5::DataSpace( N_DATA_DIMS, fDataDims, fMaxDataDims );
                 H5::DSetCreatPropList tPropList;
                 tPropList.setChunk( N_DATA_DIMS, fStrDataChunkDims );
 
@@ -370,15 +335,10 @@ namespace monarch
             }
 
             MDEBUG( mlog, "Writing acq. " << fAcquisitionId << ", record " << fRecordCountInAcq );
-            //fRecordIndex.push_back( fAcquisitionId );
 
             fDataOffset[ 0 ] = fRecordCountInAcq;
 
             (this->*fDoWriteRecord)();
-            //H5::DataSpace writeSpace( N_DATA_DIMS, fDataDims1Rec, NULL );
-            //H5::DataSpace fileSpace = fH5CurrentAcqDataSet->getSpace();
-            //fileSpace.selectHyperslab( H5S_SELECT_SET, fDataDims1Rec, fDataOffset );
-            //fH5CurrentAcqDataSet->write( fStreamRecord.GetData(), fDataTypeUser, writeSpace, fileSpace );
 
             ++fRecordCountInAcq;
             ++fRecordCountInFile;
@@ -450,7 +410,6 @@ namespace monarch
 
     void MStream::WriteRecordAsIs()
     {
-        //H5::DataSpace writeSpace( N_DATA_DIMS, fDataDims1Rec, NULL );
         H5::DataSpace tDataSpaceInFile = fH5CurrentAcqDataSet->getSpace();
         tDataSpaceInFile.selectHyperslab( H5S_SELECT_SET, fDataDims1Rec, fDataOffset );
         fH5CurrentAcqDataSet->write( fStreamRecord.GetData(), fDataTypeUser, *fH5DataSpaceUser, tDataSpaceInFile );
