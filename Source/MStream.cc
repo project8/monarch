@@ -176,12 +176,17 @@ namespace monarch
             fDoWriteRecord = &MStream::WriteRecordSeparateToInterleaved;
 
             // Arrays for HDF5 file reading/writing
-            fDataDims[ 0 ] = 1;                 fDataDims[ 1 ] = fChanRecSize;
-            fMaxDataDims[ 0 ] = H5S_UNLIMITED;  fMaxDataDims[ 1 ] = fChanRecSize;
-            fDataChunkDims[ 0 ] = 1;            fDataChunkDims[ 1 ] = fStrRecSize; // chunks read from disk should still be the full stream record size
+            fStrDataDims[ 0 ] = 1;                 fStrDataDims[ 1 ] = fStrRecSize;
+            fStrMaxDataDims[ 0 ] = H5S_UNLIMITED;  fStrMaxDataDims[ 1 ] = fStrRecSize;
+            fStrDataChunkDims[ 0 ] = 1;            fStrDataChunkDims[ 1 ] = fStrRecSize;
             fDataDims1Rec[ 0 ] = 1;             fDataDims1Rec[ 1 ] = fChanRecSize;
             fDataOffset[ 0 ] = 0;               fDataOffset[ 1 ] = 0;
-            fDataStride[ 0 ] = 0;               fDataStride[ 1 ] = 1;
+            fDataStride[ 0 ] = 1;               fDataStride[ 1 ] = 2;
+            fDataBlock[ 0 ] = 1;                fDataBlock[ 1 ] = 1;
+
+            // HDF5 object initialization
+            delete fH5DataSpaceUser;
+            fH5DataSpaceUser = new H5::DataSpace( N_DATA_DIMS, fDataDims1Rec, NULL );
 
             fIsInitialized = true;
             return;
@@ -202,12 +207,13 @@ namespace monarch
         fDoWriteRecord = &MStream::WriteRecordAsIs;
 
         // Arrays for HDF5 file reading/writing
-        fDataDims[ 0 ] = 1;                 fDataDims[ 1 ] = fStrRecSize;
-        fMaxDataDims[ 0 ] = H5S_UNLIMITED;  fMaxDataDims[ 1 ] = fStrRecSize;
-        fDataChunkDims[ 0 ] = 1;            fDataChunkDims[ 1 ] = fStrRecSize;
+        fStrDataDims[ 0 ] = 1;                 fStrDataDims[ 1 ] = fStrRecSize;
+        fStrMaxDataDims[ 0 ] = H5S_UNLIMITED;  fStrMaxDataDims[ 1 ] = fStrRecSize;
+        fStrDataChunkDims[ 0 ] = 1;            fStrDataChunkDims[ 1 ] = fStrRecSize;
         fDataDims1Rec[ 0 ] = 1;             fDataDims1Rec[ 1 ] = fStrRecSize;
         fDataOffset[ 0 ] = 0;               fDataOffset[ 1 ] = 0;
         fDataStride[ 0 ] = 0;               fDataStride[ 1 ] = 0;
+        fDataBlock[ 0 ] = 1;                fDataBlock[ 1 ] = fStrRecSize;
 
         // HDF5 object initialization
         delete fH5DataSpaceUser;
@@ -313,19 +319,19 @@ namespace monarch
                 else fRecordsAccessed = true;
 
                 // Setup the new dataset
-                fDataDims[ 0 ] = 1;
+                fStrDataDims[ 0 ] = 1;
                 //H5::DataSpace* tExtDataspace = new H5::DataSpace( N_DATA_DIMS, fDataDims, fMaxDataDims );
                 H5::DSetCreatPropList tPropList;
-                tPropList.setChunk( N_DATA_DIMS, fDataChunkDims );
+                tPropList.setChunk( N_DATA_DIMS, fStrDataChunkDims );
 
                 u32toa( fAcquisitionId, fAcqNameBuffer );
-                fH5CurrentAcqDataSet = new H5::DataSet( fH5AcqLoc->createDataSet( fAcqNameBuffer, fDataTypeInFile, H5::DataSpace( N_DATA_DIMS, fDataDims, fMaxDataDims ), tPropList ) );
+                fH5CurrentAcqDataSet = new H5::DataSet( fH5AcqLoc->createDataSet( fAcqNameBuffer, fDataTypeInFile, H5::DataSpace( N_DATA_DIMS, fStrDataDims, fStrMaxDataDims ), tPropList ) );
             }
             else
             {
                 // Extend the current dataset
-                fDataDims[ 0 ] = fDataDims[ 0 ] + 1;
-                fH5CurrentAcqDataSet->extend( fDataDims );
+                fStrDataDims[ 0 ] = fStrDataDims[ 0 ] + 1;
+                fH5CurrentAcqDataSet->extend( fStrDataDims );
             }
 
             MDEBUG( mlog, "Writing acq. " << fAcquisitionId << ", record " << fRecordCount );
@@ -379,7 +385,7 @@ namespace monarch
         for( unsigned iChan = 0; iChan < fNChannels; ++iChan )
         {
             fDataOffset[ 1 ] = iChan;
-            tDataSpaceInFile.selectHyperslab( H5S_SELECT_SET, fDataDims1Rec, fDataOffset, fDataStride );
+            tDataSpaceInFile.selectHyperslab( H5S_SELECT_SET, fDataDims1Rec, fDataOffset, fDataStride, fDataBlock );
             fH5CurrentAcqDataSet->read( fChannelRecords[ iChan ].GetData(), fDataTypeUser, *fH5DataSpaceUser, tDataSpaceInFile );
         }
         return;
@@ -399,7 +405,8 @@ namespace monarch
         for( unsigned iChan = 0; iChan < fNChannels; ++iChan )
         {
             fDataOffset[ 1 ] = iChan;
-            tDataSpaceInFile.selectHyperslab( H5S_SELECT_SET, fDataDims1Rec, fDataOffset, fDataStride );
+            tDataSpaceInFile.selectHyperslab( H5S_SELECT_SET, fDataDims1Rec, fDataOffset, fDataStride, fDataBlock );
+            std::cout << "attempting to write from: " << fChannelRecords[ iChan ].GetData() << "  dataspaceuser: " << fH5DataSpaceUser << std::endl;
             fH5CurrentAcqDataSet->write( fChannelRecords[ iChan ].GetData(), fDataTypeUser, *fH5DataSpaceUser, tDataSpaceInFile );
         }
         return;

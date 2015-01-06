@@ -144,12 +144,13 @@ namespace monarch
             mutable H5::DataType fDataTypeUser;
 
             enum { N_DATA_DIMS = 2 };
-            mutable hsize_t fDataDims[ N_DATA_DIMS ];
+            mutable hsize_t fStrDataDims[ N_DATA_DIMS ];
+            mutable hsize_t fStrMaxDataDims[ N_DATA_DIMS ];
+            mutable hsize_t fStrDataChunkDims[ N_DATA_DIMS ];
             mutable hsize_t fDataDims1Rec[ N_DATA_DIMS ];
-            mutable hsize_t fMaxDataDims[ N_DATA_DIMS ];
-            mutable hsize_t fDataChunkDims[ N_DATA_DIMS ];
             mutable hsize_t fDataOffset[ N_DATA_DIMS ];
             mutable hsize_t fDataStride[ N_DATA_DIMS ];
+            mutable hsize_t fDataBlock[ N_DATA_DIMS ];
 
     };
 

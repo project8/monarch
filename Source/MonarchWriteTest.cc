@@ -76,6 +76,13 @@ int main( const int argc, const char** argv )
         }
         tDoubleStream->WriteRecord( true );
 
+        for( unsigned iSample = 0; iSample < tDSSamples; ++iSample )
+        {
+            tDSData0[ iSample ] = 100;
+            tDSData1[ iSample ] = 200;
+        }
+        tDoubleStream->WriteRecord( false );
+
 
         // Stream 2
         MStream* tTripleStream = tWriteTest->GetStream( tTripleStreamNum );
