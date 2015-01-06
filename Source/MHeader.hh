@@ -33,37 +33,37 @@ namespace monarch
     {
         public:
             MStreamHeader();
-            MStreamHeader( const std::string& aSource, unsigned aNumber, unsigned aNChannels, MultiChannelFormatType aFormat,
-                           unsigned anAcqRate, unsigned aRecSize,
-                           unsigned aDataTypeSize, DataFormatType aDataFormat,
-                           unsigned aBitDepth );
+            MStreamHeader( const std::string& aSource, uint32_t aNumber, uint32_t aNChannels, MultiChannelFormatType aFormat,
+                           uint32_t anAcqRate, uint32_t aRecSize,
+                           uint32_t aDataTypeSize, DataFormatType aDataFormat,
+                           uint32_t aBitDepth );
             MStreamHeader( const MStreamHeader& orig );
             ~MStreamHeader();
 
             MMEMBERVARIABLE( char*, Label );
 
-            MMEMBERVARIABLE_NOSET( unsigned, Number );
-            void SetNumber( unsigned aNumber ) const; /// In addition to setting the number, sets the label to "stream[aNumber]"
+            MMEMBERVARIABLE_NOSET( uint32_t, Number );
+            void SetNumber( uint32_t aNumber ) const; /// In addition to setting the number, sets the label to "stream[aNumber]"
 
             MMEMBERVARIABLE( std::string, Source );
 
-            MMEMBERVARIABLE( unsigned, NChannels );
+            MMEMBERVARIABLE( uint32_t, NChannels );
 
             MMEMBERVARIABLE( MultiChannelFormatType, ChannelFormat );
 
-            MMEMBERVARIABLE( unsigned, AcquisitionRate );
+            MMEMBERVARIABLE( uint32_t, AcquisitionRate );
 
-            MMEMBERVARIABLE( unsigned, RecordSize );
+            MMEMBERVARIABLE( uint32_t, RecordSize );
 
-            MMEMBERVARIABLE( unsigned, DataTypeSize );
+            MMEMBERVARIABLE( uint32_t, DataTypeSize );
 
             MMEMBERVARIABLE( DataFormatType, DataFormat );
 
-            MMEMBERVARIABLE( unsigned, BitDepth );
+            MMEMBERVARIABLE( uint32_t, BitDepth );
 
-            MMEMBERVARIABLE( unsigned, NAcquisitions );
+            MMEMBERVARIABLE( uint32_t, NAcquisitions );
 
-            MMEMBERVARIABLE( unsigned, NRecords );
+            MMEMBERVARIABLE( uint32_t, NRecords );
 
         public:
             void WriteToHDF5( H5::CommonFG* aParent );
@@ -83,29 +83,29 @@ namespace monarch
     {
         public:
             MChannelHeader();
-            MChannelHeader( const std::string& aSource, unsigned aNumber,
-                            unsigned anAcqRate, unsigned aRecSize,
-                            unsigned aDataTypeSize, DataFormatType aDataFormat,
-                            unsigned aBitDepth );
+            MChannelHeader( const std::string& aSource, uint32_t aNumber,
+                            uint32_t anAcqRate, uint32_t aRecSize,
+                            uint32_t aDataTypeSize, DataFormatType aDataFormat,
+                            uint32_t aBitDepth );
             MChannelHeader( const MChannelHeader& orig );
             ~MChannelHeader();
 
             MMEMBERVARIABLE( char*, Label );
 
-            MMEMBERVARIABLE_NOSET( unsigned, Number );
-            void SetNumber( unsigned aNumber ) const; /// In addition to setting the number, sets the label to "channel[aNumber]"
+            MMEMBERVARIABLE_NOSET( uint32_t, Number );
+            void SetNumber( uint32_t aNumber ) const; /// In addition to setting the number, sets the label to "channel[aNumber]"
 
             MMEMBERVARIABLE( std::string, Source );
 
-            MMEMBERVARIABLE( unsigned, AcquisitionRate );
+            MMEMBERVARIABLE( uint32_t, AcquisitionRate );
 
-            MMEMBERVARIABLE( unsigned, RecordSize );
+            MMEMBERVARIABLE( uint32_t, RecordSize );
 
-            MMEMBERVARIABLE( unsigned, DataTypeSize );
+            MMEMBERVARIABLE( uint32_t, DataTypeSize );
 
             MMEMBERVARIABLE( DataFormatType, DataFormat );
 
-            MMEMBERVARIABLE( unsigned, BitDepth );
+            MMEMBERVARIABLE( uint32_t, BitDepth );
 
             MMEMBERVARIABLE( double, VoltageMin );
 
@@ -144,17 +144,17 @@ namespace monarch
 
             MMEMBERVARIABLEREF( std::string, Filename );
 
-            MMEMBERVARIABLE( unsigned, RunDuration );
+            MMEMBERVARIABLE( uint32_t, RunDuration );
 
             MMEMBERVARIABLEREF( std::string, Timestamp );
 
             MMEMBERVARIABLEREF( std::string, Description );
 
-            MMEMBERVARIABLE( unsigned, NChannels );
+            MMEMBERVARIABLE( uint32_t, NChannels );
 
-            MMEMBERVARIABLE( unsigned, NStreams );
+            MMEMBERVARIABLE( uint32_t, NStreams );
 
-            MMEMBERVARIABLEREF_NOSET( std::vector< unsigned >, ChannelStreams );
+            MMEMBERVARIABLEREF_NOSET( std::vector< uint32_t >, ChannelStreams );
 
             MMEMBERVARIABLEREF_NOSET( std::vector< MChannelHeader >, ChannelHeaders );
 
@@ -166,15 +166,15 @@ namespace monarch
             /// Add a stream with one channel with aRecSize samples per record
             /// Returns the stream number (used to address the stream later)
             unsigned AddStream( const std::string& aSource,
-                                unsigned anAcqRate, unsigned aRecSize,
-                                unsigned aDataTypeSize, DataFormatType aDataFormat,
-                                unsigned aBitDepth );
+                                uint32_t anAcqRate, uint32_t aRecSize,
+                                uint32_t aDataTypeSize, DataFormatType aDataFormat,
+                                uint32_t aBitDepth );
             /// Add a stream with multiple channels with aRecSize samples per record
             /// Returns the stream number (used to address the stream later)
-            unsigned AddStream( const std::string& aSource, unsigned aNChannels, MultiChannelFormatType aFormat,
-                                unsigned anAcqRate, unsigned aRecSize,
-                                unsigned aDataTypeSize, DataFormatType aDataFormat,
-                                unsigned aBitDepth );
+            unsigned AddStream( const std::string& aSource, uint32_t aNChannels, MultiChannelFormatType aFormat,
+                                uint32_t anAcqRate, uint32_t aRecSize,
+                                uint32_t aDataTypeSize, DataFormatType aDataFormat,
+                                uint32_t aBitDepth );
 
         public:
             void WriteToHDF5( H5::H5File* aFile );
