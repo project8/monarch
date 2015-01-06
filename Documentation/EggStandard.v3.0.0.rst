@@ -82,14 +82,14 @@ File Attributes
 These attributes constitute the header for the file, and describe its contents. 
 They consist of information that apply to the all streams and channels.
 
-- SchemaVersion (string) -- Egg file version
-- Filename (string) -- Filename
-- RunDuration (uint32) -- Length of the run in ms
-- Timestamp (string) -- Timestamp string
-- Description (string) -- Description of the run
-- NChannels (uint32) -- Number of channels present
-- NStreams (uint32) -- Number of streams used
-- ChannelStreams (vector< uint32 >) -- Map of channel number to stream number
+- egg_version (string) -- Egg file version
+- filename (string) -- Filename
+- run_duration (uint32) -- Length of the run in ms
+- timestamp (string) -- Timestamp string
+- description (string) -- Description of the run
+- n_channels (uint32) -- Number of channels present
+- n_streams (uint32) -- Number of streams used
+- channel_streams (vector< uint32 >) -- Map of channel number to stream number
 
 
 Stream Attributes
