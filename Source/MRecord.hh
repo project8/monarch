@@ -14,10 +14,10 @@ namespace monarch
             MRecord( byte_type* aDataPtr );
             ~MRecord();
 
-            MEMBERVARIABLE( RecordIdType, RecordId );
-            MEMBERVARIABLE( TimeType, Time );
+            MMEMBERVARIABLE( RecordIdType, RecordId );
+            MMEMBERVARIABLE( TimeType, Time );
 
-            MEMBERVARIABLE_NOSET( bool, OwnsData );
+            MMEMBERVARIABLE_NOSET( bool, OwnsData );
 
         public:
             const byte_type* GetData() const;

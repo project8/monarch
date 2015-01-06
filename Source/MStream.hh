@@ -36,7 +36,7 @@ namespace monarch
             MStream( const MStreamHeader& aHeader, H5::CommonFG* aH5StreamParentLoc, MultiChannelFormatType aAccessFormat = sSeparate );
             virtual ~MStream();
 
-            MEMBERVARIABLE( Mode, Mode );
+            MMEMBERVARIABLE( Mode, Mode );
 
             /// Setup to read/write data (called in constructor; only call this if read/write parameters change during file reading)
             void Initialize() const;

@@ -35,7 +35,9 @@ namespace monarch
             fRecordSize( 0 ),
             fDataTypeSize( 0 ),
             fDataFormat( sDigitized ),
-            fBitDepth( 0 )
+            fBitDepth( 0 ),
+            fNAcquisitions( 0 ),
+            fNRecords( 0 )
     {
     }
 
@@ -52,7 +54,9 @@ namespace monarch
             fRecordSize( aRecSize ),
             fDataTypeSize( aDataTypeSize ),
             fDataFormat( aDataFormat ),
-            fBitDepth( aBitDepth )
+            fBitDepth( aBitDepth ),
+            fNAcquisitions( 0 ),
+            fNRecords( 0 )
     {
         SetNumber( aNumber );
     }
@@ -67,7 +71,9 @@ namespace monarch
             fRecordSize( orig.fRecordSize ),
             fDataTypeSize( orig.fDataTypeSize ),
             fDataFormat( orig.fDataFormat ),
-            fBitDepth( orig.fBitDepth )
+            fBitDepth( orig.fBitDepth ),
+            fNAcquisitions( orig.fNAcquisitions ),
+            fNRecords( orig.fNRecords )
     {
         SetNumber( orig.fNumber );
     }
@@ -77,7 +83,7 @@ namespace monarch
         delete [] fLabel;
     }
 
-    void MStreamHeader::SetNumber( unsigned aNumber )
+    void MStreamHeader::SetNumber( unsigned aNumber ) const
     {
         fNumber = aNumber;
 
@@ -90,7 +96,7 @@ namespace monarch
         return;
     }
 
-    void MStreamHeader::WriteToHDF5( H5::CommonFG* aParent ) const
+    void MStreamHeader::WriteToHDF5( H5::CommonFG* aParent )
     {
         MDEBUG( mlog, "Writing stream <" << fLabel << ">" );
         H5::Group tThisStreamGroup = aParent->createGroup( fLabel );
@@ -104,11 +110,13 @@ namespace monarch
         MHeader::WriteScalarToHDF5( &tThisStreamGroup, "data_type_size", fDataTypeSize );
         MHeader::WriteScalarToHDF5( &tThisStreamGroup, "data_format", fDataFormat );
         MHeader::WriteScalarToHDF5( &tThisStreamGroup, "bit_depth", fBitDepth );
+        MHeader::WriteScalarToHDF5( &tThisStreamGroup, "n_acquisitions", fNAcquisitions );
+        MHeader::WriteScalarToHDF5( &tThisStreamGroup, "n_records", fNRecords );
 
         return;
     }
 
-    void MStreamHeader::ReadFromHDF5( const H5::CommonFG* aParent, const std::string& aLabel )
+    void MStreamHeader::ReadFromHDF5( const H5::CommonFG* aParent, const std::string& aLabel ) const
     {
         MDEBUG( mlog, "Reading stream <" << aLabel << ">" );
         H5::Group tThisStreamGroup = aParent->openGroup( aLabel );
@@ -122,6 +130,8 @@ namespace monarch
         SetDataTypeSize( MHeader::ReadScalarFromHDF5< unsigned >( &tThisStreamGroup, "data_type_size" ) );
         SetDataFormat( MHeader::ReadScalarFromHDF5< DataFormatType >( &tThisStreamGroup, "data_format" ) );
         SetBitDepth( MHeader::ReadScalarFromHDF5< unsigned >( &tThisStreamGroup, "bit_depth" ) );
+        SetNAcquisitions( MHeader::ReadScalarFromHDF5< unsigned >( &tThisStreamGroup, "n_acquisitions" ) );
+        SetNRecords( MHeader::ReadScalarFromHDF5< unsigned >( &tThisStreamGroup, "n_records" ) );
 
         return;
     }
@@ -188,7 +198,7 @@ namespace monarch
         delete [] fLabel;
     }
 
-    void MChannelHeader::SetNumber( unsigned aNumber )
+    void MChannelHeader::SetNumber( unsigned aNumber ) const
     {
         fNumber = aNumber;
 
@@ -201,7 +211,7 @@ namespace monarch
         return;
     }
 
-    void MChannelHeader::WriteToHDF5( H5::CommonFG* aParent ) const
+    void MChannelHeader::WriteToHDF5( H5::CommonFG* aParent )
     {
         MDEBUG( mlog, "Writing channel <" << fLabel << ">" );
         H5::Group tThisChannelGroup = aParent->createGroup( fLabel );
@@ -221,7 +231,7 @@ namespace monarch
         return;
     }
 
-    void MChannelHeader::ReadFromHDF5( const H5::CommonFG* aParent, const std::string& aLabel )
+    void MChannelHeader::ReadFromHDF5( const H5::CommonFG* aParent, const std::string& aLabel ) const
     {
         MDEBUG( mlog, "Reading channel <" << aLabel << ">" );
         H5::Group tThisChannelGroup = aParent->openGroup( aLabel );
@@ -255,7 +265,7 @@ namespace monarch
             fTimestamp(),
             fDescription(),
             fChannelStreams(),
-            fRunHeaderGroup( NULL ),
+            fFile( NULL ),
             fStreamsGroup( NULL ),
             fChannelsGroup( NULL )
     {
@@ -295,30 +305,30 @@ namespace monarch
         return fNStreams++;
     }
 
-    void MHeader::WriteToHDF5( H5::CommonFG* aParent ) const
+    void MHeader::WriteToHDF5( H5::H5File* aFile )
     {
         try
         {
             MDEBUG( mlog, "Writing run header" );
-            fRunHeaderGroup = new H5::Group( aParent->createGroup( "/run" ) );
-            WriteScalarToHDF5( fRunHeaderGroup, "schema_version",   GetSchemaVersion() );
-            WriteScalarToHDF5( fRunHeaderGroup, "filename",         GetFilename() );
-            WriteScalarToHDF5( fRunHeaderGroup, "n_channels",       GetNChannels() );
-            WriteScalarToHDF5( fRunHeaderGroup, "n_streams",        GetNStreams() );
-            WriteScalarToHDF5( fRunHeaderGroup, "run_duration",     GetRunDuration() );
-            WriteScalarToHDF5( fRunHeaderGroup, "timestamp",        GetTimestamp() );
-            WriteScalarToHDF5( fRunHeaderGroup, "description",      GetDescription() );
-            Write1DToHDF5( fRunHeaderGroup, "channel_streams",  GetChannelStreams() );
+            fFile = aFile;
+            WriteScalarToHDF5( fFile, "schema_version",   GetSchemaVersion() );
+            WriteScalarToHDF5( fFile, "filename",         GetFilename() );
+            WriteScalarToHDF5( fFile, "n_channels",       GetNChannels() );
+            WriteScalarToHDF5( fFile, "n_streams",        GetNStreams() );
+            WriteScalarToHDF5( fFile, "run_duration",     GetRunDuration() );
+            WriteScalarToHDF5( fFile, "timestamp",        GetTimestamp() );
+            WriteScalarToHDF5( fFile, "description",      GetDescription() );
+            Write1DToHDF5( fFile, "channel_streams",  GetChannelStreams() );
 
             MDEBUG( mlog, "Writing stream headers" );
-            fStreamsGroup = new H5::Group( aParent->createGroup( "streams" ) );
+            fStreamsGroup = new H5::Group( fFile->createGroup( "streams" ) );
             for( unsigned iStream = 0; iStream < fNStreams; ++iStream )
             {
                 fStreamHeaders[ iStream ].WriteToHDF5( fStreamsGroup );
             }
 
             MDEBUG( mlog, "Writing channel headers" );
-            fChannelsGroup = new H5::Group( aParent->createGroup( "channels" ) );
+            fChannelsGroup = new H5::Group( fFile->createGroup( "channels" ) );
             for( unsigned iChan = 0; iChan < fNChannels; ++iChan )
             {
                 fChannelHeaders[ iChan ].WriteToHDF5( fChannelsGroup );
@@ -336,26 +346,26 @@ namespace monarch
         return;
     }
 
-    void MHeader::ReadFromHDF5( const H5::CommonFG* aParent )
+    void MHeader::ReadFromHDF5( const H5::H5File* aFile ) const
     {
         try
         {
             MDEBUG( mlog, "Reading run header" );
-            fRunHeaderGroup = new H5::Group( aParent->openGroup( "run" ) );
-            SetSchemaVersion( ReadScalarFromHDF5< string >( fRunHeaderGroup, string("schema_version") ) );
-            SetFilename( ReadScalarFromHDF5< string >( fRunHeaderGroup, "filename" ) );
-            SetNChannels( ReadScalarFromHDF5< unsigned >( fRunHeaderGroup, "n_channels" ) );
-            SetNStreams( ReadScalarFromHDF5< unsigned >( fRunHeaderGroup, "n_streams" ) );
-            SetRunDuration( ReadScalarFromHDF5< unsigned >( fRunHeaderGroup, "run_duration" ) );
-            SetTimestamp( ReadScalarFromHDF5< string >( fRunHeaderGroup, "timestamp" ) );
-            SetDescription( ReadScalarFromHDF5< string >( fRunHeaderGroup, "description" ) );
+            fFile = const_cast< H5::H5File* >( aFile );
+            SetSchemaVersion( ReadScalarFromHDF5< string >( fFile, string("schema_version") ) );
+            SetFilename( ReadScalarFromHDF5< string >( fFile, "filename" ) );
+            SetNChannels( ReadScalarFromHDF5< unsigned >( fFile, "n_channels" ) );
+            SetNStreams( ReadScalarFromHDF5< unsigned >( fFile, "n_streams" ) );
+            SetRunDuration( ReadScalarFromHDF5< unsigned >( fFile, "run_duration" ) );
+            SetTimestamp( ReadScalarFromHDF5< string >( fFile, "timestamp" ) );
+            SetDescription( ReadScalarFromHDF5< string >( fFile, "description" ) );
 
             fChannelStreams.clear();
-            Read1DFromHDF5< std::vector< unsigned > >( fRunHeaderGroup, "channel_streams", fChannelStreams );
+            //Read1DFromHDF5< std::vector< unsigned > >( fFile, "channel_streams", fChannelStreams );
 
             MDEBUG( mlog, "Reading stream headers" );
             fStreamHeaders.clear();
-            fStreamsGroup = new H5::Group( aParent->openGroup( "streams" ) );
+            fStreamsGroup = new H5::Group( fFile->openGroup( "streams" ) );
             hsize_t nStreams = fStreamsGroup->getNumObjs();
             if( nStreams != fNStreams )
             {
@@ -370,7 +380,7 @@ namespace monarch
 
             MDEBUG( mlog, "Reading channel headers" );
             fChannelHeaders.clear();
-            fChannelsGroup = new H5::Group( aParent->openGroup( "channels" ) );
+            fChannelsGroup = new H5::Group( fFile->openGroup( "channels" ) );
             hsize_t nChannels = fChannelsGroup->getNumObjs();
             for( hsize_t iChan = 0; iChan < nChannels; ++iChan )
             {
@@ -399,6 +409,8 @@ std::ostream& operator<<( std::ostream& out, const monarch::MStreamHeader& hdr )
     out << "\tData Type Size: " << hdr.GetDataTypeSize() << " bytes\n";
     out << "\tData Format: " << hdr.GetDataFormat() << '\n';
     out << "\tBit Depth: " << hdr.GetBitDepth() << " bits\n";
+    out << "\tNumber of Acquisitions: " << hdr.GetNAcquisitions() << '\n';
+    out << "\tNumber of Records: " << hdr.GetNRecords() << '\n';
     return out;
 }
 
@@ -430,17 +442,17 @@ std::ostream& operator<<( std::ostream& out, const monarch::MHeader& hdr )
     out << "\tNumber of Channels: " << hdr.GetNChannels() << "\n";
     out << "\tNumber of Streams: " << hdr.GetNStreams() << "\n";
     out << "\tChannel-to-stream mapping:\n";
-    for( unsigned iChan = 0; iChan < hdr.GetNChannels(); ++iChan )
+    for( unsigned iChan = 0; iChan < hdr.GetChannelStreams().size(); ++iChan )
     {
         out << "\t\tChannel " << iChan << " --> Stream " << hdr.GetChannelStreams()[ iChan ] << "\n";
     }
     out << "\tStream headers:\n";
-    for( unsigned iStream = 0; iStream < hdr.GetNStreams(); ++iStream )
+    for( unsigned iStream = 0; iStream < hdr.GetStreamHeaders().size(); ++iStream )
     {
         out << hdr.GetStreamHeaders()[ iStream ];
     }
     out << "\tChannel headers:\n";
-    for( unsigned iChan = 0; iChan < hdr.GetNChannels(); ++iChan )
+    for( unsigned iChan = 0; iChan < hdr.GetChannelHeaders().size(); ++iChan )
     {
         out << hdr.GetChannelHeaders()[ iChan ];
     }
