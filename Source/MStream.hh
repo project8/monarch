@@ -52,7 +52,7 @@ namespace monarch
             const MRecord* GetChannelRecord( unsigned aChannel ) const;
 
             /// Read the next record from the file
-            bool ReadRecord() const;
+            bool ReadRecord( int anOffset = 0 ) const;
 
             /// Close the file
             void Close() const;
@@ -86,8 +86,10 @@ namespace monarch
             unsigned GetNChannels() const              { return fNChannels;       }
             unsigned GetNAcquisitions() const          { return fNAcquisitions;   }
             AcquisitionIdType GetAcquisitionId() const { return fAcquisitionId;   }
-            unsigned GetRecordCount() const            { return fRecordCount;     }
+            unsigned GetRecordCountInAcq() const       { return fRecordCountInAcq; }
             unsigned GetNRecordsInAcquisition() const  { return fNRecordsInAcq;   }
+            unsigned GetRecordCountInFile() const      { return fRecordCountInFile; }
+            unsigned GetNRecordsInFile() const         { return fNRecordsInFile;  }
             bool GetIsInterleaved() const              { return fDataInterleaved; }
 
             /// Access format can be changed during read or write; must call Initialize() after this
@@ -122,13 +124,19 @@ namespace monarch
             mutable unsigned fNAcquisitions;
             mutable AcquisitionIdType fAcquisitionId;
 
-            mutable unsigned fRecordCount;
+            mutable unsigned fRecordCountInAcq;
             mutable unsigned fNRecordsInAcq;
 
             mutable bool fDataInterleaved;
             mutable MultiChannelFormatType fAccessFormat;
 
+            mutable std::vector< std::pair< unsigned, unsigned > > fRecordIndex;
+            mutable unsigned fRecordCountInFile;
+            mutable unsigned fNRecordsInFile;
+
         private:
+            void BuildIndex() const; // for reading
+
             void FinalizeCurrentAcq(); // for writing
             void FinalizeStream(); // for writing
 
