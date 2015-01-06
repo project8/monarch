@@ -28,26 +28,33 @@ namespace monarch
                 kWrite
             };
 
+        private:
+            typedef void (MStream::*DoReadRecordFunc)() const;
+            typedef void (MStream::*DoWriteRecordFunc)();
+
         public:
-            MStream( const MStreamHeader& aHeader, H5::CommonFG* aH5StreamParentLoc );
+            MStream( const MStreamHeader& aHeader, H5::CommonFG* aH5StreamParentLoc, MultiChannelFormatType aAccessFormat = sSeparate );
             virtual ~MStream();
 
             MEMBERVARIABLE( Mode, Mode );
 
+            /// Setup to read/write data (called in constructor; only call this if read/write parameters change during file reading)
+            void Initialize() const;
 
             //********************************
             // methods for reading (all const)
             //********************************
 
         public:
-            // get the pointer to the stream record
+            /// Get the pointer to the stream record
             const MRecord* GetStreamRecord() const;
-            // get the pointer to a particular channel record
+            /// Get the pointer to a particular channel record
             const MRecord* GetChannelRecord( unsigned aChannel ) const;
 
-            // read the next record from the file
+            /// Read the next record from the file
             bool ReadRecord() const;
 
+            /// Close the file
             void Close() const;
 
 
@@ -56,34 +63,47 @@ namespace monarch
             //*********************************
 
         public:
-            // get the pointer to the stream record
+            /// Get the pointer to the stream record
             MRecord* GetStreamRecord();
-            // get the pointer to a particular channel record
+            /// Get the pointer to a particular channel record
             MRecord* GetChannelRecord( unsigned aChannel );
 
-            // write the record contents to the file
+            /// Write the record contents to the file
             bool WriteRecord( bool aIsNewAcquisition );
 
+            /// Close the file
             void Close();
 
 
         public:
-            unsigned GetDataTypeSize() const           { return fDataTypeSize;  }
-            unsigned GetStreamRecordNBytes() const     { return fStrRecNBytes;  }
-            unsigned GetSreamRecordSize() const        { return fStrRecSize;    }
-            unsigned GetChannelRecordNBytes() const    { return fChanRecNBytes; }
-            unsigned GetChannelRecordSize() const      { return fChanRecSize;   }
-            unsigned GetNChannels() const              { return fNChannels;     }
-            unsigned GetNAcquisitions() const          { return fNAcquisitions; }
-            AcquisitionIdType GetAcquisitionId() const { return fAcquisitionId; }
-            unsigned GetRecordCount() const            { return fRecordCount;   }
-            unsigned GetNRecordsInAcquisition() const  { return fNRecordsInAcq; }
-            bool GetIsInterleaved() const              { return fInterleaved;   }
+            bool GetIsInitialized() const              { return fIsInitialized;   }
+            bool GetRecordsAccessed() const            { return fRecordsAccessed; }
+            unsigned GetDataTypeSize() const           { return fDataTypeSize;    }
+            unsigned GetStreamRecordNBytes() const     { return fStrRecNBytes;    }
+            unsigned GetSreamRecordSize() const        { return fStrRecSize;      }
+            unsigned GetChannelRecordNBytes() const    { return fChanRecNBytes;   }
+            unsigned GetChannelRecordSize() const      { return fChanRecSize;     }
+            unsigned GetNChannels() const              { return fNChannels;       }
+            unsigned GetNAcquisitions() const          { return fNAcquisitions;   }
+            AcquisitionIdType GetAcquisitionId() const { return fAcquisitionId;   }
+            unsigned GetRecordCount() const            { return fRecordCount;     }
+            unsigned GetNRecordsInAcquisition() const  { return fNRecordsInAcq;   }
+            bool GetIsInterleaved() const              { return fDataInterleaved; }
+
+            /// Access format can be changed during read or write; must call Initialize() after this
+            void SetAccessFormat( MultiChannelFormatType aFormat ) const;
+            MultiChannelFormatType GetAccessFormat() const { return fAccessFormat; }
 
         private:
-            void ZipChannels(); // for writing
-            void UnzipChannels() const; // for reading
+            void ReadRecordInterleavedToSeparate() const;
+            void ReadRecordAsIs() const;
+            mutable DoReadRecordFunc fDoReadRecord;
 
+            void WriteRecordSeparateToInterleaved();
+            void WriteRecordAsIs();
+            mutable DoWriteRecordFunc fDoWriteRecord;
+
+            mutable bool fIsInitialized;
             mutable bool fRecordsAccessed;
 
             mutable unsigned fDataTypeSize;
@@ -105,17 +125,20 @@ namespace monarch
             mutable unsigned fRecordCount;
             mutable unsigned fNRecordsInAcq;
 
-            mutable bool fInterleaved;
+            mutable bool fDataInterleaved;
+            mutable MultiChannelFormatType fAccessFormat;
 
         private:
             void FinalizeCurrentAcq(); // for writing
             void FinalizeStream(); // for writing
 
+            mutable char fAcqNameBuffer[ 10 ];
+
             mutable H5::Group* fH5StreamParentLoc;
             mutable H5::Group* fH5AcqLoc;
             mutable H5::DataSet* fH5CurrentAcqDataSet;
 
-            mutable char fAcqNameBuffer[ 10 ];
+            mutable H5::DataSpace* fH5DataSpaceUser;
 
             mutable H5::DataType fDataTypeInFile;
             mutable H5::DataType fDataTypeUser;
@@ -126,6 +149,7 @@ namespace monarch
             mutable hsize_t fMaxDataDims[ N_DATA_DIMS ];
             mutable hsize_t fDataChunkDims[ N_DATA_DIMS ];
             mutable hsize_t fDataOffset[ N_DATA_DIMS ];
+            mutable hsize_t fDataStride[ N_DATA_DIMS ];
 
     };
 

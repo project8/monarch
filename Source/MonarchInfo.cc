@@ -68,21 +68,26 @@ int main( const int argc, const char** argv )
                 continue;
             }
 
-            tStream->ReadRecord();
-
-            const unsigned tMaxSamples = 30;
-            for( unsigned iChan = 0; iChan < tNChannels; ++iChan )
+            const unsigned tMaxRecords = 2;
+            for( unsigned iRec = 0; iRec < tMaxRecords; ++iRec )
             {
-                const byte_type* tData = tStream->GetChannelRecord( iChan )->GetData();
-                stringstream tDataOut;
-                for( unsigned iSample = 0; iSample < std::min( tMaxSamples, tRecSize ); ++iSample )
+                tStream->ReadRecord();
+
+                const unsigned tMaxSamples = 30;
+                for( unsigned iChan = 0; iChan < tNChannels; ++iChan )
                 {
-                    tDataOut << (unsigned)tData[ iSample ];
-                    if( iSample != tRecSize - 1 ) tDataOut << ", ";
+                    const byte_type* tData = tStream->GetChannelRecord( iChan )->GetData();
+                    stringstream tDataOut;
+                    for( unsigned iSample = 0; iSample < std::min( tMaxSamples, tRecSize ); ++iSample )
+                    {
+                        tDataOut << (unsigned)tData[ iSample ];
+                        if( iSample != tRecSize - 1 ) tDataOut << ", ";
+                    }
+                    if( tRecSize > tMaxSamples ) tDataOut << " . . .";
+                    MINFO( mlog, "\tChannel " << iChan << ": " << tDataOut.str() );
                 }
-                if( tRecSize > tMaxSamples ) tDataOut << " . . .";
-                MINFO( mlog, "\tChannel " << iChan << ": " << tDataOut.str() );
             }
+
         }
 
         /*

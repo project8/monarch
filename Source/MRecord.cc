@@ -38,12 +38,19 @@ namespace monarch
     MRecord::~MRecord()
     {
         std::cout << "deleting record at " << this << std::endl;
-        if( fOwnsData && fData != NULL ) delete [] fData;
+        ClearData();
+    }
+
+    void MRecord::SetData()
+    {
+        ClearData();
+        fOwnsData = true;
+        return;
     }
 
     void MRecord::SetData( unsigned aNBytes )
     {
-        if( fOwnsData ) delete [] fData;
+        ClearData();
         fOwnsData = true;
         fData = new byte_type[ aNBytes ];
         return;
@@ -51,9 +58,16 @@ namespace monarch
 
     void MRecord::SetData( byte_type* aDataPtr )
     {
-        if( fOwnsData ) delete [] fData;
+        ClearData();
         fOwnsData = false;
         fData = aDataPtr;
+        return;
+    }
+
+    void MRecord::ClearData()
+    {
+        if( fOwnsData && fData != NULL ) delete [] fData;
+        fData = NULL;
         return;
     }
 

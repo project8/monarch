@@ -33,10 +33,11 @@ namespace monarch
 {
     MLOGGER( mlog, "MStream" );
 
-    MStream::MStream( const MStreamHeader& aHeader, H5::CommonFG* aH5StreamsLoc ) :
+    MStream::MStream( const MStreamHeader& aHeader, H5::CommonFG* aH5StreamsLoc, MultiChannelFormatType aAccessFormat ) :
             fMode( kRead ),
             fAcquisitionId( 0 ),
             fNAcquisitions( 0 ),
+            fIsInitialized( false ),
             fRecordsAccessed( false ),
             fDataTypeSize( aHeader.GetDataTypeSize() ),
             fStrRecNBytes( aHeader.GetNChannels() * aHeader.GetRecordSize() * aHeader.GetDataTypeSize() ),
@@ -48,13 +49,18 @@ namespace monarch
             fChannelRecords( new MRecord[ aHeader.GetNChannels() ] ),
             fRecordCount( 0 ),
             fNRecordsInAcq( 0 ),
-            fInterleaved( aHeader.GetChannelFormat() == sInterleaved ),
+            fDataInterleaved( aHeader.GetChannelFormat() == sInterleaved ),
+            fAccessFormat( aAccessFormat ),
+            fDoReadRecord( NULL ),
+            fDoWriteRecord( NULL ),
             fH5StreamParentLoc( new H5::Group( aH5StreamsLoc->openGroup( aHeader.GetLabel() ) ) ),
             fH5AcqLoc( NULL ),
-            fH5CurrentAcqDataSet( NULL )
+            fH5CurrentAcqDataSet( NULL ),
+            fH5DataSpaceUser( NULL )
     {
         MDEBUG( mlog, "Creating stream for <" << aHeader.GetLabel() << ">" );
         std::cout << "stream record at: " << &fStreamRecord << std::endl;
+
         for( unsigned iChan = 0; iChan < fNChannels; ++iChan )
         {
             std::cout << "channel " << iChan << " record at: " << &(fChannelRecords[iChan]) << std::endl;
@@ -100,13 +106,6 @@ namespace monarch
             }
         }
 
-        // Arrays for HDF5 file reading/writing
-        fDataDims[ 0 ] = 1; fDataDims[ 1 ] = fStrRecSize;
-        fMaxDataDims[ 0 ] = H5S_UNLIMITED; fMaxDataDims[ 1 ] = fStrRecSize;
-        fDataChunkDims[ 0 ] = 1; fDataChunkDims[ 1 ] = fStrRecSize;
-        fDataDims1Rec[ 0 ] = 1; fDataDims1Rec[ 1 ] = fStrRecSize;
-        fDataOffset[ 0 ] = 0; fDataOffset[ 1 ] = 0;
-
         // Determine if we're in read or write mode
         // and get/create the acquisitions group
         // Nested exceptions are used so that the outer try block can be used to determine whether we're reading or writing
@@ -140,40 +139,83 @@ namespace monarch
             }
         }
 
-        // Allocate the stream record
-        fStreamRecord.SetData( fStrRecNBytes );
-
-        // do channel records need their own memory allocation?
-        // if single channel, or multiple channels in separate mode, then no; channel record data pointers point to the stream pointer
-        // if multiple channels in interleaved mode, then yes; channel record data get their own memory
-        if( fNChannels == 1 || ! fInterleaved )
-        {
-            byte_type* tChanDataPtr = fStreamRecord.GetData();
-            for( unsigned iChan = 0; iChan < fNChannels; ++iChan )
-            {
-                fChannelRecords[ iChan ].SetData( tChanDataPtr + fChanRecNBytes*iChan );
-            }
-        }
-        else // multiple channels in interleaved mode
-        {
-            for( unsigned iChan = 0; iChan < fNChannels; ++iChan )
-            {
-                fChannelRecords[ iChan ].SetData( fChanRecNBytes );
-            }
-        }
-
+        Initialize();
     }
 
     MStream::~MStream()
     {
-        delete fH5CurrentAcqDataSet;
-        fH5CurrentAcqDataSet = NULL;
-        delete fH5AcqLoc;
-        fH5AcqLoc = NULL;
-        delete fH5StreamParentLoc;
-        fH5StreamParentLoc = NULL;
+        delete fH5DataSpaceUser; fH5DataSpaceUser = NULL;
+        delete fH5CurrentAcqDataSet; fH5CurrentAcqDataSet = NULL;
+        delete fH5AcqLoc; fH5AcqLoc = NULL;
+        delete fH5StreamParentLoc; fH5StreamParentLoc = NULL;
 
         delete [] fChannelRecords;
+    }
+
+    void MStream::Initialize() const
+    {
+        MDEBUG( mlog, "Initializing stream" );
+        fIsInitialized = false;
+
+        // The case where the access format is separate, but the data in the file is interleaved is special.
+        // In this case, the stream record memory is not used.
+        // Reading and writing is done directly from the channel records using HDF5's interleaving capabilities.
+        if( fAccessFormat == sSeparate && fDataInterleaved && fNChannels != 1 )
+        {
+            // no memory is allocated for the stream record
+            fStreamRecord.SetData();
+
+            // allocate memory for each channel record
+            for( unsigned iChan = 0; iChan < fNChannels; ++iChan )
+            {
+                fChannelRecords[ iChan ].SetData( fChanRecNBytes );
+            }
+
+            // set the read/write functions to the special versions
+            fDoReadRecord = &MStream::ReadRecordInterleavedToSeparate;
+            fDoWriteRecord = &MStream::WriteRecordSeparateToInterleaved;
+
+            // Arrays for HDF5 file reading/writing
+            fDataDims[ 0 ] = 1;                 fDataDims[ 1 ] = fChanRecSize;
+            fMaxDataDims[ 0 ] = H5S_UNLIMITED;  fMaxDataDims[ 1 ] = fChanRecSize;
+            fDataChunkDims[ 0 ] = 1;            fDataChunkDims[ 1 ] = fStrRecSize; // chunks read from disk should still be the full stream record size
+            fDataDims1Rec[ 0 ] = 1;             fDataDims1Rec[ 1 ] = fChanRecSize;
+            fDataOffset[ 0 ] = 0;               fDataOffset[ 1 ] = 0;
+            fDataStride[ 0 ] = 0;               fDataStride[ 1 ] = 1;
+
+            fIsInitialized = true;
+            return;
+        }
+
+        // allocate stream record memory
+        fStreamRecord.SetData( fStrRecNBytes );
+
+        // channel records point to portions of the stream record and do not own their own data
+        byte_type* tChanDataPtr = fStreamRecord.GetData();
+        for( unsigned iChan = 0; iChan < fNChannels; ++iChan )
+        {
+            fChannelRecords[ iChan ].SetData( tChanDataPtr + fChanRecNBytes*iChan );
+        }
+
+        // set the read/write functions to the general versions
+        fDoReadRecord = &MStream::ReadRecordAsIs;
+        fDoWriteRecord = &MStream::WriteRecordAsIs;
+
+        // Arrays for HDF5 file reading/writing
+        fDataDims[ 0 ] = 1;                 fDataDims[ 1 ] = fStrRecSize;
+        fMaxDataDims[ 0 ] = H5S_UNLIMITED;  fMaxDataDims[ 1 ] = fStrRecSize;
+        fDataChunkDims[ 0 ] = 1;            fDataChunkDims[ 1 ] = fStrRecSize;
+        fDataDims1Rec[ 0 ] = 1;             fDataDims1Rec[ 1 ] = fStrRecSize;
+        fDataOffset[ 0 ] = 0;               fDataOffset[ 1 ] = 0;
+        fDataStride[ 0 ] = 0;               fDataStride[ 1 ] = 0;
+
+        // HDF5 object initialization
+        delete fH5DataSpaceUser;
+        fH5DataSpaceUser = new H5::DataSpace( N_DATA_DIMS, fDataDims1Rec, NULL );
+
+
+        fIsInitialized = true;
+        return;
     }
 
     const MRecord* MStream::GetStreamRecord() const
@@ -192,6 +234,8 @@ namespace monarch
 
     bool MStream::ReadRecord() const
     {
+        if( ! fIsInitialized ) Initialize();
+
         ++fRecordCount;
         if( fRecordCount == fNRecordsInAcq || fH5CurrentAcqDataSet == NULL )
         {
@@ -216,15 +260,11 @@ namespace monarch
 
         fDataOffset[ 0 ] = fRecordCount;
 
-        H5::DataSpace readSpace( N_DATA_DIMS, fDataDims1Rec, NULL );
-        H5::DataSpace fileSpace = fH5CurrentAcqDataSet->getSpace();
-        fileSpace.selectHyperslab( H5S_SELECT_SET, fDataDims1Rec, fDataOffset );
-        fH5CurrentAcqDataSet->read( fStreamRecord.GetData(), fDataTypeUser, readSpace, fileSpace );
-
-        if( fInterleaved )
-        {
-            UnzipChannels();
-        }
+        (this->*fDoReadRecord)();
+        //H5::DataSpace readSpace( N_DATA_DIMS, fDataDims1Rec, NULL );
+        //H5::DataSpace fileSpace = fH5CurrentAcqDataSet->getSpace();
+        //fileSpace.selectHyperslab( H5S_SELECT_SET, fDataDims1Rec, fDataOffset );
+        //fH5CurrentAcqDataSet->read( fStreamRecord.GetData(), fDataTypeUser, readSpace, fileSpace );
 
         return true;
     }
@@ -233,12 +273,10 @@ namespace monarch
     {
         MDEBUG( mlog, "const MStream::Close()" );
 
-        delete fH5CurrentAcqDataSet;
-        fH5CurrentAcqDataSet = NULL;
-        delete fH5AcqLoc;
-        fH5AcqLoc = NULL;
-        delete fH5StreamParentLoc;
-        fH5StreamParentLoc = NULL;
+        delete fH5DataSpaceUser; fH5DataSpaceUser = NULL;
+        delete fH5CurrentAcqDataSet; fH5CurrentAcqDataSet = NULL;
+        delete fH5AcqLoc; fH5AcqLoc = NULL;
+        delete fH5StreamParentLoc; fH5StreamParentLoc = NULL;
 
         return;
     }
@@ -262,6 +300,8 @@ namespace monarch
     {
         // note: fRecordCount is used to keep track of the number of records written in each acquisition;
         //       fNRecordsInAcq is only valid for the last completed acquisition.
+
+        if( ! fIsInitialized ) Initialize();
 
         try
         {
@@ -290,18 +330,13 @@ namespace monarch
 
             MDEBUG( mlog, "Writing acq. " << fAcquisitionId << ", record " << fRecordCount );
 
-            // Write data in stream record to disk
-            if( fInterleaved )
-            {
-                ZipChannels();
-            }
-
             fDataOffset[ 0 ] = fRecordCount;
 
-            H5::DataSpace writeSpace( N_DATA_DIMS, fDataDims1Rec, NULL );
-            H5::DataSpace fileSpace = fH5CurrentAcqDataSet->getSpace();
-            fileSpace.selectHyperslab( H5S_SELECT_SET, fDataDims1Rec, fDataOffset );
-            fH5CurrentAcqDataSet->write( fStreamRecord.GetData(), fDataTypeUser, writeSpace, fileSpace );
+            (this->*fDoWriteRecord)();
+            //H5::DataSpace writeSpace( N_DATA_DIMS, fDataDims1Rec, NULL );
+            //H5::DataSpace fileSpace = fH5CurrentAcqDataSet->getSpace();
+            //fileSpace.selectHyperslab( H5S_SELECT_SET, fDataDims1Rec, fDataOffset );
+            //fH5CurrentAcqDataSet->write( fStreamRecord.GetData(), fDataTypeUser, writeSpace, fileSpace );
 
             ++fRecordCount;
             return true;
@@ -323,23 +358,59 @@ namespace monarch
         MDEBUG( mlog, "non-const MStream::Close()" );
         FinalizeStream();
 
-        delete fH5CurrentAcqDataSet;
-        fH5CurrentAcqDataSet = NULL;
-        delete fH5AcqLoc;
-        fH5AcqLoc = NULL;
-        delete fH5StreamParentLoc;
-        fH5StreamParentLoc = NULL;
+        delete fH5DataSpaceUser; fH5DataSpaceUser = NULL;
+        delete fH5CurrentAcqDataSet; fH5CurrentAcqDataSet = NULL;
+        delete fH5AcqLoc; fH5AcqLoc = NULL;
+        delete fH5StreamParentLoc; fH5StreamParentLoc = NULL;
 
         return;
     }
 
-    void MStream::ZipChannels()
+    void MStream::SetAccessFormat( MultiChannelFormatType aFormat ) const
     {
+        fAccessFormat = aFormat;
+        fIsInitialized = false;
         return;
     }
 
-    void MStream::UnzipChannels() const
+    void MStream::ReadRecordInterleavedToSeparate() const
     {
+        H5::DataSpace tDataSpaceInFile = fH5CurrentAcqDataSet->getSpace();
+        for( unsigned iChan = 0; iChan < fNChannels; ++iChan )
+        {
+            fDataOffset[ 1 ] = iChan;
+            tDataSpaceInFile.selectHyperslab( H5S_SELECT_SET, fDataDims1Rec, fDataOffset, fDataStride );
+            fH5CurrentAcqDataSet->read( fChannelRecords[ iChan ].GetData(), fDataTypeUser, *fH5DataSpaceUser, tDataSpaceInFile );
+        }
+        return;
+    }
+
+    void MStream::ReadRecordAsIs() const
+    {
+        H5::DataSpace tDataSpaceInFile = fH5CurrentAcqDataSet->getSpace();
+        tDataSpaceInFile.selectHyperslab( H5S_SELECT_SET, fDataDims1Rec, fDataOffset );
+        fH5CurrentAcqDataSet->read( fStreamRecord.GetData(), fDataTypeUser, *fH5DataSpaceUser, tDataSpaceInFile );
+        return;
+    }
+
+    void MStream::WriteRecordSeparateToInterleaved()
+    {
+        H5::DataSpace tDataSpaceInFile = fH5CurrentAcqDataSet->getSpace();
+        for( unsigned iChan = 0; iChan < fNChannels; ++iChan )
+        {
+            fDataOffset[ 1 ] = iChan;
+            tDataSpaceInFile.selectHyperslab( H5S_SELECT_SET, fDataDims1Rec, fDataOffset, fDataStride );
+            fH5CurrentAcqDataSet->write( fChannelRecords[ iChan ].GetData(), fDataTypeUser, *fH5DataSpaceUser, tDataSpaceInFile );
+        }
+        return;
+    }
+
+    void MStream::WriteRecordAsIs()
+    {
+        //H5::DataSpace writeSpace( N_DATA_DIMS, fDataDims1Rec, NULL );
+        H5::DataSpace tDataSpaceInFile = fH5CurrentAcqDataSet->getSpace();
+        tDataSpaceInFile.selectHyperslab( H5S_SELECT_SET, fDataDims1Rec, fDataOffset );
+        fH5CurrentAcqDataSet->write( fStreamRecord.GetData(), fDataTypeUser, *fH5DataSpaceUser, tDataSpaceInFile );
         return;
     }
 

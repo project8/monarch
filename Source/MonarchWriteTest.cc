@@ -57,7 +57,7 @@ int main( const int argc, const char** argv )
         }
         tSingleStream->WriteRecord( false );
 
-/*
+
         // Stream 1
         MStream* tDoubleStream = tWriteTest->GetStream( tDoubleStreamNum );
         byte_type* tDSData0 = tDoubleStream->GetChannelRecord( 0 )->GetData();
@@ -75,8 +75,8 @@ int main( const int argc, const char** argv )
             tDSData1[ iSample ] = 20;
         }
         tDoubleStream->WriteRecord( true );
-*/
-/*
+
+
         // Stream 2
         MStream* tTripleStream = tWriteTest->GetStream( tTripleStreamNum );
         byte_type* tTSData0 = tTripleStream->GetChannelRecord( 0 )->GetData();
@@ -97,7 +97,7 @@ int main( const int argc, const char** argv )
             tTSData2[ iSample ] = 30;
         }
         tTripleStream->WriteRecord( false );
-*/
+
 
 
     /*

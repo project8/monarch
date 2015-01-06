@@ -23,8 +23,15 @@ namespace monarch
             const byte_type* GetData() const;
             byte_type* GetData();
 
+            /// Allocate no memory for the record; data pointer is to NULL
+            void SetData();
+            /// Allocate aNBytes of memory for the record
             void SetData( unsigned aNBytes );
+            /// Do not allocate memory for the record; instead point to someone else's memory.
+            /// Warning: if the memory pointed to is de-allocated, use of this record should be discontinued
             void SetData( byte_type* aDataPtr );
+
+            void ClearData();
 
         private:
             byte_type* fData;
