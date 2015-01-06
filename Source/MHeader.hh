@@ -140,7 +140,7 @@ namespace monarch
             MHeader();
             ~MHeader();
 
-            MMEMBERVARIABLEREF( std::string, SchemaVersion );
+            MMEMBERVARIABLEREF( std::string, EggVersion );
 
             MMEMBERVARIABLEREF( std::string, Filename );
 

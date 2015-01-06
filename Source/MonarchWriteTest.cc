@@ -20,7 +20,6 @@ int main( const int argc, const char** argv )
         Monarch* tWriteTest = Monarch::OpenForWriting( argv[1] );
 
         MHeader* tHeader = tWriteTest->GetHeader();
-        tHeader->SetSchemaVersion( "???" );
         tHeader->SetFilename( argv[1] );
         tHeader->SetRunDuration( 8675309 );
         tHeader->SetTimestamp( "Stardate 33515" );

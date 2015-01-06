@@ -1,13 +1,13 @@
 /*
- * MonarchVersion.cpp
+ * MVersion.cpp
  *
  *  Created on: Mar 21, 2014
  *      Author: nsoblath
  */
 
-#include "MonarchVersion.hpp"
+#include "MVersion.hh"
 
-#include "MonarchLogger.hpp"
+#include "MLogger.hh"
 
 #include <sstream>
 
@@ -15,48 +15,56 @@ namespace monarch
 {
     MLOGGER( mlog, "Version" );
 
-    char MonarchVersion::sDelimeter = '.';
+    char MVersion::sDelimeter = '.';
 
-    MonarchVersion::MonarchVersion() :
-            fMajorVer( 0 ),
-            fMinorVer( 0 ),
-            fRevision( 0 ),
-            fVersion()
+    MVersion::MVersion() :
+            fMajorVer( Monarch_VERSION_MAJOR ),
+            fMinorVer( Monarch_VERSION_MINOR ),
+            fRevision( Monarch_REVISION ),
+            fVersion(),
+            fEggVersion( TOSTRING(Egg_VERSION) )
     {
+        Combine( fMajorVer, fMinorVer, fRevision );
     }
 
-    MonarchVersion::MonarchVersion( const std::string& aVer ) :
+    MVersion::MVersion( const std::string& aVer ) :
                     fMajorVer( 0 ),
                     fMinorVer( 0 ),
                     fRevision( 0 ),
-                    fVersion()
+                    fVersion(),
+                    fEggVersion( TOSTRING(Egg_VERSION) )
     {
         Parse( aVer );
     }
 
-    MonarchVersion::~MonarchVersion()
+    MVersion::~MVersion()
     {
     }
 
-    unsigned MonarchVersion::MajorVersion() const
+    unsigned MVersion::MajorVersion() const
     {
         return fMajorVer;
     }
-    unsigned MonarchVersion::MinorVersion() const
+    unsigned MVersion::MinorVersion() const
     {
         return fMinorVer;
     }
-    unsigned MonarchVersion::Revision() const
+    unsigned MVersion::Revision() const
     {
         return fRevision;
     }
 
-    const std::string& MonarchVersion::VersionStr() const
+    const std::string& MVersion::VersionStr() const
     {
         return fVersion;
     }
 
-    bool MonarchVersion::Parse( const std::string& aVer )
+    const std::string& MVersion::EggVersion() const
+    {
+        return fEggVersion;
+    }
+
+    bool MVersion::Parse( const std::string& aVer )
     {
         if( aVer == "unknown" )
         {
@@ -96,7 +104,7 @@ namespace monarch
         return true;
     }
 
-    bool MonarchVersion::Combine( unsigned aMajVer, unsigned aMinVer, unsigned aRev )
+    bool MVersion::Combine( unsigned aMajVer, unsigned aMinVer, unsigned aRev )
     {
         std::stringstream tVerStr;
         tVerStr << aMajVer << sDelimeter << aMinVer << sDelimeter << aRev;

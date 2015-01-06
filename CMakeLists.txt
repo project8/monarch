@@ -12,6 +12,9 @@ cmake_policy (SET CMP0011 NEW)
 
 include_directories( BEFORE ${PROJECT_SOURCE_DIR}/Source )
 
+# Egg file version
+set( Egg_VERSION "3.0.0b" )
+
 
 ########################
 # monarch dependencies #
@@ -71,6 +74,7 @@ set( MONARCHCORE_SOURCEFILES
     Source/MMonarch.cc
     Source/MRecord.cc
     Source/MStream.cc
+    Source/MVersion.cc
 )
 
 configure_file( Source/MVersion.hh.in ${CMAKE_CURRENT_BINARY_DIR}/MVersion.hh )

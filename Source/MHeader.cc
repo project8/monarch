@@ -9,6 +9,7 @@
 
 #include "MIToA.hh"
 #include "MLogger.hh"
+#include "MVersion.hh"
 
 #include <cstdlib> // for atol in parsing timestamp
 
@@ -257,7 +258,7 @@ namespace monarch
     //*********************
 
     MHeader::MHeader() :
-            fSchemaVersion(),
+            fEggVersion( TOSTRING(Egg_VERSION) ),
             fFilename(),
             fNChannels( 0 ),
             fNStreams( 0 ),
@@ -311,7 +312,7 @@ namespace monarch
         {
             MDEBUG( mlog, "Writing run header" );
             fFile = aFile;
-            WriteScalarToHDF5( fFile, "schema_version",   GetSchemaVersion() );
+            WriteScalarToHDF5( fFile, "egg_version",   GetEggVersion() );
             WriteScalarToHDF5( fFile, "filename",         GetFilename() );
             WriteScalarToHDF5( fFile, "n_channels",       GetNChannels() );
             WriteScalarToHDF5( fFile, "n_streams",        GetNStreams() );
@@ -352,7 +353,7 @@ namespace monarch
         {
             MDEBUG( mlog, "Reading run header" );
             fFile = const_cast< H5::H5File* >( aFile );
-            SetSchemaVersion( ReadScalarFromHDF5< string >( fFile, string("schema_version") ) );
+            SetEggVersion( ReadScalarFromHDF5< string >( fFile, string("egg_version") ) );
             SetFilename( ReadScalarFromHDF5< string >( fFile, "filename" ) );
             SetNChannels( ReadScalarFromHDF5< uint32_t >( fFile, "n_channels" ) );
             SetNStreams( ReadScalarFromHDF5< uint32_t >( fFile, "n_streams" ) );
@@ -434,7 +435,7 @@ std::ostream& operator<<( std::ostream& out, const monarch::MChannelHeader& hdr 
 std::ostream& operator<<( std::ostream& out, const monarch::MHeader& hdr )
 {
     out << "Monarch Header Content:\n";
-    out << "\tSchema Version: " << hdr.GetSchemaVersion() << "\n";
+    out << "\tEgg Version: " << hdr.GetEggVersion() << "\n";
     out << "\tFilename: " << hdr.GetFilename() << "\n";
     out << "\tRun Duration: " << hdr.GetRunDuration() << " ms\n";
     out << "\tTimestamp: " << hdr.GetTimestamp() << "\n";

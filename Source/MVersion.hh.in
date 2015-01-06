@@ -18,6 +18,8 @@
 #define Monarch_VERSION @Monarch_VERSION@
 #define Monarch_FULL_VERSION @Monarch_FULL_VERSION@
 
+#define Egg_VERSION @Egg_VERSION@
+
 #define Monarch_GIT_COMMIT @Monarch_GIT_COMMIT@
 #define Monarch_GIT_DESCRIBE @Monarch_GIT_DESCRIBE@
 
@@ -40,6 +42,8 @@ namespace monarch
             
             bool Combine( unsigned aMajVer, unsigned aMinVer, unsigned aRev );
             
+            const std::string& EggVersion() const;
+            
         private:
             static char sDelimeter;
         
@@ -47,6 +51,8 @@ namespace monarch
             unsigned fMinorVer;
             unsigned fRevision;
             std::string fVersion;
+            
+            std::string fEggVersion;
     };
 }
 
