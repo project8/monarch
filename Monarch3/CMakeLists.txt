@@ -49,6 +49,9 @@ pbuilder_install_libraries( Monarch3 )
 add_executable( Monarch3Info Monarch3Info.cc )
 target_link_libraries( Monarch3Info Monarch3 ${EXTERNAL_LIBRARIES})
 
+add_executable( Monarch3ReadTest Monarch3ReadTest.cc )
+target_link_libraries( Monarch3ReadTest Monarch3 ${EXTERNAL_LIBRARIES})
+
 add_executable( Monarch3WriteTest Monarch3WriteTest.cc )
 target_link_libraries( Monarch3WriteTest Monarch3 ${EXTERNAL_LIBRARIES})
 
