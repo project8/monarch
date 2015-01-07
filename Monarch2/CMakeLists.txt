@@ -26,7 +26,7 @@ set( MONARCH2_HEADERFILES
     ${MONARCH2_HEADERFILES}
     ${CMAKE_BINARY_DIR}/M2Version.hh
 )
-include_directories( BEFORE ${CMAKE_CURRENT_BINARY_DIR} )
+include_directories( BEFORE ${CMAKE_BINARY_DIR} )
 
 add_library( Monarch2 ${MONARCH2_SOURCEFILES} )
 target_link_libraries( Monarch2 MonarchProto ${EXTERNAL_LIBRARIES} )

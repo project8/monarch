@@ -50,75 +50,12 @@ include_directories( BEFORE
 )
 
 
-###################
-# monarch library #
-###################
-
-set( MONARCHCORE_HEADERFILES
-    Source/MException.hh
-    Source/MHeader.hh
-    Source/MIToA.hh
-    Source/MLogger.hh
-    Source/MMemberVariable.hh
-    Source/MMonarch.hh
-    Source/MRecord.hh
-    Source/MStream.hh
-    Source/MTypes.hh
-)
-
-set( MONARCHCORE_SOURCEFILES
-    Source/MException.cc
-    Source/MHeader.cc
-    Source/MIToA.cc
-    Source/MLogger.cc
-    Source/MMonarch.cc
-    Source/MRecord.cc
-    Source/MStream.cc
-    Source/MVersion.cc
-)
-
-configure_file( Source/MVersion.hh.in ${CMAKE_CURRENT_BINARY_DIR}/MVersion.hh )
-set( MONARCHCORE_HEADERFILES
-    ${MONARCHCORE_HEADERFILES}
-    ${CMAKE_CURRENT_BINARY_DIR}/MVersion.hh
-)
-include_directories( BEFORE ${CMAKE_CURRENT_BINARY_DIR} )
-
-add_library( MonarchCore ${MONARCHCORE_SOURCEFILES} )
-target_link_libraries( MonarchCore MonarchProto ${EXTERNAL_LIBRARIES} )
-
-pbuilder_install_headers( ${MONARCHCORE_HEADERFILES} )
-pbuilder_install_libraries( MonarchCore )
-
-
-#######################
-# monarch executables #
-#######################
-
-#add_executable( MonarchDump Source/MonarchDump.cpp )
-#target_link_libraries( MonarchDump MonarchCore MonarchProto ${EXTERNAL_LIBRARIES})
-
-add_executable( MonarchInfo Source/MonarchInfo.cc )
-target_link_libraries( MonarchInfo MonarchCore MonarchProto ${EXTERNAL_LIBRARIES})
-
-add_executable( MonarchWriteTest Source/MonarchWriteTest.cc )
-target_link_libraries( MonarchWriteTest MonarchCore MonarchProto ${EXTERNAL_LIBRARIES})
-
-#add_executable( MonarchTimeCheck Source/MonarchTimeCheck.cpp )
-#target_link_libraries( MonarchTimeCheck MonarchCore MonarchProto ${EXTERNAL_LIBRARIES})
-
-pbuilder_install_executables (
-    #MonarchDump
-    MonarchInfo
-    MonarchWriteTest
-    #MonarchTimeCheck
-)
-
 #############################
 # libraries and executables #
 #############################
 
 add_subdirectory( Monarch2 )
+add_subdirectory( Monarch3 )
 
 #######################
 # installation config #
