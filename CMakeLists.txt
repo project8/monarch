@@ -114,6 +114,11 @@ pbuilder_install_executables (
     #MonarchTimeCheck
 )
 
+#############################
+# libraries and executables #
+#############################
+
+add_subdirectory( Monarch2 )
 
 #######################
 # installation config #
