@@ -32,7 +32,7 @@ int main( const int argc, const char** argv )
 
         MINFO( mlog, "Adding streams" );
         unsigned tSingleStreamNum = tHeader->AddStream( "1-channel device", 500, tSSSamples, 1, sDigitized, 8 );
-        unsigned tDoubleStreamNum = tHeader->AddStream( "2-channel device", 2, sInterleaved, 250, tDSSamples, 1, sDigitized, 8 );
+        unsigned tDoubleStreamNum = tHeader->AddStream( "2-channel device", 2, sInterleaved, 250, tDSSamples, 2, sDigitized, 16 );
         unsigned tTripleStreamNum = tHeader->AddStream( "3-channel device", 3, sSeparate, 100, tTSSamples, 1, sDigitized, 8 );
 
         tWriteTest->WriteHeader();
@@ -59,26 +59,26 @@ int main( const int argc, const char** argv )
 
         // Stream 1
         MStream* tDoubleStream = tWriteTest->GetStream( tDoubleStreamNum );
-        byte_type* tDSData0 = tDoubleStream->GetChannelRecord( 0 )->GetData();
-        byte_type* tDSData1 = tDoubleStream->GetChannelRecord( 1 )->GetData();
+        MRecordDataSetter< uint16_t > tDSData0( tDoubleStream->GetChannelRecord( 0 )->GetData(), 2, sDigitized );
+        MRecordDataSetter< uint16_t > tDSData1( tDoubleStream->GetChannelRecord( 1 )->GetData(), 2, sDigitized );
         for( unsigned iSample = 0; iSample < tDSSamples; ++iSample )
         {
-            tDSData0[ iSample ] = 1;
-            tDSData1[ iSample ] = 2;
+            tDSData0.set_at( 1, iSample );
+            tDSData1.set_at( 2, iSample );
         }
         tDoubleStream->WriteRecord( true );
 
         for( unsigned iSample = 0; iSample < tDSSamples; ++iSample )
         {
-            tDSData0[ iSample ] = 10;
-            tDSData1[ iSample ] = 20;
+            tDSData0.set_at( 1000, iSample );
+            tDSData1.set_at( 2000, iSample );
         }
         tDoubleStream->WriteRecord( true );
 
         for( unsigned iSample = 0; iSample < tDSSamples; ++iSample )
         {
-            tDSData0[ iSample ] = 100;
-            tDSData1[ iSample ] = 200;
+            tDSData0.set_at( 10000, iSample );
+            tDSData1.set_at( 20000, iSample );
         }
         tDoubleStream->WriteRecord( false );
 

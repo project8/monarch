@@ -76,11 +76,12 @@ int main( const int argc, const char** argv )
                 const unsigned tMaxSamples = 30;
                 for( unsigned iChan = 0; iChan < tNChannels; ++iChan )
                 {
-                    const byte_type* tData = tStream->GetChannelRecord( iChan )->GetData();
+                    const MRecordDataInterface< uint64_t > tDataInterface( tStream->GetChannelRecord( iChan )->GetData(),
+                            tStream->GetDataTypeSize(), tStrHeader.GetDataFormat() );
                     stringstream tDataOut;
                     for( unsigned iSample = 0; iSample < std::min( tMaxSamples, tRecSize ); ++iSample )
                     {
-                        tDataOut << (unsigned)tData[ iSample ];
+                        tDataOut << tDataInterface.at( iSample );
                         if( iSample != tRecSize - 1 ) tDataOut << ", ";
                     }
                     if( tRecSize > tMaxSamples ) tDataOut << " . . .";

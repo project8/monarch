@@ -48,6 +48,99 @@ namespace monarch
         return fData;
     }
 
+
+    template< typename SetType >
+    class MRecordDataSetter
+    {
+        public:
+            MRecordDataSetter( byte_type* aData, unsigned aDataTypeSize, DataFormatType aDataFormat ) :
+                fUByteData( aData )
+            {
+                SetInterface( aDataTypeSize, aDataFormat );
+            }
+            ~MRecordDataSetter()
+            {
+            }
+
+            void set_at( SetType value, unsigned index )
+            {
+                (this->*fArrayFcn)( value, index );
+            }
+
+            void SetInterface( unsigned aDataTypeSize, DataFormatType aDataFormat )
+            {
+                if( aDataFormat == sDigitized )
+                {
+                    if( aDataTypeSize == 1 ) fArrayFcn = &MRecordDataSetter< SetType >::set_at_u1;
+                    else if( aDataTypeSize == 2 )  fArrayFcn = &MRecordDataSetter< SetType >::set_at_u2;
+                    else if( aDataTypeSize == 4 )  fArrayFcn = &MRecordDataSetter< SetType >::set_at_u4;
+                    else if( aDataTypeSize == 8 )  fArrayFcn = &MRecordDataSetter< SetType >::set_at_u8;
+                    else
+                    {
+                        throw MException() << "Unable to make a digitized data interface with data type size " << aDataTypeSize;
+                    }
+                }
+                else // aDataFormat == sAnalog
+                {
+                    if( aDataTypeSize == 4 )  fArrayFcn = &MRecordDataSetter< SetType >::set_at_f4;
+                    else if( aDataTypeSize == 8 )  fArrayFcn = &MRecordDataSetter< SetType >::set_at_f8;
+                    else
+                    {
+                        throw MException() << "Unable to make a analog data interface with data type size " << aDataTypeSize;
+                    }                }
+                return;
+            }
+
+            void SetData( const byte_type* aData )
+            {
+                fUByteData = aData;
+            }
+
+        private:
+            void set_at_u1( SetType value, unsigned index )
+            {
+                fUByteData[ index ] = value;
+            }
+
+            void set_at_u2( SetType value, unsigned index )
+            {
+                fU2BytesData[ index ] = value;
+            }
+
+            void set_at_u4( SetType value, unsigned index )
+            {
+                fU4BytesData[ index ] = value;
+            }
+
+            void set_at_u8( SetType value, unsigned index )
+            {
+                fU8BytesData[ index ] = value;
+            }
+
+            void set_at_f4( SetType value, unsigned index )
+            {
+                fF4BytesData[ index ] = value;
+            }
+
+            void set_at_f8( SetType value, unsigned index )
+            {
+                fF8BytesData[ index ] = value;
+            }
+
+            void (MRecordDataSetter::*fArrayFcn)( SetType, unsigned );
+
+            union
+            {
+                byte_type* fUByteData;
+                uint16_t* fU2BytesData;
+                uint32_t* fU4BytesData;
+                uint64_t* fU8BytesData;
+                float* fF4BytesData;
+                double* fF8BytesData;
+            };
+    };
+
+
     template< typename ReturnType >
     class MRecordDataInterface
     {
