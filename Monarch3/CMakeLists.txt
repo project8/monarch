@@ -25,12 +25,12 @@ set( MONARCH3_SOURCEFILES
     M3Version.cc
 )
 
-configure_file( M3Version.hh.in ${CMAKE_BINARY_DIR}/M3Version.hh )
+configure_file( M3Version.hh.in ${PROJECT_BINARY_DIR}/M3Version.hh )
 set( MONARCH3_HEADERFILES
     ${MONARCH3_HEADERFILES}
-    ${CMAKE_BINARY_DIR}/M3Version.hh
+    ${PROJECT_BINARY_DIR}/M3Version.hh
 )
-include_directories( BEFORE ${CMAKE_BINARY_DIR} )
+include_directories( BEFORE ${PROJECT_BINARY_DIR} )
 
 add_library( Monarch3 ${MONARCH3_SOURCEFILES} )
 target_link_libraries( Monarch3 ${EXTERNAL_LIBRARIES} )
