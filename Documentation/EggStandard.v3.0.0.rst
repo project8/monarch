@@ -8,6 +8,7 @@ Relevant software:
 
 Files are written in HDF5 format.  
 All group, dataset, and attribute names are lower case, with words separated by underscores.
+Numerical values in the file are stored in little-endian format.
 
 File Structure
 --------------
