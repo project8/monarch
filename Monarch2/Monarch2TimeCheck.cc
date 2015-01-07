@@ -13,14 +13,14 @@ using std::ofstream;
 
 using namespace monarch2;
 
-M2LOGGER( mlog, "MonarchTimeCheck" );
+M2LOGGER( mlog, "Monarch2TimeCheck" );
 
 int main( const int argc, const char** argv )
 {
     if( argc < 3 )
     {
         M2INFO( mlog, "usage:\n"
-            << "  MonarchTimeCheck <input egg file> <output text file>" );
+            << "  Monarch2TimeCheck <input egg file> <output text file>" );
         return -1;
     }
 

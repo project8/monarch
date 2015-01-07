@@ -10,7 +10,7 @@ int main( const int argc, const char** argv )
     if( strcmp( argv[1], "-h" ) == 0 || argc < 2 )
     {
         M3INFO( mlog, "usage:\n"
-            << "  MonarchInfo [-h] <output egg file>\n"
+            << "  Monarch3WriteTest [-h] <output egg file>\n"
             << "      -h: print this usage information" );
         return -1;
     }

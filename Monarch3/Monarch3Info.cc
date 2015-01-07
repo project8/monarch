@@ -13,7 +13,7 @@ int main( const int argc, const char** argv )
     if( strcmp( argv[1], "-h" ) == 0 || argc < 2 )
     {
         M3INFO( mlog, "usage:\n"
-            << "  MonarchInfo [-Hh] <input egg file>\n"
+            << "  Monarch3Info [-Hh] <input egg file>\n"
             << "      -h: print this usage information\n"
             << "      -H: (optional) header only; does not check number of records" );
         return -1;

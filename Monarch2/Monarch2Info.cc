@@ -5,14 +5,14 @@
 
 using namespace monarch2;
 
-M2LOGGER( mlog, "MonarchInfo" );
+M2LOGGER( mlog, "Monarch2Info" );
 
 int main( const int argc, const char** argv )
 {
     if( argc < 2 )
     {
         M2INFO( mlog, "usage:\n"
-            << "  MonarchInfo [-h] <input egg file>\n"
+            << "  Monarch2Info [-h] <input egg file>\n"
             << "      -h: (optional) header only; does not check number of records" );
         return -1;
     }

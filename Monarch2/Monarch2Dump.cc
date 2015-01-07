@@ -8,14 +8,14 @@ using std::ofstream;
 
 using namespace monarch2;
 
-M2LOGGER( mlog, "MonarchDump" );
+M2LOGGER( mlog, "Monarch2Dump" );
 
 int main( const int argc, const char** argv )
 {
     if( argc < 3 )
     {
         M2INFO( mlog, "usage:\n"
-            << "  MonarchDump <input egg file> <output text file> <# of records per channel [optional]>\n"
+            << "  Monarch2Dump <input egg file> <output text file> <# of records per channel [optional]>\n"
             << "# of records is optional; the default is 1; use 0 to dump the whole file" );
         return -1;
     }
