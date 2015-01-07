@@ -1,35 +1,35 @@
 /*
- * MMonarch.hh
+ * M3Monarch.hh
  *
  *  Created on: Dec 4, 2014
  *      Author: nsoblath
  */
 
-#ifndef MMONARCH_HH_
-#define MMONARCH_HH_
+#ifndef M3MONARCH_HH_
+#define M3MONARCH_HH_
 
-#include "MException.hh"
-#include "MHeader.hh"
-#include "MLogger.hh"
-#include "MStream.hh"
+#include "M3Exception.hh"
+#include "M3Header.hh"
+#include "M3Logger.hh"
+#include "M3Stream.hh"
 
 #include "H5Cpp.h"
 
 #include <string>
 
-namespace monarch
+namespace monarch3
 {
-    MLOGGER( mlog_mmonarch, "MMonarch.h" );
+    M3LOGGER( mlog_mmonarch, "M3Monarch3.h" );
 
     /*!
-     @class Monarch
+     @class Monarch3
      @author N. S. Oblath (v3), D. Furse (original)
 
      @brief Egg file read/write access
 
      @details
     */
-    class Monarch
+    class Monarch3
     {
             //***********************
             // constructors and state
@@ -37,7 +37,7 @@ namespace monarch
 
         private:
             //private to force use of static constructor methods
-            Monarch();
+            Monarch3();
 
             //current state of monarch
             typedef enum
@@ -49,7 +49,7 @@ namespace monarch
             mutable State fState;
 
         public:
-            ~Monarch();
+            ~Monarch3();
 
             //********************************
             // methods for reading (all const)
@@ -60,7 +60,7 @@ namespace monarch
             /// This static method opens the file for reading.
             /// If the file exists and can be read, this returns a prepared monarch pointer, and memory is allocated for the header.
             /// Upon successful return monarch is in the eOpen state.
-            static const Monarch* OpenForReading( const std::string& filename );
+            static const Monarch3* OpenForReading( const std::string& filename );
 
             /// This method extracts the header information from the file.
             /// If the header read correctly, this returns and the header may be examined, and memory is allocated for the record.
@@ -69,10 +69,10 @@ namespace monarch
             void ReadHeader() const;
 
             /// Get the pointer to the header.
-            const MHeader* GetHeader() const;
+            const M3Header* GetHeader() const;
 
             /// Get the pointer to a particular stream
-            const MStream* GetStream( unsigned stream ) const;
+            const M3Stream* GetStream( unsigned stream ) const;
 
             /// Close the file pointer.
             void Close() const;
@@ -86,7 +86,7 @@ namespace monarch
             /// This static method opens the file for writing.
             /// If the file exists and can be written, this returns a prepared monarch pointer, and memory is allocated for the header.
             /// Upon successful return monarch is in the eOpen state.
-            static Monarch* OpenForWriting( const std::string& filename );
+            static Monarch3* OpenForWriting( const std::string& filename );
 
             /// This method marshals the current header to the file.
             /// If the header marshalled correctly, this returns true, memory is allocated for the record(s).
@@ -94,10 +94,10 @@ namespace monarch
             void WriteHeader();
 
             /// Get the pointer to the header.
-            MHeader* GetHeader();
+            M3Header* GetHeader();
 
             /// Get the pointer to a particular stream
-            MStream* GetStream( unsigned stream );
+            M3Stream* GetStream( unsigned stream );
 
             /// Close the file pointer
             void Close();
@@ -107,31 +107,31 @@ namespace monarch
             mutable H5::H5File* fFile;
 
             // the header
-            mutable MHeader* fHeader;
+            mutable M3Header* fHeader;
 
             // the streams
-            mutable std::vector< MStream* > fStreams;
+            mutable std::vector< M3Stream* > fStreams;
 
     };
 
-    inline const MHeader* Monarch::GetHeader() const
+    inline const M3Header* Monarch3::GetHeader() const
     {
         return fHeader;
     }
-    inline MHeader* Monarch::GetHeader()
+    inline M3Header* Monarch3::GetHeader()
     {
         return fHeader;
     }
 
-    inline const MStream* Monarch::GetStream( unsigned iStream ) const
+    inline const M3Stream* Monarch3::GetStream( unsigned iStream ) const
     {
         return fStreams.at( iStream );
     }
-    inline MStream* Monarch::GetStream( unsigned iStream )
+    inline M3Stream* Monarch3::GetStream( unsigned iStream )
     {
         return fStreams.at( iStream );
     }
 
 }
 
-#endif /* MMONARCH_HH_ */
+#endif /* M3MONARCH_HH_ */

@@ -1,5 +1,5 @@
 /*
- * MIToA.hh
+ * M3IToA.hh
  *
  *  Created on: Dec 25, 2014
  *      Author: nsoblath
@@ -33,7 +33,7 @@
 
 // from digitslut.h
 
-namespace monarch
+namespace monarch3
 {
     const char gDigitsLut[200] = {
             '0','0','0','1','0','2','0','3','0','4','0','5','0','6','0','7','0','8','0','9',
@@ -57,7 +57,7 @@ namespace monarch
 #include "intrin.h"
 #endif
 
-namespace monarch
+namespace monarch3
 {
     //******************************
     // Integer-to-string conversions
@@ -186,4 +186,4 @@ namespace monarch
         return 20;
 #endif
     }
-} /* namespace monarch */
+} /* namespace monarch3 */

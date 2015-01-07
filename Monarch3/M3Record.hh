@@ -1,23 +1,23 @@
-#ifndef MRECORD_HH_
-#define MRECORD_HH_
+#ifndef M3RECORD_HH_
+#define M3RECORD_HH_
 
-#include "MException.hh"
-#include "MMemberVariable.hh"
-#include "MTypes.hh"
+#include "M3Exception.hh"
+#include "M3MemberVariable.hh"
+#include "M3Types.hh"
 
-namespace monarch
+namespace monarch3
 {
-    class MRecord
+    class M3Record
     {
         public:
-            MRecord( unsigned aNBytes = 0 );
-            MRecord( byte_type* aDataPtr );
-            ~MRecord();
+            M3Record( unsigned aNBytes = 0 );
+            M3Record( byte_type* aDataPtr );
+            ~M3Record();
 
-            MMEMBERVARIABLE( RecordIdType, RecordId );
-            MMEMBERVARIABLE( TimeType, Time );
+            M3MEMBERVARIABLE( RecordIdType, RecordId );
+            M3MEMBERVARIABLE( TimeType, Time );
 
-            MMEMBERVARIABLE_NOSET( bool, OwnsData );
+            M3MEMBERVARIABLE_NOSET( bool, OwnsData );
 
         public:
             const byte_type* GetData() const;
@@ -38,27 +38,27 @@ namespace monarch
 
     };
 
-    inline const byte_type* MRecord::GetData() const
+    inline const byte_type* M3Record::GetData() const
     {
         return fData;
     }
 
-    inline byte_type* MRecord::GetData()
+    inline byte_type* M3Record::GetData()
     {
         return fData;
     }
 
 
     template< typename SetType >
-    class MRecordDataSetter
+    class M3RecordDataSetter
     {
         public:
-            MRecordDataSetter( byte_type* aData, unsigned aDataTypeSize, DataFormatType aDataFormat ) :
+            M3RecordDataSetter( byte_type* aData, unsigned aDataTypeSize, DataFormatType aDataFormat ) :
                 fUByteData( aData )
             {
                 SetInterface( aDataTypeSize, aDataFormat );
             }
-            ~MRecordDataSetter()
+            ~M3RecordDataSetter()
             {
             }
 
@@ -71,22 +71,22 @@ namespace monarch
             {
                 if( aDataFormat == sDigitized )
                 {
-                    if( aDataTypeSize == 1 ) fArrayFcn = &MRecordDataSetter< SetType >::set_at_u1;
-                    else if( aDataTypeSize == 2 )  fArrayFcn = &MRecordDataSetter< SetType >::set_at_u2;
-                    else if( aDataTypeSize == 4 )  fArrayFcn = &MRecordDataSetter< SetType >::set_at_u4;
-                    else if( aDataTypeSize == 8 )  fArrayFcn = &MRecordDataSetter< SetType >::set_at_u8;
+                    if( aDataTypeSize == 1 ) fArrayFcn = &M3RecordDataSetter< SetType >::set_at_u1;
+                    else if( aDataTypeSize == 2 )  fArrayFcn = &M3RecordDataSetter< SetType >::set_at_u2;
+                    else if( aDataTypeSize == 4 )  fArrayFcn = &M3RecordDataSetter< SetType >::set_at_u4;
+                    else if( aDataTypeSize == 8 )  fArrayFcn = &M3RecordDataSetter< SetType >::set_at_u8;
                     else
                     {
-                        throw MException() << "Unable to make a digitized data interface with data type size " << aDataTypeSize;
+                        throw M3Exception() << "Unable to make a digitized data interface with data type size " << aDataTypeSize;
                     }
                 }
                 else // aDataFormat == sAnalog
                 {
-                    if( aDataTypeSize == 4 )  fArrayFcn = &MRecordDataSetter< SetType >::set_at_f4;
-                    else if( aDataTypeSize == 8 )  fArrayFcn = &MRecordDataSetter< SetType >::set_at_f8;
+                    if( aDataTypeSize == 4 )  fArrayFcn = &M3RecordDataSetter< SetType >::set_at_f4;
+                    else if( aDataTypeSize == 8 )  fArrayFcn = &M3RecordDataSetter< SetType >::set_at_f8;
                     else
                     {
-                        throw MException() << "Unable to make a analog data interface with data type size " << aDataTypeSize;
+                        throw M3Exception() << "Unable to make a analog data interface with data type size " << aDataTypeSize;
                     }                }
                 return;
             }
@@ -127,7 +127,7 @@ namespace monarch
                 fF8BytesData[ index ] = value;
             }
 
-            void (MRecordDataSetter::*fArrayFcn)( SetType, unsigned );
+            void (M3RecordDataSetter::*fArrayFcn)( SetType, unsigned );
 
             union
             {
@@ -142,15 +142,15 @@ namespace monarch
 
 
     template< typename ReturnType >
-    class MRecordDataInterface
+    class M3RecordDataInterface
     {
         public:
-            MRecordDataInterface( const byte_type* aData, unsigned aDataTypeSize, DataFormatType aDataFormat ) :
+            M3RecordDataInterface( const byte_type* aData, unsigned aDataTypeSize, DataFormatType aDataFormat ) :
                 fUByteData( aData )
             {
                 SetInterface( aDataTypeSize, aDataFormat );
             }
-            ~MRecordDataInterface()
+            ~M3RecordDataInterface()
             {
             }
 
@@ -163,22 +163,22 @@ namespace monarch
             {
                 if( aDataFormat == sDigitized )
                 {
-                    if( aDataTypeSize == 1 ) fArrayFcn = &MRecordDataInterface< ReturnType >::at_u1;
-                    else if( aDataTypeSize == 2 )  fArrayFcn = &MRecordDataInterface< ReturnType >::at_u2;
-                    else if( aDataTypeSize == 4 )  fArrayFcn = &MRecordDataInterface< ReturnType >::at_u4;
-                    else if( aDataTypeSize == 8 )  fArrayFcn = &MRecordDataInterface< ReturnType >::at_u8;
+                    if( aDataTypeSize == 1 ) fArrayFcn = &M3RecordDataInterface< ReturnType >::at_u1;
+                    else if( aDataTypeSize == 2 )  fArrayFcn = &M3RecordDataInterface< ReturnType >::at_u2;
+                    else if( aDataTypeSize == 4 )  fArrayFcn = &M3RecordDataInterface< ReturnType >::at_u4;
+                    else if( aDataTypeSize == 8 )  fArrayFcn = &M3RecordDataInterface< ReturnType >::at_u8;
                     else
                     {
-                        throw MException() << "Unable to make a digitized data interface with data type size " << aDataTypeSize;
+                        throw M3Exception() << "Unable to make a digitized data interface with data type size " << aDataTypeSize;
                     }
                 }
                 else // aDataFormat == sAnalog
                 {
-                    if( aDataTypeSize == 4 )  fArrayFcn = &MRecordDataInterface< ReturnType >::at_f4;
-                    else if( aDataTypeSize == 8 )  fArrayFcn = &MRecordDataInterface< ReturnType >::at_f8;
+                    if( aDataTypeSize == 4 )  fArrayFcn = &M3RecordDataInterface< ReturnType >::at_f4;
+                    else if( aDataTypeSize == 8 )  fArrayFcn = &M3RecordDataInterface< ReturnType >::at_f8;
                     else
                     {
-                        throw MException() << "Unable to make a analog data interface with data type size " << aDataTypeSize;
+                        throw M3Exception() << "Unable to make a analog data interface with data type size " << aDataTypeSize;
                     }                }
                 return;
             }
@@ -219,7 +219,7 @@ namespace monarch
                 return fF8BytesData[ index ];
             }
 
-            ReturnType (MRecordDataInterface::*fArrayFcn)( unsigned ) const;
+            ReturnType (M3RecordDataInterface::*fArrayFcn)( unsigned ) const;
 
             union
             {

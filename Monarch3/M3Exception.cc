@@ -1,30 +1,30 @@
 /*
- * MException.cc
+ * M3Exception.cc
  *
  *  Created on: Dec 4, 2014
  *      Author: nsoblath
  */
 
-#include "MException.hh"
+#include "M3Exception.hh"
 
-namespace monarch
+namespace monarch3
 {
 
-    MException::MException() :
+    M3Exception::M3Exception() :
             exception(),
             fStream( "" )
     {
     }
-    MException::MException( const MException& aCopy ) :
+    M3Exception::M3Exception( const M3Exception& aCopy ) :
             exception( aCopy ),
             fStream( aCopy.fStream.str() )
     {
     }
-    MException::~MException() throw ()
+    M3Exception::~M3Exception() throw ()
     {
     }
 
-    const char* MException::what() const throw ()
+    const char* M3Exception::what() const throw ()
     {
         return fStream.str().c_str();
     }

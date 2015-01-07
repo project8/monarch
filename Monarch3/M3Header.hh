@@ -1,69 +1,69 @@
 /*
- * MHeader.hh
+ * M3Header.hh
  *
  *  Created on: Dec 4, 2014
  *      Author: nsoblath
  */
 
-#ifndef MHEADER_HH_
-#define MHEADER_HH_
+#ifndef M3HEADER_HH_
+#define M3HEADER_HH_
 
-#include "MLogger.hh"
-#include "MMemberVariable.hh"
-#include "MTypes.hh"
+#include "M3Logger.hh"
+#include "M3MemberVariable.hh"
+#include "M3Types.hh"
 
 #include "H5Cpp.h"
 
 #include <string>
 #include <vector>
 
-namespace monarch
+namespace monarch3
 {
-    MLOGGER( mlog_mheader, "MHeader.hh" );
+    M3LOGGER( mlog_mheader, "M3Header.hh" );
 
     /*!
-     @class MStreamHeader
+     @class M3StreamHeader
      @author N. S. Oblath
 
      @brief Single-stream header information
 
      @details
     */
-    class MStreamHeader
+    class M3StreamHeader
     {
         public:
-            MStreamHeader();
-            MStreamHeader( const std::string& aSource, uint32_t aNumber, uint32_t aNChannels, MultiChannelFormatType aFormat,
+            M3StreamHeader();
+            M3StreamHeader( const std::string& aSource, uint32_t aNumber, uint32_t aNChannels, MultiChannelFormatType aFormat,
                            uint32_t anAcqRate, uint32_t aRecSize,
                            uint32_t aDataTypeSize, DataFormatType aDataFormat,
                            uint32_t aBitDepth );
-            MStreamHeader( const MStreamHeader& orig );
-            ~MStreamHeader();
+            M3StreamHeader( const M3StreamHeader& orig );
+            ~M3StreamHeader();
 
-            MMEMBERVARIABLE( char*, Label );
+            M3MEMBERVARIABLE( char*, Label );
 
-            MMEMBERVARIABLE_NOSET( uint32_t, Number );
+            M3MEMBERVARIABLE_NOSET( uint32_t, Number );
             void SetNumber( uint32_t aNumber ) const; /// In addition to setting the number, sets the label to "stream[aNumber]"
 
-            MMEMBERVARIABLE( std::string, Source );
+            M3MEMBERVARIABLE( std::string, Source );
 
-            MMEMBERVARIABLE( uint32_t, NChannels );
+            M3MEMBERVARIABLE( uint32_t, NChannels );
 
-            MMEMBERVARIABLE( MultiChannelFormatType, ChannelFormat );
+            M3MEMBERVARIABLE( MultiChannelFormatType, ChannelFormat );
 
-            MMEMBERVARIABLE( uint32_t, AcquisitionRate );
+            M3MEMBERVARIABLE( uint32_t, AcquisitionRate );
 
-            MMEMBERVARIABLE( uint32_t, RecordSize );
+            M3MEMBERVARIABLE( uint32_t, RecordSize );
 
-            MMEMBERVARIABLE( uint32_t, DataTypeSize );
+            M3MEMBERVARIABLE( uint32_t, DataTypeSize );
 
-            MMEMBERVARIABLE( DataFormatType, DataFormat );
+            M3MEMBERVARIABLE( DataFormatType, DataFormat );
 
-            MMEMBERVARIABLE( uint32_t, BitDepth );
+            M3MEMBERVARIABLE( uint32_t, BitDepth );
 
-            MMEMBERVARIABLE( uint32_t, NAcquisitions );
+            M3MEMBERVARIABLE( uint32_t, NAcquisitions );
 
-            MMEMBERVARIABLE( uint32_t, NRecords );
+            M3MEMBERVARIABLE( uint32_t, NRecords );
 
         public:
             void WriteToHDF5( H5::CommonFG* aParent );
@@ -72,48 +72,48 @@ namespace monarch
     };
 
     /*!
-     @class MChannelHeader
+     @class M3ChannelHeader
      @author N. S. Oblath
 
      @brief Single-channel header information
 
      @details
     */
-    class MChannelHeader
+    class M3ChannelHeader
     {
         public:
-            MChannelHeader();
-            MChannelHeader( const std::string& aSource, uint32_t aNumber,
+            M3ChannelHeader();
+            M3ChannelHeader( const std::string& aSource, uint32_t aNumber,
                             uint32_t anAcqRate, uint32_t aRecSize,
                             uint32_t aDataTypeSize, DataFormatType aDataFormat,
                             uint32_t aBitDepth );
-            MChannelHeader( const MChannelHeader& orig );
-            ~MChannelHeader();
+            M3ChannelHeader( const M3ChannelHeader& orig );
+            ~M3ChannelHeader();
 
-            MMEMBERVARIABLE( char*, Label );
+            M3MEMBERVARIABLE( char*, Label );
 
-            MMEMBERVARIABLE_NOSET( uint32_t, Number );
+            M3MEMBERVARIABLE_NOSET( uint32_t, Number );
             void SetNumber( uint32_t aNumber ) const; /// In addition to setting the number, sets the label to "channel[aNumber]"
 
-            MMEMBERVARIABLE( std::string, Source );
+            M3MEMBERVARIABLE( std::string, Source );
 
-            MMEMBERVARIABLE( uint32_t, AcquisitionRate );
+            M3MEMBERVARIABLE( uint32_t, AcquisitionRate );
 
-            MMEMBERVARIABLE( uint32_t, RecordSize );
+            M3MEMBERVARIABLE( uint32_t, RecordSize );
 
-            MMEMBERVARIABLE( uint32_t, DataTypeSize );
+            M3MEMBERVARIABLE( uint32_t, DataTypeSize );
 
-            MMEMBERVARIABLE( DataFormatType, DataFormat );
+            M3MEMBERVARIABLE( DataFormatType, DataFormat );
 
-            MMEMBERVARIABLE( uint32_t, BitDepth );
+            M3MEMBERVARIABLE( uint32_t, BitDepth );
 
-            MMEMBERVARIABLE( double, VoltageMin );
+            M3MEMBERVARIABLE( double, VoltageMin );
 
-            MMEMBERVARIABLE( double, VoltageRange );
+            M3MEMBERVARIABLE( double, VoltageRange );
 
-            MMEMBERVARIABLE( double, FrequencyMin );
+            M3MEMBERVARIABLE( double, FrequencyMin );
 
-            MMEMBERVARIABLE( double, FrequencyRange );
+            M3MEMBERVARIABLE( double, FrequencyRange );
 
         public:
             void WriteToHDF5( H5::CommonFG* aParent );
@@ -123,42 +123,42 @@ namespace monarch
 
 
     /*!
-     @class MHeader
+     @class M3Header
      @author N. S. Oblath
 
      @brief Egg file header information
 
      @details
     */
-    class MHeader
+    class M3Header
     {
         public:
-            typedef std::vector< MChannelHeader > MChannelHeaders;
-            typedef std::vector< MStreamHeader > MStreamHeaders;
+            typedef std::vector< M3ChannelHeader > M3ChannelHeaders;
+            typedef std::vector< M3StreamHeader > M3StreamHeaders;
 
         public:
-            MHeader();
-            ~MHeader();
+            M3Header();
+            ~M3Header();
 
-            MMEMBERVARIABLEREF( std::string, EggVersion );
+            M3MEMBERVARIABLEREF( std::string, EggVersion );
 
-            MMEMBERVARIABLEREF( std::string, Filename );
+            M3MEMBERVARIABLEREF( std::string, Filename );
 
-            MMEMBERVARIABLE( uint32_t, RunDuration );
+            M3MEMBERVARIABLE( uint32_t, RunDuration );
 
-            MMEMBERVARIABLEREF( std::string, Timestamp );
+            M3MEMBERVARIABLEREF( std::string, Timestamp );
 
-            MMEMBERVARIABLEREF( std::string, Description );
+            M3MEMBERVARIABLEREF( std::string, Description );
 
-            MMEMBERVARIABLE( uint32_t, NChannels );
+            M3MEMBERVARIABLE( uint32_t, NChannels );
 
-            MMEMBERVARIABLE( uint32_t, NStreams );
+            M3MEMBERVARIABLE( uint32_t, NStreams );
 
-            MMEMBERVARIABLEREF_NOSET( std::vector< uint32_t >, ChannelStreams );
+            M3MEMBERVARIABLEREF_NOSET( std::vector< uint32_t >, ChannelStreams );
 
-            MMEMBERVARIABLEREF_NOSET( std::vector< MChannelHeader >, ChannelHeaders );
+            M3MEMBERVARIABLEREF_NOSET( std::vector< M3ChannelHeader >, ChannelHeaders );
 
-            MMEMBERVARIABLEREF_NOSET( std::vector< MStreamHeader >, StreamHeaders );
+            M3MEMBERVARIABLEREF_NOSET( std::vector< M3StreamHeader >, StreamHeaders );
 
             // TODO: channel coherence
 
@@ -207,48 +207,48 @@ namespace monarch
 
     };
 
-    inline const H5::Group* MHeader::GetStreamsGroup() const
+    inline const H5::Group* M3Header::GetStreamsGroup() const
     {
         return fStreamsGroup;
     }
 
-    inline H5::Group* MHeader::GetStreamsGroup()
+    inline H5::Group* M3Header::GetStreamsGroup()
     {
         return fStreamsGroup;
     }
 
-    inline const H5::Group* MHeader::GetChannelsGroup() const
+    inline const H5::Group* M3Header::GetChannelsGroup() const
     {
         return fChannelsGroup;
     }
 
-    inline H5::Group* MHeader::GetChannelsGroup()
+    inline H5::Group* M3Header::GetChannelsGroup()
     {
         return fChannelsGroup;
     }
 
 
-    inline void MHeader::WriteScalarToHDF5( H5::H5Location* aLoc, const std::string& aName, const std::string& aValue )
+    inline void M3Header::WriteScalarToHDF5( H5::H5Location* aLoc, const std::string& aName, const std::string& aValue )
     {
         H5::DataType tType = MH5Type< std::string >::H5( aValue );
         aLoc->createAttribute( aName, tType, H5::DataSpace( H5S_SCALAR ) ).write( tType, aValue );
-        MDEBUG( mlog_mheader, "Writing string to new scalar metadata <" << aName << ">: " << aValue << "; size = " << aValue.size() );
+        M3DEBUG( mlog_mheader, "Writing string to new scalar metadata <" << aName << ">: " << aValue << "; size = " << aValue.size() );
         return;
     }
 
     template< typename XType >
-    void MHeader::WriteScalarToHDF5( H5::H5Location* aLoc, const std::string& aName, XType aValue )
+    void M3Header::WriteScalarToHDF5( H5::H5Location* aLoc, const std::string& aName, XType aValue )
     {
         aLoc->createAttribute( aName, MH5Type< XType >::H5(), H5::DataSpace( H5S_SCALAR ) ).write( MH5Type< XType >::Native(), &aValue );
-        MDEBUG( mlog_mheader, "Writing value to new scalar metadata <" << aName << ">: " << aValue );
+        M3DEBUG( mlog_mheader, "Writing value to new scalar metadata <" << aName << ">: " << aValue );
         return;
     }
 
     template< typename XArrayType >
-    inline void MHeader::Write1DToHDF5( H5::H5Location* aLoc, const std::string& aName, const XArrayType& anArray )
+    inline void M3Header::Write1DToHDF5( H5::H5Location* aLoc, const std::string& aName, const XArrayType& anArray )
     {
         typedef typename XArrayType::value_type XValueType;
-        MDEBUG( mlog_mheader, "Writing vector to new 1-D metadata <" << aName << ">; size = " << anArray.size() );
+        M3DEBUG( mlog_mheader, "Writing vector to new 1-D metadata <" << aName << ">; size = " << anArray.size() );
         hsize_t tDims[ 1 ] = { anArray.size() };
         H5::ArrayType tTypeNative( MH5Type< XValueType >::Native(), 1, tDims );
         H5::ArrayType tTypeH5( MH5Type< XValueType >::H5(), 1, tDims );
@@ -257,7 +257,7 @@ namespace monarch
         for( unsigned i = 0; i < anArray.size(); ++i )
         {
             buffer[ i ] = anArray[ i ];
-            std::cout << "writing bin " << i << ": " << buffer[i] << " <-- " << anArray[i] << std::endl;
+            //std::cout << "writing bin " << i << ": " << buffer[i] << " <-- " << anArray[i] << std::endl;
         }
         aLoc->createAttribute( aName, tTypeH5, dspace ).write( tTypeNative, buffer );
         delete [] buffer;
@@ -269,42 +269,42 @@ namespace monarch
 
     // read specialization for strings
     template<>
-    inline std::string MHeader::ReadScalarFromHDF5( const H5::H5Location* aLoc, const std::string& aName )
+    inline std::string M3Header::ReadScalarFromHDF5( const H5::H5Location* aLoc, const std::string& aName )
     {
         std::string tValue;
         H5::Attribute* tAttr = new H5::Attribute( aLoc->openAttribute( aName ) );
         tAttr->read( tAttr->getDataType(), tValue );
         delete tAttr;
-        MDEBUG( mlog_mheader, "Reading string <" << aName << ">: " << tValue << "; size = " << tValue.size() );
+        M3DEBUG( mlog_mheader, "Reading string <" << aName << ">: " << tValue << "; size = " << tValue.size() );
         return tValue;
     }
 
     // templated read function
     template< typename XType >
-    XType MHeader::ReadScalarFromHDF5( const H5::H5Location* aLoc, const std::string& aName )
+    XType M3Header::ReadScalarFromHDF5( const H5::H5Location* aLoc, const std::string& aName )
     {
         XType tValue;
         H5::Attribute* tAttr = new H5::Attribute( aLoc->openAttribute( aName ) );
         tAttr->read( tAttr->getDataType(), &tValue );
         delete tAttr;
-        MDEBUG( mlog_mheader, "Reading value <" << aName << ">: " << tValue );
+        M3DEBUG( mlog_mheader, "Reading value <" << aName << ">: " << tValue );
         return tValue;
     }
 
     template< typename XArrayType >
-    void MHeader::Read1DFromHDF5( const H5::H5Location* aLoc, const std::string& aName, XArrayType& anArray )
+    void M3Header::Read1DFromHDF5( const H5::H5Location* aLoc, const std::string& aName, XArrayType& anArray )
     {
         typedef typename XArrayType::value_type XValueType;
         H5::Attribute tAttr( aLoc->openAttribute( aName ) );
         H5::DataSpace tDataspace( tAttr.getSpace() );
         if( tDataspace.getSimpleExtentNdims() != 1 )
         {
-            throw MException() << "Attribute <" << aName << "> has " << tDataspace.getSimpleExtentNdims() << " dimensions; 1 dimension was expected";
+            throw M3Exception() << "Attribute <" << aName << "> has " << tDataspace.getSimpleExtentNdims() << " dimensions; 1 dimension was expected";
         }
         hsize_t tDims[ 1 ];
         tDataspace.getSimpleExtentDims( tDims );
         XValueType* buffer = new XValueType( tDims[0] );
-        MDEBUG( mlog_mheader, "Reading 1-D metadata <" << aName << "> to vector; size = " << tDims[0] );
+        M3DEBUG( mlog_mheader, "Reading 1-D metadata <" << aName << "> to vector; size = " << tDims[0] );
         tAttr.read( tAttr.getDataType(), buffer );
         for( unsigned i = 0; i < anArray.size(); ++i )
         {
@@ -317,8 +317,8 @@ namespace monarch
 }
 
 // Pretty printing methods
-std::ostream& operator<<( std::ostream& out, const monarch::MStreamHeader& hdr );
-std::ostream& operator<<( std::ostream& out, const monarch::MChannelHeader& hdr );
-std::ostream& operator<<( std::ostream& out, const monarch::MHeader& hdr );
+std::ostream& operator<<( std::ostream& out, const monarch3::M3StreamHeader& hdr );
+std::ostream& operator<<( std::ostream& out, const monarch3::M3ChannelHeader& hdr );
+std::ostream& operator<<( std::ostream& out, const monarch3::M3Header& hdr );
 
 #endif

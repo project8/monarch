@@ -1,39 +1,39 @@
 /*
- * MException.hh
+ * M3Exception.hh
  *
  *  Created on: Dec 4, 2014
  *      Author: nsoblath
  */
 
-#ifndef MEXCEPTION_HH_
-#define MEXCEPTION_HH_
+#ifndef M3EXCEPTION_HH_
+#define M3EXCEPTION_HH_
 
 #include <exception>
 #include <sstream>
 
-namespace monarch
+namespace monarch3
 {
 
     /*!
-     @class MException
+     @class M3Exception
      @author D. Furse
 
-     @brief Specialized exception class for Monarch
+     @brief Specialized exception class for Monarch3
 
      @details
     */
-    class MException : public std::exception
+    class M3Exception : public std::exception
     {
         public:
-            MException();
-            MException( const MException& aCopy );
-            virtual ~MException() throw();
+            M3Exception();
+            M3Exception( const M3Exception& aCopy );
+            virtual ~M3Exception() throw();
 
         public:
             virtual const char* what() const throw();
 
             template< class XType >
-            MException& operator<< ( const XType& aReference )
+            M3Exception& operator<< ( const XType& aReference )
             {
                 fStream << aReference;
                 return *this;
@@ -45,4 +45,4 @@ namespace monarch
 
 }
 
-#endif /* MEXCEPTION_HH_ */
+#endif /* M3EXCEPTION_HH_ */

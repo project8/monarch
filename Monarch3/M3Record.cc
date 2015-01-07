@@ -1,15 +1,15 @@
 /*
- * MRecord.cc
+ * M3Record.cc
  *
  *  Created on: Dec 26, 2014
  *      Author: nsoblath
  */
 
-#include "MRecord.hh"
+#include "M3Record.hh"
 
-namespace monarch
+namespace monarch3
 {
-    MRecord::MRecord( unsigned aNBytes ) :
+    M3Record::M3Record( unsigned aNBytes ) :
             fRecordId( 0 ),
             fTime( 0 ),
             fOwnsData( true )
@@ -25,7 +25,7 @@ namespace monarch
         }
     }
 
-    MRecord::MRecord( byte_type* aDataPtr ) :
+    M3Record::M3Record( byte_type* aDataPtr ) :
             fRecordId( 0 ),
             fTime( 0 ),
             fOwnsData( false ),
@@ -33,19 +33,19 @@ namespace monarch
     {
     }
 
-    MRecord::~MRecord()
+    M3Record::~M3Record()
     {
         ClearData();
     }
 
-    void MRecord::SetData()
+    void M3Record::SetData()
     {
         ClearData();
         fOwnsData = true;
         return;
     }
 
-    void MRecord::SetData( unsigned aNBytes )
+    void M3Record::SetData( unsigned aNBytes )
     {
         ClearData();
         fOwnsData = true;
@@ -53,7 +53,7 @@ namespace monarch
         return;
     }
 
-    void MRecord::SetData( byte_type* aDataPtr )
+    void M3Record::SetData( byte_type* aDataPtr )
     {
         ClearData();
         fOwnsData = false;
@@ -61,7 +61,7 @@ namespace monarch
         return;
     }
 
-    void MRecord::ClearData()
+    void M3Record::ClearData()
     {
         if( fOwnsData && fData != NULL ) delete [] fData;
         fData = NULL;

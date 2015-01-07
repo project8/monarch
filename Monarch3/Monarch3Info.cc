@@ -1,18 +1,18 @@
-#include "MMonarch.hh"
-#include "MLogger.hh"
+#include "M3Monarch.hh"
+#include "M3Logger.hh"
 
 #include <sstream>
 
-using namespace monarch;
+using namespace monarch3;
 using std::stringstream;
 
-MLOGGER( mlog, "MonarchInfo" );
+M3LOGGER( mlog, "Monarch3Info" );
 
 int main( const int argc, const char** argv )
 {
     if( strcmp( argv[1], "-h" ) == 0 || argc < 2 )
     {
-        MINFO( mlog, "usage:\n"
+        M3INFO( mlog, "usage:\n"
             << "  MonarchInfo [-Hh] <input egg file>\n"
             << "      -h: print this usage information\n"
             << "      -H: (optional) header only; does not check number of records" );
@@ -25,7 +25,7 @@ int main( const int argc, const char** argv )
     {
         if( argc < 3 )
         {
-            MERROR( mlog, "no filename provided" );
+            M3ERROR( mlog, "no filename provided" );
             return -1;
         }
         ++tFileArg;
@@ -34,14 +34,14 @@ int main( const int argc, const char** argv )
 
     try
     {
-        MINFO( mlog, "Opening file <" << argv[tFileArg] );
-        const Monarch* tReadTest = Monarch::OpenForReading( argv[tFileArg] );
+        M3INFO( mlog, "Opening file <" << argv[tFileArg] );
+        const Monarch3* tReadTest = Monarch3::OpenForReading( argv[tFileArg] );
 
-        MINFO( mlog, "Reading header" );
+        M3INFO( mlog, "Reading header" );
         tReadTest->ReadHeader();
 
-        const MHeader* tReadHeader = tReadTest->GetHeader();
-        MINFO( mlog, *tReadHeader );
+        const M3Header* tReadHeader = tReadTest->GetHeader();
+        M3INFO( mlog, *tReadHeader );
 
         if( ! tCheckRecords )
         {
@@ -50,21 +50,21 @@ int main( const int argc, const char** argv )
             return 0;
         }
 
-        MINFO( mlog, "Reading data" );
+        M3INFO( mlog, "Reading data" );
 
         unsigned tNStreams = tReadHeader->GetNStreams();
         for( unsigned iStream = 0; iStream < tNStreams; ++iStream )
         {
-            const MStreamHeader& tStrHeader = tReadHeader->GetStreamHeaders().at( iStream );
+            const M3StreamHeader& tStrHeader = tReadHeader->GetStreamHeaders().at( iStream );
             unsigned tNChannels = tStrHeader.GetNChannels();
             unsigned tRecSize = tStrHeader.GetRecordSize();
-            MINFO( mlog, "Stream " << iStream << " has " << tNChannels << " channel(s) stored in format mode " << tStrHeader.GetChannelFormat() );
+            M3INFO( mlog, "Stream " << iStream << " has " << tNChannels << " channel(s) stored in format mode " << tStrHeader.GetChannelFormat() );
 
-            const MStream* tStream = tReadTest->GetStream( iStream );
+            const M3Stream* tStream = tReadTest->GetStream( iStream );
 
             if( tStream->GetNAcquisitions() == 0 )
             {
-                MINFO( mlog, "\tThis stream has no acquisitions" );
+                M3INFO( mlog, "\tThis stream has no acquisitions" );
                 continue;
             }
 
@@ -76,7 +76,7 @@ int main( const int argc, const char** argv )
                 const unsigned tMaxSamples = 30;
                 for( unsigned iChan = 0; iChan < tNChannels; ++iChan )
                 {
-                    const MRecordDataInterface< uint64_t > tDataInterface( tStream->GetChannelRecord( iChan )->GetData(),
+                    const M3RecordDataInterface< uint64_t > tDataInterface( tStream->GetChannelRecord( iChan )->GetData(),
                             tStream->GetDataTypeSize(), tStrHeader.GetDataFormat() );
                     stringstream tDataOut;
                     for( unsigned iSample = 0; iSample < std::min( tMaxSamples, tRecSize ); ++iSample )
@@ -85,7 +85,7 @@ int main( const int argc, const char** argv )
                         if( iSample != tRecSize - 1 ) tDataOut << ", ";
                     }
                     if( tRecSize > tMaxSamples ) tDataOut << " . . .";
-                    MINFO( mlog, "\tChannel " << iChan << ": " << tDataOut.str() );
+                    M3INFO( mlog, "\tChannel " << iChan << ": " << tDataOut.str() );
                 }
             }
 
@@ -94,9 +94,9 @@ int main( const int argc, const char** argv )
         tReadTest->Close();
         delete tReadTest;
     }
-    catch( MException& e )
+    catch( M3Exception& e )
     {
-        MERROR( mlog, "Exception thrown during file reading:\n" << e.what() );
+        M3ERROR( mlog, "Exception thrown during file reading:\n" << e.what() );
     }
 
     return 0;

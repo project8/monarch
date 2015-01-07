@@ -5,10 +5,10 @@
  *      Author: nsoblath
  */
 
-#ifndef MTYPES_HH_
-#define MTYPES_HH_
+#ifndef M3TYPES_HH_
+#define M3TYPES_HH_
 
-#include "MException.hh"
+#include "M3Exception.hh"
 
 #include "H5Cpp.h"
 
@@ -16,7 +16,7 @@
 
 #include "thorax.hh"
 
-namespace monarch
+namespace monarch3
 {
 
     template<typename T, typename U>
@@ -56,11 +56,11 @@ namespace monarch
     {
         static H5::DataType Native( T )
         {
-            throw MException() << "Unknown native type requested";
+            throw M3Exception() << "Unknown native type requested";
         }
         static H5::DataType H5( T )
         {
-            throw MException() << "Unknown H5 type requested";
+            throw M3Exception() << "Unknown H5 type requested";
         }
     };
 

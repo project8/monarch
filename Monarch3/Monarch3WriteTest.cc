@@ -1,15 +1,15 @@
-#include "MMonarch.hh"
-#include "MLogger.hh"
+#include "M3Monarch.hh"
+#include "M3Logger.hh"
 
-using namespace monarch;
+using namespace monarch3;
 
-MLOGGER( mlog, "MonarchWriteTest" );
+M3LOGGER( mlog, "Monarch3WriteTest" );
 
 int main( const int argc, const char** argv )
 {
     if( strcmp( argv[1], "-h" ) == 0 || argc < 2 )
     {
-        MINFO( mlog, "usage:\n"
+        M3INFO( mlog, "usage:\n"
             << "  MonarchInfo [-h] <output egg file>\n"
             << "      -h: print this usage information" );
         return -1;
@@ -17,9 +17,9 @@ int main( const int argc, const char** argv )
 
     try
     {
-        Monarch* tWriteTest = Monarch::OpenForWriting( argv[1] );
+        Monarch3* tWriteTest = Monarch3::OpenForWriting( argv[1] );
 
-        MHeader* tHeader = tWriteTest->GetHeader();
+        M3Header* tHeader = tWriteTest->GetHeader();
         tHeader->SetFilename( argv[1] );
         tHeader->SetRunDuration( 8675309 );
         tHeader->SetTimestamp( "Stardate 33515" );
@@ -30,19 +30,19 @@ int main( const int argc, const char** argv )
         unsigned tDSSamples = 5;
         unsigned tTSSamples = 5;
 
-        MINFO( mlog, "Adding streams" );
+        M3INFO( mlog, "Adding streams" );
         unsigned tSingleStreamNum = tHeader->AddStream( "1-channel device", 500, tSSSamples, 1, sDigitized, 8 );
         unsigned tDoubleStreamNum = tHeader->AddStream( "2-channel device", 2, sInterleaved, 250, tDSSamples, 2, sDigitized, 16 );
         unsigned tTripleStreamNum = tHeader->AddStream( "3-channel device", 3, sSeparate, 100, tTSSamples, 1, sDigitized, 8 );
 
         tWriteTest->WriteHeader();
 
-        MINFO( mlog, "Wrote header:\n" << *tHeader );
+        M3INFO( mlog, "Wrote header:\n" << *tHeader );
 
-        MINFO( mlog, "Writing data" );
+        M3INFO( mlog, "Writing data" );
 
         // Stream 0
-        MStream* tSingleStream = tWriteTest->GetStream( tSingleStreamNum );
+        M3Stream* tSingleStream = tWriteTest->GetStream( tSingleStreamNum );
         byte_type* tSSData = tSingleStream->GetStreamRecord()->GetData();
         for( unsigned iSample = 0; iSample < tSSSamples; ++iSample )
         {
@@ -58,9 +58,9 @@ int main( const int argc, const char** argv )
 
 
         // Stream 1
-        MStream* tDoubleStream = tWriteTest->GetStream( tDoubleStreamNum );
-        MRecordDataSetter< uint16_t > tDSData0( tDoubleStream->GetChannelRecord( 0 )->GetData(), 2, sDigitized );
-        MRecordDataSetter< uint16_t > tDSData1( tDoubleStream->GetChannelRecord( 1 )->GetData(), 2, sDigitized );
+        M3Stream* tDoubleStream = tWriteTest->GetStream( tDoubleStreamNum );
+        M3RecordDataSetter< uint16_t > tDSData0( tDoubleStream->GetChannelRecord( 0 )->GetData(), 2, sDigitized );
+        M3RecordDataSetter< uint16_t > tDSData1( tDoubleStream->GetChannelRecord( 1 )->GetData(), 2, sDigitized );
         for( unsigned iSample = 0; iSample < tDSSamples; ++iSample )
         {
             tDSData0.set_at( 1, iSample );
@@ -84,7 +84,7 @@ int main( const int argc, const char** argv )
 
 
         // Stream 2
-        MStream* tTripleStream = tWriteTest->GetStream( tTripleStreamNum );
+        M3Stream* tTripleStream = tWriteTest->GetStream( tTripleStreamNum );
         byte_type* tTSData0 = tTripleStream->GetChannelRecord( 0 )->GetData();
         byte_type* tTSData1 = tTripleStream->GetChannelRecord( 1 )->GetData();
         byte_type* tTSData2 = tTripleStream->GetChannelRecord( 2 )->GetData();
@@ -105,14 +105,14 @@ int main( const int argc, const char** argv )
         tTripleStream->WriteRecord( false );
 
         tWriteTest->Close();
-        MINFO( mlog, "File closed" );
+        M3INFO( mlog, "File closed" );
 
         delete tWriteTest;
 
     }
-    catch( MException& e )
+    catch( M3Exception& e )
     {
-        MERROR( mlog, "Exception thrown during write test:\n" << e.what() );
+        M3ERROR( mlog, "Exception thrown during write test:\n" << e.what() );
     }
 
     return 0;

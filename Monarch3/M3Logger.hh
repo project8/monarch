@@ -1,13 +1,13 @@
 /*
- * MLogger.hh
+ * M3Logger.hh
  * Based on KLogger.h, from KATRIN's Kasper
  *
  *  Created on: Jan 23, 2014
  *      Author: nsoblath
  */
 
-#ifndef MLOGGER_HH_
-#define MLOGGER_HH_
+#ifndef M3LOGGER_HH_
+#define M3LOGGER_HH_
 
 /**
  * @file
@@ -73,7 +73,7 @@
 /**
  * The standard monarch namespace.
  */
-namespace monarch
+namespace monarch3
 {
 
     /**
@@ -96,27 +96,27 @@ namespace monarch
      * included in the output:
      *
      * <pre>
-     * MLOG(myLogger, level, "message");
-     * MTRACE(myLogger, "message");
-     * MDEBUG(myLogger, "message");
-     * MINFO(myLogger, "message");
-     * MWARN(myLogger, "message");
-     * MERROR(myLogger, "message");
-     * MFATAL(myLogger, "message");
+     * M3LOG(myLogger, level, "message");
+     * M3TRACE(myLogger, "message");
+     * M3DEBUG(myLogger, "message");
+     * M3INFO(myLogger, "message");
+     * M3WARN(myLogger, "message");
+     * M3ERROR(myLogger, "message");
+     * M3FATAL(myLogger, "message");
      *
-     * MASSERT(myLogger, assertion, "message");
+     * M3ASSERT(myLogger, assertion, "message");
      *
-     * MLOG_ONCE(myLogger, level, "message");
-     * MTRACE_ONCE(myLogger, "message");
-     * MDEBUG_ONCE(myLogger, "message");
-     * MINFO_ONCE(myLogger, "message");
-     * MWARN_ONCE(myLogger, "message");
-     * MERROR_ONCE(myLogger, "message");
-     * MFATAL_ONCE(myLogger, "message");
+     * M3LOG_ONCE(myLogger, level, "message");
+     * M3TRACE_ONCE(myLogger, "message");
+     * M3DEBUG_ONCE(myLogger, "message");
+     * M3INFO_ONCE(myLogger, "message");
+     * M3WARN_ONCE(myLogger, "message");
+     * M3ERROR_ONCE(myLogger, "message");
+     * M3FATAL_ONCE(myLogger, "message");
      * </pre>
      *
      */
-    class MLogger
+    class M3Logger
     {
         public:
             enum ELevel {
@@ -138,8 +138,8 @@ namespace monarch
             };
 
         public:
-            static MLogger& GetRootLogger() {
-                static MLogger rootLogger;
+            static M3Logger& GetRootLogger() {
+                static M3Logger rootLogger;
                 return rootLogger;
             }
 
@@ -148,11 +148,11 @@ namespace monarch
              * Standard constructor assigning a name to the logger instance.
              * @param name The logger name.
              */
-            MLogger(const char* name = 0);
+            M3Logger(const char* name = 0);
             /// @overload
-            MLogger(const std::string& name);
+            M3Logger(const std::string& name);
 
-            virtual ~MLogger();
+            virtual ~M3Logger();
 
             /**
              * Check whether a certain log-level is enabled.
@@ -246,90 +246,90 @@ namespace monarch
 
 // PRIVATE MACROS
 
-#define __MDEFAULT_LOGGER        monarch::MLogger::GetRootLogger()
+#define __M3DEFAULT_LOGGER        monarch3::M3Logger::GetRootLogger()
 
-#define __MLOG_LOCATION         monarch::MLogger::Location(__FILE__, __FUNC__, __LINE__)
+#define __M3LOG_LOCATION         monarch3::M3Logger::Location(__FILE__, __FUNC__, __LINE__)
 
-#define __MLOG_LOG_4(I,L,M,O) \
+#define __M3LOG_LOG_4(I,L,M,O) \
         { \
-    if (I.IsLevelEnabled(monarch::MLogger::e##L)) { \
+    if (I.IsLevelEnabled(monarch3::M3Logger::e##L)) { \
         static bool _sLoggerMarker = false; \
         if (!O || !_sLoggerMarker) { \
             _sLoggerMarker = true; \
             std::ostringstream stream; stream << M; \
-            I.Log(monarch::MLogger::e##L, stream.str(), __MLOG_LOCATION); \
+            I.Log(monarch3::M3Logger::e##L, stream.str(), __M3LOG_LOCATION); \
         } \
     } \
         }
 
-#define __MLOG_LOG_3(I,L,M)     __MLOG_LOG_4(I,L,M,false)
-#define __MLOG_LOG_2(L,M)       __MLOG_LOG_4(__MDEFAULT_LOGGER,L,M,false)
-#define __MLOG_LOG_1(M)         __MLOG_LOG_4(__MDEFAULT_LOGGER,Debug,M,false)
+#define __M3LOG_LOG_3(I,L,M)     __M3LOG_LOG_4(I,L,M,false)
+#define __M3LOG_LOG_2(L,M)       __M3LOG_LOG_4(__M3DEFAULT_LOGGER,L,M,false)
+#define __M3LOG_LOG_1(M)         __M3LOG_LOG_4(__M3DEFAULT_LOGGER,Debug,M,false)
 
-#define __MLOG_TRACE_2(I,M)     __MLOG_LOG_4(I,Trace,M,false)
-#define __MLOG_TRACE_1(M)       __MLOG_LOG_4(__MDEFAULT_LOGGER,Trace,M,false)
+#define __M3LOG_TRACE_2(I,M)     __M3LOG_LOG_4(I,Trace,M,false)
+#define __M3LOG_TRACE_1(M)       __M3LOG_LOG_4(__M3DEFAULT_LOGGER,Trace,M,false)
 
-#define __MLOG_DEBUG_2(I,M)     __MLOG_LOG_4(I,Debug,M,false)
-#define __MLOG_DEBUG_1(M)       __MLOG_LOG_4(__MDEFAULT_LOGGER,Debug,M,false)
+#define __M3LOG_DEBUG_2(I,M)     __M3LOG_LOG_4(I,Debug,M,false)
+#define __M3LOG_DEBUG_1(M)       __M3LOG_LOG_4(__M3DEFAULT_LOGGER,Debug,M,false)
 
-#define __MLOG_INFO_2(I,M)      __MLOG_LOG_4(I,Info,M,false)
-#define __MLOG_INFO_1(M)        __MLOG_LOG_4(__MDEFAULT_LOGGER,Info,M,false)
+#define __M3LOG_INFO_2(I,M)      __M3LOG_LOG_4(I,Info,M,false)
+#define __M3LOG_INFO_1(M)        __M3LOG_LOG_4(__M3DEFAULT_LOGGER,Info,M,false)
 
-#define __MLOG_WARN_2(I,M)      __MLOG_LOG_4(I,Warn,M,false)
-#define __MLOG_WARN_1(M)        __MLOG_LOG_4(__MDEFAULT_LOGGER,Warn,M,false)
+#define __M3LOG_WARN_2(I,M)      __M3LOG_LOG_4(I,Warn,M,false)
+#define __M3LOG_WARN_1(M)        __M3LOG_LOG_4(__M3DEFAULT_LOGGER,Warn,M,false)
 
-#define __MLOG_ERROR_2(I,M)     __MLOG_LOG_4(I,Error,M,false)
-#define __MLOG_ERROR_1(M)       __MLOG_LOG_4(__MDEFAULT_LOGGER,Error,M,false)
+#define __M3LOG_ERROR_2(I,M)     __M3LOG_LOG_4(I,Error,M,false)
+#define __M3LOG_ERROR_1(M)       __M3LOG_LOG_4(__M3DEFAULT_LOGGER,Error,M,false)
 
-#define __MLOG_FATAL_2(I,M)     __MLOG_LOG_4(I,Fatal,M,false)
-#define __MLOG_FATAL_1(M)       __MLOG_LOG_4(__MDEFAULT_LOGGER,Fatal,M,false)
+#define __M3LOG_FATAL_2(I,M)     __M3LOG_LOG_4(I,Fatal,M,false)
+#define __M3LOG_FATAL_1(M)       __M3LOG_LOG_4(__M3DEFAULT_LOGGER,Fatal,M,false)
 
-#define __MLOG_ASSERT_3(I,C,M)  if (!(C)) { __MLOG_ERROR_2(I,M) }
-#define __MLOG_ASSERT_2(C,M)    __MLOG_ASSERT_3(__MDEFAULT_LOGGER,C,M)
+#define __M3LOG_ASSERT_3(I,C,M)  if (!(C)) { __M3LOG_ERROR_2(I,M) }
+#define __M3LOG_ASSERT_2(C,M)    __M3LOG_ASSERT_3(__M3DEFAULT_LOGGER,C,M)
 
 
-#define __MLOG_LOG_ONCE_3(I,L,M)     __MLOG_LOG_4(I,L,M,true)
-#define __MLOG_LOG_ONCE_2(L,M)       __MLOG_LOG_4(__MDEFAULT_LOGGER,L,M,true)
-#define __MLOG_LOG_ONCE_1(M)         __MLOG_LOG_4(__MDEFAULT_LOGGER,Debug,M,true)
+#define __M3LOG_LOG_ONCE_3(I,L,M)     __M3LOG_LOG_4(I,L,M,true)
+#define __M3LOG_LOG_ONCE_2(L,M)       __M3LOG_LOG_4(__M3DEFAULT_LOGGER,L,M,true)
+#define __M3LOG_LOG_ONCE_1(M)         __M3LOG_LOG_4(__M3DEFAULT_LOGGER,Debug,M,true)
 
-#define __MLOG_TRACE_ONCE_2(I,M)     __MLOG_LOG_4(I,Trace,M,true)
-#define __MLOG_TRACE_ONCE_1(M)       __MLOG_LOG_4(__MDEFAULT_LOGGER,Trace,M,true)
+#define __M3LOG_TRACE_ONCE_2(I,M)     __M3LOG_LOG_4(I,Trace,M,true)
+#define __M3LOG_TRACE_ONCE_1(M)       __M3LOG_LOG_4(__M3DEFAULT_LOGGER,Trace,M,true)
 
-#define __MLOG_DEBUG_ONCE_2(I,M)     __MLOG_LOG_4(I,Debug,M,true)
-#define __MLOG_DEBUG_ONCE_1(M)       __MLOG_LOG_4(__MDEFAULT_LOGGER,Debug,M,true)
+#define __M3LOG_DEBUG_ONCE_2(I,M)     __M3LOG_LOG_4(I,Debug,M,true)
+#define __M3LOG_DEBUG_ONCE_1(M)       __M3LOG_LOG_4(__M3DEFAULT_LOGGER,Debug,M,true)
 
-#define __MLOG_INFO_ONCE_2(I,M)      __MLOG_LOG_4(I,Info,M,true)
-#define __MLOG_INFO_ONCE_1(M)        __MLOG_LOG_4(__MDEFAULT_LOGGER,Info,M,true)
+#define __M3LOG_INFO_ONCE_2(I,M)      __M3LOG_LOG_4(I,Info,M,true)
+#define __M3LOG_INFO_ONCE_1(M)        __M3LOG_LOG_4(__M3DEFAULT_LOGGER,Info,M,true)
 
-#define __MLOG_WARN_ONCE_2(I,M)      __MLOG_LOG_4(I,Warn,M,true)
-#define __MLOG_WARN_ONCE_1(M)        __MLOG_LOG_4(__MDEFAULT_LOGGER,Warn,M,true)
+#define __M3LOG_WARN_ONCE_2(I,M)      __M3LOG_LOG_4(I,Warn,M,true)
+#define __M3LOG_WARN_ONCE_1(M)        __M3LOG_LOG_4(__M3DEFAULT_LOGGER,Warn,M,true)
 
-#define __MLOG_ERROR_ONCE_2(I,M)     __MLOG_LOG_4(I,Error,M,true)
-#define __MLOG_ERROR_ONCE_1(M)       __MLOG_LOG_4(__MDEFAULT_LOGGER,Error,M,true)
+#define __M3LOG_ERROR_ONCE_2(I,M)     __M3LOG_LOG_4(I,Error,M,true)
+#define __M3LOG_ERROR_ONCE_1(M)       __M3LOG_LOG_4(__M3DEFAULT_LOGGER,Error,M,true)
 
-#define __MLOG_FATAL_ONCE_2(I,M)     __MLOG_LOG_4(I,Fatal,M,true)
-#define __MLOG_FATAL_ONCE_1(M)       __MLOG_LOG_4(__MDEFAULT_LOGGER,Fatal,M,true)
+#define __M3LOG_FATAL_ONCE_2(I,M)     __M3LOG_LOG_4(I,Fatal,M,true)
+#define __M3LOG_FATAL_ONCE_1(M)       __M3LOG_LOG_4(__M3DEFAULT_LOGGER,Fatal,M,true)
 
 
 // PUBLIC MACROS
 
-#define MLOGGER(I,K)      static monarch::MLogger I(K);
+#define M3LOGGER(I,K)      static monarch3::M3Logger I(K);
 
-#define MLOG(...)         macro_dispatcher(__MLOG_LOG_, __VA_ARGS__)(__VA_ARGS__)
-#define MTRACE(...)       macro_dispatcher(__MLOG_TRACE_, __VA_ARGS__)(__VA_ARGS__)
-#define MDEBUG(...)       macro_dispatcher(__MLOG_DEBUG_, __VA_ARGS__)(__VA_ARGS__)
-#define MINFO(...)        macro_dispatcher(__MLOG_INFO_, __VA_ARGS__)(__VA_ARGS__)
-#define MWARN(...)        macro_dispatcher(__MLOG_WARN_, __VA_ARGS__)(__VA_ARGS__)
-#define MERROR(...)       macro_dispatcher(__MLOG_ERROR_, __VA_ARGS__)(__VA_ARGS__)
-#define MFATAL(...)       macro_dispatcher(__MLOG_FATAL_, __VA_ARGS__)(__VA_ARGS__)
-#define MASSERT(...)      macro_dispatcher(__MLOG_ASSERT_, __VA_ARGS__)(__VA_ARGS__)
+#define M3LOG(...)         macro_dispatcher(__M3LOG_LOG_, __VA_ARGS__)(__VA_ARGS__)
+#define M3TRACE(...)       macro_dispatcher(__M3LOG_TRACE_, __VA_ARGS__)(__VA_ARGS__)
+#define M3DEBUG(...)       macro_dispatcher(__M3LOG_DEBUG_, __VA_ARGS__)(__VA_ARGS__)
+#define M3INFO(...)        macro_dispatcher(__M3LOG_INFO_, __VA_ARGS__)(__VA_ARGS__)
+#define M3WARN(...)        macro_dispatcher(__M3LOG_WARN_, __VA_ARGS__)(__VA_ARGS__)
+#define M3ERROR(...)       macro_dispatcher(__M3LOG_ERROR_, __VA_ARGS__)(__VA_ARGS__)
+#define M3FATAL(...)       macro_dispatcher(__M3LOG_FATAL_, __VA_ARGS__)(__VA_ARGS__)
+#define M3ASSERT(...)      macro_dispatcher(__M3LOG_ASSERT_, __VA_ARGS__)(__VA_ARGS__)
 
-#define MLOG_ONCE(...)    macro_dispatcher(__MLOG_LOG_ONCE_, __VA_ARGS__)(__VA_ARGS__)
-#define MTRACE_ONCE(...)  macro_dispatcher(__MLOG_TRACE_ONCE_, __VA_ARGS__)(__VA_ARGS__)
-#define MDEBUG_ONCE(...)  macro_dispatcher(__MLOG_DEBUG_ONCE_, __VA_ARGS__)(__VA_ARGS__)
-#define MINFO_ONCE(...)   macro_dispatcher(__MLOG_INFO_ONCE_, __VA_ARGS__)(__VA_ARGS__)
-#define MWARN_ONCE(...)   macro_dispatcher(__MLOG_WARN_ONCE_, __VA_ARGS__)(__VA_ARGS__)
-#define MERROR_ONCE(...)  macro_dispatcher(__MLOG_ERROR_ONCE_, __VA_ARGS__)(__VA_ARGS__)
-#define MFATAL_ONCE(...)  macro_dispatcher(__MLOG_FATAL_ONCE_, __VA_ARGS__)(__VA_ARGS__)
+#define M3LOG_ONCE(...)    macro_dispatcher(__M3LOG_LOG_ONCE_, __VA_ARGS__)(__VA_ARGS__)
+#define M3TRACE_ONCE(...)  macro_dispatcher(__M3LOG_TRACE_ONCE_, __VA_ARGS__)(__VA_ARGS__)
+#define M3DEBUG_ONCE(...)  macro_dispatcher(__M3LOG_DEBUG_ONCE_, __VA_ARGS__)(__VA_ARGS__)
+#define M3INFO_ONCE(...)   macro_dispatcher(__M3LOG_INFO_ONCE_, __VA_ARGS__)(__VA_ARGS__)
+#define M3WARN_ONCE(...)   macro_dispatcher(__M3LOG_WARN_ONCE_, __VA_ARGS__)(__VA_ARGS__)
+#define M3ERROR_ONCE(...)  macro_dispatcher(__M3LOG_ERROR_ONCE_, __VA_ARGS__)(__VA_ARGS__)
+#define M3FATAL_ONCE(...)  macro_dispatcher(__M3LOG_FATAL_ONCE_, __VA_ARGS__)(__VA_ARGS__)
 
-#endif /* MLOGGER_HH_ */
+#endif /* M3LOGGER_HH_ */

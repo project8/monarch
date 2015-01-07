@@ -1,25 +1,25 @@
 /*
- * MStream.hh
+ * M3Stream.hh
  *
  *  Created on: Dec 26, 2014
  *      Author: nsoblath
  */
 
-#ifndef MSTREAM_HH_
-#define MSTREAM_HH_
+#ifndef M3STREAM_HH_
+#define M3STREAM_HH_
 
-#include "MHeader.hh"
-#include "MMemberVariable.hh"
-#include "MRecord.hh"
-#include "MTypes.hh"
+#include "M3Header.hh"
+#include "M3MemberVariable.hh"
+#include "M3Record.hh"
+#include "M3Types.hh"
 
 #include "H5Cpp.h"
 
 
-namespace monarch
+namespace monarch3
 {
 
-    class MStream
+    class M3Stream
     {
         public:
             enum Mode
@@ -29,14 +29,14 @@ namespace monarch
             };
 
         private:
-            typedef void (MStream::*DoReadRecordFunc)() const;
-            typedef void (MStream::*DoWriteRecordFunc)();
+            typedef void (M3Stream::*DoReadRecordFunc)() const;
+            typedef void (M3Stream::*DoWriteRecordFunc)();
 
         public:
-            MStream( const MStreamHeader& aHeader, H5::CommonFG* aH5StreamParentLoc, MultiChannelFormatType aAccessFormat = sSeparate );
-            virtual ~MStream();
+            M3Stream( const M3StreamHeader& aHeader, H5::CommonFG* aH5StreamParentLoc, MultiChannelFormatType aAccessFormat = sSeparate );
+            virtual ~M3Stream();
 
-            MMEMBERVARIABLE( Mode, Mode );
+            M3MEMBERVARIABLE( Mode, Mode );
 
             /// Setup to read/write data (called in constructor; only call this if read/write parameters change during file reading)
             void Initialize() const;
@@ -47,9 +47,9 @@ namespace monarch
 
         public:
             /// Get the pointer to the stream record
-            const MRecord* GetStreamRecord() const;
+            const M3Record* GetStreamRecord() const;
             /// Get the pointer to a particular channel record
-            const MRecord* GetChannelRecord( unsigned aChannel ) const;
+            const M3Record* GetChannelRecord( unsigned aChannel ) const;
 
             /// Read the next record from the file
             bool ReadRecord( int anOffset = 0 ) const;
@@ -64,9 +64,9 @@ namespace monarch
 
         public:
             /// Get the pointer to the stream record
-            MRecord* GetStreamRecord();
+            M3Record* GetStreamRecord();
             /// Get the pointer to a particular channel record
-            MRecord* GetChannelRecord( unsigned aChannel );
+            M3Record* GetChannelRecord( unsigned aChannel );
 
             /// Write the record contents to the file
             bool WriteRecord( bool aIsNewAcquisition );
@@ -116,10 +116,10 @@ namespace monarch
             mutable unsigned fChanRecNBytes;
             mutable unsigned fChanRecSize;
 
-            mutable MRecord fStreamRecord;
+            mutable M3Record fStreamRecord;
 
             mutable unsigned fNChannels;
-            mutable MRecord* fChannelRecords;
+            mutable M3Record* fChannelRecords;
 
             mutable unsigned fNAcquisitions;
             mutable AcquisitionIdType fAcquisitionId;

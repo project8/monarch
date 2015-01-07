@@ -1,23 +1,23 @@
 /*
- * MVersion.cpp
+ * M3Version.cpp
  *
  *  Created on: Mar 21, 2014
  *      Author: nsoblath
  */
 
-#include "MVersion.hh"
+#include "M3Version.hh"
 
-#include "MLogger.hh"
+#include "M3Logger.hh"
 
 #include <sstream>
 
-namespace monarch
+namespace monarch3
 {
-    MLOGGER( mlog, "Version" );
+    M3LOGGER( mlog, "Version" );
 
-    char MVersion::sDelimeter = '.';
+    char M3Version::sDelimeter = '.';
 
-    MVersion::MVersion() :
+    M3Version::M3Version() :
             fMajorVer( Monarch_VERSION_MAJOR ),
             fMinorVer( Monarch_VERSION_MINOR ),
             fRevision( Monarch_REVISION ),
@@ -27,7 +27,7 @@ namespace monarch
         Combine( fMajorVer, fMinorVer, fRevision );
     }
 
-    MVersion::MVersion( const std::string& aVer ) :
+    M3Version::M3Version( const std::string& aVer ) :
                     fMajorVer( 0 ),
                     fMinorVer( 0 ),
                     fRevision( 0 ),
@@ -37,34 +37,34 @@ namespace monarch
         Parse( aVer );
     }
 
-    MVersion::~MVersion()
+    M3Version::~M3Version()
     {
     }
 
-    unsigned MVersion::MajorVersion() const
+    unsigned M3Version::MajorVersion() const
     {
         return fMajorVer;
     }
-    unsigned MVersion::MinorVersion() const
+    unsigned M3Version::MinorVersion() const
     {
         return fMinorVer;
     }
-    unsigned MVersion::Revision() const
+    unsigned M3Version::Revision() const
     {
         return fRevision;
     }
 
-    const std::string& MVersion::VersionStr() const
+    const std::string& M3Version::VersionStr() const
     {
         return fVersion;
     }
 
-    const std::string& MVersion::EggVersion() const
+    const std::string& M3Version::EggVersion() const
     {
         return fEggVersion;
     }
 
-    bool MVersion::Parse( const std::string& aVer )
+    bool M3Version::Parse( const std::string& aVer )
     {
         if( aVer == "unknown" )
         {
@@ -78,7 +78,7 @@ namespace monarch
         size_t tDelimPos_1 = aVer.find( sDelimeter, 0 );
         if( tDelimPos_1 == std::string::npos )
         {
-            MERROR( mlog, "version string <" << aVer << "> is not in the right format (did not find first delimeter)" );
+            M3ERROR( mlog, "version string <" << aVer << "> is not in the right format (did not find first delimeter)" );
             return false;
         }
         std::stringstream tMajVerStr;
@@ -87,7 +87,7 @@ namespace monarch
         size_t tDelimPos_2 = aVer.find( sDelimeter, tDelimPos_1 + 1 );
         if( tDelimPos_2 == std::string::npos )
         {
-            MERROR( mlog, "version string <" << aVer << "> is not in the right format (did not find second delimeter)" );
+            M3ERROR( mlog, "version string <" << aVer << "> is not in the right format (did not find second delimeter)" );
             return false;
         }
         std::stringstream tMinVerStr;
@@ -104,7 +104,7 @@ namespace monarch
         return true;
     }
 
-    bool MVersion::Combine( unsigned aMajVer, unsigned aMinVer, unsigned aRev )
+    bool M3Version::Combine( unsigned aMajVer, unsigned aMinVer, unsigned aRev )
     {
         std::stringstream tVerStr;
         tVerStr << aMajVer << sDelimeter << aMinVer << sDelimeter << aRev;

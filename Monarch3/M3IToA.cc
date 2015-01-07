@@ -1,5 +1,5 @@
 /*
- * MIToA.cc
+ * M3IToA.cc
  *
  *  Created on: Dec 25, 2014
  *      Author: nsoblath
@@ -29,12 +29,12 @@
  */
 
 
-#include "MIToA.hh"
+#include "M3IToA.hh"
 
 // Additional count number of digit pass
 // Use lookup table of two gDigitsLut
 
-namespace monarch
+namespace monarch3
 {
 
     void u32toa( uint32_t value, char* buffer )
@@ -136,4 +136,4 @@ namespace monarch
         u64toa( static_cast<uint64_t>(value), buffer );
     }
 
-} /* namespace monarch */
+} /* namespace monarch3 */

@@ -1,21 +1,21 @@
 /*
- * MMonarch.cc
+ * M3Monarch.cc
  *
  *  Created on: Dec 4, 2014
  *      Author: nsoblath
  */
 
-#include "MMonarch.hh"
+#include "M3Monarch.hh"
 
-#include "MLogger.hh"
+#include "M3Logger.hh"
 
 using std::string;
 
-namespace monarch
+namespace monarch3
 {
-    MLOGGER( mlog, "MMonarch" );
+    M3LOGGER( mlog, "MMonarch3" );
 
-    Monarch::Monarch() :
+    Monarch3::Monarch3() :
                 fState( eClosed ),
                 fFile( NULL ),
                 fHeader( NULL )
@@ -25,7 +25,7 @@ namespace monarch
         H5::Exception::dontPrint();
     }
 
-    Monarch::~Monarch()
+    Monarch3::~Monarch3()
     {
         if( fHeader != NULL )
         {
@@ -40,49 +40,49 @@ namespace monarch
         }
     }
 
-    const Monarch* Monarch::OpenForReading( const string& aFilename )
+    const Monarch3* Monarch3::OpenForReading( const string& aFilename )
     {
-        Monarch* tMonarch = new Monarch();
+        Monarch3* tMonarch3 = new Monarch3();
 
-        tMonarch->fFile = new H5::H5File( aFilename.c_str(), H5F_ACC_RDONLY );
-        if( tMonarch->fFile == NULL )
+        tMonarch3->fFile = new H5::H5File( aFilename.c_str(), H5F_ACC_RDONLY );
+        if( tMonarch3->fFile == NULL )
         {
-            delete tMonarch;
-            throw MException() << "Could not open <" << aFilename << "> for reading";
+            delete tMonarch3;
+            throw M3Exception() << "Could not open <" << aFilename << "> for reading";
             return NULL;
         }
-        MDEBUG( mlog, "Opened egg file <" << aFilename << "> for reading" );
+        M3DEBUG( mlog, "Opened egg file <" << aFilename << "> for reading" );
 
-        tMonarch->fHeader = new MHeader();
-        tMonarch->fHeader->SetFilename( aFilename );
+        tMonarch3->fHeader = new M3Header();
+        tMonarch3->fHeader->SetFilename( aFilename );
 
-        tMonarch->fState = eOpen;
+        tMonarch3->fState = eOpen;
 
-        return tMonarch;
+        return tMonarch3;
     }
 
-    Monarch* Monarch::OpenForWriting( const string& aFilename )
+    Monarch3* Monarch3::OpenForWriting( const string& aFilename )
     {
-        Monarch* tMonarch = new Monarch();
+        Monarch3* tMonarch3 = new Monarch3();
 
-        tMonarch->fFile = new H5::H5File( aFilename.c_str(), H5F_ACC_TRUNC );
-        if( tMonarch->fFile == NULL )
+        tMonarch3->fFile = new H5::H5File( aFilename.c_str(), H5F_ACC_TRUNC );
+        if( tMonarch3->fFile == NULL )
         {
-            delete tMonarch;
-            throw MException() << "Could not open <" << aFilename << "> for writing";
+            delete tMonarch3;
+            throw M3Exception() << "Could not open <" << aFilename << "> for writing";
             return NULL;
         }
-        MDEBUG( mlog, "Opened egg file <" << aFilename << "> for writing" );
+        M3DEBUG( mlog, "Opened egg file <" << aFilename << "> for writing" );
 
-        tMonarch->fHeader = new MHeader();
-        tMonarch->fHeader->SetFilename( aFilename );
+        tMonarch3->fHeader = new M3Header();
+        tMonarch3->fHeader->SetFilename( aFilename );
 
-        tMonarch->fState = eOpen;
+        tMonarch3->fState = eOpen;
 
-        return tMonarch;
+        return tMonarch3;
     }
 
-    void Monarch::ReadHeader() const
+    void Monarch3::ReadHeader() const
     {
         // Read the header information from the file (run header, plus all stream and channel headers)
         try
@@ -91,9 +91,9 @@ namespace monarch
         }
         catch( H5::Exception& e )
         {
-            throw MException() << "HDF5 error while reading the header:\n\t" << e.getCDetailMsg() << " (function: " << e.getFuncName() << ")";
+            throw M3Exception() << "HDF5 error while reading the header:\n\t" << e.getCDetailMsg() << " (function: " << e.getFuncName() << ")";
         }
-        catch( MException& e )
+        catch( M3Exception& e )
         {
             throw( e );
         }
@@ -104,18 +104,18 @@ namespace monarch
         try
         {
             // Create the stream objects based on the configuration from the header
-            for( MHeader::MStreamHeaders::const_iterator streamIt = fHeader->GetStreamHeaders().begin();
+            for( M3Header::M3StreamHeaders::const_iterator streamIt = fHeader->GetStreamHeaders().begin();
                     streamIt != fHeader->GetStreamHeaders().end();
                     ++streamIt )
             {
-                fStreams.push_back( new MStream( *streamIt, tStreamsGroup ) );
+                fStreams.push_back( new M3Stream( *streamIt, tStreamsGroup ) );
             }
         }
         catch( H5::Exception& e )
         {
-            throw MException() << "HDF5 error while creating stream objects for reading:\n\t" << e.getDetailMsg() << " (function: " << e.getFuncName() << ")";
+            throw M3Exception() << "HDF5 error while creating stream objects for reading:\n\t" << e.getDetailMsg() << " (function: " << e.getFuncName() << ")";
         }
-        catch( MException& e )
+        catch( M3Exception& e )
         {
             throw( e );
         }
@@ -124,7 +124,7 @@ namespace monarch
         return;
     }
 
-    void Monarch::WriteHeader()
+    void Monarch3::WriteHeader()
     {
         // Write the header to the file
         // This will create the following groups: run, streams, and channels
@@ -134,9 +134,9 @@ namespace monarch
         }
         catch( H5::Exception& e )
         {
-            throw MException() << "HDF5 error while writing header:\n\t" << e.getDetailMsg() << " (function: " << e.getFuncName() << ")";
+            throw M3Exception() << "HDF5 error while writing header:\n\t" << e.getDetailMsg() << " (function: " << e.getFuncName() << ")";
         }
-        catch( MException& e )
+        catch( M3Exception& e )
         {
             throw( e );
         }
@@ -147,18 +147,18 @@ namespace monarch
         try
         {
             // Create the stream objects based on the configuration from the header
-            for( MHeader::MStreamHeaders::const_iterator streamIt = fHeader->GetStreamHeaders().begin();
+            for( M3Header::M3StreamHeaders::const_iterator streamIt = fHeader->GetStreamHeaders().begin();
                     streamIt != fHeader->GetStreamHeaders().end();
                     ++streamIt )
             {
-                fStreams.push_back( new MStream( *streamIt, tStreamsGroup ) );
+                fStreams.push_back( new M3Stream( *streamIt, tStreamsGroup ) );
             }
         }
         catch( H5::Exception& e )
         {
-            throw MException() << "HDF5 error while creating stream objects:\n\t" << e.getDetailMsg() << " (function: " << e.getFuncName() << ")";
+            throw M3Exception() << "HDF5 error while creating stream objects:\n\t" << e.getDetailMsg() << " (function: " << e.getFuncName() << ")";
         }
-        catch( MException& e )
+        catch( M3Exception& e )
         {
             throw( e );
         }
@@ -167,31 +167,31 @@ namespace monarch
         return;
     }
 
-    void Monarch::Close() const
+    void Monarch3::Close() const
     {
-        MDEBUG( mlog, "const Monarch::Close()" );
+        M3DEBUG( mlog, "const Monarch3::Close()" );
         try
         {
-            for( std::vector< MStream* >::iterator streamIt = fStreams.begin(); streamIt != fStreams.end(); ++streamIt )
+            for( std::vector< M3Stream* >::iterator streamIt = fStreams.begin(); streamIt != fStreams.end(); ++streamIt )
             {
-                const_cast< const MStream* >(*streamIt)->Close();
+                const_cast< const M3Stream* >(*streamIt)->Close();
                 delete *streamIt;
                 *streamIt = NULL;
             }
         }
         catch( H5::Exception& e )
         {
-            throw MException() << "Error while closing: " << e.getDetailMsg() << " (function: " << e.getFuncName() << ")";
+            throw M3Exception() << "Error while closing: " << e.getDetailMsg() << " (function: " << e.getFuncName() << ")";
         }
         return;
     }
 
-    void Monarch::Close()
+    void Monarch3::Close()
     {
-        MDEBUG( mlog, "non-const Monarch::Close()" );
+        M3DEBUG( mlog, "non-const Monarch3::Close()" );
         try
         {
-            for( std::vector< MStream* >::iterator streamIt = fStreams.begin(); streamIt != fStreams.end(); ++streamIt )
+            for( std::vector< M3Stream* >::iterator streamIt = fStreams.begin(); streamIt != fStreams.end(); ++streamIt )
             {
                 (*streamIt)->Close();
                 delete *streamIt;
@@ -200,7 +200,7 @@ namespace monarch
         }
         catch( H5::Exception& e )
         {
-            throw MException() << "Error while closing: " << e.getDetailMsg() << " (function: " << e.getFuncName() << ")";
+            throw M3Exception() << "Error while closing: " << e.getDetailMsg() << " (function: " << e.getFuncName() << ")";
         }
         return;
     }
