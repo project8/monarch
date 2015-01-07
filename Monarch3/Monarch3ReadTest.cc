@@ -174,14 +174,14 @@ int main( const int argc, const char** argv )
         M3INFO( mlog, "\tRecord 1 has values '10', '20', and '30'" );
 
         const M3Stream* tStream2 = tReadTest->GetStream( 2 );
-        unsigned tNAcquisitions2 = tStream1->GetNAcquisitions();
+        unsigned tNAcquisitions2 = tStream2->GetNAcquisitions();
         unsigned tNRecords2 = tStream2->GetNRecordsInFile();
         M3INFO( mlog, "Stream 2 has " << tNAcquisitions2 << " acquisitions and " << tNRecords2 << " records" );
-        const M3StreamHeader& tStrHeader2 = tReadHeader->GetStreamHeaders().at( 1 );
+        const M3StreamHeader& tStrHeader2 = tReadHeader->GetStreamHeaders().at( 2 );
         unsigned tNChannels2 = tStrHeader2.GetNChannels();
         unsigned tRecSize2 = tStrHeader2.GetRecordSize();
         M3INFO( mlog, "Stream 2 has " << tNChannels2 << " channel(s) stored in format mode " << tStrHeader2.GetChannelFormat() );
-        if( tNAcquisitions1 != 1 || tNChannels1 != 3 || tNRecords1 != 2 )
+        if( tNAcquisitions2 != 1 || tNChannels2 != 3 || tNRecords2 != 2 )
         {
             M3ERROR( mlog, "Invalid number of acquisitions (1 expected), channels (3 expected), or records (2 expected)" );
             delete tReadTest;

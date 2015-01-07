@@ -61,6 +61,7 @@ target_link_libraries( Monarch3WriteTest Monarch3 ${EXTERNAL_LIBRARIES})
 pbuilder_install_executables (
     #Monarch3Dump
     Monarch3Info
+    Monarch3ReadTest
     Monarch3WriteTest
     #Monarch3TimeCheck
 )
