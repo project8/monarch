@@ -157,8 +157,10 @@ namespace monarch3
             M3MEMBERVARIABLEREF_NOSET( std::vector< uint32_t >, ChannelStreams );
 
             M3MEMBERVARIABLEREF_NOSET( std::vector< M3ChannelHeader >, ChannelHeaders );
+            std::vector< M3ChannelHeader >& GetChannelHeaders();
 
             M3MEMBERVARIABLEREF_NOSET( std::vector< M3StreamHeader >, StreamHeaders );
+            std::vector< M3StreamHeader >& GetStreamHeaders();
 
             // TODO: channel coherence
 
@@ -225,6 +227,16 @@ namespace monarch3
     inline H5::Group* M3Header::GetChannelsGroup()
     {
         return fChannelsGroup;
+    }
+
+    inline std::vector< M3ChannelHeader >& M3Header::GetChannelHeaders()
+    {
+        return fChannelHeaders;
+    }
+
+    inline std::vector< M3StreamHeader >& M3Header::GetStreamHeaders()
+    {
+        return fStreamHeaders;
     }
 
 
