@@ -42,8 +42,10 @@ namespace monarch3
             //current state of monarch
             typedef enum
             {
-                eOpen, // state when monarch has a file open but hasn't written/read the header
-                eReady, // state when monarch has dealt with the header and is writing/reading records
+                eOpenToRead, // state when monarch has a file open but hasn't read the header
+                eOpenToWrite, // state when monarch has a file open but hasn't written the header
+                eReadyToRead, // state when monarch has dealt with the header and is reading records
+                eReadyToWrite, // state when monarch has dealt with the header and is writing records
                 eClosed // state when monarch has no file
             } State;
             mutable State fState;
@@ -74,8 +76,8 @@ namespace monarch3
             /// Get the pointer to a particular stream
             const M3Stream* GetStream( unsigned stream ) const;
 
-            /// Close the file pointer.
-            void Close() const;
+            /// Close the file.
+            void FinishReading() const;
 
             //*********************************
             // methods for writing (none const)
@@ -99,8 +101,8 @@ namespace monarch3
             /// Get the pointer to a particular stream
             M3Stream* GetStream( unsigned stream );
 
-            /// Close the file pointer
-            void Close();
+            /// Close the file.
+            void FinishWriting();
 
         private:
             // the HDF5 file

@@ -45,7 +45,7 @@ int main( const int argc, const char** argv )
 
         if( ! tCheckRecords )
         {
-            tReadTest->Close();
+            tReadTest->FinishReading();
             delete tReadTest;
             return 0;
         }
@@ -91,7 +91,7 @@ int main( const int argc, const char** argv )
 
         }
 
-        tReadTest->Close();
+        tReadTest->FinishReading();
         delete tReadTest;
     }
     catch( M3Exception& e )

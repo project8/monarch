@@ -27,6 +27,9 @@ namespace monarch3
 
     Monarch3::~Monarch3()
     {
+        if( fState == eOpenToRead || fState == eReadyToRead) FinishReading();
+        if( fState == eOpenToWrite || fState == eReadyToWrite) FinishWriting();
+
         if( fHeader != NULL )
         {
             delete fHeader;
@@ -56,7 +59,7 @@ namespace monarch3
         tMonarch3->fHeader = new M3Header();
         tMonarch3->fHeader->SetFilename( aFilename );
 
-        tMonarch3->fState = eOpen;
+        tMonarch3->fState = eOpenToRead;
 
         return tMonarch3;
     }
@@ -77,13 +80,18 @@ namespace monarch3
         tMonarch3->fHeader = new M3Header();
         tMonarch3->fHeader->SetFilename( aFilename );
 
-        tMonarch3->fState = eOpen;
+        tMonarch3->fState = eOpenToWrite;
 
         return tMonarch3;
     }
 
     void Monarch3::ReadHeader() const
     {
+        if( fState != eOpenToRead )
+        {
+            throw M3Exception() << "File not opened to read";
+        }
+
         // Read the header information from the file (run header, plus all stream and channel headers)
         try
         {
@@ -120,12 +128,17 @@ namespace monarch3
             throw( e );
         }
 
-        fState = eReady;
+        fState = eReadyToRead;
         return;
     }
 
     void Monarch3::WriteHeader()
     {
+        if( fState != eOpenToWrite )
+        {
+            throw M3Exception() << "File not opened to write";
+        }
+
         // Write the header to the file
         // This will create the following groups: run, streams, and channels
         try
@@ -163,13 +176,13 @@ namespace monarch3
             throw( e );
         }
 
-        fState = eReady;
+        fState = eReadyToWrite;
         return;
     }
 
-    void Monarch3::Close() const
+    void Monarch3::FinishReading() const
     {
-        M3DEBUG( mlog, "const Monarch3::Close()" );
+        M3DEBUG( mlog, "Finishing reading" );
         try
         {
             for( std::vector< M3Stream* >::iterator streamIt = fStreams.begin(); streamIt != fStreams.end(); ++streamIt )
@@ -183,12 +196,13 @@ namespace monarch3
         {
             throw M3Exception() << "Error while closing: " << e.getDetailMsg() << " (function: " << e.getFuncName() << ")";
         }
+        fState = eClosed;
         return;
     }
 
-    void Monarch3::Close()
+    void Monarch3::FinishWriting()
     {
-        M3DEBUG( mlog, "non-const Monarch3::Close()" );
+        M3DEBUG( mlog, "Finishing writing" );
         try
         {
             for( std::vector< M3Stream* >::iterator streamIt = fStreams.begin(); streamIt != fStreams.end(); ++streamIt )
@@ -202,6 +216,7 @@ namespace monarch3
         {
             throw M3Exception() << "Error while closing: " << e.getDetailMsg() << " (function: " << e.getFuncName() << ")";
         }
+        fState = eClosed;
         return;
     }
 

@@ -104,7 +104,7 @@ int main( const int argc, const char** argv )
         }
         tTripleStream->WriteRecord( false );
 
-        tWriteTest->Close();
+        tWriteTest->FinishWriting();
         M3INFO( mlog, "File closed" );
 
         delete tWriteTest;
