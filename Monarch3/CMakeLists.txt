@@ -3,32 +3,32 @@
 ####################
 
 set( MONARCH3_HEADERFILES
-    MException.hh
-    MHeader.hh
-    MIToA.hh
-    MLogger.hh
-    MMemberVariable.hh
-    MMonarch.hh
-    MRecord.hh
-    MStream.hh
-    MTypes.hh
+    M3Exception.hh
+    M3Header.hh
+    M3IToA.hh
+    M3Logger.hh
+    M3MemberVariable.hh
+    M3Monarch.hh
+    M3Record.hh
+    M3Stream.hh
+    M3Types.hh
 )
 
 set( MONARCH3_SOURCEFILES
-    MException.cc
-    MHeader.cc
-    MIToA.cc
-    MLogger.cc
-    MMonarch.cc
-    MRecord.cc
-    MStream.cc
-    MVersion.cc
+    M3Exception.cc
+    M3Header.cc
+    M3IToA.cc
+    M3Logger.cc
+    M3Monarch.cc
+    M3Record.cc
+    M3Stream.cc
+    M3Version.cc
 )
 
-configure_file( MVersion.hh.in ${CMAKE_BINARY_DIR}/MVersion.hh )
+configure_file( M3Version.hh.in ${CMAKE_BINARY_DIR}/M3Version.hh )
 set( MONARCH3_HEADERFILES
     ${MONARCH3_HEADERFILES}
-    ${CMAKE_BINARY_DIR}/MVersion.hh
+    ${CMAKE_BINARY_DIR}/M3Version.hh
 )
 include_directories( BEFORE ${CMAKE_BINARY_DIR} )
 
@@ -43,16 +43,16 @@ pbuilder_install_libraries( Monarch3 )
 # monarch3 executables #
 ########################
 
-#add_executable( Monarch3Dump MonarchDump.cpp )
+#add_executable( Monarch3Dump Monarch3Dump.cpp )
 #target_link_libraries( Monarch3Dump Monarch3 ${EXTERNAL_LIBRARIES})
 
-add_executable( Monarch3Info MonarchInfo.cc )
+add_executable( Monarch3Info Monarch3Info.cc )
 target_link_libraries( Monarch3Info Monarch3 ${EXTERNAL_LIBRARIES})
 
-add_executable( Monarch3WriteTest MonarchWriteTest.cc )
+add_executable( Monarch3WriteTest Monarch3WriteTest.cc )
 target_link_libraries( Monarch3WriteTest Monarch3 ${EXTERNAL_LIBRARIES})
 
-#add_executable( Monarch3TimeCheck MonarchTimeCheck.cpp )
+#add_executable( Monarch3TimeCheck Monarch3TimeCheck.cpp )
 #target_link_libraries( Monarch3TimeCheck Monarch3 ${EXTERNAL_LIBRARIES})
 
 pbuilder_install_executables (
