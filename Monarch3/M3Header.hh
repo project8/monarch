@@ -257,7 +257,7 @@ namespace monarch3
     }
 
     template< typename XArrayType >
-    inline void M3Header::Write1DToHDF5( H5::H5Location* aLoc, const std::string& aName, const XArrayType& anArray )
+    void M3Header::Write1DToHDF5( H5::H5Location* aLoc, const std::string& aName, const XArrayType& anArray )
     {
         typedef typename XArrayType::value_type XValueType;
         M3DEBUG( mlog_mheader, "Writing vector to new 1-D metadata <" << aName << ">; size = " << anArray.size() );

@@ -28,7 +28,7 @@ if( GIT_FOUND )
 endif( GIT_FOUND )
 
 find_package( HDF5 COMPONENTS CXX )
-include_directories( ${HDF5_INCLUDE_DIR} )
+include_directories( BEFORE ${HDF5_INCLUDE_DIR} )
 pbuilder_add_ext_libraries( ${HDF5_CXX_LIBRARIES} )
 
 find_package( Protobuf )
