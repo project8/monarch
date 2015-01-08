@@ -262,16 +262,17 @@ namespace monarch3
         typedef typename XArrayType::value_type XValueType;
         M3DEBUG( mlog_mheader, "Writing vector to new 1-D metadata <" << aName << ">; size = " << anArray.size() );
         hsize_t tDims[ 1 ] = { anArray.size() };
-        H5::ArrayType tTypeNative( MH5Type< XValueType >::Native(), 1, tDims );
-        H5::ArrayType tTypeH5( MH5Type< XValueType >::H5(), 1, tDims );
-        H5::DataSpace dspace( 1, tDims );
+        std::cout << "tDims[0] = " << tDims[0] << std::endl;
+        //H5::ArrayType tTypeNative( MH5Type< XValueType >::Native(), 1, tDims );
+        //H5::ArrayType tTypeH5( MH5Type< XValueType >::H5(), 1, tDims );
+        H5::DataSpace dspace( 1, tDims, tDims );
         XValueType* buffer = new XValueType( anArray.size() );
         for( unsigned i = 0; i < anArray.size(); ++i )
         {
             buffer[ i ] = anArray[ i ];
-            //std::cout << "writing bin " << i << ": " << buffer[i] << " <-- " << anArray[i] << std::endl;
+            std::cout << "writing bin " << i << ": " << buffer[i] << " <-- " << anArray[i] << std::endl;
         }
-        aLoc->createAttribute( aName, tTypeH5, dspace ).write( tTypeNative, buffer );
+        aLoc->createAttribute( aName, MH5Type< XValueType >::H5(), dspace ).write( MH5Type< XValueType >::Native(), buffer );
         delete [] buffer;
         return;
     }

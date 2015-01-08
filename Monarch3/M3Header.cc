@@ -312,14 +312,14 @@ namespace monarch3
         {
             M3DEBUG( mlog, "Writing run header" );
             fFile = aFile;
-            WriteScalarToHDF5( fFile, "egg_version",   GetEggVersion() );
-            WriteScalarToHDF5( fFile, "filename",         GetFilename() );
-            WriteScalarToHDF5( fFile, "n_channels",       GetNChannels() );
-            WriteScalarToHDF5( fFile, "n_streams",        GetNStreams() );
-            WriteScalarToHDF5( fFile, "run_duration",     GetRunDuration() );
-            WriteScalarToHDF5( fFile, "timestamp",        GetTimestamp() );
-            WriteScalarToHDF5( fFile, "description",      GetDescription() );
-            Write1DToHDF5( fFile, "channel_streams",  GetChannelStreams() );
+            WriteScalarToHDF5( fFile, "egg_version",   fEggVersion );
+            WriteScalarToHDF5( fFile, "filename",      fFilename );
+            WriteScalarToHDF5( fFile, "n_channels",    fNChannels );
+            WriteScalarToHDF5( fFile, "n_streams",     fNStreams );
+            WriteScalarToHDF5( fFile, "run_duration",  fRunDuration );
+            WriteScalarToHDF5( fFile, "timestamp",     fTimestamp );
+            WriteScalarToHDF5( fFile, "description",   fDescription );
+            Write1DToHDF5( fFile, "channel_streams",  fChannelStreams );
 
             M3DEBUG( mlog, "Writing stream headers" );
             fStreamsGroup = new H5::Group( fFile->createGroup( "streams" ) );
