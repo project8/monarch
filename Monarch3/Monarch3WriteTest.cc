@@ -1,6 +1,8 @@
 #include "M3Monarch.hh"
 #include "M3Logger.hh"
 
+#include "/opt/local/include/fftw3.h"
+
 using namespace monarch3;
 
 M3LOGGER( mlog, "Monarch3WriteTest" );
@@ -30,12 +32,14 @@ int main( const int argc, const char** argv )
         unsigned tDSSamples = 5;
         unsigned tTSSamples = 5;
         unsigned tFlSSamples = 10;
+        unsigned tFlCompSamples = 5;
 
         M3INFO( mlog, "Adding streams" );
         unsigned tSingleStreamNum = tHeader->AddStream( "1-channel device", 500, tSSSamples, 1, 1, sDigitized, 8 );
         unsigned tDoubleStreamNum = tHeader->AddStream( "2-channel device", 2, sInterleaved, 250, tDSSamples, 1, 2, sDigitized, 16 );
         unsigned tTripleStreamNum = tHeader->AddStream( "3-channel device", 3, sSeparate, 100, tTSSamples, 1, 1, sDigitized, 8 );
         unsigned tFloatStreamNum = tHeader->AddStream( "Floating-point device", 100, tFlSSamples, 1, 4, sAnalog, 8 );
+        unsigned tFlCompStreamNum = tHeader->AddStream( "Complex Floating-point device", 5, sInterleaved, 100, tFlCompSamples, 2, 8, sAnalog, 16 );
 
         tWriteTest->WriteHeader();
 
@@ -50,39 +54,64 @@ int main( const int argc, const char** argv )
         {
             tSSData[ iSample ] = 1;
         }
-        tSingleStream->WriteRecord( true );
+        if( ! tSingleStream->WriteRecord( true ) )
+        {
+            M3ERROR( mlog, "Unable to write the record!" );
+            delete tWriteTest;
+            return -1;
+        }
 
         for( unsigned iSample = 0; iSample < tSSSamples; ++iSample )
         {
             tSSData[ iSample ] = 10;
         }
-        tSingleStream->WriteRecord( false );
+        if( ! tSingleStream->WriteRecord( false ) )
+        {
+            M3ERROR( mlog, "Unable to write the record!" );
+            delete tWriteTest;
+            return -1;
+        }
 
 
         // Stream 1
         M3Stream* tDoubleStream = tWriteTest->GetStream( tDoubleStreamNum );
-        M3RecordDataSetter< uint16_t > tDSData0( tDoubleStream->GetChannelRecord( 0 )->GetData(), 2, sDigitized );
-        M3RecordDataSetter< uint16_t > tDSData1( tDoubleStream->GetChannelRecord( 1 )->GetData(), 2, sDigitized );
+        M3DataWriter< uint16_t > tDSData0( tDoubleStream->GetChannelRecord( 0 )->GetData(), 2, sDigitized );
+        M3DataWriter< uint16_t > tDSData1( tDoubleStream->GetChannelRecord( 1 )->GetData(), 2, sDigitized );
         for( unsigned iSample = 0; iSample < tDSSamples; ++iSample )
         {
             tDSData0.set_at( 1, iSample );
             tDSData1.set_at( 2, iSample );
         }
-        tDoubleStream->WriteRecord( true );
+        if( ! tDoubleStream->WriteRecord( true ) )
+        {
+            M3ERROR( mlog, "Unable to write the record!" );
+            delete tWriteTest;
+            return -1;
+        }
 
         for( unsigned iSample = 0; iSample < tDSSamples; ++iSample )
         {
             tDSData0.set_at( 1000, iSample );
             tDSData1.set_at( 2000, iSample );
         }
-        tDoubleStream->WriteRecord( true );
+        if( ! tDoubleStream->WriteRecord( true ) )
+        {
+            M3ERROR( mlog, "Unable to write the record!" );
+            delete tWriteTest;
+            return -1;
+        }
 
         for( unsigned iSample = 0; iSample < tDSSamples; ++iSample )
         {
             tDSData0.set_at( 10000, iSample );
             tDSData1.set_at( 20000, iSample );
         }
-        tDoubleStream->WriteRecord( false );
+        if( ! tDoubleStream->WriteRecord( false ) )
+        {
+            M3ERROR( mlog, "Unable to write the record!" );
+            delete tWriteTest;
+            return -1;
+        }
 
 
         // Stream 2
@@ -96,7 +125,12 @@ int main( const int argc, const char** argv )
             tTSData1[ iSample ] = 2;
             tTSData2[ iSample ] = 3;
         }
-        tTripleStream->WriteRecord( true );
+        if( ! tTripleStream->WriteRecord( true ) )
+        {
+            M3ERROR( mlog, "Unable to write the record!" );
+            delete tWriteTest;
+            return -1;
+        }
 
         for( unsigned iSample = 0; iSample < tTSSamples; ++iSample )
         {
@@ -104,22 +138,91 @@ int main( const int argc, const char** argv )
             tTSData1[ iSample ] = 20;
             tTSData2[ iSample ] = 30;
         }
-        tTripleStream->WriteRecord( false );
+        if( ! tTripleStream->WriteRecord( false ) )
+        {
+            M3ERROR( mlog, "Unable to write the record!" );
+            delete tWriteTest;
+            return -1;
+        }
+
+
 
         // Stream 3
         M3Stream* tFloatStream = tWriteTest->GetStream( tFloatStreamNum );
-        M3RecordDataSetter< float > tFlSData( tFloatStream->GetChannelRecord( 0 )->GetData(), 4, sAnalog );
+        M3DataWriter< float > tFlSData( tFloatStream->GetChannelRecord( 0 )->GetData(), 4, sAnalog );
         for( unsigned iSample = 0; iSample < tFlSSamples; ++iSample )
         {
-            tFlSData.set_at( 1.5, iSample );
+            tFlSData.set_at( 3.1415926535898, iSample );
         }
-        tFloatStream->WriteRecord( true );
+        if( ! tFloatStream->WriteRecord( true ) )
+        {
+            M3ERROR( mlog, "Unable to write the record!" );
+            delete tWriteTest;
+            return -1;
+        }
 
         for( unsigned iSample = 0; iSample < tFlSSamples; ++iSample )
         {
-            tFlSData.set_at( 0.0003, iSample );
+            tFlSData.set_at( 2.71828182846, iSample );
         }
-        tFloatStream->WriteRecord( true );
+        if( ! tFloatStream->WriteRecord( true ) )
+        {
+            M3ERROR( mlog, "Unable to write the record!" );
+            delete tWriteTest;
+            return -1;
+        }
+
+
+
+
+        // Stream 4
+        M3Stream* tFlCompStream = tWriteTest->GetStream( tFlCompStreamNum );
+        M3ComplexDataWriter< f8_complex > tFlCompSData0( tFlCompStream->GetChannelRecord( 0 )->GetData(), 8, sAnalog, 2 );
+        M3ComplexDataWriter< f8_complex > tFlCompSData1( tFlCompStream->GetChannelRecord( 1 )->GetData(), 8, sAnalog, 2 );
+        M3ComplexDataWriter< f8_complex > tFlCompSData2( tFlCompStream->GetChannelRecord( 2 )->GetData(), 8, sAnalog, 2 );
+        M3ComplexDataWriter< f8_complex > tFlCompSData3( tFlCompStream->GetChannelRecord( 3 )->GetData(), 8, sAnalog, 2 );
+        M3ComplexDataWriter< f8_complex > tFlCompSData4( tFlCompStream->GetChannelRecord( 3 )->GetData(), 8, sAnalog, 2 );
+        f8_complex value0, value1, value2, value3, value4;
+        value0[ 0 ] = 0.0; value0[ 1 ] = 0.0;
+        value1[ 0 ] = 1.1; value1[ 1 ] = 1.001;
+        value2[ 0 ] = 2.2; value1[ 1 ] = 2.002;
+        value3[ 0 ] = 3.3; value1[ 1 ] = 3.003;
+        value4[ 0 ] = 4.4; value1[ 1 ] = 4.004;
+        for( unsigned iSample = 0; iSample < tFlCompSamples; ++iSample )
+        {
+            tFlCompSData0.set_at( value0, iSample );
+            tFlCompSData1.set_at( value1, iSample );
+            tFlCompSData2.set_at( value2, iSample );
+            tFlCompSData3.set_at( value3, iSample );
+            tFlCompSData4.set_at( value4, iSample );
+        }
+        if( ! tFlCompStream->WriteRecord( true ) )
+        {
+            M3ERROR( mlog, "Unable to write the record!" );
+            delete tWriteTest;
+            return -1;
+        }
+
+        value0[ 0 ] = -0.0; value0[ 1 ] = -0.0;
+        value1[ 0 ] = -1.1; value1[ 1 ] = -1.001;
+        value2[ 0 ] = -2.2; value1[ 1 ] = -2.002;
+        value3[ 0 ] = -3.3; value1[ 1 ] = -3.003;
+        value4[ 0 ] = -4.4; value1[ 1 ] = -4.004;
+        for( unsigned iSample = 0; iSample < tFlCompSamples; ++iSample )
+        {
+            tFlCompSData0.set_at( value0, iSample );
+            tFlCompSData1.set_at( value1, iSample );
+            tFlCompSData2.set_at( value2, iSample );
+            tFlCompSData3.set_at( value3, iSample );
+            tFlCompSData4.set_at( value4, iSample );
+        }
+        if( ! tFlCompStream->WriteRecord( false ) )
+        {
+            M3ERROR( mlog, "Unable to write the record!" );
+            delete tWriteTest;
+            return -1;
+        }
+
 
         tWriteTest->FinishWriting();
         M3INFO( mlog, "File closed" );

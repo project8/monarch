@@ -179,13 +179,13 @@ namespace monarch3
             fDoWriteRecord = &M3Stream::WriteRecordSeparateToInterleaved;
 
             // Arrays for HDF5 file reading/writing
-            fStrDataDims[ 0 ] = 1;                 fStrDataDims[ 1 ] = fStrRecSize;
-            fStrMaxDataDims[ 0 ] = H5S_UNLIMITED;  fStrMaxDataDims[ 1 ] = fStrRecSize;
-            fStrDataChunkDims[ 0 ] = 1;            fStrDataChunkDims[ 1 ] = fStrRecSize;
-            fDataDims1Rec[ 0 ] = 1;             fDataDims1Rec[ 1 ] = fChanRecSize;
+            fStrDataDims[ 0 ] = 1;                 fStrDataDims[ 1 ] = fStrRecSize * fSampleSize;
+            fStrMaxDataDims[ 0 ] = H5S_UNLIMITED;  fStrMaxDataDims[ 1 ] = fStrRecSize * fSampleSize;
+            fStrDataChunkDims[ 0 ] = 1;            fStrDataChunkDims[ 1 ] = fStrRecSize * fSampleSize;
+            fDataDims1Rec[ 0 ] = 1;             fDataDims1Rec[ 1 ] = fChanRecSize * fSampleSize;
             fDataOffset[ 0 ] = 0;               fDataOffset[ 1 ] = 0;
-            fDataStride[ 0 ] = 1;               fDataStride[ 1 ] = 2;
-            fDataBlock[ 0 ] = 1;                fDataBlock[ 1 ] = 1;
+            fDataStride[ 0 ] = 1;               fDataStride[ 1 ] = fNChannels;
+            fDataBlock[ 0 ] = 1;                fDataBlock[ 1 ] = fSampleSize;
 
             // HDF5 object initialization
             delete fH5DataSpaceUser;
@@ -210,13 +210,13 @@ namespace monarch3
         fDoWriteRecord = &M3Stream::WriteRecordAsIs;
 
         // Arrays for HDF5 file reading/writing
-        fStrDataDims[ 0 ] = 1;                 fStrDataDims[ 1 ] = fStrRecSize;
-        fStrMaxDataDims[ 0 ] = H5S_UNLIMITED;  fStrMaxDataDims[ 1 ] = fStrRecSize;
-        fStrDataChunkDims[ 0 ] = 1;            fStrDataChunkDims[ 1 ] = fStrRecSize;
-        fDataDims1Rec[ 0 ] = 1;             fDataDims1Rec[ 1 ] = fStrRecSize;
+        fStrDataDims[ 0 ] = 1;                 fStrDataDims[ 1 ] = fStrRecSize * fSampleSize;
+        fStrMaxDataDims[ 0 ] = H5S_UNLIMITED;  fStrMaxDataDims[ 1 ] = fStrRecSize * fSampleSize;
+        fStrDataChunkDims[ 0 ] = 1;            fStrDataChunkDims[ 1 ] = fStrRecSize * fSampleSize;
+        fDataDims1Rec[ 0 ] = 1;             fDataDims1Rec[ 1 ] = fStrRecSize * fSampleSize;
         fDataOffset[ 0 ] = 0;               fDataOffset[ 1 ] = 0;
-        fDataStride[ 0 ] = 0;               fDataStride[ 1 ] = 0;
-        fDataBlock[ 0 ] = 1;                fDataBlock[ 1 ] = fStrRecSize;
+        fDataStride[ 0 ] = 1;               fDataStride[ 1 ] = fSampleSize;
+        fDataBlock[ 0 ] = 1;                fDataBlock[ 1 ] = fSampleSize;
 
         // HDF5 object initialization
         delete fH5DataSpaceUser;
@@ -247,7 +247,8 @@ namespace monarch3
 
         anOffset += fRecordsAccessed;
         if( ( anOffset < 0 && abs( anOffset ) > fRecordCountInFile ) ||
-            ( anOffset > 0 && fRecordCountInFile + anOffset >= fNRecordsInFile ) )
+            ( anOffset > 0 && fRecordCountInFile + anOffset >= fNRecordsInFile ) ||
+            ( anOffset == 0 && fNRecordsInFile == 0 ))
         {
             // either requested to go back before the beginning of the file, or past the end
             return false;
