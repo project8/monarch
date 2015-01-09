@@ -34,7 +34,7 @@ namespace monarch3
         public:
             M3StreamHeader();
             M3StreamHeader( const std::string& aSource, uint32_t aNumber, uint32_t aNChannels, MultiChannelFormatType aFormat,
-                           uint32_t anAcqRate, uint32_t aRecSize,
+                           uint32_t anAcqRate, uint32_t aRecSize, uint32_t aSampleSize,
                            uint32_t aDataTypeSize, DataFormatType aDataFormat,
                            uint32_t aBitDepth );
             M3StreamHeader( const M3StreamHeader& orig );
@@ -54,6 +54,8 @@ namespace monarch3
             M3MEMBERVARIABLE( uint32_t, AcquisitionRate );
 
             M3MEMBERVARIABLE( uint32_t, RecordSize );
+
+            M3MEMBERVARIABLE( uint32_t, SampleSize );
 
             M3MEMBERVARIABLE( uint32_t, DataTypeSize );
 
@@ -84,7 +86,7 @@ namespace monarch3
         public:
             M3ChannelHeader();
             M3ChannelHeader( const std::string& aSource, uint32_t aNumber,
-                            uint32_t anAcqRate, uint32_t aRecSize,
+                            uint32_t anAcqRate, uint32_t aRecSize, uint32_t aSampleSize,
                             uint32_t aDataTypeSize, DataFormatType aDataFormat,
                             uint32_t aBitDepth );
             M3ChannelHeader( const M3ChannelHeader& orig );
@@ -100,6 +102,8 @@ namespace monarch3
             M3MEMBERVARIABLE( uint32_t, AcquisitionRate );
 
             M3MEMBERVARIABLE( uint32_t, RecordSize );
+
+            M3MEMBERVARIABLE( uint32_t, SampleSize );
 
             M3MEMBERVARIABLE( uint32_t, DataTypeSize );
 
@@ -168,13 +172,13 @@ namespace monarch3
             /// Add a stream with one channel with aRecSize samples per record
             /// Returns the stream number (used to address the stream later)
             unsigned AddStream( const std::string& aSource,
-                                uint32_t anAcqRate, uint32_t aRecSize,
+                                uint32_t anAcqRate, uint32_t aRecSize, uint32_t aSampleSize,
                                 uint32_t aDataTypeSize, DataFormatType aDataFormat,
                                 uint32_t aBitDepth );
             /// Add a stream with multiple channels with aRecSize samples per record
             /// Returns the stream number (used to address the stream later)
             unsigned AddStream( const std::string& aSource, uint32_t aNChannels, MultiChannelFormatType aFormat,
-                                uint32_t anAcqRate, uint32_t aRecSize,
+                                uint32_t anAcqRate, uint32_t aRecSize, uint32_t aSampleSize,
                                 uint32_t aDataTypeSize, DataFormatType aDataFormat,
                                 uint32_t aBitDepth );
 
@@ -199,7 +203,7 @@ namespace monarch3
             static void WriteScalarToHDF5( H5::H5Location* aLoc, const std::string& aName, XType aValue );
 
             template< typename XArrayType >
-            static void Write1DToHDF5( H5::H5Location* aLoc, const std::string& aName, const XArrayType& anArray );
+            static void Write1DToHDF5( H5::CommonFG* aLoc, const std::string& aName, const XArrayType& anArray );
 
             template< typename XType >
             static XType ReadScalarFromHDF5( const H5::H5Location* aLoc, const std::string& aName );
@@ -257,7 +261,7 @@ namespace monarch3
     }
 
     template< typename XArrayType >
-    void M3Header::Write1DToHDF5( H5::H5Location* aLoc, const std::string& aName, const XArrayType& anArray )
+    void M3Header::Write1DToHDF5( H5::CommonFG* aLoc, const std::string& aName, const XArrayType& anArray )
     {
         typedef typename XArrayType::value_type XValueType;
         M3DEBUG( mlog_mheader, "Writing vector to new 1-D metadata <" << aName << ">; size = " << anArray.size() );
@@ -272,7 +276,8 @@ namespace monarch3
             buffer[ i ] = anArray[ i ];
             std::cout << "writing bin " << i << ": " << buffer[i] << " <-- " << anArray[i] << std::endl;
         }
-        aLoc->createAttribute( aName, MH5Type< XValueType >::H5(), dspace ).write( MH5Type< XValueType >::Native(), buffer );
+        //aLoc->createAttribute( aName, MH5Type< XValueType >::H5(), dspace ).write( MH5Type< XValueType >::Native(), buffer );
+        aLoc->createDataSet( aName, MH5Type< XValueType >::H5(), dspace ).write( buffer, MH5Type< XValueType >::Native() );
         delete [] buffer;
         return;
     }

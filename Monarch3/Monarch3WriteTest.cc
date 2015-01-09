@@ -29,11 +29,13 @@ int main( const int argc, const char** argv )
         unsigned tSSSamples = 10;
         unsigned tDSSamples = 5;
         unsigned tTSSamples = 5;
+        unsigned tFlSSamples = 10;
 
         M3INFO( mlog, "Adding streams" );
-        unsigned tSingleStreamNum = tHeader->AddStream( "1-channel device", 500, tSSSamples, 1, sDigitized, 8 );
-        unsigned tDoubleStreamNum = tHeader->AddStream( "2-channel device", 2, sInterleaved, 250, tDSSamples, 2, sDigitized, 16 );
-        unsigned tTripleStreamNum = tHeader->AddStream( "3-channel device", 3, sSeparate, 100, tTSSamples, 1, sDigitized, 8 );
+        unsigned tSingleStreamNum = tHeader->AddStream( "1-channel device", 500, tSSSamples, 1, 1, sDigitized, 8 );
+        unsigned tDoubleStreamNum = tHeader->AddStream( "2-channel device", 2, sInterleaved, 250, tDSSamples, 1, 2, sDigitized, 16 );
+        unsigned tTripleStreamNum = tHeader->AddStream( "3-channel device", 3, sSeparate, 100, tTSSamples, 1, 1, sDigitized, 8 );
+        unsigned tFloatStreamNum = tHeader->AddStream( "Floating-point device", 100, tFlSSamples, 1, 4, sAnalog, 8 );
 
         tWriteTest->WriteHeader();
 
@@ -103,6 +105,21 @@ int main( const int argc, const char** argv )
             tTSData2[ iSample ] = 30;
         }
         tTripleStream->WriteRecord( false );
+
+        // Stream 3
+        M3Stream* tFloatStream = tWriteTest->GetStream( tFloatStreamNum );
+        M3RecordDataSetter< float > tFlSData( tFloatStream->GetChannelRecord( 0 )->GetData(), 4, sAnalog );
+        for( unsigned iSample = 0; iSample < tFlSSamples; ++iSample )
+        {
+            tFlSData.set_at( 1.5, iSample );
+        }
+        tFloatStream->WriteRecord( true );
+
+        for( unsigned iSample = 0; iSample < tFlSSamples; ++iSample )
+        {
+            tFlSData.set_at( 0.0003, iSample );
+        }
+        tFloatStream->WriteRecord( true );
 
         tWriteTest->FinishWriting();
         M3INFO( mlog, "File closed" );

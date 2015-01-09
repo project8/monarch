@@ -79,6 +79,7 @@ namespace monarch3
             bool GetIsInitialized() const              { return fIsInitialized;   }
             bool GetRecordsAccessed() const            { return fRecordsAccessed; }
             unsigned GetDataTypeSize() const           { return fDataTypeSize;    }
+            unsigned GetSampleSize() const             { return fSampleSize;      }
             unsigned GetStreamRecordNBytes() const     { return fStrRecNBytes;    }
             unsigned GetSreamRecordSize() const        { return fStrRecSize;      }
             unsigned GetChannelRecordNBytes() const    { return fChanRecNBytes;   }
@@ -109,6 +110,7 @@ namespace monarch3
             mutable bool fRecordsAccessed;
 
             mutable unsigned fDataTypeSize;
+            mutable unsigned fSampleSize;
 
             mutable unsigned fStrRecNBytes;
             mutable unsigned fStrRecSize;

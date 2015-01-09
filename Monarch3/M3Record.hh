@@ -49,14 +49,16 @@ namespace monarch3
     }
 
 
+    typedef double f8_complex;
+
     template< typename SetType >
     class M3RecordDataSetter
     {
         public:
-            M3RecordDataSetter( byte_type* aData, unsigned aDataTypeSize, DataFormatType aDataFormat ) :
+            M3RecordDataSetter( byte_type* aData, unsigned aDataTypeSize, DataFormatType aDataFormat, unsigned aSampleSize = 1 ) :
                 fUByteData( aData )
             {
-                SetInterface( aDataTypeSize, aDataFormat );
+                SetInterface( aDataTypeSize, aDataFormat, aSampleSize );
             }
             ~M3RecordDataSetter()
             {
@@ -67,9 +69,9 @@ namespace monarch3
                 (this->*fArrayFcn)( value, index );
             }
 
-            void SetInterface( unsigned aDataTypeSize, DataFormatType aDataFormat )
+            void SetInterface( unsigned aDataTypeSize, DataFormatType aDataFormat, unsigned aSampleSize = 1 )
             {
-                if( aDataFormat == sDigitized )
+                if( aDataFormat == sDigitized && aSampleSize == 1 )
                 {
                     if( aDataTypeSize == 1 ) fArrayFcn = &M3RecordDataSetter< SetType >::set_at_u1;
                     else if( aDataTypeSize == 2 )  fArrayFcn = &M3RecordDataSetter< SetType >::set_at_u2;
@@ -80,14 +82,20 @@ namespace monarch3
                         throw M3Exception() << "Unable to make a digitized data interface with data type size " << aDataTypeSize;
                     }
                 }
-                else // aDataFormat == sAnalog
+                else if( aDataFormat == sAnalog )
                 {
-                    if( aDataTypeSize == 4 )  fArrayFcn = &M3RecordDataSetter< SetType >::set_at_f4;
-                    else if( aDataTypeSize == 8 )  fArrayFcn = &M3RecordDataSetter< SetType >::set_at_f8;
+                    if( aDataTypeSize == 4 && aSampleSize == 1 )  fArrayFcn = &M3RecordDataSetter< SetType >::set_at_f4;
+                    else if( aDataTypeSize == 8 && aSampleSize == 1 )  fArrayFcn = &M3RecordDataSetter< SetType >::set_at_f8;
+                    else if( aDataTypeSize == 8 && aSampleSize == 2 )  fArrayFcn = &M3RecordDataSetter< SetType >::set_at_f8;
                     else
                     {
                         throw M3Exception() << "Unable to make a analog data interface with data type size " << aDataTypeSize;
-                    }                }
+                    }
+                }
+                else
+                {
+                    throw M3Exception() << "Invalid combination of data format <" << aDataFormat << ">, data type size <" << aDataTypeSize << "> and sample size <" << aSampleSize << ">";
+                }
                 return;
             }
 
@@ -127,6 +135,12 @@ namespace monarch3
                 fF8BytesData[ index ] = value;
             }
 
+            void set_at_f8_comp( SetType value, unsigned index )
+            {
+                fF8CompBytesData[ index ][ 0 ] = value[ 0 ];
+                fF8CompBytesData[ index ][ 1 ] = value[ 1 ];
+            }
+
             void (M3RecordDataSetter::*fArrayFcn)( SetType, unsigned );
 
             union
@@ -137,6 +151,7 @@ namespace monarch3
                 uint64_t* fU8BytesData;
                 float* fF4BytesData;
                 double* fF8BytesData;
+                const f8_complex* fF8CompBytesData;
             };
     };
 
@@ -145,10 +160,10 @@ namespace monarch3
     class M3RecordDataInterface
     {
         public:
-            M3RecordDataInterface( const byte_type* aData, unsigned aDataTypeSize, DataFormatType aDataFormat ) :
+            M3RecordDataInterface( const byte_type* aData, unsigned aDataTypeSize, DataFormatType aDataFormat, unsigned aSampleSize = 1 ) :
                 fUByteData( aData )
             {
-                SetInterface( aDataTypeSize, aDataFormat );
+                SetInterface( aDataTypeSize, aDataFormat, aSampleSize );
             }
             ~M3RecordDataInterface()
             {
@@ -159,9 +174,9 @@ namespace monarch3
                 return (this->*fArrayFcn)( index );
             }
 
-            void SetInterface( unsigned aDataTypeSize, DataFormatType aDataFormat )
+            void SetInterface( unsigned aDataTypeSize, DataFormatType aDataFormat, unsigned aSampleSize = 1 )
             {
-                if( aDataFormat == sDigitized )
+                if( aDataFormat == sDigitized && aSampleSize == 1 )
                 {
                     if( aDataTypeSize == 1 ) fArrayFcn = &M3RecordDataInterface< ReturnType >::at_u1;
                     else if( aDataTypeSize == 2 )  fArrayFcn = &M3RecordDataInterface< ReturnType >::at_u2;
@@ -172,14 +187,20 @@ namespace monarch3
                         throw M3Exception() << "Unable to make a digitized data interface with data type size " << aDataTypeSize;
                     }
                 }
-                else // aDataFormat == sAnalog
+                else if( aDataFormat == sAnalog )
                 {
-                    if( aDataTypeSize == 4 )  fArrayFcn = &M3RecordDataInterface< ReturnType >::at_f4;
-                    else if( aDataTypeSize == 8 )  fArrayFcn = &M3RecordDataInterface< ReturnType >::at_f8;
+                    if( aDataTypeSize == 4 && aSampleSize == 1 )  fArrayFcn = &M3RecordDataInterface< ReturnType >::at_f4;
+                    else if( aDataTypeSize == 8 && aSampleSize == 1 )  fArrayFcn = &M3RecordDataInterface< ReturnType >::at_f8;
+                    else if( aDataTypeSize == 8 && aSampleSize == 2 )  fArrayFcn = &M3RecordDataInterface< ReturnType >::at_f8_comp;
                     else
                     {
                         throw M3Exception() << "Unable to make a analog data interface with data type size " << aDataTypeSize;
-                    }                }
+                    }
+                }
+                else
+                {
+                    throw M3Exception() << "Invalid combination of data format <" << aDataFormat << ">, data type size <" << aDataTypeSize << "> and sample size <" << aSampleSize << ">";
+                }
                 return;
             }
 
@@ -219,6 +240,11 @@ namespace monarch3
                 return fF8BytesData[ index ];
             }
 
+            ReturnType at_f8_comp( unsigned index ) const
+            {
+                return fF8CompBytesData[ index ];
+            }
+
             ReturnType (M3RecordDataInterface::*fArrayFcn)( unsigned ) const;
 
             union
@@ -229,6 +255,7 @@ namespace monarch3
                 const uint64_t* fU8BytesData;
                 const float* fF4BytesData;
                 const double* fF8BytesData;
+                const f8_complex* fF8CompBytesData;
             };
     };
 
