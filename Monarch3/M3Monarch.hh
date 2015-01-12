@@ -28,6 +28,13 @@ namespace monarch3
      @brief Egg file read/write access
 
      @details
+     Monarch3 objects are created with one of the two static Open functions:
+      - OpenForReading() will create a read-only Monarch3 object;
+      - OpenForWriting() will create a writeable Monarch3 object.
+
+     The data structure and general header information is setup/read via the header (accessed with GetHeader()).
+
+     Stream data is written or read via the stream objects (accessed with GetStream( unsigned )).
     */
     class Monarch3
     {

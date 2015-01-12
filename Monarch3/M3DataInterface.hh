@@ -1,3 +1,10 @@
+/*
+ * M3DataInterface.hh
+ *
+ *  Created on: Jan 12, 2015
+ *      Author: nsoblath
+ */
+
 #ifndef M3DATAINTERFACE_HH_
 #define M3DATAINTERFACE_HH_
 
@@ -10,6 +17,21 @@ namespace monarch3
     typedef float f4_complex[ 2 ];
     typedef double f8_complex[ 2 ];
 
+    /*!
+     @class M3DataWriter
+     @author N. S. Oblath
+
+     @brief Interface class for a variety of data types
+
+     @details
+     Provides write-only access to a byte_type array as if it were an array of:
+      - uint8_t -- 1-byte integers (i.e. byte_type)
+      - uint16_t -- 2-byte integers
+      - uint32_t -- 4-byte integers
+      - uint64_t -- 8-byte integers
+      - float -- 4-byte floating point
+      - double -- 8-byte floating point
+    */
     template< typename SetType >
     class M3DataWriter
     {
@@ -106,6 +128,17 @@ namespace monarch3
             };
     };
 
+    /*!
+     @class M3ComplexDataWriter
+     @author N. S. Oblath
+
+     @brief Interface class for complex data types
+
+     @details
+     Provides write-only access to a byte_type array as if it were an array of:
+      - f4_complex (i.e. float[2]) -- binary-compatible to fftwf_complex
+      - f8_complex (i.e. double[2]) -- binary-compatible to fftw_complex
+    */
     template< typename SetType >
     class M3ComplexDataWriter
     {
@@ -184,6 +217,21 @@ namespace monarch3
     };
 
 
+    /*!
+     @class M3DataReader
+     @author N. S. Oblath
+
+     @brief Interface class for a variety of data types
+
+     @details
+     Provides read-only access to a byte_type array as if it were an array of:
+      - uint8_t -- 1-byte integers (i.e. byte_type)
+      - uint16_t -- 2-byte integers
+      - uint32_t -- 4-byte integers
+      - uint64_t -- 8-byte integers
+      - float -- 4-byte floating point
+      - double -- 8-byte floating point
+    */
     template< typename ReturnType >
     class M3DataReader
     {
@@ -280,6 +328,17 @@ namespace monarch3
             };
     };
 
+    /*!
+     @class M3ComplexDataReader
+     @author N. S. Oblath
+
+     @brief Interface class for complex data types
+
+     @details
+     Provides read-only access to a byte_type array as if it were an array of:
+      - f4_complex (i.e. float[2]) -- binary-compatible to fftwf_complex
+      - f8_complex (i.e. double[2]) -- binary-compatible to fftw_complex
+    */
     template< typename ReturnType >
     class M3ComplexDataReader
     {

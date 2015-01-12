@@ -133,6 +133,9 @@ namespace monarch3
      @brief Egg file header information
 
      @details
+     General run setup can be configured by setting variables in this header object.
+
+     The stream structure of the data is also configured using the AddStream functions.
     */
     class M3Header
     {
