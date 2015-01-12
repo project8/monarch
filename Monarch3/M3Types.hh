@@ -36,12 +36,14 @@ namespace monarch3
 
     // channel information
 
+    /// Specifies whether the data is digitized or analog
     typedef unsigned DataFormatType;
     static const DataFormatType sDigitized = 0;
     static const DataFormatType sAnalog = 1;
 
     // stream information
 
+    /// Specifies whether the data channels are interleaved or separate in a stream
     typedef uint32_t MultiChannelFormatType;
     static const MultiChannelFormatType sInterleaved = 0;
     static const MultiChannelFormatType sSeparate = 1;

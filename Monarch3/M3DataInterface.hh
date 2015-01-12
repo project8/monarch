@@ -14,7 +14,9 @@
 namespace monarch3
 {
 
+    /// Binary-compatible to fftwf_complex
     typedef float f4_complex[ 2 ];
+    /// Binary-compatible to fftw_complex
     typedef double f8_complex[ 2 ];
 
     /*!

@@ -70,9 +70,6 @@
 
 // CLASS DEFINITIONS
 
-/**
- * The standard monarch namespace.
- */
 namespace monarch3
 {
 

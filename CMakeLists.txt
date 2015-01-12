@@ -64,3 +64,12 @@ add_subdirectory( Monarch3 )
 pbuilder_install_config_files()
 
 pbuilder_variables_for_parent()
+
+#################
+# documentation #
+#################
+
+# Doxygen documentation can be built with "make doc" (it's not included with the "all" make target)
+# By default it builds in the source tree.
+add_subdirectory (Documentation)
+
