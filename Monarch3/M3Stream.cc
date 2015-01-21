@@ -186,6 +186,15 @@ namespace monarch3
             fDataOffset[ 0 ] = 0;               fDataOffset[ 1 ] = 0;
             fDataStride[ 0 ] = 1;               fDataStride[ 1 ] = fNChannels;
             fDataBlock[ 0 ] = 1;                fDataBlock[ 1 ] = fSampleSize;
+            /*
+            std::cout << "str data dims: " << fStrDataDims[0] << " " << fStrDataDims[1] << std::endl;
+            std::cout << "str max data dims: " << fStrMaxDataDims[0] << " " << fStrMaxDataDims[1] << std::endl;
+            std::cout << "str data chunk dims: " << fStrDataChunkDims[0] << " " << fStrDataChunkDims[1] << std::endl;
+            std::cout << "str data dims 1 rec: " << fDataDims1Rec[0] << " " << fDataDims1Rec[1] << std::endl;
+            std::cout << "str data offset: " << fDataOffset[0] << " " << fDataOffset[1] << std::endl;
+            std::cout << "str data stride: " << fDataStride[0] << " " << fDataStride[1] << std::endl;
+            std::cout << "str data block: " << fDataBlock[0] << " " << fDataBlock[1] << std::endl;
+            */
 
             // HDF5 object initialization
             delete fH5DataSpaceUser;
@@ -216,7 +225,16 @@ namespace monarch3
         fDataDims1Rec[ 0 ] = 1;             fDataDims1Rec[ 1 ] = fStrRecSize * fSampleSize;
         fDataOffset[ 0 ] = 0;               fDataOffset[ 1 ] = 0;
         fDataStride[ 0 ] = 1;               fDataStride[ 1 ] = fSampleSize;
-        fDataBlock[ 0 ] = 1;                fDataBlock[ 1 ] = fSampleSize;
+        fDataBlock[ 0 ] = 1;                fDataBlock[ 1 ] = fStrRecSize * fSampleSize;
+        /*
+        std::cout << "str data dims: " << fStrDataDims[0] << " " << fStrDataDims[1] << std::endl;
+        std::cout << "str max data dims: " << fStrMaxDataDims[0] << " " << fStrMaxDataDims[1] << std::endl;
+        std::cout << "str data chunk dims: " << fStrDataChunkDims[0] << " " << fStrDataChunkDims[1] << std::endl;
+        std::cout << "str data dims 1 rec: " << fDataDims1Rec[0] << " " << fDataDims1Rec[1] << std::endl;
+        std::cout << "str data offset: " << fDataOffset[0] << " " << fDataOffset[1] << std::endl;
+        std::cout << "str data stride: " << fDataStride[0] << " " << fDataStride[1] << std::endl;
+        std::cout << "str data block: " << fDataBlock[0] << " " << fDataBlock[1] << std::endl;
+        */
 
         // HDF5 object initialization
         delete fH5DataSpaceUser;
@@ -405,6 +423,7 @@ namespace monarch3
         {
             fDataOffset[ 1 ] = iChan;
             tDataSpaceInFile.selectHyperslab( H5S_SELECT_SET, fDataDims1Rec, fDataOffset, fDataStride, fDataBlock );
+            std::cout << "about to write separate to interleaved  " << fDataTypeUser.fromClass() << std::endl;
             fH5CurrentAcqDataSet->write( fChannelRecords[ iChan ].GetData(), fDataTypeUser, *fH5DataSpaceUser, tDataSpaceInFile );
         }
         return;
