@@ -2,8 +2,6 @@
 #include "M3Monarch.hh"
 #include "M3Logger.hh"
 
-#include "/opt/local/include/fftw3.h"
-
 using namespace monarch3;
 
 M3LOGGER( mlog, "Monarch3WriteTest" );
