@@ -15,6 +15,8 @@ include_directories( BEFORE ${PROJECT_SOURCE_DIR}/Source )
 # Egg file version
 set( Egg_VERSION "3.0.0b" )
 
+set( Monarch_BUILD_MONARCH2 FALSE CACHE BOOL "Build Monarch2 library (requires Protobuf)" )
+set( Monarch_BUILD_MONARCH3 TRUE CACHE BOOL "Build Monarch3 library (requires HDF5)" )
 
 ########################
 # monarch dependencies #
@@ -27,15 +29,19 @@ if( GIT_FOUND )
     execute_process( COMMAND ${GIT_EXECUTABLE} describe --tags --long  OUTPUT_VARIABLE Monarch_GIT_DESCRIBE  OUTPUT_STRIP_TRAILING_WHITESPACE )
 endif( GIT_FOUND )
 
-find_package( HDF5 COMPONENTS CXX )
-include_directories( BEFORE ${HDF5_INCLUDE_DIR} )
-pbuilder_add_ext_libraries( ${HDF5_CXX_LIBRARIES} )
+if( Monarch_BUILD_MONARCH3 )
+    find_package( HDF5 REQUIRED COMPONENTS CXX )
+    include_directories( BEFORE ${HDF5_INCLUDE_DIR} )
+    pbuilder_add_ext_libraries( ${HDF5_CXX_LIBRARIES} )
+endif( Monarch_BUILD_MONARCH3 )
 
-find_package( Protobuf )
-include_directories( ${PROTOBUF_INCLUDE_DIR} )
-pbuilder_add_ext_libraries( ${PROTOBUF_LIBRARIES} )
-include_directories( BEFORE ${CMAKE_CURRENT_BINARY_DIR}/Protobuf )
-add_subdirectory( Protobuf )
+if( Monarch_BUILD_MONARCH2 )
+    find_package( Protobuf REQUIRED )
+    include_directories( ${PROTOBUF_INCLUDE_DIR} )
+    pbuilder_add_ext_libraries( ${PROTOBUF_LIBRARIES} )
+    include_directories( BEFORE ${CMAKE_CURRENT_BINARY_DIR}/Protobuf )
+    add_subdirectory( Protobuf )
+endif( Monarch_BUILD_MONARCH2 )
 
 add_subdirectory( libthorax )
 pbuilder_add_submodule_libraries( ${libthorax_LIBRARIES} )
@@ -54,8 +60,13 @@ include_directories( BEFORE
 # libraries and executables #
 #############################
 
-add_subdirectory( Monarch2 )
-add_subdirectory( Monarch3 )
+if( Monarch_BUILD_MONARCH2 )
+    add_subdirectory( Monarch2 )
+endif( Monarch_BUILD_MONARCH2 )
+
+if( Monarch_BUILD_MONARCH3 )
+    add_subdirectory( Monarch3 )
+endif( Monarch_BUILD_MONARCH3 )
 
 #######################
 # installation config #
