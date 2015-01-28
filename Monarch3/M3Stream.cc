@@ -423,7 +423,7 @@ namespace monarch3
         {
             fDataOffset[ 1 ] = iChan;
             tDataSpaceInFile.selectHyperslab( H5S_SELECT_SET, fDataDims1Rec, fDataOffset, fDataStride, fDataBlock );
-            std::cout << "about to write separate to interleaved  " << fDataTypeUser.fromClass() << std::endl;
+            //std::cout << "about to write separate to interleaved  " << fDataTypeUser.fromClass() << std::endl;
             fH5CurrentAcqDataSet->write( fChannelRecords[ iChan ].GetData(), fDataTypeUser, *fH5DataSpaceUser, tDataSpaceInFile );
         }
         return;
