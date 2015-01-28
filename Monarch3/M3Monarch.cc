@@ -41,6 +41,12 @@ namespace monarch3
             delete fStreams.back();
             fStreams.pop_back();
         }
+
+        if( fFile != NULL )
+        {
+            delete fFile;
+            fFile = NULL;
+        }
     }
 
     const Monarch3* Monarch3::OpenForReading( const string& aFilename )
@@ -162,7 +168,6 @@ namespace monarch3
             throw( e );
         }
 
-
         H5::Group* tStreamsGroup = fHeader->GetStreamsGroup();
 
         try
@@ -193,11 +198,22 @@ namespace monarch3
         M3DEBUG( mlog, "Finishing reading" );
         try
         {
+            if( fHeader != NULL )
+            {
+                delete fHeader;
+                fHeader = NULL;
+            }
             for( std::vector< M3Stream* >::iterator streamIt = fStreams.begin(); streamIt != fStreams.end(); ++streamIt )
             {
                 const_cast< const M3Stream* >(*streamIt)->Close();
                 delete *streamIt;
                 *streamIt = NULL;
+            }
+            if( fFile != NULL )
+            {
+                fFile->close();
+                delete fFile;
+                fFile = NULL;
             }
         }
         catch( H5::Exception& e )
@@ -213,12 +229,24 @@ namespace monarch3
         M3DEBUG( mlog, "Finishing writing" );
         try
         {
+            if( fHeader != NULL )
+            {
+                delete fHeader;
+                fHeader = NULL;
+            }
             for( std::vector< M3Stream* >::iterator streamIt = fStreams.begin(); streamIt != fStreams.end(); ++streamIt )
             {
                 (*streamIt)->Close();
                 delete *streamIt;
                 *streamIt = NULL;
             }
+            if( fFile != NULL )
+            {
+                fFile->close();
+                delete fFile;
+                fFile = NULL;
+            }
+            fFile = NULL;
         }
         catch( H5::Exception& e )
         {

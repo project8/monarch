@@ -284,6 +284,8 @@ namespace monarch3
 
     M3Header::~M3Header()
     {
+        delete fStreamsGroup;
+        delete fChannelsGroup;
     }
 
     uint32_t M3Header::AddStream( const std::string& aSource,
