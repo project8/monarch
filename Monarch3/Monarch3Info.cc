@@ -40,7 +40,7 @@ int main( const int argc, const char** argv )
 
     try
     {
-        M3INFO( mlog, "Opening file <" << argv[tFileArg] );
+        M3INFO( mlog, "Opening file <" << argv[tFileArg] << ">" );
         const Monarch3* tReadTest = Monarch3::OpenForReading( argv[tFileArg] );
 
         M3INFO( mlog, "Reading header" );
