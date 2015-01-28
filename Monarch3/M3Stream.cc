@@ -35,8 +35,8 @@ namespace monarch3
 
     M3Stream::M3Stream( const M3StreamHeader& aHeader, H5::CommonFG* aH5StreamsLoc, MultiChannelFormatType aAccessFormat ) :
             fMode( kRead ),
-            fAcquisitionId( 0 ),
-            fNAcquisitions( 0 ),
+            fDoReadRecord( NULL ),
+            fDoWriteRecord( NULL ),
             fIsInitialized( false ),
             fRecordsAccessed( false ),
             fDataTypeSize( aHeader.GetDataTypeSize() ),
@@ -48,15 +48,15 @@ namespace monarch3
             fStreamRecord(),
             fNChannels( aHeader.GetNChannels() ),
             fChannelRecords( new M3Record[ aHeader.GetNChannels() ] ),
+            fNAcquisitions( 0 ),
+            fAcquisitionId( 0 ),
             fRecordCountInAcq( 0 ),
             fNRecordsInAcq( 0 ),
             fDataInterleaved( aHeader.GetChannelFormat() == sInterleaved ),
             fAccessFormat( aAccessFormat ),
             fRecordIndex(),
-            fNRecordsInFile( 0 ),
             fRecordCountInFile( 0 ),
-            fDoReadRecord( NULL ),
-            fDoWriteRecord( NULL ),
+            fNRecordsInFile( 0 ),
             fH5StreamParentLoc( new H5::Group( aH5StreamsLoc->openGroup( aHeader.GetLabel() ) ) ),
             fH5AcqLoc( NULL ),
             fH5CurrentAcqDataSet( NULL ),
@@ -264,7 +264,7 @@ namespace monarch3
         if( ! fIsInitialized ) Initialize();
 
         anOffset += fRecordsAccessed;
-        if( ( anOffset < 0 && abs( anOffset ) > fRecordCountInFile ) ||
+        if( ( anOffset < 0 && (unsigned)abs( anOffset ) > fRecordCountInFile ) ||
             ( anOffset > 0 && fRecordCountInFile + anOffset >= fNRecordsInFile ) ||
             ( anOffset == 0 && fNRecordsInFile == 0 ))
         {

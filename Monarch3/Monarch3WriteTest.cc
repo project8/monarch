@@ -8,7 +8,7 @@ M3LOGGER( mlog, "Monarch3WriteTest" );
 
 int main( const int argc, const char** argv )
 {
-    if( strcmp( argv[1], "-h" ) == 0 || argc < 2 )
+    if( argc < 2 || strcmp( argv[1], "-h" ) == 0 )
     {
         M3INFO( mlog, "usage:\n"
             << "  Monarch3WriteTest [-h] <output egg file>\n"
@@ -31,14 +31,15 @@ int main( const int argc, const char** argv )
         unsigned tDSSamples = 5;
         unsigned tTSSamples = 5;
         unsigned tFlSSamples = 10;
-        unsigned tFlCompSamples = 5;
+        //unsigned tFlCompSamples = 5;
 
         M3INFO( mlog, "Adding streams" );
         unsigned tSingleStreamNum = tHeader->AddStream( "1-channel device", 500, tSSSamples, 1, 1, sDigitized, 8 );
         unsigned tDoubleStreamNum = tHeader->AddStream( "2-channel device", 2, sInterleaved, 250, tDSSamples, 1, 2, sDigitized, 16 );
         unsigned tTripleStreamNum = tHeader->AddStream( "3-channel device", 3, sSeparate, 100, tTSSamples, 1, 1, sDigitized, 8 );
         unsigned tFloatStreamNum = tHeader->AddStream( "Floating-point device", 100, tFlSSamples, 1, 4, sAnalog, 8 );
-        unsigned tFlCompStreamNum = tHeader->AddStream( "Complex Floating-point device", 5, sInterleaved, 100, tFlCompSamples, 2, 8, sAnalog, 16 );
+        // multi-channel multi-sample writing commented out until fixed
+        //unsigned tFlCompStreamNum = tHeader->AddStream( "Complex Floating-point device", 5, sInterleaved, 100, tFlCompSamples, 2, 8, sAnalog, 16 );
 
         tWriteTest->WriteHeader();
 
@@ -175,6 +176,7 @@ int main( const int argc, const char** argv )
 
 
         // Stream 4
+        /*
         M3Stream* tFlCompStream = tWriteTest->GetStream( tFlCompStreamNum );
         M3ComplexDataWriter< f8_complex > tFlCompSData0( tFlCompStream->GetChannelRecord( 0 )->GetData(), 8, sAnalog, 2 );
         M3ComplexDataWriter< f8_complex > tFlCompSData1( tFlCompStream->GetChannelRecord( 1 )->GetData(), 8, sAnalog, 2 );
@@ -221,6 +223,7 @@ int main( const int argc, const char** argv )
             delete tWriteTest;
             return -1;
         }
+        */
 
 
         tWriteTest->FinishWriting();

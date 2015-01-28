@@ -270,11 +270,11 @@ namespace monarch3
     M3Header::M3Header() :
             fEggVersion( TOSTRING(Egg_VERSION) ),
             fFilename(),
-            fNChannels( 0 ),
-            fNStreams( 0 ),
             fRunDuration( 0 ),
             fTimestamp(),
             fDescription(),
+            fNChannels( 0 ),
+            fNStreams( 0 ),
             fChannelStreams(),
             fFile( NULL ),
             fStreamsGroup( NULL ),

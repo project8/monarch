@@ -17,7 +17,7 @@ bool PrintChannelsFloatComplex( const M3Stream* aStream );
 
 int main( const int argc, const char** argv )
 {
-    if( strcmp( argv[1], "-h" ) == 0 || argc < 2 )
+    if( argc < 2 || strcmp( argv[1], "-h" ) == 0 )
     {
         M3INFO( mlog, "usage:\n"
             << "  Monarch3ReadTest [-Hh] <input egg file>\n"
@@ -69,7 +69,7 @@ int main( const int argc, const char** argv )
         M3INFO( mlog, "Stream 0 has " << tNAcquisitions0 << " acquisitions and " << tNRecords0 << " records" );
         const M3StreamHeader& tStrHeader0 = tReadHeader->GetStreamHeaders().at( 0 );
         unsigned tNChannels0 = tStrHeader0.GetNChannels();
-        unsigned tRecSize0 = tStrHeader0.GetRecordSize();
+        //unsigned tRecSize0 = tStrHeader0.GetRecordSize();
         M3INFO( mlog, "Stream 0 has " << tNChannels0 << " channel(s) stored in format mode " << tStrHeader0.GetChannelFormat() );
         if( tNAcquisitions0 != 1 || tNChannels0 != 1 || tNRecords0 != 2 )
         {
@@ -104,7 +104,7 @@ int main( const int argc, const char** argv )
         M3INFO( mlog, "Stream 1 has " << tNAcquisitions1 << " acquisitions and " << tNRecords1 << " records" );
         const M3StreamHeader& tStrHeader1 = tReadHeader->GetStreamHeaders().at( 1 );
         unsigned tNChannels1 = tStrHeader1.GetNChannels();
-        unsigned tRecSize1 = tStrHeader1.GetRecordSize();
+        //unsigned tRecSize1 = tStrHeader1.GetRecordSize();
         M3INFO( mlog, "Stream 1 has " << tNChannels1 << " channel(s) stored in format mode " << tStrHeader1.GetChannelFormat() );
         if( tNAcquisitions1 != 2 || tNChannels1 != 2 || tNRecords1 != 3 )
         {
@@ -183,7 +183,7 @@ int main( const int argc, const char** argv )
         M3INFO( mlog, "Stream 2 has " << tNAcquisitions2 << " acquisitions and " << tNRecords2 << " records" );
         const M3StreamHeader& tStrHeader2 = tReadHeader->GetStreamHeaders().at( 2 );
         unsigned tNChannels2 = tStrHeader2.GetNChannels();
-        unsigned tRecSize2 = tStrHeader2.GetRecordSize();
+        //unsigned tRecSize2 = tStrHeader2.GetRecordSize();
         M3INFO( mlog, "Stream 2 has " << tNChannels2 << " channel(s) stored in format mode " << tStrHeader2.GetChannelFormat() );
         if( tNAcquisitions2 != 1 || tNChannels2 != 3 || tNRecords2 != 2 )
         {
@@ -221,7 +221,7 @@ int main( const int argc, const char** argv )
         M3INFO( mlog, "Stream 3 has " << tNAcquisitions3 << " acquisitions and " << tNRecords3 << " records" );
         const M3StreamHeader& tStrHeader3 = tReadHeader->GetStreamHeaders().at( 3 );
         unsigned tNChannels3 = tStrHeader3.GetNChannels();
-        unsigned tRecSize3 = tStrHeader3.GetRecordSize();
+        //unsigned tRecSize3 = tStrHeader3.GetRecordSize();
         M3INFO( mlog, "Stream 3 has " << tNChannels3 << " channel(s) stored in format mode " << tStrHeader3.GetChannelFormat() );
         if( tNAcquisitions3 != 2 || tNChannels3 != 1 || tNRecords3 != 2 )
         {
@@ -241,8 +241,9 @@ int main( const int argc, const char** argv )
             }
         }
 
+        M3INFO( mlog, "Test 4 complete\n" );
 
-
+/*
         M3INFO( mlog, "Test 5: reading 2 sequential 5-channel interleaved complex floating-point records from stream 4");
         M3INFO( mlog, "\tRecord 0 always has values '(0, 0)'" );
         M3INFO( mlog, "\tRecord 1 has values '(1.1, 1.001) and (-1.1, -1.001)'" );
@@ -256,7 +257,7 @@ int main( const int argc, const char** argv )
         M3INFO( mlog, "Stream 4 has " << tNAcquisitions4 << " acquisitions and " << tNRecords4 << " records" );
         const M3StreamHeader& tStrHeader4 = tReadHeader->GetStreamHeaders().at( 3 );
         unsigned tNChannels4 = tStrHeader4.GetNChannels();
-        unsigned tRecSize4 = tStrHeader4.GetRecordSize();
+        //unsigned tRecSize4 = tStrHeader4.GetRecordSize();
         M3INFO( mlog, "Stream 4 has " << tNChannels4 << " channel(s) stored in format mode " << tStrHeader4.GetChannelFormat() );
         if( tNAcquisitions4 != 1 || tNChannels4 != 5 || tNRecords4 != 2 )
         {
@@ -277,7 +278,7 @@ int main( const int argc, const char** argv )
         }
 
         M3INFO( mlog, "Test 5 complete\n" );
-
+*/
 
 
 

@@ -47,7 +47,15 @@ namespace monarch3
     {
         Monarch3* tMonarch3 = new Monarch3();
 
-        tMonarch3->fFile = new H5::H5File( aFilename.c_str(), H5F_ACC_RDONLY );
+        try
+        {
+            tMonarch3->fFile = new H5::H5File( aFilename.c_str(), H5F_ACC_RDONLY );
+        }
+        catch( std::exception& e )
+        {
+            throw M3Exception() << "Could not open <" << aFilename << "> for reading; an exception was thrown: " << e.what();
+            return NULL;
+        }
         if( tMonarch3->fFile == NULL )
         {
             delete tMonarch3;

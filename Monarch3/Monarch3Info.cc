@@ -16,7 +16,7 @@ bool PrintChannelsFloatComplex( const M3Stream* aStream );
 
 int main( const int argc, const char** argv )
 {
-    if( strcmp( argv[1], "-h" ) == 0 || argc < 2 )
+    if( argc < 2 || strcmp( argv[1], "-h" ) == 0 )
     {
         M3INFO( mlog, "usage:\n"
             << "  Monarch3Info [-Hh] <input egg file>\n"
@@ -63,7 +63,7 @@ int main( const int argc, const char** argv )
         {
             const M3StreamHeader& tStrHeader = tReadHeader->GetStreamHeaders().at( iStream );
             unsigned tNChannels = tStrHeader.GetNChannels();
-            unsigned tRecSize = tStrHeader.GetRecordSize();
+            //unsigned tRecSize = tStrHeader.GetRecordSize();
             M3INFO( mlog, "Stream " << iStream << " has " << tNChannels << " channel(s) stored in format mode " << tStrHeader.GetChannelFormat() );
 
             const M3Stream* tStream = tReadTest->GetStream( iStream );
