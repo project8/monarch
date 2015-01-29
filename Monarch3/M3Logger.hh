@@ -9,6 +9,7 @@
 #ifndef M3LOGGER_HH_
 #define M3LOGGER_HH_
 
+
 /**
  * @file
  * @brief Contains the logger class and macros, based on Kasper's KLogger class.
@@ -247,6 +248,7 @@ namespace monarch3
 
 #define __M3LOG_LOCATION         monarch3::M3Logger::Location(__FILE__, __FUNC__, __LINE__)
 
+#ifndef _WIN32
 #define __M3LOG_LOG_4(I,L,M,O) \
         { \
     if (I.IsLevelEnabled(monarch3::M3Logger::e##L)) { \
@@ -258,6 +260,11 @@ namespace monarch3
         } \
     } \
         }
+#else
+#define __M3LOG_LOG_4(I,L,M,O) \
+	    { } 
+#endif
+
 
 #define __M3LOG_LOG_3(I,L,M)     __M3LOG_LOG_4(I,L,M,false)
 #define __M3LOG_LOG_2(L,M)       __M3LOG_LOG_4(__M3DEFAULT_LOGGER,L,M,false)
