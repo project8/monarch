@@ -67,6 +67,19 @@ namespace monarch3
     };
 
     template<>
+    struct MH5Type< bool >
+    {
+        static H5::DataType Native()
+        {
+            return H5::PredType::NATIVE_UINT8;
+        }
+        static H5::DataType H5()
+        {
+            return H5::PredType::STD_U8LE;
+        }
+    };
+
+    template<>
     struct MH5Type< int8_t >
     {
         static H5::DataType Native()

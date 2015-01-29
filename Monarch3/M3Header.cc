@@ -1,4 +1,5 @@
 /*
+
  * M3Header.cc
  *
  *  Created on: Dec 4, 2014
@@ -276,6 +277,7 @@ namespace monarch3
             fNChannels( 0 ),
             fNStreams( 0 ),
             fChannelStreams(),
+            fChannelCoherence(),
             fFile( NULL ),
             fStreamsGroup( NULL ),
             fChannelsGroup( NULL )
@@ -298,6 +300,22 @@ namespace monarch3
         fChannelHeaders.push_back( M3ChannelHeader( aSource, fNChannels, anAcqRate, aRecSize, aSampleSize, aDataTypeSize, aDataFormat, aBitDepth ) );
         fStreamHeaders.push_back( M3StreamHeader( aSource, fNStreams, 1, sSeparate, anAcqRate, aRecSize, aSampleSize, aDataTypeSize, aDataFormat, aBitDepth ) );
         ++fNChannels;
+        std::cout << "resizing to " << fNChannels << std::endl;
+        fChannelCoherence.resize( fNChannels );
+        for( unsigned i = 0; i < fNChannels; ++i )
+        {
+            fChannelCoherence[ i ].resize( fNChannels, false );
+        }
+        fChannelCoherence.back().back() = true;
+        for( unsigned i = 0; i < fNChannels; ++i )
+        {
+            std::cout << "   ";
+            for( unsigned j = 0; j < fNChannels; ++j )
+            {
+                std::cout << fChannelCoherence[ i ][ j ] << " ";
+            }
+            std::cout << std::endl;
+        }
         return fNStreams++;
     }
 
@@ -307,12 +325,35 @@ namespace monarch3
                                  uint32_t aBitDepth )
     {
         M3DEBUG( mlog, "Adding stream " << fNStreams << " for multiple channels with record size " << aRecSize );
+        unsigned tFirstNewChannel = fNChannels;
         for( uint32_t iNewChannel = 0; iNewChannel < aNChannels; ++iNewChannel )
         {
             M3DEBUG( mlog, "Adding channel " << fNChannels );
             fChannelStreams.push_back( fNStreams );
             fChannelHeaders.push_back( M3ChannelHeader( aSource, fNChannels, anAcqRate, aRecSize, aSampleSize, aDataTypeSize, aDataFormat, aBitDepth ) );
             ++fNChannels;
+            std::cout << "resizing to " << fNChannels << std::endl;
+            fChannelCoherence.resize( fNChannels );
+            for( unsigned i = 0; i < fNChannels; ++i )
+            {
+                fChannelCoherence[ i ].resize( fNChannels, false );
+            }
+            fChannelCoherence.back().back() = true;
+            for( unsigned i = fNChannels - 2; i >= tFirstNewChannel; --i )
+            {
+                std::cout << "setting true for " << fNChannels - 1 << ", " << i << std::endl;
+                fChannelCoherence[ fNChannels - 1 ][ i ] = true;
+                fChannelCoherence[ i ][ fNChannels - 1 ] = true;
+            }
+        }
+        for( unsigned i = 0; i < fNChannels; ++i )
+        {
+            std::cout << "   ";
+            for( unsigned j = 0; j < fNChannels; ++j )
+            {
+                std::cout << fChannelCoherence[ i ][ j ] << " ";
+            }
+            std::cout << std::endl;
         }
         fStreamHeaders.push_back( M3StreamHeader( aSource, fNStreams, aNChannels, aFormat, anAcqRate, aRecSize, aSampleSize, aDataTypeSize, aDataFormat, aBitDepth ) );
         return fNStreams++;
@@ -332,6 +373,7 @@ namespace monarch3
             WriteScalarToHDF5( fFile, "timestamp",     fTimestamp );
             WriteScalarToHDF5( fFile, "description",   fDescription );
             //Write1DToHDF5( fFile, "channel_streams",  fChannelStreams );
+            WriteChannelCoherence( fFile );
 
             M3DEBUG( mlog, "Writing stream headers" );
             fStreamsGroup = new H5::Group( fFile->createGroup( "streams" ) );
@@ -406,6 +448,30 @@ namespace monarch3
         {
             M3ERROR( mlog, "Unable to open header group or find header data:\n\t" << e.getCDetailMsg() );
         }
+    }
+
+    void M3Header::WriteChannelCoherence( H5::CommonFG* aLoc )
+    {
+        unsigned tSize = fChannelCoherence.size();
+
+        const unsigned tNDims = 2;
+        hsize_t tDims[ tNDims ] = { tSize, tSize };
+
+        H5::DataSpace tDataspace( tNDims, tDims );
+        H5::DataSet tDataset = aLoc->createDataSet( "channel-coherence", MH5Type< bool >::H5(), tDataspace );
+
+        uint8_t* tCCBuffer = new uint8_t[ tSize * tSize ];
+        for( unsigned i = 0; i < tSize; ++i )
+        {
+            for( unsigned j = 0; j < tSize; ++j )
+            {
+                tCCBuffer[ i * tSize + j ] = (uint8_t)fChannelCoherence[ i ][ j ];
+            }
+        }
+
+        tDataset.write( tCCBuffer, MH5Type< bool >::Native(), tDataspace );
+
+        return;
     }
 
 }

@@ -163,13 +163,13 @@ namespace monarch3
 
             M3MEMBERVARIABLEREF_NOSET( std::vector< uint32_t >, ChannelStreams );
 
+            M3MEMBERVARIABLEREF_NOSET( std::vector< std::vector< bool > >, ChannelCoherence );
+
             M3MEMBERVARIABLEREF_NOSET( std::vector< M3ChannelHeader >, ChannelHeaders );
             std::vector< M3ChannelHeader >& GetChannelHeaders();
 
             M3MEMBERVARIABLEREF_NOSET( std::vector< M3StreamHeader >, StreamHeaders );
             std::vector< M3StreamHeader >& GetStreamHeaders();
-
-            // TODO: channel coherence
 
         public:
             /// Add a stream with one channel with aRecSize samples per record
@@ -196,6 +196,8 @@ namespace monarch3
             H5::Group* GetChannelsGroup();
 
         private:
+            void WriteChannelCoherence( H5::CommonFG* aLoc );
+
             mutable H5::H5File* fFile;
             mutable H5::Group* fStreamsGroup;
             mutable H5::Group* fChannelsGroup;
