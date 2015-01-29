@@ -164,6 +164,7 @@ namespace monarch3
             M3MEMBERVARIABLEREF_NOSET( std::vector< uint32_t >, ChannelStreams );
 
             M3MEMBERVARIABLEREF_NOSET( std::vector< std::vector< bool > >, ChannelCoherence );
+            void SetCoherence( unsigned aChanA, unsigned aChanB, bool aCoherence );
 
             M3MEMBERVARIABLEREF_NOSET( std::vector< M3ChannelHeader >, ChannelHeaders );
             std::vector< M3ChannelHeader >& GetChannelHeaders();
@@ -196,7 +197,11 @@ namespace monarch3
             H5::Group* GetChannelsGroup();
 
         private:
-            void WriteChannelCoherence( H5::CommonFG* aLoc );
+            void WriteChannelStreams( H5::H5Location* aLoc );
+            void ReadChannelStreams( const H5::H5Location* aLoc ) const;
+
+            void WriteChannelCoherence( H5::H5Location* aLoc );
+            void ReadChannelCoherence( const H5::H5Location* aLoc ) const;
 
             mutable H5::H5File* fFile;
             mutable H5::Group* fStreamsGroup;
@@ -207,14 +212,14 @@ namespace monarch3
             template< typename XType >
             static void WriteScalarToHDF5( H5::H5Location* aLoc, const std::string& aName, XType aValue );
 
-            template< typename XArrayType >
-            static void Write1DToHDF5( H5::CommonFG* aLoc, const std::string& aName, const XArrayType& anArray );
+            //template< typename XArrayType >
+            //static void Write1DToHDF5( H5::CommonFG* aLoc, const std::string& aName, const XArrayType& anArray );
 
             template< typename XType >
             static XType ReadScalarFromHDF5( const H5::H5Location* aLoc, const std::string& aName );
 
-            template< typename XArrayType >
-            static void Read1DFromHDF5( const H5::H5Location* aLoc, const std::string& aName, XArrayType& anArray );
+            //template< typename XArrayType >
+            //static void Read1DFromHDF5( const H5::H5Location* aLoc, const std::string& aName, XArrayType& anArray );
 
     };
 
@@ -264,7 +269,7 @@ namespace monarch3
         M3DEBUG( mlog_mheader, "Writing value to new scalar metadata <" << aName << ">: " << aValue );
         return;
     }
-
+/*
     template< typename XArrayType >
     void M3Header::Write1DToHDF5( H5::CommonFG* aLoc, const std::string& aName, const XArrayType& anArray )
     {
@@ -286,7 +291,7 @@ namespace monarch3
         delete [] buffer;
         return;
     }
-
+*/
 
     // Read functions
 
@@ -313,7 +318,7 @@ namespace monarch3
         M3DEBUG( mlog_mheader, "Reading value <" << aName << ">: " << tValue );
         return tValue;
     }
-
+/*
     template< typename XArrayType >
     void M3Header::Read1DFromHDF5( const H5::H5Location* aLoc, const std::string& aName, XArrayType& anArray )
     {
@@ -336,7 +341,7 @@ namespace monarch3
         delete [] buffer;
         return;
     }
-
+*/
 }
 
 // Pretty printing methods

@@ -290,6 +290,17 @@ namespace monarch3
         delete fChannelsGroup;
     }
 
+    void M3Header::SetCoherence( unsigned aChanA, unsigned aChanB, bool aCoherence )
+    {
+        if( aChanA >= fNChannels || aChanB >= fNChannels )
+        {
+            throw M3Exception() << "Channel out of bounds: " << aChanA << " or " << aChanB << " >= " << fNChannels;
+        }
+        fChannelCoherence[ aChanA ][ aChanB ] = aCoherence;
+        fChannelCoherence[ aChanB ][ aChanA ] = aCoherence;
+        return;
+    }
+
     uint32_t M3Header::AddStream( const std::string& aSource,
                                  uint32_t anAcqRate, uint32_t aRecSize, uint32_t aSampleSize,
                                  uint32_t aDataTypeSize, DataFormatType aDataFormat,
@@ -301,21 +312,12 @@ namespace monarch3
         fStreamHeaders.push_back( M3StreamHeader( aSource, fNStreams, 1, sSeparate, anAcqRate, aRecSize, aSampleSize, aDataTypeSize, aDataFormat, aBitDepth ) );
         ++fNChannels;
         std::cout << "resizing to " << fNChannels << std::endl;
-        fChannelCoherence.resize( fNChannels );
-        for( unsigned i = 0; i < fNChannels; ++i )
+        fChannelCoherence.resize( fNChannels ); // resize number of columns
+        for( unsigned i = 0; i < fNChannels; ++i ) // resize each row
         {
             fChannelCoherence[ i ].resize( fNChannels, false );
         }
-        fChannelCoherence.back().back() = true;
-        for( unsigned i = 0; i < fNChannels; ++i )
-        {
-            std::cout << "   ";
-            for( unsigned j = 0; j < fNChannels; ++j )
-            {
-                std::cout << fChannelCoherence[ i ][ j ] << " ";
-            }
-            std::cout << std::endl;
-        }
+        fChannelCoherence.back().back() = true; // each channel is coherent with itself
         return fNStreams++;
     }
 
@@ -332,28 +334,17 @@ namespace monarch3
             fChannelStreams.push_back( fNStreams );
             fChannelHeaders.push_back( M3ChannelHeader( aSource, fNChannels, anAcqRate, aRecSize, aSampleSize, aDataTypeSize, aDataFormat, aBitDepth ) );
             ++fNChannels;
-            std::cout << "resizing to " << fNChannels << std::endl;
-            fChannelCoherence.resize( fNChannels );
-            for( unsigned i = 0; i < fNChannels; ++i )
+            fChannelCoherence.resize( fNChannels ); // resize number of columns
+            for( unsigned i = 0; i < fNChannels; ++i ) // resize all rows
             {
                 fChannelCoherence[ i ].resize( fNChannels, false );
             }
-            fChannelCoherence.back().back() = true;
-            for( unsigned i = fNChannels - 2; i >= tFirstNewChannel; --i )
+            fChannelCoherence.back().back() = true; // each channel is coherent with itself
+            for( unsigned i = fNChannels - 2; i >= tFirstNewChannel; --i ) // all channels in the same stream are coherent with each other
             {
-                std::cout << "setting true for " << fNChannels - 1 << ", " << i << std::endl;
                 fChannelCoherence[ fNChannels - 1 ][ i ] = true;
                 fChannelCoherence[ i ][ fNChannels - 1 ] = true;
             }
-        }
-        for( unsigned i = 0; i < fNChannels; ++i )
-        {
-            std::cout << "   ";
-            for( unsigned j = 0; j < fNChannels; ++j )
-            {
-                std::cout << fChannelCoherence[ i ][ j ] << " ";
-            }
-            std::cout << std::endl;
         }
         fStreamHeaders.push_back( M3StreamHeader( aSource, fNStreams, aNChannels, aFormat, anAcqRate, aRecSize, aSampleSize, aDataTypeSize, aDataFormat, aBitDepth ) );
         return fNStreams++;
@@ -373,6 +364,7 @@ namespace monarch3
             WriteScalarToHDF5( fFile, "timestamp",     fTimestamp );
             WriteScalarToHDF5( fFile, "description",   fDescription );
             //Write1DToHDF5( fFile, "channel_streams",  fChannelStreams );
+            WriteChannelStreams( fFile );
             WriteChannelCoherence( fFile );
 
             M3DEBUG( mlog, "Writing stream headers" );
@@ -415,8 +407,21 @@ namespace monarch3
             SetTimestamp( ReadScalarFromHDF5< string >( fFile, "timestamp" ) );
             SetDescription( ReadScalarFromHDF5< string >( fFile, "description" ) );
 
-            fChannelStreams.clear();
+            //fChannelStreams.clear();
             //Read1DFromHDF5< std::vector< uint32_t > >( fFile, "channel_streams", fChannelStreams );
+            ReadChannelStreams( aFile );
+            ReadChannelCoherence( aFile );
+            /*
+            for( unsigned i = 0; i < fNChannels; ++i )
+            {
+                std::cout << "   ";
+                for( unsigned j = 0; j < fNChannels; ++j )
+                {
+                    std::cout << fChannelCoherence[ i ][ j ] << " ";
+                }
+                std::cout << std::endl;
+            }
+            */
 
             M3DEBUG( mlog, "Reading stream headers" );
             fStreamHeaders.clear();
@@ -450,26 +455,121 @@ namespace monarch3
         }
     }
 
-    void M3Header::WriteChannelCoherence( H5::CommonFG* aLoc )
+    void M3Header::WriteChannelStreams( H5::H5Location* aLoc )
     {
-        unsigned tSize = fChannelCoherence.size();
-
-        const unsigned tNDims = 2;
-        hsize_t tDims[ tNDims ] = { tSize, tSize };
+        const unsigned tNDims = 1;
+        hsize_t tDims[ tNDims ] = { fNChannels };
 
         H5::DataSpace tDataspace( tNDims, tDims );
-        H5::DataSet tDataset = aLoc->createDataSet( "channel-coherence", MH5Type< bool >::H5(), tDataspace );
+        //H5::DataSet tDataset = aLoc->createDataSet( "channel_streams", MH5Type< uint32_t >::H5(), tDataspace );
+        H5::Attribute tAttr = aLoc->createAttribute( "channel_streams", MH5Type< uint32_t >::H5(), tDataspace );
 
-        uint8_t* tCCBuffer = new uint8_t[ tSize * tSize ];
-        for( unsigned i = 0; i < tSize; ++i )
+        uint32_t* tCSBuffer = new uint32_t[ fNChannels ];
+        for( unsigned i = 0; i < fNChannels; ++i )
         {
-            for( unsigned j = 0; j < tSize; ++j )
+            tCSBuffer[ i ] = fChannelStreams[ i ];
+        }
+
+        //tDataset.write( tCSBuffer, MH5Type< uint32_t >::Native(), tDataspace );
+        tAttr.write( MH5Type< uint32_t >::Native(), tCSBuffer );
+
+        delete [] tCSBuffer;
+
+        return;
+    }
+
+    void M3Header::ReadChannelStreams( const H5::H5Location* aLoc ) const
+    {
+        const unsigned tNDims = 1;
+        hsize_t tDims[ tNDims ];
+
+        //H5::DataSet tDataset = aLoc->openDataSet( "channel_streams" );
+        H5::Attribute tAttr = aLoc->openAttribute( "channel_streams" );
+        //H5::DataSpace tDataspace( tDataset.getSpace() );
+        H5::DataSpace tDataspace( tAttr.getSpace() );
+        tDataspace.getSimpleExtentDims( tDims );
+
+        if( tDims[ 0 ] != fNChannels )
+        {
+            M3ERROR( mlog, "Channel-streams dataset dimensions (" << tDims[ 0 ] << ") do not match number of channels, " << fNChannels );
+            return;
+        }
+
+        uint32_t* tCSBuffer = new uint32_t[ fNChannels ];
+        //tDataset.read( tCSBuffer, MH5Type< uint32_t >::Native(), tDataspace );
+        tAttr.read( MH5Type< uint32_t >::Native(), tCSBuffer );
+
+        fChannelStreams.clear();
+        fChannelStreams.resize( fNChannels );
+        for( unsigned i = 0; i < fNChannels; ++i )
+        {
+            fChannelStreams[ i ] = tCSBuffer[ i ];
+        }
+
+        delete [] tCSBuffer;
+
+        return;
+    }
+
+    void M3Header::WriteChannelCoherence( H5::H5Location* aLoc )
+    {
+        const unsigned tNDims = 2;
+        hsize_t tDims[ tNDims ] = { fNChannels, fNChannels };
+
+        H5::DataSpace tDataspace( tNDims, tDims );
+        //H5::DataSet tDataset = aLoc->createDataSet( "channel_coherence", MH5Type< bool >::H5(), tDataspace );
+        H5::Attribute tAttr = aLoc->createAttribute( "channel_coherence", MH5Type< bool >::H5(), tDataspace );
+
+        uint8_t* tCCBuffer = new uint8_t[ fNChannels * fNChannels ];
+        for( unsigned i = 0; i < fNChannels; ++i )
+        {
+            for( unsigned j = 0; j < fNChannels; ++j )
             {
-                tCCBuffer[ i * tSize + j ] = (uint8_t)fChannelCoherence[ i ][ j ];
+                tCCBuffer[ i * fNChannels + j ] = (uint8_t)fChannelCoherence[ i ][ j ];
             }
         }
 
-        tDataset.write( tCCBuffer, MH5Type< bool >::Native(), tDataspace );
+        //tDataset.write( tCCBuffer, MH5Type< bool >::Native(), tDataspace );
+        tAttr.write( MH5Type< bool >::Native(), tCCBuffer );
+
+        delete [] tCCBuffer;
+
+        return;
+    }
+
+    void M3Header::ReadChannelCoherence( const H5::H5Location* aLoc ) const
+    {
+        const unsigned tNDims = 2;
+        hsize_t tDims[ tNDims ];
+
+        //H5::DataSet tDataset = aLoc->openDataSet( "channel_coherence" );
+        H5::Attribute tAttr = aLoc->openAttribute( "channel_coherence" );
+        //H5::DataSpace tDataspace( tDataset.getSpace() );
+        H5::DataSpace tDataspace( tAttr.getSpace() );
+        tDataspace.getSimpleExtentDims( tDims );
+
+        if( tDims[ 0 ] != fNChannels || tDims[ 1 ] != fNChannels )
+        {
+            M3ERROR( mlog, "Channel coherence dataset dimensions (" << tDims[ 0 ] << ", " << tDims[ 1 ] << ") do not match number of channels, " << fNChannels );
+            return;
+        }
+
+        uint8_t* tCCBuffer = new uint8_t[ fNChannels * fNChannels ];
+        //tDataset.read( tCCBuffer, MH5Type< bool >::Native(), tDataspace );
+        tAttr.read( MH5Type< bool >::Native(), tCCBuffer );
+
+        fChannelCoherence.clear();
+        fChannelCoherence.resize( fNChannels );
+        for( unsigned i = 0; i < fNChannels; ++i )
+        {
+            fChannelCoherence[ i ].resize( fNChannels );
+            for( unsigned j = 0; j < fNChannels; ++j )
+            {
+                fChannelCoherence[ i ][ j ] = (bool)tCCBuffer[ i * fNChannels + j ];
+            }
+        }
+
+        delete [] tCCBuffer;
 
         return;
     }
