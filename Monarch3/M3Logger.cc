@@ -21,7 +21,9 @@
 #include <cstring>
 #include <iomanip>
 #include <iterator>
+#ifndef _WIN32
 #include <sys/time.h>
+#endif
 #include <time.h>
 
 using namespace std;
@@ -40,15 +42,28 @@ namespace monarch3
     {
             static char sDateTimeFormat[16];
             static time_t sRawTime;
-            static tm* sProcessedTime;
-            static char sTimeBuff[512];
+#ifdef _WIN32
+            static tm sProcessedTime;
+#else
+			static tm* sProcessedTime;
+#endif
+			static char sTimeBuff[512];
             static size_t getTimeAbsoluteStr()
             {
                 time(&M3Logger::Private::sRawTime);
-                sProcessedTime = gmtime(&M3Logger::Private::sRawTime);
-                return strftime(M3Logger::Private::sTimeBuff, 512,
-                        M3Logger::Private::sDateTimeFormat,
-                        M3Logger::Private::sProcessedTime);
+#ifdef _WIN32
+				gmtime_s(&sProcessedTime, &M3Logger::Private::sRawTime);
+				return strftime(M3Logger::Private::sTimeBuff, 512,
+					M3Logger::Private::sDateTimeFormat,
+					&M3Logger::Private::sProcessedTime);
+
+#else
+				sProcessedTime = gmtime(&M3Logger::Private::sRawTime);
+				return strftime(M3Logger::Private::sTimeBuff, 512,
+					M3Logger::Private::sDateTimeFormat,
+					M3Logger::Private::sProcessedTime);
+#endif
+
             }
 
             const char* fLogger;
@@ -128,10 +143,14 @@ namespace monarch3
     };
 
     char M3Logger::Private::sDateTimeFormat[16];
-    time_t M3Logger::Private::sRawTime;
-    tm* M3Logger::Private::sProcessedTime;
     char M3Logger::Private::sTimeBuff[512];
-
+#ifdef _WIN32
+	time_t M3Logger::Private::sRawTime = time(NULL);
+	tm M3Logger::Private::sProcessedTime;
+#else
+	time_t M3Logger::Private::sRawTime;
+	tm* M3Logger::Private::sProcessedTime;
+#endif
     M3Logger::M3Logger(const char* name) : fPrivate(new Private())
     {
         if (name == 0)
@@ -144,7 +163,11 @@ namespace monarch3
             fPrivate->fLogger = logName;
         }
         fPrivate->fColored = true;
-        sprintf(M3Logger::Private::sDateTimeFormat,  "%%T");
+#ifdef _WIN32
+		sprintf(M3Logger::Private::sDateTimeFormat, "%%H:%%M:%%SZ");
+#else
+		sprintf(M3Logger::Private::sDateTimeFormat, "%%T");
+#endif
         SetLevel(eDebug);
     }
 
@@ -152,7 +175,12 @@ namespace monarch3
     {
         fPrivate->fLogger = name.c_str();
         fPrivate->fColored = true;
-        sprintf(M3Logger::Private::sDateTimeFormat,  "%%T");
+#ifdef _WIN32
+		sprintf(M3Logger::Private::sDateTimeFormat, "%%H:%%M:%%SZ");
+#else
+		sprintf(M3Logger::Private::sDateTimeFormat, "%%T");
+#endif
+		
         SetLevel(eDebug);
     }
 
