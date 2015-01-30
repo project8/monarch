@@ -41,10 +41,11 @@ namespace monarch3
     struct M3Logger::Private
     {
             static char sDateTimeFormat[16];
-            static time_t sRawTime;
 #ifdef _WIN32
-            static tm sProcessedTime;
+			static time_t sRawTime;
+			static tm sProcessedTime;
 #else
+			static time_t sRawTime;
 			static tm* sProcessedTime;
 #endif
 			static char sTimeBuff[512];
