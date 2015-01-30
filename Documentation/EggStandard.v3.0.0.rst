@@ -1,4 +1,4 @@
-Egg v3.0.0b File Standard
+Egg v3.0.0.b2 File Standard
 =========================
 
 Usage history: 1/2015 - 
@@ -91,6 +91,7 @@ They consist of information that apply to the all streams and channels.
 - n_channels (uint32) -- Number of channels present
 - n_streams (uint32) -- Number of streams used
 - channel_streams (vector< uint32 >) -- Map of channel number to stream number
+- channel_coherence (vector< vector< bool > >) -- Matrix of channel coherence (stored as uint8_t)
 
 
 Stream Attributes
