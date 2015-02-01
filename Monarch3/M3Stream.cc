@@ -5,6 +5,8 @@
  *      Author: nsoblath
  */
 
+#define M3_API_EXPORTS
+
 #include "M3Stream.hh"
 
 #include "M3IToA.hh"

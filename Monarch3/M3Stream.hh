@@ -38,7 +38,6 @@
     */
 namespace monarch3
 {
-
     class M3_API M3Stream
     {
         public:

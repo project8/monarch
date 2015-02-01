@@ -8,11 +8,7 @@
 #ifndef M3CONSTANTS_HH_
 #define M3CONSTANTS_HH_
 
-#include "thorax.hh"
-
-namespace monarch3
-{
-    // API export macros for windows
+// API export macros for windows
 #ifdef _WIN32
 #  ifdef M3_API_EXPORTS
 #    define M3_API __declspec(dllexport)
@@ -23,6 +19,10 @@ namespace monarch3
 #  define M3_API
 #endif
 
+#include "thorax.hh"
+
+namespace monarch3
+{
     // channel information
 
     /// Specifies whether the data is digitized or analog

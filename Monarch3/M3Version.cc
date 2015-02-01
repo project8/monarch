@@ -5,6 +5,8 @@
  *      Author: nsoblath
  */
 
+#define M3_API_EXPORTS
+
 #include "M3Version.hh"
 
 #include "M3Logger.hh"
@@ -15,7 +17,7 @@ namespace monarch3
 {
     M3LOGGER( mlog, "Version" );
 
-    char M3Version::sDelimeter = '.';
+    M3_API char M3Version::sDelimeter = '.';
 
     M3Version::M3Version() :
             fMajorVer( Monarch_VERSION_MAJOR ),

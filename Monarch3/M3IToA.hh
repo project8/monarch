@@ -29,7 +29,7 @@
 
 #pragma once
 
-
+#include "M3Constants.hh"
 
 // from digitslut.h
 

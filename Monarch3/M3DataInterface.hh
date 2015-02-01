@@ -35,7 +35,7 @@ namespace monarch3
       - double -- 8-byte floating point
     */
     template< typename SetType >
-    class M3_API M3DataWriter
+    class M3DataWriter
     {
         public:
             M3DataWriter( byte_type* aData, unsigned aDataTypeSize, DataFormatType aDataFormat ) :
@@ -142,7 +142,7 @@ namespace monarch3
       - f8_complex (i.e. double[2]) -- binary-compatible to fftw_complex
     */
     template< typename SetType >
-    class M3_API M3ComplexDataWriter
+    class M3ComplexDataWriter
     {
         public:
             M3ComplexDataWriter( byte_type* aData, unsigned aDataTypeSize, DataFormatType aDataFormat, unsigned aSampleSize = 2 ) :
@@ -235,7 +235,7 @@ namespace monarch3
       - double -- 8-byte floating point
     */
     template< typename ReturnType >
-    class M3_API M3DataReader
+    class M3DataReader
     {
         public:
             M3DataReader( const byte_type* aData, unsigned aDataTypeSize, DataFormatType aDataFormat ) :
@@ -342,7 +342,7 @@ namespace monarch3
       - f8_complex (i.e. double[2]) -- binary-compatible to fftw_complex
     */
     template< typename ReturnType >
-    class M3_API M3ComplexDataReader
+    class M3ComplexDataReader
     {
         public:
             M3ComplexDataReader( const byte_type* aData, unsigned aDataTypeSize, DataFormatType aDataFormat, unsigned aSampleSize = 2 ) :

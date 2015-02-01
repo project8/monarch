@@ -4,6 +4,7 @@
  *  Created on: Dec 4, 2014
  *      Author: nsoblath
  */
+#define M3_API_EXPORTS
 
 #include "M3Exception.hh"
 

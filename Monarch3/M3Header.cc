@@ -6,6 +6,8 @@
  *      Author: nsoblath
  */
 
+#define M3_API_EXPORTS
+
 #include "M3Header.hh"
 
 #include "M3IToA.hh"
