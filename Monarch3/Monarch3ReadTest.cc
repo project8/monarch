@@ -316,14 +316,14 @@ bool ReadRecordCheck( const M3Stream* aStream, int aOffset, unsigned aDataFormat
                 case 1:
                     if( ! PrintChannelsFloat( aStream ) )
                     {
-                        M3ERROR( "Problem printing channels (float)" );
+                        M3ERROR( mlog, "Problem printing channels (float)" );
                         return 0;
                     }
                     break;
                 default:
                     if( ! PrintChannelsFloatComplex( aStream ) )
                     {
-                        M3ERROR( "Problem printing channels (float-complex)" );
+                        M3ERROR( mlog, "Problem printing channels (float-complex)" );
                         return 0;
                     }
                     break;
@@ -346,7 +346,7 @@ bool PrintChannelsInt( const M3Stream* aStream )
         const M3DataReader< uint64_t > tDataInterface( aStream->GetChannelRecord( iChan )->GetData(),
                 aStream->GetDataTypeSize(), sDigitized );
         stringstream tDataOut;
-        for( unsigned iSample = 0; iSample < std::min( tMaxSamples, tRecSize ); ++iSample )
+        for( unsigned iSample = 0; iSample < min( tMaxSamples, tRecSize ); ++iSample )
         {
             tDataOut << tDataInterface.at( iSample );
             if( iSample != tRecSize - 1 ) tDataOut << ", ";
@@ -366,7 +366,7 @@ bool PrintChannelsFloat( const M3Stream* aStream )
         const M3DataReader< double > tDataInterface( aStream->GetChannelRecord( iChan )->GetData(),
                 aStream->GetDataTypeSize(), sAnalog );
         stringstream tDataOut;
-        for( unsigned iSample = 0; iSample < std::min( tMaxSamples, tRecSize ); ++iSample )
+        for( unsigned iSample = 0; iSample < min( tMaxSamples, tRecSize ); ++iSample )
         {
             tDataOut << tDataInterface.at( iSample );
             if( iSample != tRecSize - 1 ) tDataOut << ", ";
@@ -390,7 +390,7 @@ bool PrintChannelsFloatComplex( const M3Stream* aStream )
                 const M3ComplexDataReader< f4_complex > tDataInterface( aStream->GetChannelRecord( iChan )->GetData(),
                         aStream->GetDataTypeSize(), sAnalog, aStream->GetSampleSize() );
                 stringstream tDataOut;
-                for( unsigned iSample = 0; iSample < std::min( tMaxSamples, tRecSize ); ++iSample )
+                for( unsigned iSample = 0; iSample < min( tMaxSamples, tRecSize ); ++iSample )
                 {
                     tDataOut << "(" << tDataInterface.at( iSample )[ 0 ] << ", " << tDataInterface.at( iSample )[ 1 ] << ")";
                     if( iSample != tRecSize - 1 ) tDataOut << ", ";
@@ -405,7 +405,7 @@ bool PrintChannelsFloatComplex( const M3Stream* aStream )
                 const M3ComplexDataReader< f8_complex > tDataInterface( aStream->GetChannelRecord( iChan )->GetData(),
                         aStream->GetDataTypeSize(), sAnalog, aStream->GetSampleSize() );
                 stringstream tDataOut;
-                for( unsigned iSample = 0; iSample < std::min( tMaxSamples, tRecSize ); ++iSample )
+                for( unsigned iSample = 0; iSample < min( tMaxSamples, tRecSize ); ++iSample )
                 {
                     tDataOut << "(" << tDataInterface.at( iSample )[ 0 ] << ", " << tDataInterface.at( iSample )[ 1 ] << ")";
                     if( iSample != tRecSize - 1 ) tDataOut << ", ";

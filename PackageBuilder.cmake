@@ -43,11 +43,11 @@ set (BIN_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/${BIN_INSTALL_SUBDIR}")
 set (CONFIG_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/${CONFIG_INSTALL_SUBDIR}")
 
 # build shared libraries
-if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+#if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     set (BUILD_SHARED_LIBS ON)
-elseif (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-    set (BUILD_SHARED_LIBS OFF)    
-endif (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+#elseif (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+#    set (BUILD_SHARED_LIBS OFF)    
+#endif (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 
 # global property to hold the names of katydid library targets
 set_property (GLOBAL PROPERTY ${PROJECT_NAME}_LIBRARIES)
