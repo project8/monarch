@@ -29,7 +29,7 @@ namespace monarch3
 
      @details
     */
-    class M3StreamHeader
+    class M3_API M3StreamHeader
     {
         public:
             M3StreamHeader();
@@ -81,7 +81,7 @@ namespace monarch3
 
      @details
     */
-    class M3ChannelHeader
+    class M3_API M3ChannelHeader
     {
         public:
             M3ChannelHeader();
@@ -137,7 +137,7 @@ namespace monarch3
 
      The stream structure of the data is also configured using the AddStream functions.
     */
-    class M3Header
+    class M3_API M3Header
     {
         public:
             typedef std::vector< M3ChannelHeader > M3ChannelHeaders;
@@ -345,8 +345,8 @@ namespace monarch3
 }
 
 // Pretty printing methods
-std::ostream& operator<<( std::ostream& out, const monarch3::M3StreamHeader& hdr );
-std::ostream& operator<<( std::ostream& out, const monarch3::M3ChannelHeader& hdr );
-std::ostream& operator<<( std::ostream& out, const monarch3::M3Header& hdr );
+M3_API std::ostream& operator<<( std::ostream& out, const monarch3::M3StreamHeader& hdr );
+M3_API std::ostream& operator<<( std::ostream& out, const monarch3::M3ChannelHeader& hdr );
+M3_API std::ostream& operator<<( std::ostream& out, const monarch3::M3Header& hdr );
 
 #endif

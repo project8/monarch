@@ -10,6 +10,8 @@
 #ifndef M3VERSION_HH_
 #define M3VERSION_HH_
 
+#include "M3Constants.hh"
+
 #include <string>
 
 #define Monarch_VERSION_MAJOR @Monarch_VERSION_MAJOR@
@@ -25,7 +27,7 @@
 
 namespace monarch3
 {
-    class M3Version
+    class M3_API M3Version
     {
         public:
             M3Version();

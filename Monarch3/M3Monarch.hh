@@ -36,7 +36,7 @@ namespace monarch3
 
      Stream data is written or read via the stream objects (accessed with GetStream( unsigned )).
     */
-    class Monarch3
+    class M3_API Monarch3
     {
             //***********************
             // constructors and state

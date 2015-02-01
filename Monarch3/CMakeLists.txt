@@ -3,6 +3,7 @@
 ####################
 
 set( MONARCH3_HEADERFILES
+    M3Constants.hh
     M3DataInterface.hh
     M3Exception.hh
     M3Header.hh

@@ -8,6 +8,8 @@
 #ifndef M3EXCEPTION_HH_
 #define M3EXCEPTION_HH_
 
+#include "M3Constants.hh"
+
 #include <exception>
 #include <sstream>
 
@@ -22,7 +24,7 @@ namespace monarch3
 
      @details
     */
-    class M3Exception : public std::exception
+    class M3_API M3Exception : public std::exception
     {
         public:
             M3Exception();

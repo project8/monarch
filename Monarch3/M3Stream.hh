@@ -39,7 +39,7 @@
 namespace monarch3
 {
 
-    class M3Stream
+    class M3_API M3Stream
     {
         public:
             enum Mode
