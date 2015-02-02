@@ -7,6 +7,7 @@
  */
 
 #define M3_API_EXPORTS
+#define hdf5_EXPORTS
 
 #include "M3Header.hh"
 
@@ -578,7 +579,7 @@ namespace monarch3
 
 }
 
-std::ostream& operator<<( std::ostream& out, const monarch3::M3StreamHeader& hdr )
+M3_API std::ostream& operator<<( std::ostream& out, const monarch3::M3StreamHeader& hdr )
 {
     out << "Stream Header Content:\n";
     out << "\tStream Number: " << hdr.GetNumber() << '\n';
@@ -596,7 +597,7 @@ std::ostream& operator<<( std::ostream& out, const monarch3::M3StreamHeader& hdr
     return out;
 }
 
-std::ostream& operator<<( std::ostream& out, const monarch3::M3ChannelHeader& hdr )
+M3_API std::ostream& operator<<( std::ostream& out, const monarch3::M3ChannelHeader& hdr )
 {
     out << "Channel Header Content:\n";
     out << "\tChannel Number: " << hdr.GetNumber() << '\n';
@@ -614,7 +615,7 @@ std::ostream& operator<<( std::ostream& out, const monarch3::M3ChannelHeader& hd
     return out;
 }
 
-std::ostream& operator<<( std::ostream& out, const monarch3::M3Header& hdr )
+M3_API std::ostream& operator<<( std::ostream& out, const monarch3::M3Header& hdr )
 {
     out << "Monarch Header Content:\n";
     out << "\tEgg Version: " << hdr.GetEggVersion() << "\n";

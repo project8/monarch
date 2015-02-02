@@ -32,7 +32,6 @@ set( MONARCH3_HEADERFILES
     ${MONARCH3_HEADERFILES}
     ${PROJECT_BINARY_DIR}/M3Version.hh
 )
-include_directories( BEFORE ${PROJECT_BINARY_DIR} )
 
 add_library( Monarch3 ${MONARCH3_SOURCEFILES} )
 target_link_libraries( Monarch3 ${EXTERNAL_LIBRARIES} )

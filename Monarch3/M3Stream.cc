@@ -122,14 +122,14 @@ namespace monarch3
                 tAttrNRec.read( tAttrNRec.getDataType(), &fNRecordsInFile );
                 BuildIndex();
             }
-            catch( H5::Exception& e2 )
+            catch( H5::Exception& )
             {
                 throw;
             }
             M3DEBUG( mlog, "\tNumber of acquisitions found: " << fNAcquisitions << "; Number of records found: " << fNRecordsInFile );
             fMode = kRead;
         }
-        catch( H5::Exception& e1 )
+        catch( H5::Exception& )
         {
             // if we ended up here, the acquisitions group doesn't exist, so we must be in write mode
             try
@@ -138,7 +138,7 @@ namespace monarch3
                 M3DEBUG( mlog, "Opened acquisition group in <write> mode" );
                 fMode = kWrite;
             }
-            catch( H5::Exception& e2 )
+            catch( H5::Exception& )
             {
                 throw;
             }

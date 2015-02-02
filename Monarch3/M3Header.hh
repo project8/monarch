@@ -8,6 +8,7 @@
 #ifndef M3HEADER_HH_
 #define M3HEADER_HH_
 
+#include "M3Constants.hh"
 #include "M3Logger.hh"
 #include "M3MemberVariable.hh"
 #include "M3Types.hh"
@@ -16,6 +17,19 @@
 
 #include <string>
 #include <vector>
+
+#ifdef _WIN32
+M3_EXPIMP_TEMPLATE template class M3_API std::basic_string< char, std::char_traits< char >, std::allocator< char > >;
+namespace monarch3
+{
+    class M3ChannelHeader;
+    class M3StreamHeader;
+}
+M3_EXPIMP_TEMPLATE template class M3_API std::vector< uint32_t, std::allocator< uint32_t > >;
+M3_EXPIMP_TEMPLATE template class M3_API std::vector< std::vector< bool, std::allocator< bool > >, std::allocator< std::vector< bool, std::allocator< bool > > > >;
+M3_EXPIMP_TEMPLATE template class M3_API std::vector< monarch3::M3ChannelHeader >;
+M3_EXPIMP_TEMPLATE template class M3_API std::vector< monarch3::M3StreamHeader >;
+#endif
 
 namespace monarch3
 {

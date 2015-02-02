@@ -15,30 +15,32 @@
 
 #include "H5Cpp.h"
 
+#ifdef _WIN32
+M3_EXPIMP_TEMPLATE template class M3_API std::vector< std::pair< unsigned, unsigned > >;
+#endif
 
-    /*!
-     @class M3Stream
-     @author N. S. Oblath
-
-     @brief Read/write access for a data stream.
-
-     @details
-     Data can be read/written either for the stream as a whole, or for individual channels within the stream by
-     accessing the relevant record objects.
-
-     The function ReadRecord extracts a record from disk.  The offset allows the file to move forward or back within the file.
-     After that call, the new record is available via the record objects.
-
-     The function WriteRecord moves the data in memory to disk.  Before calling WriteRecord, the appropriate data should be copied
-     to the record object(s).
-
-     When a stream object is created, most of the information needed to define the stream characteristics is extracted from the
-     stream header object that is passed to the constructor.  Most users won't need to worry about this, as it's already taken
-     care of by the Monarch3 object.
-    */
 namespace monarch3
 {
-    class M3_API M3Stream
+    /*!
+    @class M3Stream
+    @author N. S. Oblath
+
+    @brief Read/write access for a data stream.
+
+    @details
+    Data can be read/written either for the stream as a whole, or for individual channels within the stream by
+    accessing the relevant record objects.
+
+    The function ReadRecord extracts a record from disk.  The offset allows the file to move forward or back within the file.
+    After that call, the new record is available via the record objects.
+
+    The function WriteRecord moves the data in memory to disk.  Before calling WriteRecord, the appropriate data should be copied
+    to the record object(s).
+
+    When a stream object is created, most of the information needed to define the stream characteristics is extracted from the
+    stream header object that is passed to the constructor.  Most users won't need to worry about this, as it's already taken
+    care of by the Monarch3 object.
+    */    class M3_API M3Stream
     {
         public:
             enum Mode

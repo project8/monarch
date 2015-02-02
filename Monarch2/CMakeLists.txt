@@ -26,7 +26,6 @@ set( MONARCH2_HEADERFILES
     ${MONARCH2_HEADERFILES}
     ${PROJECT_BINARY_DIR}/M2Version.hh
 )
-include_directories( BEFORE ${PROJECT_BINARY_DIR} )
 
 add_library( Monarch2 ${MONARCH2_SOURCEFILES} )
 target_link_libraries( Monarch2 MonarchProto ${EXTERNAL_LIBRARIES} )

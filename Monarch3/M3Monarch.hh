@@ -19,6 +19,10 @@
 
 namespace monarch3
 {
+#ifdef _WIN32
+    M3_EXPIMP_TEMPLATE template class M3_API std::vector< M3Stream* >;
+#endif
+
     M3LOGGER( mlog_mmonarch, "M3Monarch3.h" );
 
     /*!
