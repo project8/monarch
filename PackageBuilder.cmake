@@ -33,7 +33,11 @@ endif (SET_INSTALL_PREFIX_TO_DEFAULT)
 
 # install subdirectories
 set (INCLUDE_INSTALL_SUBDIR "include" CACHE PATH "Install subdirectory for headers")
-set (LIB_INSTALL_SUBDIR "lib" CACHE PATH "Install subdirectory for libraries")
+if( ${CMAKE_SYSTEM_NAME} MATCHES "Windows" )
+    set (LIB_INSTALL_SUBDIR "bin" CACHE PATH "Install subdirectory for libraries")
+else( ${CMAKE_SYSTEM_NAME} MATCHES "Windows" )
+    set (LIB_INSTALL_SUBDIR "lib" CACHE PATH "Install subdirectory for libraries")
+endif( ${CMAKE_SYSTEM_NAME} MATCHES "Windows" )
 set (BIN_INSTALL_SUBDIR "bin" CACHE PATH "Install subdirectory for binaries")
 set (CONFIG_INSTALL_SUBDIR "config" CACHE PATH "Install subdirectory for config files")
 
