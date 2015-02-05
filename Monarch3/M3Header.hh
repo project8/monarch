@@ -50,9 +50,9 @@ namespace monarch3
     {
         public:
             M3StreamHeader();
-            M3StreamHeader( const std::string& aSource, uint32_t aNumber, uint32_t aNChannels, MultiChannelFormatType aFormat,
+            M3StreamHeader( const std::string& aSource, uint32_t aNumber, uint32_t aNChannels, uint32_t aFormat,
                            uint32_t anAcqRate, uint32_t aRecSize, uint32_t aSampleSize,
-                           uint32_t aDataTypeSize, DataFormatType aDataFormat,
+                           uint32_t aDataTypeSize, uint32_t aDataFormat,
                            uint32_t aBitDepth );
             M3StreamHeader( const M3StreamHeader& orig );
             ~M3StreamHeader();
@@ -66,7 +66,7 @@ namespace monarch3
 
             M3MEMBERVARIABLE( uint32_t, NChannels );
 
-            M3MEMBERVARIABLE( MultiChannelFormatType, ChannelFormat );
+            M3MEMBERVARIABLE( uint32_t, ChannelFormat );
 
             M3MEMBERVARIABLE( uint32_t, AcquisitionRate );
 
@@ -76,7 +76,7 @@ namespace monarch3
 
             M3MEMBERVARIABLE( uint32_t, DataTypeSize );
 
-            M3MEMBERVARIABLE( DataFormatType, DataFormat );
+            M3MEMBERVARIABLE( uint32_t, DataFormat );
 
             M3MEMBERVARIABLE( uint32_t, BitDepth );
 
@@ -104,7 +104,7 @@ namespace monarch3
             M3ChannelHeader();
             M3ChannelHeader( const std::string& aSource, uint32_t aNumber,
                             uint32_t anAcqRate, uint32_t aRecSize, uint32_t aSampleSize,
-                            uint32_t aDataTypeSize, DataFormatType aDataFormat,
+                            uint32_t aDataTypeSize, uint32_t aDataFormat,
                             uint32_t aBitDepth );
             M3ChannelHeader( const M3ChannelHeader& orig );
             ~M3ChannelHeader();
@@ -124,13 +124,15 @@ namespace monarch3
 
             M3MEMBERVARIABLE( uint32_t, DataTypeSize );
 
-            M3MEMBERVARIABLE( DataFormatType, DataFormat );
+            M3MEMBERVARIABLE( uint32_t, DataFormat );
 
             M3MEMBERVARIABLE( uint32_t, BitDepth );
 
             M3MEMBERVARIABLE( double, VoltageMin );
 
             M3MEMBERVARIABLE( double, VoltageRange );
+
+            M3MEMBERVARIABLE( double, DACGain );
 
             M3MEMBERVARIABLE( double, FrequencyMin );
 
@@ -194,14 +196,16 @@ namespace monarch3
             /// Returns the stream number (used to address the stream later)
             unsigned AddStream( const std::string& aSource,
                                 uint32_t anAcqRate, uint32_t aRecSize, uint32_t aSampleSize,
-                                uint32_t aDataTypeSize, DataFormatType aDataFormat,
-                                uint32_t aBitDepth );
+                                uint32_t aDataTypeSize, uint32_t aDataFormat,
+                                uint32_t aBitDepth,
+                                std::vector< unsigned >* aChanVec = NULL );
             /// Add a stream with multiple channels with aRecSize samples per record
             /// Returns the stream number (used to address the stream later)
-            unsigned AddStream( const std::string& aSource, uint32_t aNChannels, MultiChannelFormatType aFormat,
+            unsigned AddStream( const std::string& aSource, uint32_t aNChannels, uint32_t aFormat,
                                 uint32_t anAcqRate, uint32_t aRecSize, uint32_t aSampleSize,
-                                uint32_t aDataTypeSize, DataFormatType aDataFormat,
-                                uint32_t aBitDepth );
+                                uint32_t aDataTypeSize, uint32_t aDataFormat,
+                                uint32_t aBitDepth,
+                                std::vector< unsigned >* aChanVec = NULL );
 
         public:
             void WriteToHDF5( H5::H5File* aFile );

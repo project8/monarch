@@ -54,7 +54,7 @@ namespace monarch3
             typedef void (M3Stream::*DoWriteRecordFunc)();
 
         public:
-            M3Stream( const M3StreamHeader& aHeader, H5::CommonFG* aH5StreamParentLoc, MultiChannelFormatType aAccessFormat = sSeparate );
+            M3Stream( const M3StreamHeader& aHeader, H5::CommonFG* aH5StreamParentLoc, uint32_t aAccessFormat = sSeparate );
             virtual ~M3Stream();
 
             M3MEMBERVARIABLE( Mode, Mode );
@@ -123,8 +123,8 @@ namespace monarch3
             bool GetIsInterleaved() const              { return fDataInterleaved; }
 
             /// Access format can be changed during read or write; must call Initialize() after this
-            void SetAccessFormat( MultiChannelFormatType aFormat ) const;
-            MultiChannelFormatType GetAccessFormat() const { return fAccessFormat; }
+            void SetAccessFormat( uint32_t aFormat ) const;
+            uint32_t GetAccessFormat() const { return fAccessFormat; }
 
         private:
             void ReadRecordInterleavedToSeparate() const;
@@ -159,7 +159,7 @@ namespace monarch3
             mutable unsigned fNRecordsInAcq;
 
             mutable bool fDataInterleaved;
-            mutable MultiChannelFormatType fAccessFormat;
+            mutable uint32_t fAccessFormat;
 
             mutable std::vector< std::pair< unsigned, unsigned > > fRecordIndex;
             mutable unsigned fRecordCountInFile;

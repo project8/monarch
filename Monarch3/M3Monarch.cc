@@ -118,7 +118,7 @@ namespace monarch3
         }
         catch( M3Exception& e )
         {
-            throw( e );
+            throw;
         }
 
 
@@ -140,7 +140,7 @@ namespace monarch3
         }
         catch( M3Exception& e )
         {
-            throw( e );
+            throw;
         }
 
         fState = eReadyToRead;
@@ -166,7 +166,7 @@ namespace monarch3
         }
         catch( M3Exception& e )
         {
-            throw( e );
+            throw;
         }
 
         H5::Group* tStreamsGroup = fHeader->GetStreamsGroup();
@@ -187,7 +187,7 @@ namespace monarch3
         }
         catch( M3Exception& e )
         {
-            throw( e );
+            throw;
         }
 
         fState = eReadyToWrite;

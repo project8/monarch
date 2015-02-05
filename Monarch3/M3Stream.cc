@@ -35,7 +35,7 @@ namespace monarch3
 {
     M3LOGGER( mlog, "M3Stream" );
 
-    M3Stream::M3Stream( const M3StreamHeader& aHeader, H5::CommonFG* aH5StreamsLoc, MultiChannelFormatType aAccessFormat ) :
+    M3Stream::M3Stream( const M3StreamHeader& aHeader, H5::CommonFG* aH5StreamsLoc, uint32_t aAccessFormat ) :
             fMode( kRead ),
             fDoReadRecord( NULL ),
             fDoWriteRecord( NULL ),
@@ -391,7 +391,7 @@ namespace monarch3
         return;
     }
 
-    void M3Stream::SetAccessFormat( MultiChannelFormatType aFormat ) const
+    void M3Stream::SetAccessFormat( uint32_t aFormat ) const
     {
         fAccessFormat = aFormat;
         fIsInitialized = false;
