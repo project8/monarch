@@ -1,3 +1,7 @@
+#ifdef _WIN32
+#define NOMINMAX
+#endif
+
 #include "M3DataInterface.hh"
 #include "M3Monarch.hh"
 #include "M3Logger.hh"
