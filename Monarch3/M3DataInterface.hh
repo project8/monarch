@@ -8,6 +8,7 @@
 #ifndef M3DATAINTERFACE_HH_
 #define M3DATAINTERFACE_HH_
 
+#include "M3Constants.hh"
 #include "M3Exception.hh"
 #include "M3Types.hh"
 
@@ -38,7 +39,7 @@ namespace monarch3
     class M3DataWriter
     {
         public:
-            M3DataWriter( byte_type* aData, unsigned aDataTypeSize, DataFormatType aDataFormat ) :
+            M3DataWriter( byte_type* aData, unsigned aDataTypeSize, uint32_t aDataFormat ) :
                 fUByteData( aData )
             {
                 SetInterface( aDataTypeSize, aDataFormat );
@@ -52,7 +53,7 @@ namespace monarch3
                 (this->*fArrayFcn)( value, index );
             }
 
-            void SetInterface( unsigned aDataTypeSize, DataFormatType aDataFormat )
+            void SetInterface( unsigned aDataTypeSize, uint32_t aDataFormat )
             {
                 if( aDataFormat == sDigitized )
                 {
@@ -145,7 +146,7 @@ namespace monarch3
     class M3ComplexDataWriter
     {
         public:
-            M3ComplexDataWriter( byte_type* aData, unsigned aDataTypeSize, DataFormatType aDataFormat, unsigned aSampleSize = 2 ) :
+            M3ComplexDataWriter( byte_type* aData, unsigned aDataTypeSize, uint32_t aDataFormat, unsigned aSampleSize = 2 ) :
                 fUByteData( aData )
             {
                 SetInterface( aDataTypeSize, aDataFormat, aSampleSize );
@@ -159,7 +160,7 @@ namespace monarch3
                 (this->*fArrayFcn)( value, index );
             }
 
-            void SetInterface( unsigned aDataTypeSize, DataFormatType aDataFormat, unsigned aSampleSize = 2 )
+            void SetInterface( unsigned aDataTypeSize, uint32_t aDataFormat, unsigned aSampleSize = 2 )
             {
                 if( aDataFormat == sDigitized && aSampleSize == 1 )
                 {
@@ -238,7 +239,7 @@ namespace monarch3
     class M3DataReader
     {
         public:
-            M3DataReader( const byte_type* aData, unsigned aDataTypeSize, DataFormatType aDataFormat ) :
+            M3DataReader( const byte_type* aData, unsigned aDataTypeSize, uint32_t aDataFormat ) :
                 fUByteData( aData )
             {
                 SetInterface( aDataTypeSize, aDataFormat );
@@ -252,7 +253,7 @@ namespace monarch3
                 return (this->*fArrayFcn)( index );
             }
 
-            void SetInterface( unsigned aDataTypeSize, DataFormatType aDataFormat )
+            void SetInterface( unsigned aDataTypeSize, uint32_t aDataFormat )
             {
                 if( aDataFormat == sDigitized )
                 {
@@ -345,7 +346,7 @@ namespace monarch3
     class M3ComplexDataReader
     {
         public:
-            M3ComplexDataReader( const byte_type* aData, unsigned aDataTypeSize, DataFormatType aDataFormat, unsigned aSampleSize = 2 ) :
+            M3ComplexDataReader( const byte_type* aData, unsigned aDataTypeSize, uint32_t aDataFormat, unsigned aSampleSize = 2 ) :
                 fUByteData( aData )
             {
                 SetInterface( aDataTypeSize, aDataFormat, aSampleSize );
@@ -359,7 +360,7 @@ namespace monarch3
                 return (this->*fArrayFcn)( index );
             }
 
-            void SetInterface( unsigned aDataTypeSize, DataFormatType aDataFormat, unsigned aSampleSize = 2 )
+            void SetInterface( unsigned aDataTypeSize, uint32_t aDataFormat, unsigned aSampleSize = 2 )
             {
                 if( aDataFormat == sDigitized && aSampleSize == 1 )
                 {

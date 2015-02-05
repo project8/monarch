@@ -13,6 +13,8 @@
  *      Author: Marco Haag <marco.haag@kit.edu>
  */
 
+#ifndef _WIN32
+
 #include "M3Logger.hh"
 
 #include <algorithm>
@@ -39,16 +41,16 @@ namespace monarch3
     struct M3Logger::Private
     {
             static char sDateTimeFormat[16];
-            static time_t sRawTime;
-            static tm* sProcessedTime;
-            static char sTimeBuff[512];
+			static time_t sRawTime;
+			static tm* sProcessedTime;
+			static char sTimeBuff[512];
             static size_t getTimeAbsoluteStr()
             {
                 time(&M3Logger::Private::sRawTime);
-                sProcessedTime = gmtime(&M3Logger::Private::sRawTime);
-                return strftime(M3Logger::Private::sTimeBuff, 512,
-                        M3Logger::Private::sDateTimeFormat,
-                        M3Logger::Private::sProcessedTime);
+				sProcessedTime = gmtime(&M3Logger::Private::sRawTime);
+				return strftime(M3Logger::Private::sTimeBuff, 512,
+					M3Logger::Private::sDateTimeFormat,
+					M3Logger::Private::sProcessedTime);
             }
 
             const char* fLogger;
@@ -128,10 +130,9 @@ namespace monarch3
     };
 
     char M3Logger::Private::sDateTimeFormat[16];
-    time_t M3Logger::Private::sRawTime;
-    tm* M3Logger::Private::sProcessedTime;
     char M3Logger::Private::sTimeBuff[512];
-
+	time_t M3Logger::Private::sRawTime;
+	tm* M3Logger::Private::sProcessedTime;
     M3Logger::M3Logger(const char* name) : fPrivate(new Private())
     {
         if (name == 0)
@@ -144,7 +145,7 @@ namespace monarch3
             fPrivate->fLogger = logName;
         }
         fPrivate->fColored = true;
-        sprintf(M3Logger::Private::sDateTimeFormat,  "%%T");
+		sprintf(M3Logger::Private::sDateTimeFormat, "%%T");
         SetLevel(eDebug);
     }
 
@@ -152,7 +153,8 @@ namespace monarch3
     {
         fPrivate->fLogger = name.c_str();
         fPrivate->fColored = true;
-        sprintf(M3Logger::Private::sDateTimeFormat,  "%%T");
+		sprintf(M3Logger::Private::sDateTimeFormat, "%%T");
+		
         SetLevel(eDebug);
     }
 
@@ -187,3 +189,5 @@ namespace monarch3
         }
     }
 }
+
+#endif

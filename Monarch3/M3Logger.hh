@@ -9,6 +9,7 @@
 #ifndef M3LOGGER_HH_
 #define M3LOGGER_HH_
 
+
 /**
  * @file
  * @brief Contains the logger class and macros, based on Kasper's KLogger class.
@@ -24,6 +25,7 @@
 
 #define STRINGIFY(x) #x
 #define TOSTRING(x) STRINGIFY(x)
+
 #define __FILE_LINE__      __FILE__ "(" TOSTRING(__LINE__) ")"
 #define __FILENAME_LINE__  (strrchr(__FILE__, '/') ? strrchr(__FILE_LINE__, '/') + 1 : __FILE_LINE__)
 
@@ -49,6 +51,7 @@
 
 #endif  /* LOGGER_UTILITY_MACROS_ */
 
+#ifndef _WIN32
 
 // COLOR DEFINITIONS
 #define COLOR_NORMAL "0"
@@ -328,5 +331,30 @@ namespace monarch3
 #define M3WARN_ONCE(...)   macro_dispatcher(__M3LOG_WARN_ONCE_, __VA_ARGS__)(__VA_ARGS__)
 #define M3ERROR_ONCE(...)  macro_dispatcher(__M3LOG_ERROR_ONCE_, __VA_ARGS__)(__VA_ARGS__)
 #define M3FATAL_ONCE(...)  macro_dispatcher(__M3LOG_FATAL_ONCE_, __VA_ARGS__)(__VA_ARGS__)
+
+#else /*_WIN32*/
+
+#include <iostream>
+#define M3LOGGER(I,K)      
+
+#define M3LOG(I,K)         std::cout << "LOG: " << K << std::endl;
+#define M3TRACE(I,K)       std::cout << "TRACE: " << K << std::endl;
+#define M3DEBUG(I,K)       std::cout << "DEBUG: " << K << std::endl;
+#define M3INFO(I,K)        std::cout << "INFO: " << K << std::endl;
+#define M3WARN(I,K)        std::cout << "WARN: " << K << std::endl;
+#define M3ERROR(I,K)       std::cout << "ERROR: " << K << std::endl;
+#define M3FATAL(I,K)       std::cout << "FATAL: " << K << std::endl;
+#define M3ASSERT(I,K)      std::cout << "ASSERT: " << K << std::endl;
+
+#define M3LOG_ONCE(I,K)    std::cout << "LOG: " << K << std::endl;
+#define M3TRACE_ONCE(I,K)  std::cout << "TRACE: " << K << std::endl;
+#define M3DEBUG_ONCE(I,K)  std::cout << "DEBUG: " << K << std::endl;
+#define M3INFO_ONCE(I,K)   std::cout << "INFO: " << K << std::endl;
+#define M3WARN_ONCE(I,K)   std::cout << "WARN: " << K << std::endl;
+#define M3ERROR_ONCE(I,K)  std::cout << "ERROR: " << K << std::endl;
+#define M3FATAL_ONCE(I,K)  std::cout << "FATAL: " << K << std::endl;
+
+#endif
+
 
 #endif /* M3LOGGER_HH_ */

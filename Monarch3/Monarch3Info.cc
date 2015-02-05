@@ -3,6 +3,7 @@
 #include "M3Logger.hh"
 #include "M3Record.hh"
 
+#include <algorithm>
 #include <sstream>
 
 using namespace monarch3;
@@ -87,7 +88,7 @@ int main( const int argc, const char** argv )
                     case sDigitized:
                         if( ! PrintChannelsInt( tStream ) )
                         {
-                            M3ERROR( "Problem printing channels (int)" );
+                            M3ERROR( mlog, "Problem printing channels (int)" );
                             return 0;
                         }
                         break;
@@ -97,21 +98,21 @@ int main( const int argc, const char** argv )
                             case 1:
                                 if( ! PrintChannelsFloat( tStream ) )
                                 {
-                                    M3ERROR( "Problem printing channels (float)" );
+                                    M3ERROR( mlog, "Problem printing channels (float)" );
                                     return 0;
                                 }
                                 break;
                             default:
                                 if( ! PrintChannelsFloatComplex( tStream ) )
                                 {
-                                    M3ERROR( "Problem printing channels (float-complex)" );
+                                    M3ERROR( mlog, "Problem printing channels (float-complex)" );
                                     return 0;
                                 }
                                 break;
                         }
                         break;
                     default:
-                        M3ERROR( "Invalid data format: " << tStrHeader.GetDataFormat() );
+                        M3ERROR( mlog, "Invalid data format: "<<tStrHeader.GetDataFormat() );
                         break;
                 }
             }

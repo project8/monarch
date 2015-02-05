@@ -29,6 +29,8 @@
  */
 
 
+#define M3_API_EXPORTS
+
 #include "M3IToA.hh"
 
 // Additional count number of digit pass
@@ -37,7 +39,7 @@
 namespace monarch3
 {
 
-    void u32toa( uint32_t value, char* buffer )
+    M3_API void u32toa( uint32_t value, char* buffer )
     {
         unsigned digit = CountDecimalDigit32(value);
         buffer += digit;
@@ -63,7 +65,7 @@ namespace monarch3
         }
     }
 
-    void i32toa( int32_t value, char* buffer )
+    M3_API void i32toa( int32_t value, char* buffer )
     {
         if (value < 0) {
             *buffer++ = '-';
@@ -73,7 +75,7 @@ namespace monarch3
         u32toa( static_cast<uint32_t>(value), buffer );
     }
 
-    void u64toa( uint64_t value, char* buffer )
+    M3_API void u64toa( uint64_t value, char* buffer )
     {
         unsigned digit = CountDecimalDigit64(value);
         buffer += digit;
@@ -125,7 +127,7 @@ namespace monarch3
         }
     }
 
-    void i64toa( int64_t value, char* buffer )
+    M3_API void i64toa( int64_t value, char* buffer )
     {
         if ( value < 0 )
         {

@@ -8,8 +8,14 @@
 #ifndef M3EXCEPTION_HH_
 #define M3EXCEPTION_HH_
 
+#include "M3Constants.hh"
+
 #include <exception>
 #include <sstream>
+
+//#ifdef _WIN32
+//M3_EXPIMP_TEMPLATE template class M3_API std::basic_stringstream< char, std::char_traits< char >, std::allocator< char > >;
+//#endif
 
 namespace monarch3
 {
@@ -22,7 +28,7 @@ namespace monarch3
 
      @details
     */
-    class M3Exception : public std::exception
+    class M3_API M3Exception : public std::exception
     {
         public:
             M3Exception();

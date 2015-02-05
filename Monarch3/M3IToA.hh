@@ -29,7 +29,7 @@
 
 #pragma once
 
-
+#include "M3Constants.hh"
 
 // from digitslut.h
 
@@ -64,13 +64,13 @@ namespace monarch3
     //******************************
 
     /// Quickly convert a 32-bit unsigned integer to a char array (buffer should already be allocated)
-    void u32toa( uint32_t value, char* buffer );
+    M3_API void u32toa( uint32_t value, char* buffer );
     /// Quickly convert a 32-bit signed integer to a char array (buffer should already be allocated)
-    void i32toa( int32_t value, char* buffer );
+    M3_API void i32toa( int32_t value, char* buffer );
     /// Quickly convert a 64-bit unsigned integer to a char array (buffer should already be allocated)
-    void u64toa( uint64_t value, char* buffer );
+    M3_API void u64toa( uint64_t value, char* buffer );
     /// Quickly convert a 64-bit signed integer to a char array (buffer should already be allocated)
-    void i64toa( int64_t value, char* buffer );
+    M3_API void i64toa( int64_t value, char* buffer );
 
 
 

@@ -6,6 +6,9 @@
  *      Author: nsoblath
  */
 
+#define M3_API_EXPORTS
+#define hdf5_EXPORTS
+
 #include "M3Header.hh"
 
 #include "M3IToA.hh"
@@ -44,9 +47,9 @@ namespace monarch3
     {
     }
 
-    M3StreamHeader::M3StreamHeader( const std::string& aSource, uint32_t aNumber, uint32_t aNChannels, MultiChannelFormatType aFormat,
+    M3StreamHeader::M3StreamHeader( const std::string& aSource, uint32_t aNumber, uint32_t aNChannels, uint32_t aFormat,
                     uint32_t anAcqRate, uint32_t aRecSize, uint32_t aSampleSize,
-                    uint32_t aDataTypeSize, DataFormatType aDataFormat,
+                    uint32_t aDataTypeSize, uint32_t aDataFormat,
                     uint32_t aBitDepth ) :
             fLabel( NULL ),
             fNumber( 0 ),
@@ -130,12 +133,12 @@ namespace monarch3
         SetNumber( M3Header::ReadScalarFromHDF5< uint32_t >( &tThisStreamGroup, "number" ) );
         SetSource( M3Header::ReadScalarFromHDF5< string >( &tThisStreamGroup, "source" ) );
         SetNChannels( M3Header::ReadScalarFromHDF5< uint32_t >( &tThisStreamGroup, "n_channels" ) );
-        SetChannelFormat( M3Header::ReadScalarFromHDF5< MultiChannelFormatType >( &tThisStreamGroup, "channel_format" ) );
+        SetChannelFormat( M3Header::ReadScalarFromHDF5< uint32_t >( &tThisStreamGroup, "channel_format" ) );
         SetAcquisitionRate( M3Header::ReadScalarFromHDF5< uint32_t >( &tThisStreamGroup, "acquisition_rate" ) );
         SetRecordSize( M3Header::ReadScalarFromHDF5< uint32_t >( &tThisStreamGroup, "record_size" ) );
         SetSampleSize( M3Header::ReadScalarFromHDF5< uint32_t >( &tThisStreamGroup, "sample_size" ) );
         SetDataTypeSize( M3Header::ReadScalarFromHDF5< uint32_t >( &tThisStreamGroup, "data_type_size" ) );
-        SetDataFormat( M3Header::ReadScalarFromHDF5< DataFormatType >( &tThisStreamGroup, "data_format" ) );
+        SetDataFormat( M3Header::ReadScalarFromHDF5< uint32_t >( &tThisStreamGroup, "data_format" ) );
         SetBitDepth( M3Header::ReadScalarFromHDF5< uint32_t >( &tThisStreamGroup, "bit_depth" ) );
         SetNAcquisitions( M3Header::ReadScalarFromHDF5< uint32_t >( &tThisStreamGroup, "n_acquisitions" ) );
         SetNRecords( M3Header::ReadScalarFromHDF5< uint32_t >( &tThisStreamGroup, "n_records" ) );
@@ -159,6 +162,7 @@ namespace monarch3
             fBitDepth( 0 ),
             fVoltageMin( 0. ),
             fVoltageRange( 0. ),
+            fDACGain( 0. ),
             fFrequencyMin( 0. ),
             fFrequencyRange( 0. )
     {
@@ -166,7 +170,7 @@ namespace monarch3
 
     M3ChannelHeader::M3ChannelHeader( const std::string& aSource, uint32_t aNumber,
                     uint32_t anAcqRate, uint32_t aRecSize, uint32_t aSampleSize,
-                    uint32_t aDataTypeSize, DataFormatType aDataFormat,
+                    uint32_t aDataTypeSize, uint32_t aDataFormat,
                     uint32_t aBitDepth ) :
             fLabel( NULL ),
             fNumber( 0 ),
@@ -179,6 +183,7 @@ namespace monarch3
             fBitDepth( aBitDepth ),
             fVoltageMin( 0. ),
             fVoltageRange( 0. ),
+            fDACGain( 0. ),
             fFrequencyMin( 0. ),
             fFrequencyRange( 0. )
     {
@@ -197,6 +202,7 @@ namespace monarch3
             fBitDepth( orig.fBitDepth ),
             fVoltageMin( orig.fVoltageMin ),
             fVoltageRange( orig.fVoltageRange ),
+            fDACGain( orig.fDACGain ),
             fFrequencyMin( orig.fFrequencyMin ),
             fFrequencyRange( orig.fFrequencyRange )
     {
@@ -236,6 +242,7 @@ namespace monarch3
         M3Header::WriteScalarToHDF5( &tThisChannelGroup, "bit_depth", fBitDepth );
         M3Header::WriteScalarToHDF5( &tThisChannelGroup, "voltage_min", fVoltageMin );
         M3Header::WriteScalarToHDF5( &tThisChannelGroup, "voltage_range", fVoltageRange );
+        M3Header::WriteScalarToHDF5( &tThisChannelGroup, "dac_gain", fDACGain );
         M3Header::WriteScalarToHDF5( &tThisChannelGroup, "frequency_min", fFrequencyMin );
         M3Header::WriteScalarToHDF5( &tThisChannelGroup, "frequency_range", fFrequencyRange );
 
@@ -253,10 +260,11 @@ namespace monarch3
         SetRecordSize( M3Header::ReadScalarFromHDF5< uint32_t >( &tThisChannelGroup, "record_size" ) );
         SetSampleSize( M3Header::ReadScalarFromHDF5< uint32_t >( &tThisChannelGroup, "sample_size" ) );
         SetDataTypeSize( M3Header::ReadScalarFromHDF5< uint32_t >( &tThisChannelGroup, "data_type_size" ) );
-        SetDataFormat( M3Header::ReadScalarFromHDF5< DataFormatType >( &tThisChannelGroup, "data_format" ) );
+        SetDataFormat( M3Header::ReadScalarFromHDF5< uint32_t >( &tThisChannelGroup, "data_format" ) );
         SetBitDepth( M3Header::ReadScalarFromHDF5< uint32_t >( &tThisChannelGroup, "bit_depth" ) );
         SetVoltageMin( M3Header::ReadScalarFromHDF5< double >( &tThisChannelGroup, "voltage_min" ) );
         SetVoltageRange( M3Header::ReadScalarFromHDF5< double >( &tThisChannelGroup, "voltage_range" ) );
+        SetDACGain( M3Header::ReadScalarFromHDF5< double >( &tThisChannelGroup, "dac_gain" ) );
         SetFrequencyMin( M3Header::ReadScalarFromHDF5< double >( &tThisChannelGroup, "frequency_min" ) );
         SetFrequencyRange( M3Header::ReadScalarFromHDF5< double >( &tThisChannelGroup, "frequency_range" ) );
 
@@ -303,10 +311,12 @@ namespace monarch3
 
     uint32_t M3Header::AddStream( const std::string& aSource,
                                  uint32_t anAcqRate, uint32_t aRecSize, uint32_t aSampleSize,
-                                 uint32_t aDataTypeSize, DataFormatType aDataFormat,
-                                 uint32_t aBitDepth )
+                                 uint32_t aDataTypeSize, uint32_t aDataFormat,
+                                 uint32_t aBitDepth,
+                                 std::vector< unsigned >* aChanVec )
     {
         M3DEBUG( mlog, "Adding stream " << fNStreams << " for channel " << fNChannels << " with record size " << aRecSize );
+        if( aChanVec != NULL ) aChanVec->push_back( fNChannels );
         fChannelStreams.push_back( fNStreams );
         fChannelHeaders.push_back( M3ChannelHeader( aSource, fNChannels, anAcqRate, aRecSize, aSampleSize, aDataTypeSize, aDataFormat, aBitDepth ) );
         fStreamHeaders.push_back( M3StreamHeader( aSource, fNStreams, 1, sSeparate, anAcqRate, aRecSize, aSampleSize, aDataTypeSize, aDataFormat, aBitDepth ) );
@@ -321,16 +331,18 @@ namespace monarch3
         return fNStreams++;
     }
 
-    uint32_t M3Header::AddStream( const std::string& aSource, uint32_t aNChannels, MultiChannelFormatType aFormat,
+    uint32_t M3Header::AddStream( const std::string& aSource, uint32_t aNChannels, uint32_t aFormat,
                                  uint32_t anAcqRate, uint32_t aRecSize, uint32_t aSampleSize,
-                                 uint32_t aDataTypeSize, DataFormatType aDataFormat,
-                                 uint32_t aBitDepth )
+                                 uint32_t aDataTypeSize, uint32_t aDataFormat,
+                                 uint32_t aBitDepth,
+                                 std::vector< unsigned >* aChanVec )
     {
         M3DEBUG( mlog, "Adding stream " << fNStreams << " for multiple channels with record size " << aRecSize );
         unsigned tFirstNewChannel = fNChannels;
         for( uint32_t iNewChannel = 0; iNewChannel < aNChannels; ++iNewChannel )
         {
             M3DEBUG( mlog, "Adding channel " << fNChannels );
+            if( aChanVec != NULL ) aChanVec->push_back( fNChannels );
             fChannelStreams.push_back( fNStreams );
             fChannelHeaders.push_back( M3ChannelHeader( aSource, fNChannels, anAcqRate, aRecSize, aSampleSize, aDataTypeSize, aDataFormat, aBitDepth ) );
             ++fNChannels;
@@ -383,11 +395,12 @@ namespace monarch3
         }
         catch( H5::Exception& e )
         {
-            throw M3Exception() << "HDF5 error while writing header: \n\t" << e.getDetailMsg();
+            //std::cout << e.getDetailMsg() << std::endl;
+            throw M3Exception() << "HDF5 error while writing header: " << std::string( e.getCDetailMsg() );
         }
         catch( M3Exception& e )
         {
-            throw( e );
+            throw;
         }
 
         return;
@@ -576,7 +589,7 @@ namespace monarch3
 
 }
 
-std::ostream& operator<<( std::ostream& out, const monarch3::M3StreamHeader& hdr )
+M3_API std::ostream& operator<<( std::ostream& out, const monarch3::M3StreamHeader& hdr )
 {
     out << "Stream Header Content:\n";
     out << "\tStream Number: " << hdr.GetNumber() << '\n';
@@ -594,7 +607,7 @@ std::ostream& operator<<( std::ostream& out, const monarch3::M3StreamHeader& hdr
     return out;
 }
 
-std::ostream& operator<<( std::ostream& out, const monarch3::M3ChannelHeader& hdr )
+M3_API std::ostream& operator<<( std::ostream& out, const monarch3::M3ChannelHeader& hdr )
 {
     out << "Channel Header Content:\n";
     out << "\tChannel Number: " << hdr.GetNumber() << '\n';
@@ -612,7 +625,7 @@ std::ostream& operator<<( std::ostream& out, const monarch3::M3ChannelHeader& hd
     return out;
 }
 
-std::ostream& operator<<( std::ostream& out, const monarch3::M3Header& hdr )
+M3_API std::ostream& operator<<( std::ostream& out, const monarch3::M3Header& hdr )
 {
     out << "Monarch Header Content:\n";
     out << "\tEgg Version: " << hdr.GetEggVersion() << "\n";
