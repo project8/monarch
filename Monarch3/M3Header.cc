@@ -369,15 +369,15 @@ namespace monarch3
             M3DEBUG( mlog, "Writing run header" );
             fFile = aFile;
             WriteScalarToHDF5( fFile, "egg_version",   fEggVersion );
-            WriteScalarToHDF5( fFile, "filename",      fFilename );
+            //WriteScalarToHDF5( fFile, "filename",      fFilename );
             WriteScalarToHDF5( fFile, "n_channels",    fNChannels );
-            WriteScalarToHDF5( fFile, "n_streams",     fNStreams );
-            WriteScalarToHDF5( fFile, "run_duration",  fRunDuration );
-            WriteScalarToHDF5( fFile, "timestamp",     fTimestamp );
-            WriteScalarToHDF5( fFile, "description",   fDescription );
-            //Write1DToHDF5( fFile, "channel_streams",  fChannelStreams );
-            WriteChannelStreams( fFile );
-            WriteChannelCoherence( fFile );
+            //WriteScalarToHDF5( fFile, "n_streams",     fNStreams );
+            //WriteScalarToHDF5( fFile, "run_duration",  fRunDuration );
+            //WriteScalarToHDF5( fFile, "timestamp",     fTimestamp );
+            //WriteScalarToHDF5( fFile, "description",   fDescription );
+            //////////////Write1DToHDF5( fFile, "channel_streams",  fChannelStreams );
+            //WriteChannelStreams( fFile );
+            //WriteChannelCoherence( fFile );
 
             M3DEBUG( mlog, "Writing stream headers" );
             fStreamsGroup = new H5::Group( fFile->createGroup( "streams" ) );
@@ -395,11 +395,11 @@ namespace monarch3
         }
         catch( H5::Exception& e )
         {
-            //std::cout << e.getDetailMsg() << std::endl;
-            throw M3Exception() << "HDF5 error while writing header: " << std::string( e.getCDetailMsg() );
+            throw M3Exception() << "HDF5 error while writing header: " << e.getCDetailMsg();
         }
         catch( M3Exception& e )
         {
+            M3DEBUG( mlog, "M3Exception: " << e.what() );
             throw;
         }
 

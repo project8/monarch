@@ -15,7 +15,7 @@
 #    define M3_EXPIMP_TEMPLATE
 #  else
 #    define M3_API __declspec(dllimport)
-#    define M3_EXPIMP_TEMPLATE
+#    define M3_EXPIMP_TEMPLATE extern
 #  endif
 #else
 #  define M3_API
