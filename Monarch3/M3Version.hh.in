@@ -10,6 +10,8 @@
 #ifndef M3VERSION_HH_
 #define M3VERSION_HH_
 
+#include "M3Constants.hh"
+
 #include <string>
 
 #define Monarch_VERSION_MAJOR @Monarch_VERSION_MAJOR@
@@ -23,9 +25,13 @@
 #define Monarch_GIT_COMMIT @Monarch_GIT_COMMIT@
 #define Monarch_GIT_DESCRIBE @Monarch_GIT_DESCRIBE@
 
+//#ifdef _WIN32
+//M3_EXPIMP_TEMPLATE template class M3_API std::basic_string< char, std::char_traits< char >, std::allocator< char > >;
+//#endif
+
 namespace monarch3
 {
-    class M3Version
+    class M3_API M3Version
     {
         public:
             M3Version();

@@ -4,6 +4,7 @@
  *  Created on: Dec 4, 2014
  *      Author: nsoblath
  */
+#define M3_API_EXPORTS
 
 #include "M3Exception.hh"
 
@@ -12,21 +13,27 @@ namespace monarch3
 
     M3Exception::M3Exception() :
             exception(),
-            fStream( "" )
+            fMessage()
     {
     }
     M3Exception::M3Exception( const M3Exception& aCopy ) :
             exception( aCopy ),
-            fStream( aCopy.fStream.str() )
+            fMessage( aCopy.fMessage )
     {
     }
     M3Exception::~M3Exception() throw ()
     {
     }
 
+    //void M3Exception::SetWhat( const char* aWhat )
+    //{
+    //    fMessage = std::string( aWhat );
+    //    //fStream << aWhat;
+    //}
+
     const char* M3Exception::what() const throw ()
     {
-        return fStream.str().c_str();
+        return fMessage.c_str();
     }
 
 }

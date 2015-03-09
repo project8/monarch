@@ -31,7 +31,7 @@ namespace monarch3
      If the M3Record( byte_type* ) constructor or SetData( byte_type* ) function is used, the record will point to data elsewhere that it does not own.
 
     */
-    class M3Record
+    class M3_API M3Record
     {
         public:
             M3Record( unsigned aNBytes = 0 );

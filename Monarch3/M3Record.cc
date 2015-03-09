@@ -4,6 +4,7 @@
  *  Created on: Dec 26, 2014
  *      Author: nsoblath
  */
+#define M3_API_EXPORTS
 
 #include "M3Record.hh"
 

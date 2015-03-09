@@ -1,8 +1,13 @@
+#ifdef _WIN32
+#define NOMINMAX
+#endif
+
 #include "M3DataInterface.hh"
 #include "M3Monarch.hh"
 #include "M3Logger.hh"
 #include "M3Record.hh"
 
+#include <algorithm>
 #include <sstream>
 
 using namespace monarch3;
@@ -316,14 +321,14 @@ bool ReadRecordCheck( const M3Stream* aStream, int aOffset, unsigned aDataFormat
                 case 1:
                     if( ! PrintChannelsFloat( aStream ) )
                     {
-                        M3ERROR( "Problem printing channels (float)" );
+                        M3ERROR( mlog, "Problem printing channels (float)" );
                         return 0;
                     }
                     break;
                 default:
                     if( ! PrintChannelsFloatComplex( aStream ) )
                     {
-                        M3ERROR( "Problem printing channels (float-complex)" );
+                        M3ERROR( mlog, "Problem printing channels (float-complex)" );
                         return 0;
                     }
                     break;

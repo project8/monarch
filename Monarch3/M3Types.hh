@@ -14,8 +14,6 @@
 
 #include <string>
 
-#include "thorax.hh"
-
 namespace monarch3
 {
 
@@ -33,25 +31,6 @@ namespace monarch3
 
     template<bool> struct staticassert;
     template<> struct staticassert<true> {};  //specialization
-
-    // channel information
-
-    /// Specifies whether the data is digitized or analog
-    typedef unsigned DataFormatType;
-    static const DataFormatType sDigitized = 0;
-    static const DataFormatType sAnalog = 1;
-
-    // stream information
-
-    /// Specifies whether the data channels are interleaved or separate in a stream
-    typedef uint32_t MultiChannelFormatType;
-    static const MultiChannelFormatType sInterleaved = 0;
-    static const MultiChannelFormatType sSeparate = 1;
-
-    // re-typdefing for aesthetic purposes
-    typedef acquisition_id_type AcquisitionIdType; // 8 bytes
-    typedef record_id_type RecordIdType; // 8 bytes
-    typedef time_nsec_type TimeType; // 8 bytes
 
     template< typename T >
     struct MH5Type

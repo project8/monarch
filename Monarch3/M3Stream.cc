@@ -5,6 +5,8 @@
  *      Author: nsoblath
  */
 
+#define M3_API_EXPORTS
+
 #include "M3Stream.hh"
 
 #include "M3IToA.hh"
@@ -33,7 +35,7 @@ namespace monarch3
 {
     M3LOGGER( mlog, "M3Stream" );
 
-    M3Stream::M3Stream( const M3StreamHeader& aHeader, H5::CommonFG* aH5StreamsLoc, MultiChannelFormatType aAccessFormat ) :
+    M3Stream::M3Stream( const M3StreamHeader& aHeader, H5::CommonFG* aH5StreamsLoc, uint32_t aAccessFormat ) :
             fMode( kRead ),
             fDoReadRecord( NULL ),
             fDoWriteRecord( NULL ),
@@ -120,14 +122,14 @@ namespace monarch3
                 tAttrNRec.read( tAttrNRec.getDataType(), &fNRecordsInFile );
                 BuildIndex();
             }
-            catch( H5::Exception& e2 )
+            catch( H5::Exception& )
             {
                 throw;
             }
             M3DEBUG( mlog, "\tNumber of acquisitions found: " << fNAcquisitions << "; Number of records found: " << fNRecordsInFile );
             fMode = kRead;
         }
-        catch( H5::Exception& e1 )
+        catch( H5::Exception& )
         {
             // if we ended up here, the acquisitions group doesn't exist, so we must be in write mode
             try
@@ -136,7 +138,7 @@ namespace monarch3
                 M3DEBUG( mlog, "Opened acquisition group in <write> mode" );
                 fMode = kWrite;
             }
-            catch( H5::Exception& e2 )
+            catch( H5::Exception& )
             {
                 throw;
             }
@@ -389,7 +391,7 @@ namespace monarch3
         return;
     }
 
-    void M3Stream::SetAccessFormat( MultiChannelFormatType aFormat ) const
+    void M3Stream::SetAccessFormat( uint32_t aFormat ) const
     {
         fAccessFormat = aFormat;
         fIsInitialized = false;

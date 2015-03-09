@@ -8,14 +8,31 @@
 #ifndef M3HEADER_HH_
 #define M3HEADER_HH_
 
+#include "M3Constants.hh"
 #include "M3Logger.hh"
 #include "M3MemberVariable.hh"
 #include "M3Types.hh"
 
+//#ifdef _WIN32
+//M3_EXPIMP_TEMPLATE template class M3_API std::basic_string< char, std::char_traits< char >, std::allocator< char > >;
+//#endif
 #include "H5Cpp.h"
 
 #include <string>
 #include <vector>
+
+//#ifdef _WIN32
+//M3_EXPIMP_TEMPLATE template class M3_API std::basic_string< char, std::char_traits< char >, std::allocator< char > >;
+//namespace monarch3
+//{
+//    class M3ChannelHeader;
+//    class M3StreamHeader;
+//}
+//M3_EXPIMP_TEMPLATE template class M3_API std::vector< uint32_t, std::allocator< uint32_t > >;
+//M3_EXPIMP_TEMPLATE template class M3_API std::vector< std::vector< bool, std::allocator< bool > >, std::allocator< std::vector< bool, std::allocator< bool > > > >;
+//M3_EXPIMP_TEMPLATE template class M3_API std::vector< monarch3::M3ChannelHeader >;
+//M3_EXPIMP_TEMPLATE template class M3_API std::vector< monarch3::M3StreamHeader >;
+//#endif
 
 namespace monarch3
 {
@@ -29,13 +46,13 @@ namespace monarch3
 
      @details
     */
-    class M3StreamHeader
+    class M3_API M3StreamHeader
     {
         public:
             M3StreamHeader();
-            M3StreamHeader( const std::string& aSource, uint32_t aNumber, uint32_t aNChannels, MultiChannelFormatType aFormat,
+            M3StreamHeader( const std::string& aSource, uint32_t aNumber, uint32_t aNChannels, uint32_t aFormat,
                            uint32_t anAcqRate, uint32_t aRecSize, uint32_t aSampleSize,
-                           uint32_t aDataTypeSize, DataFormatType aDataFormat,
+                           uint32_t aDataTypeSize, uint32_t aDataFormat,
                            uint32_t aBitDepth );
             M3StreamHeader( const M3StreamHeader& orig );
             ~M3StreamHeader();
@@ -49,7 +66,7 @@ namespace monarch3
 
             M3MEMBERVARIABLE( uint32_t, NChannels );
 
-            M3MEMBERVARIABLE( MultiChannelFormatType, ChannelFormat );
+            M3MEMBERVARIABLE( uint32_t, ChannelFormat );
 
             M3MEMBERVARIABLE( uint32_t, AcquisitionRate );
 
@@ -59,7 +76,7 @@ namespace monarch3
 
             M3MEMBERVARIABLE( uint32_t, DataTypeSize );
 
-            M3MEMBERVARIABLE( DataFormatType, DataFormat );
+            M3MEMBERVARIABLE( uint32_t, DataFormat );
 
             M3MEMBERVARIABLE( uint32_t, BitDepth );
 
@@ -81,13 +98,13 @@ namespace monarch3
 
      @details
     */
-    class M3ChannelHeader
+    class M3_API M3ChannelHeader
     {
         public:
             M3ChannelHeader();
             M3ChannelHeader( const std::string& aSource, uint32_t aNumber,
                             uint32_t anAcqRate, uint32_t aRecSize, uint32_t aSampleSize,
-                            uint32_t aDataTypeSize, DataFormatType aDataFormat,
+                            uint32_t aDataTypeSize, uint32_t aDataFormat,
                             uint32_t aBitDepth );
             M3ChannelHeader( const M3ChannelHeader& orig );
             ~M3ChannelHeader();
@@ -107,13 +124,15 @@ namespace monarch3
 
             M3MEMBERVARIABLE( uint32_t, DataTypeSize );
 
-            M3MEMBERVARIABLE( DataFormatType, DataFormat );
+            M3MEMBERVARIABLE( uint32_t, DataFormat );
 
             M3MEMBERVARIABLE( uint32_t, BitDepth );
 
             M3MEMBERVARIABLE( double, VoltageMin );
 
             M3MEMBERVARIABLE( double, VoltageRange );
+
+            M3MEMBERVARIABLE( double, DACGain );
 
             M3MEMBERVARIABLE( double, FrequencyMin );
 
@@ -137,7 +156,7 @@ namespace monarch3
 
      The stream structure of the data is also configured using the AddStream functions.
     */
-    class M3Header
+    class M3_API M3Header
     {
         public:
             typedef std::vector< M3ChannelHeader > M3ChannelHeaders;
@@ -177,14 +196,16 @@ namespace monarch3
             /// Returns the stream number (used to address the stream later)
             unsigned AddStream( const std::string& aSource,
                                 uint32_t anAcqRate, uint32_t aRecSize, uint32_t aSampleSize,
-                                uint32_t aDataTypeSize, DataFormatType aDataFormat,
-                                uint32_t aBitDepth );
+                                uint32_t aDataTypeSize, uint32_t aDataFormat,
+                                uint32_t aBitDepth,
+                                std::vector< unsigned >* aChanVec = NULL );
             /// Add a stream with multiple channels with aRecSize samples per record
             /// Returns the stream number (used to address the stream later)
-            unsigned AddStream( const std::string& aSource, uint32_t aNChannels, MultiChannelFormatType aFormat,
+            unsigned AddStream( const std::string& aSource, uint32_t aNChannels, uint32_t aFormat,
                                 uint32_t anAcqRate, uint32_t aRecSize, uint32_t aSampleSize,
-                                uint32_t aDataTypeSize, DataFormatType aDataFormat,
-                                uint32_t aBitDepth );
+                                uint32_t aDataTypeSize, uint32_t aDataFormat,
+                                uint32_t aBitDepth,
+                                std::vector< unsigned >* aChanVec = NULL );
 
         public:
             void WriteToHDF5( H5::H5File* aFile );
@@ -256,17 +277,17 @@ namespace monarch3
 
     inline void M3Header::WriteScalarToHDF5( H5::H5Location* aLoc, const std::string& aName, const std::string& aValue )
     {
+        M3DEBUG( mlog_mheader, "Writing string to new scalar metadata <" << aName << ">: " << aValue << "; size = " << aValue.size() );
         H5::DataType tType = MH5Type< std::string >::H5( aValue );
         aLoc->createAttribute( aName, tType, H5::DataSpace( H5S_SCALAR ) ).write( tType, aValue );
-        M3DEBUG( mlog_mheader, "Writing string to new scalar metadata <" << aName << ">: " << aValue << "; size = " << aValue.size() );
         return;
     }
 
     template< typename XType >
     void M3Header::WriteScalarToHDF5( H5::H5Location* aLoc, const std::string& aName, XType aValue )
     {
-        aLoc->createAttribute( aName, MH5Type< XType >::H5(), H5::DataSpace( H5S_SCALAR ) ).write( MH5Type< XType >::Native(), &aValue );
         M3DEBUG( mlog_mheader, "Writing value to new scalar metadata <" << aName << ">: " << aValue );
+        aLoc->createAttribute( aName, MH5Type< XType >::H5(), H5::DataSpace( H5S_SCALAR ) ).write( MH5Type< XType >::Native(), &aValue );
         return;
     }
 /*
@@ -345,8 +366,8 @@ namespace monarch3
 }
 
 // Pretty printing methods
-std::ostream& operator<<( std::ostream& out, const monarch3::M3StreamHeader& hdr );
-std::ostream& operator<<( std::ostream& out, const monarch3::M3ChannelHeader& hdr );
-std::ostream& operator<<( std::ostream& out, const monarch3::M3Header& hdr );
+M3_API std::ostream& operator<<( std::ostream& out, const monarch3::M3StreamHeader& hdr );
+M3_API std::ostream& operator<<( std::ostream& out, const monarch3::M3ChannelHeader& hdr );
+M3_API std::ostream& operator<<( std::ostream& out, const monarch3::M3Header& hdr );
 
 #endif
