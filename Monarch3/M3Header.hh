@@ -278,8 +278,9 @@ namespace monarch3
     inline void M3Header::WriteScalarToHDF5( H5::H5Location* aLoc, const std::string& aName, const std::string& aValue )
     {
         M3DEBUG( mlog_mheader, "Writing string to new scalar metadata <" << aName << ">: " << aValue << "; size = " << aValue.size() );
-        H5::DataType tType = MH5Type< std::string >::H5( aValue );
-        aLoc->createAttribute( aName, tType, H5::DataSpace( H5S_SCALAR ) ).write( tType, aValue );
+		// aName.c_str() and aValue.c_str() are used because while using the std::string itself, the value was getting mangled
+		H5::DataType tType = MH5Type< std::string >::H5( aValue );
+        aLoc->createAttribute( aName.c_str(), tType, H5::DataSpace( H5S_SCALAR ) ).write( tType, aValue.c_str() );
         return;
     }
 
@@ -287,7 +288,8 @@ namespace monarch3
     void M3Header::WriteScalarToHDF5( H5::H5Location* aLoc, const std::string& aName, XType aValue )
     {
         M3DEBUG( mlog_mheader, "Writing value to new scalar metadata <" << aName << ">: " << aValue );
-        aLoc->createAttribute( aName, MH5Type< XType >::H5(), H5::DataSpace( H5S_SCALAR ) ).write( MH5Type< XType >::Native(), &aValue );
+        // aName.c_str() is used because while using the std::string itself, the value was getting mangled
+		aLoc->createAttribute( aName.c_str(), MH5Type< XType >::H5(), H5::DataSpace( H5S_SCALAR ) ).write( MH5Type< XType >::Native(), &aValue );
         return;
     }
 /*
@@ -320,10 +322,13 @@ namespace monarch3
     template<>
     inline std::string M3Header::ReadScalarFromHDF5( const H5::H5Location* aLoc, const std::string& aName )
     {
-        std::string tValue;
-        H5::Attribute* tAttr = new H5::Attribute( aLoc->openAttribute( aName ) );
-        tAttr->read( tAttr->getDataType(), tValue );
+        //std::string tValue;
+		char tBuffer[ 256 ];
+        H5::Attribute* tAttr = new H5::Attribute( aLoc->openAttribute( aName.c_str() ) );
+        //tAttr->read( tAttr->getDataType(), tValue );
+		tAttr->read( tAttr->getDataType(), tBuffer );
         delete tAttr;
+		std::string tValue( tBuffer );
         M3DEBUG( mlog_mheader, "Reading string <" << aName << ">: " << tValue << "; size = " << tValue.size() );
         return tValue;
     }
@@ -333,7 +338,7 @@ namespace monarch3
     XType M3Header::ReadScalarFromHDF5( const H5::H5Location* aLoc, const std::string& aName )
     {
         XType tValue;
-        H5::Attribute* tAttr = new H5::Attribute( aLoc->openAttribute( aName ) );
+        H5::Attribute* tAttr = new H5::Attribute( aLoc->openAttribute( aName.c_str() ) );
         tAttr->read( tAttr->getDataType(), &tValue );
         delete tAttr;
         M3DEBUG( mlog_mheader, "Reading value <" << aName << ">: " << tValue );

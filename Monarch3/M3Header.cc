@@ -128,7 +128,7 @@ namespace monarch3
     void M3StreamHeader::ReadFromHDF5( const H5::CommonFG* aParent, const std::string& aLabel ) const
     {
         M3DEBUG( mlog, "Reading stream <" << aLabel << ">" );
-        H5::Group tThisStreamGroup = aParent->openGroup( aLabel );
+        H5::Group tThisStreamGroup = aParent->openGroup( aLabel.c_str() );
 
         SetNumber( M3Header::ReadScalarFromHDF5< uint32_t >( &tThisStreamGroup, "number" ) );
         SetSource( M3Header::ReadScalarFromHDF5< string >( &tThisStreamGroup, "source" ) );
@@ -252,7 +252,7 @@ namespace monarch3
     void M3ChannelHeader::ReadFromHDF5( const H5::CommonFG* aParent, const std::string& aLabel ) const
     {
         M3DEBUG( mlog, "Reading channel <" << aLabel << ">" );
-        H5::Group tThisChannelGroup = aParent->openGroup( aLabel );
+        H5::Group tThisChannelGroup = aParent->openGroup( aLabel.c_str() );
 
         SetNumber( M3Header::ReadScalarFromHDF5< uint32_t >( &tThisChannelGroup, "number" ) );
         SetSource( M3Header::ReadScalarFromHDF5< string >( &tThisChannelGroup, "source" ) );
@@ -369,15 +369,15 @@ namespace monarch3
             M3DEBUG( mlog, "Writing run header" );
             fFile = aFile;
             WriteScalarToHDF5( fFile, "egg_version",   fEggVersion );
-            //WriteScalarToHDF5( fFile, "filename",      fFilename );
+            WriteScalarToHDF5( fFile, "filename",      fFilename );
             WriteScalarToHDF5( fFile, "n_channels",    fNChannels );
-            //WriteScalarToHDF5( fFile, "n_streams",     fNStreams );
-            //WriteScalarToHDF5( fFile, "run_duration",  fRunDuration );
-            //WriteScalarToHDF5( fFile, "timestamp",     fTimestamp );
-            //WriteScalarToHDF5( fFile, "description",   fDescription );
+            WriteScalarToHDF5( fFile, "n_streams",     fNStreams );
+            WriteScalarToHDF5( fFile, "run_duration",  fRunDuration );
+            WriteScalarToHDF5( fFile, "timestamp",     fTimestamp );
+            WriteScalarToHDF5( fFile, "description",   fDescription );
             //////////////Write1DToHDF5( fFile, "channel_streams",  fChannelStreams );
-            //WriteChannelStreams( fFile );
-            //WriteChannelCoherence( fFile );
+            WriteChannelStreams( fFile );
+            WriteChannelCoherence( fFile );
 
             M3DEBUG( mlog, "Writing stream headers" );
             fStreamsGroup = new H5::Group( fFile->createGroup( "streams" ) );
@@ -436,6 +436,10 @@ namespace monarch3
             }
             */
 
+			// Windows' HDF5 really doesn't like using std::strings
+			const unsigned tBuffSize = 256;
+			char tBuffer[ tBuffSize ];
+
             M3DEBUG( mlog, "Reading stream headers" );
             fStreamHeaders.clear();
             fStreamsGroup = new H5::Group( fFile->openGroup( "streams" ) );
@@ -446,8 +450,12 @@ namespace monarch3
             }
             for( hsize_t iStream = 0; iStream < nStreams; ++iStream )
             {
-                string tStreamLabel = fStreamsGroup->getObjnameByIdx( iStream );
+                //string tStreamLabel = fStreamsGroup->getObjnameByIdx( iStream );
+                unsigned tLabelSize = fStreamsGroup->getObjnameByIdx( iStream, tBuffer, tBuffSize );
+                std::string tStreamLabel( tBuffer, tLabelSize );
+				M3DEBUG( mlog, "Attempting to read stream header #" << iStream << "; label <" << tStreamLabel << ">" );
                 fStreamHeaders.push_back( M3StreamHeader() );
+                M3DEBUG( mlog, "Testing if we can access the last header: " << fStreamHeaders.back().GetLabel() );
                 fStreamHeaders.back().ReadFromHDF5( fStreamsGroup, tStreamLabel );
             }
 
@@ -457,15 +465,19 @@ namespace monarch3
             hsize_t nChannels = fChannelsGroup->getNumObjs();
             for( hsize_t iChan = 0; iChan < nChannels; ++iChan )
             {
-                string tChannelLabel = fChannelsGroup->getObjnameByIdx( iChan );
+                //string tChannelLabel = fChannelsGroup->getObjnameByIdx( iChan );
+                unsigned tLabelSize = fChannelsGroup->getObjnameByIdx( iChan, tBuffer, tBuffSize );
+                std::string tChannelLabel( tBuffer, tLabelSize );
                 fChannelHeaders.push_back( M3ChannelHeader() );
                 fChannelHeaders.back().ReadFromHDF5( fChannelsGroup, tChannelLabel );
             }
         }
         catch( H5::Exception& e )
         {
-            M3ERROR( mlog, "Unable to open header group or find header data:\n\t" << e.getCDetailMsg() );
+            //H5::Exception::printErrorStack();
+            throw M3Exception() << "Unable to open header group or find header data\n";
         }
+		return;
     }
 
     void M3Header::WriteChannelStreams( H5::H5Location* aLoc )

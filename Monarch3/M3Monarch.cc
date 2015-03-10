@@ -21,9 +21,6 @@ namespace monarch3
                 fFile( NULL ),
                 fHeader( NULL )
     {
-        // Turn of HDF5 automatic exception printing to allow exceptions to be handled properly
-        // And they will be handled properly, always, right????
-        H5::Exception::dontPrint();
     }
 
     Monarch3::~Monarch3()
