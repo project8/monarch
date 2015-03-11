@@ -107,13 +107,25 @@ namespace monarch3
             }
         }
 
+        // variables to store the HDF5 error printing state
+        H5E_auto2_t tAutoPrintFunc;
+        void* tClientData;
+
         // Determine if we're in read or write mode
         // and get/create the acquisitions group
         // Nested exceptions are used so that the outer try block can be used to determine whether we're reading or writing
         try
         {
+            // turn off HDF5 error printing because the throwing of an exception here means we're writing instead of reading
+            H5::Exception::getAutoPrint( tAutoPrintFunc, &tClientData );
+            H5::Exception::dontPrint();
+
             fH5AcqLoc = new H5::Group( fH5StreamParentLoc->openGroup( "acquisitions" ) );
             M3DEBUG( mlog, "Opened acquisition group in <read> mode" );
+
+            // turn HDF5 error printing back on
+            H5::Exception::setAutoPrint( tAutoPrintFunc, tClientData );
+
             try
             {
                 H5::Attribute tAttrNAcq( fH5StreamParentLoc->openAttribute( "n_acquisitions" ) );
@@ -124,14 +136,19 @@ namespace monarch3
             }
             catch( H5::Exception& )
             {
-                throw;
+                throw M3Exception() << "Acquisitions group is not properly setup for reading\n";
             }
+
             M3DEBUG( mlog, "\tNumber of acquisitions found: " << fNAcquisitions << "; Number of records found: " << fNRecordsInFile );
             fMode = kRead;
         }
         catch( H5::Exception& )
         {
             // if we ended up here, the acquisitions group doesn't exist, so we must be in write mode
+
+            // turn HDF5 error printing back on
+            H5::Exception::setAutoPrint( tAutoPrintFunc, tClientData );
+
             try
             {
                 fH5AcqLoc = new H5::Group( fH5StreamParentLoc->createGroup( "acquisitions" ) );
@@ -140,7 +157,7 @@ namespace monarch3
             }
             catch( H5::Exception& )
             {
-                throw;
+                throw M3Exception() << "Unable to open new acquisitions group for writing\n";
             }
         }
 
