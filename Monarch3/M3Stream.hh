@@ -110,7 +110,7 @@ namespace monarch3
             unsigned GetDataTypeSize() const           { return fDataTypeSize;    }
             unsigned GetSampleSize() const             { return fSampleSize;      }
             unsigned GetStreamRecordNBytes() const     { return fStrRecNBytes;    }
-            unsigned GetSreamRecordSize() const        { return fStrRecSize;      }
+            unsigned GetStreamRecordSize() const       { return fStrRecSize;      }
             unsigned GetChannelRecordNBytes() const    { return fChanRecNBytes;   }
             unsigned GetChannelRecordSize() const      { return fChanRecSize;     }
             unsigned GetNChannels() const              { return fNChannels;       }
