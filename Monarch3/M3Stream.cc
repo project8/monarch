@@ -66,7 +66,7 @@ namespace monarch3
     {
         M3DEBUG( mlog, "Creating stream for <" << aHeader.GetLabel() << ">" );
 
-        if( aHeader.GetDataFormat() == sDigitized )
+        if( aHeader.GetDataFormat() == sDigitizedUS )
         {
             switch( fDataTypeSize )
             {
@@ -87,7 +87,31 @@ namespace monarch3
                     fDataTypeUser = H5::PredType::NATIVE_UINT64;
                     break;
                 default:
-                    throw M3Exception() << "Unknown integer data type size: " << fDataTypeSize;
+                    throw M3Exception() << "Unknown unsigned integer data type size: " << fDataTypeSize;
+            }
+        }
+        else if( aHeader.GetDataFormat() == sDigitizedS )
+        {
+            switch( fDataTypeSize )
+            {
+                case 1:
+                    fDataTypeInFile = H5::PredType::STD_I8LE;
+                    fDataTypeUser = H5::PredType::NATIVE_INT8;
+                   break;
+                case 2:
+                    fDataTypeInFile = H5::PredType::STD_I16LE;
+                    fDataTypeUser = H5::PredType::NATIVE_INT16;
+                    break;
+                case 4:
+                    fDataTypeInFile = H5::PredType::STD_I32LE;
+                    fDataTypeUser = H5::PredType::NATIVE_INT32;
+                    break;
+                case 8:
+                    fDataTypeInFile = H5::PredType::STD_I64LE;
+                    fDataTypeUser = H5::PredType::NATIVE_INT64;
+                    break;
+                default:
+                    throw M3Exception() << "Unknown signed integer data type size: " << fDataTypeSize;
             }
         }
         else // aHeader.GetDataFormat() == sAnalog

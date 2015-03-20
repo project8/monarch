@@ -16,6 +16,7 @@ using std::stringstream;
 M3LOGGER( mlog, "Monarch3ReadTest" );
 
 bool ReadRecordCheck( const M3Stream* aStream, int aOffset, unsigned aDataFormat );
+bool PrintChannelsUInt( const M3Stream* aStream );
 bool PrintChannelsInt( const M3Stream* aStream );
 bool PrintChannelsFloat( const M3Stream* aStream );
 bool PrintChannelsFloatComplex( const M3Stream* aStream );
@@ -308,8 +309,15 @@ bool ReadRecordCheck( const M3Stream* aStream, int aOffset, unsigned aDataFormat
 
     switch( aDataFormat )
     {
-        case sDigitized:
-            if( ! PrintChannelsInt( aStream ) )
+        case sDigitizedUS:
+            if( ! PrintChannelsUInt( aStream ) )
+            {
+                M3ERROR( mlog, "Failed to print channels (digitized)" );
+                return false;
+            }
+            break;
+        case sDigitizedS:
+            if( ! PrintChannelsUInt( aStream ) )
             {
                 M3ERROR( mlog, "Failed to print channels (digitized)" );
                 return false;
@@ -342,14 +350,34 @@ bool ReadRecordCheck( const M3Stream* aStream, int aOffset, unsigned aDataFormat
     return true;
 }
 
-bool PrintChannelsInt( const M3Stream* aStream )
+bool PrintChannelsUInt( const M3Stream* aStream )
 {
     unsigned tRecSize = aStream->GetChannelRecordSize();
     const unsigned tMaxSamples = 30;
     for( unsigned iChan = 0; iChan < aStream->GetNChannels(); ++iChan )
     {
         const M3DataReader< uint64_t > tDataInterface( aStream->GetChannelRecord( iChan )->GetData(),
-                aStream->GetDataTypeSize(), sDigitized );
+                aStream->GetDataTypeSize(), sDigitizedUS );
+        stringstream tDataOut;
+        for( unsigned iSample = 0; iSample < std::min( tMaxSamples, tRecSize ); ++iSample )
+        {
+            tDataOut << tDataInterface.at( iSample );
+            if( iSample != tRecSize - 1 ) tDataOut << ", ";
+        }
+        if( tRecSize > tMaxSamples ) tDataOut << " . . .";
+        M3INFO( mlog, "\tChannel " << iChan << ": " << tDataOut.str() );
+    }
+    return true;
+}
+
+bool PrintChannelsInt( const M3Stream* aStream )
+{
+    unsigned tRecSize = aStream->GetChannelRecordSize();
+    const unsigned tMaxSamples = 30;
+    for( unsigned iChan = 0; iChan < aStream->GetNChannels(); ++iChan )
+    {
+        const M3DataReader< int64_t > tDataInterface( aStream->GetChannelRecord( iChan )->GetData(),
+                aStream->GetDataTypeSize(), sDigitizedS );
         stringstream tDataOut;
         for( unsigned iSample = 0; iSample < std::min( tMaxSamples, tRecSize ); ++iSample )
         {

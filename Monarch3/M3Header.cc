@@ -40,7 +40,7 @@ namespace monarch3
             fRecordSize( 0 ),
             fSampleSize( 0 ),
             fDataTypeSize( 0 ),
-            fDataFormat( sDigitized ),
+            fDataFormat( sDigitizedUS ),
             fBitDepth( 0 ),
             fNAcquisitions( 0 ),
             fNRecords( 0 )
@@ -158,7 +158,7 @@ namespace monarch3
             fRecordSize( 0 ),
             fSampleSize( 0 ),
             fDataTypeSize( 0 ),
-            fDataFormat( sDigitized ),
+            fDataFormat( sDigitizedUS ),
             fBitDepth( 0 ),
             fVoltageMin( 0. ),
             fVoltageRange( 0. ),

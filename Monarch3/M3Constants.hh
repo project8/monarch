@@ -27,9 +27,10 @@ namespace monarch3
 {
     // channel information
 
-    /// Specifies whether the data is digitized or analog
-    static const uint32_t sDigitized = 0;
-    static const uint32_t sAnalog = 1;
+    /// Specifies whether the data is digitized (unsigned or signed) or analog
+    static const uint32_t sDigitizedUS = 0;
+    static const uint32_t sDigitizedS = 1;
+    static const uint32_t sAnalog = 2;
 
     // stream information
 
