@@ -28,10 +28,10 @@ namespace monarch3
     // channel information
 
     /// Specifies whether the data is digitized (unsigned or signed) or analog
-    static const uint32_t sInvalidFormat = 0;
-    static const uint32_t sDigitizedUS = 1;
-    static const uint32_t sDigitizedS = 2;
-    static const uint32_t sAnalog = 3;
+    static const uint32_t sInvalidFormat = UINT32_MAX;
+    static const uint32_t sDigitizedUS = 0;
+    static const uint32_t sDigitizedS = 1;
+    static const uint32_t sAnalog = 2;
 
     // stream information
 
