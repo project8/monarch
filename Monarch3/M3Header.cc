@@ -160,7 +160,7 @@ namespace monarch3
             fDataTypeSize( 0 ),
             fDataFormat( sDigitizedUS ),
             fBitDepth( 0 ),
-            fVoltageMin( 0. ),
+            fVoltageOffset( 0. ),
             fVoltageRange( 0. ),
             fDACGain( 0. ),
             fFrequencyMin( 0. ),
@@ -181,7 +181,7 @@ namespace monarch3
             fDataTypeSize( aDataTypeSize ),
             fDataFormat( aDataFormat ),
             fBitDepth( aBitDepth ),
-            fVoltageMin( 0. ),
+            fVoltageOffset( 0. ),
             fVoltageRange( 0. ),
             fDACGain( 0. ),
             fFrequencyMin( 0. ),
@@ -200,7 +200,7 @@ namespace monarch3
             fDataTypeSize( orig.fDataTypeSize ),
             fDataFormat( orig.fDataFormat ),
             fBitDepth( orig.fBitDepth ),
-            fVoltageMin( orig.fVoltageMin ),
+            fVoltageOffset( orig.fVoltageOffset ),
             fVoltageRange( orig.fVoltageRange ),
             fDACGain( orig.fDACGain ),
             fFrequencyMin( orig.fFrequencyMin ),
@@ -240,7 +240,7 @@ namespace monarch3
         M3Header::WriteScalarToHDF5( &tThisChannelGroup, "data_type_size", fDataTypeSize );
         M3Header::WriteScalarToHDF5( &tThisChannelGroup, "data_format", fDataFormat );
         M3Header::WriteScalarToHDF5( &tThisChannelGroup, "bit_depth", fBitDepth );
-        M3Header::WriteScalarToHDF5( &tThisChannelGroup, "voltage_min", fVoltageMin );
+        M3Header::WriteScalarToHDF5( &tThisChannelGroup, "voltage_offset", fVoltageOffset );
         M3Header::WriteScalarToHDF5( &tThisChannelGroup, "voltage_range", fVoltageRange );
         M3Header::WriteScalarToHDF5( &tThisChannelGroup, "dac_gain", fDACGain );
         M3Header::WriteScalarToHDF5( &tThisChannelGroup, "frequency_min", fFrequencyMin );
@@ -262,7 +262,7 @@ namespace monarch3
         SetDataTypeSize( M3Header::ReadScalarFromHDF5< uint32_t >( &tThisChannelGroup, "data_type_size" ) );
         SetDataFormat( M3Header::ReadScalarFromHDF5< uint32_t >( &tThisChannelGroup, "data_format" ) );
         SetBitDepth( M3Header::ReadScalarFromHDF5< uint32_t >( &tThisChannelGroup, "bit_depth" ) );
-        SetVoltageMin( M3Header::ReadScalarFromHDF5< double >( &tThisChannelGroup, "voltage_min" ) );
+        SetVoltageOffset( M3Header::ReadScalarFromHDF5< double >( &tThisChannelGroup, "voltage_offset" ) );
         SetVoltageRange( M3Header::ReadScalarFromHDF5< double >( &tThisChannelGroup, "voltage_range" ) );
         SetDACGain( M3Header::ReadScalarFromHDF5< double >( &tThisChannelGroup, "dac_gain" ) );
         SetFrequencyMin( M3Header::ReadScalarFromHDF5< double >( &tThisChannelGroup, "frequency_min" ) );
@@ -630,7 +630,7 @@ M3_API std::ostream& operator<<( std::ostream& out, const monarch3::M3ChannelHea
     out << "\tData Type Size: " << hdr.GetDataTypeSize() << " bytes\n";
     out << "\tData Format: " << hdr.GetDataFormat() << '\n';
     out << "\tBit Depth: " << hdr.GetBitDepth() << " bits\n";
-    out << "\tVoltage Min: " << hdr.GetVoltageMin() << " V\n";
+    out << "\tVoltage Offset: " << hdr.GetVoltageOffset() << " V\n";
     out << "\tVoltage Range: " << hdr.GetVoltageRange() << " V\n";
     out << "\tFrequency Min: " << hdr.GetFrequencyMin() << " Hz\n";
     out << "\tFrequency Range: " << hdr.GetFrequencyRange() << " Hz\n";

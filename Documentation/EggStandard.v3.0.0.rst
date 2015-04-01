@@ -1,4 +1,4 @@
-Egg v3.0.0.b3 File Standard
+Egg v3.0.0.b4 File Standard
 =========================
 
 Usage history: 1/2015 - 
@@ -145,7 +145,7 @@ users will care about how the data is divided into channels.
   * 1 == analog
   
 - bit_depth (uint32) -- Number of bits with which the data was digitized
-- voltage_min (double) -- Minimum voltage recorded
+- voltage_offset (double) -- Voltage value represented by an ADC value of 0 (the minimum voltage for unsigned digital data, and the center voltage for signed digital data)
 - voltage_range (double) -- Voltage range accepted above the minimum
 - dac_gain (double) -- Gain value needed to convert digital values to analog (analog = digital * gain + voltage_min)
 - frequency_min (double) -- For band-pass data, minimum frequency recorded

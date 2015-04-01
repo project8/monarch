@@ -128,7 +128,7 @@ namespace monarch3
 
             M3MEMBERVARIABLE( uint32_t, BitDepth );
 
-            M3MEMBERVARIABLE( double, VoltageMin );
+            M3MEMBERVARIABLE( double, VoltageOffset );
 
             M3MEMBERVARIABLE( double, VoltageRange );
 
