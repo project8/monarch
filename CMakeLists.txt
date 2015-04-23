@@ -6,7 +6,10 @@ cmake_minimum_required( VERSION 2.8 )
 
 project( Monarch )
 
-include( ${PROJECT_SOURCE_DIR}/PackageBuilder.cmake )
+list( APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
+#set( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake" )
+message(STATUS "path with append is:${CMAKE_MODULE_PATH}")
+include( PackageBuilder)
 pbuilder_prepare_project( 2 6 7 )
 cmake_policy (SET CMP0011 NEW)
 
