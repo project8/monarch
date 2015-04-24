@@ -15,6 +15,11 @@ Contents:
    UsageMonarch3
    from_doxygen
 
+.. the following are for syntax testing, should be
+   removed from the final version
+
+And then I can link the doxygen output :cpp:class:`monarch3::Monarch3`
+
 Indices and tables
 ==================
 
