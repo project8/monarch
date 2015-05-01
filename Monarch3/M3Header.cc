@@ -352,10 +352,13 @@ namespace monarch3
                 fChannelCoherence[ i ].resize( fNChannels, false );
             }
             fChannelCoherence.back().back() = true; // each channel is coherent with itself
-            for( unsigned i = fNChannels - 2; i >= tFirstNewChannel; --i ) // all channels in the same stream are coherent with each other
+            if( fNChannels > 0 ) // this condition is necessary because if it's not the case, fNChannels-1 will be some huge number, since we're dealing with unsigned ints, so the for-loop condition won't be sufficient
             {
-                fChannelCoherence[ fNChannels - 1 ][ i ] = true;
-                fChannelCoherence[ i ][ fNChannels - 1 ] = true;
+                for( unsigned i = tFirstNewChannel; i < fNChannels - 1; ++i )
+                {
+                    fChannelCoherence[ fNChannels - 1 ][ i ] = true;
+                    fChannelCoherence[ i ][ fNChannels - 1 ] = true;
+               }
             }
         }
         fStreamHeaders.push_back( M3StreamHeader( aSource, fNStreams, aNChannels, aFormat, anAcqRate, aRecSize, aSampleSize, aDataTypeSize, aDataFormat, aBitDepth ) );
