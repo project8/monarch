@@ -35,6 +35,7 @@ namespace monarch3
             fNumber( 0 ),
             fSource(),
             fNChannels( 0 ),
+            fChannels(),
             fChannelFormat( sSeparate ),
             fAcquisitionRate( 0 ),
             fRecordSize( 0 ),
@@ -47,7 +48,7 @@ namespace monarch3
     {
     }
 
-    M3StreamHeader::M3StreamHeader( const std::string& aSource, uint32_t aNumber, uint32_t aNChannels, uint32_t aFormat,
+    M3StreamHeader::M3StreamHeader( const std::string& aSource, uint32_t aNumber, uint32_t aNChannels, uint32_t aFirstChannel, uint32_t aFormat,
                     uint32_t anAcqRate, uint32_t aRecSize, uint32_t aSampleSize,
                     uint32_t aDataTypeSize, uint32_t aDataFormat,
                     uint32_t aBitDepth ) :
@@ -55,6 +56,7 @@ namespace monarch3
             fNumber( 0 ),
             fSource( aSource ),
             fNChannels( aNChannels ),
+            fChannels( aNChannels ),
             fChannelFormat( aFormat ),
             fAcquisitionRate( anAcqRate ),
             fRecordSize( aRecSize ),
@@ -66,6 +68,10 @@ namespace monarch3
             fNRecords( 0 )
     {
         SetNumber( aNumber );
+        for( unsigned iChannel = 0; iChannel < fNChannels; ++iChannel )
+        {
+            fChannels[ iChannel ] = aFirstChannel + iChannel;
+        }
     }
 
     M3StreamHeader::M3StreamHeader( const M3StreamHeader& orig ) :
@@ -73,6 +79,7 @@ namespace monarch3
             fNumber( 0 ),
             fSource( orig.fSource ),
             fNChannels( orig.fNChannels ),
+            fChannels( orig.fChannels ),
             fChannelFormat( orig.fChannelFormat ),
             fAcquisitionRate( orig.fAcquisitionRate ),
             fRecordSize( orig.fRecordSize ),
@@ -122,6 +129,8 @@ namespace monarch3
         M3Header::WriteScalarToHDF5( &tThisStreamGroup, "n_acquisitions", fNAcquisitions );
         M3Header::WriteScalarToHDF5( &tThisStreamGroup, "n_records", fNRecords );
 
+        WriteChannels( &tThisStreamGroup );
+
         return;
     }
 
@@ -142,6 +151,64 @@ namespace monarch3
         SetBitDepth( M3Header::ReadScalarFromHDF5< uint32_t >( &tThisStreamGroup, "bit_depth" ) );
         SetNAcquisitions( M3Header::ReadScalarFromHDF5< uint32_t >( &tThisStreamGroup, "n_acquisitions" ) );
         SetNRecords( M3Header::ReadScalarFromHDF5< uint32_t >( &tThisStreamGroup, "n_records" ) );
+
+        ReadChannels( &tThisStreamGroup );
+
+        return;
+    }
+
+    void M3StreamHeader::WriteChannels( H5::H5Location* aLoc )
+    {
+        const unsigned tNDims = 1;
+        hsize_t tDims[ tNDims ] = { fNChannels };
+
+        H5::DataSpace tDataspace( tNDims, tDims );
+        //H5::DataSet tDataset = aLoc->createDataSet( "channels", MH5Type< uint32_t >::H5(), tDataspace );
+        H5::Attribute tAttr = aLoc->createAttribute( "channels", MH5Type< uint32_t >::H5(), tDataspace );
+
+        uint32_t* tCSBuffer = new uint32_t[ fNChannels ];
+        for( unsigned i = 0; i < fNChannels; ++i )
+        {
+            tCSBuffer[ i ] = fChannels[ i ];
+        }
+
+        //tDataset.write( tCSBuffer, MH5Type< uint32_t >::Native(), tDataspace );
+        tAttr.write( MH5Type< uint32_t >::Native(), tCSBuffer );
+
+        delete [] tCSBuffer;
+
+        return;
+    }
+
+    void M3StreamHeader::ReadChannels( const H5::H5Location* aLoc ) const
+    {
+        const unsigned tNDims = 1;
+        hsize_t tDims[ tNDims ];
+
+        //H5::DataSet tDataset = aLoc->openDataSet( "channels" );
+        H5::Attribute tAttr = aLoc->openAttribute( "channels" );
+        //H5::DataSpace tDataspace( tDataset.getSpace() );
+        H5::DataSpace tDataspace( tAttr.getSpace() );
+        tDataspace.getSimpleExtentDims( tDims );
+
+        if( tDims[ 0 ] != fNChannels )
+        {
+            M3ERROR( mlog, "Channels dataset dimensions (" << tDims[ 0 ] << ") do not match number of channels, " << fNChannels );
+            return;
+        }
+
+        uint32_t* tCSBuffer = new uint32_t[ fNChannels ];
+        //tDataset.read( tCSBuffer, MH5Type< uint32_t >::Native(), tDataspace );
+        tAttr.read( MH5Type< uint32_t >::Native(), tCSBuffer );
+
+        fChannels.clear();
+        fChannels.resize( fNChannels );
+        for( unsigned i = 0; i < fNChannels; ++i )
+        {
+            fChannels[ i ] = tCSBuffer[ i ];
+        }
+
+        delete [] tCSBuffer;
 
         return;
     }
@@ -319,7 +386,7 @@ namespace monarch3
         if( aChanVec != NULL ) aChanVec->push_back( fNChannels );
         fChannelStreams.push_back( fNStreams );
         fChannelHeaders.push_back( M3ChannelHeader( aSource, fNChannels, anAcqRate, aRecSize, aSampleSize, aDataTypeSize, aDataFormat, aBitDepth ) );
-        fStreamHeaders.push_back( M3StreamHeader( aSource, fNStreams, 1, sSeparate, anAcqRate, aRecSize, aSampleSize, aDataTypeSize, aDataFormat, aBitDepth ) );
+        fStreamHeaders.push_back( M3StreamHeader( aSource, fNStreams, 1, fNChannels, sSeparate, anAcqRate, aRecSize, aSampleSize, aDataTypeSize, aDataFormat, aBitDepth ) );
         ++fNChannels;
         std::cout << "resizing to " << fNChannels << std::endl;
         fChannelCoherence.resize( fNChannels ); // resize number of columns
@@ -361,7 +428,7 @@ namespace monarch3
                }
             }
         }
-        fStreamHeaders.push_back( M3StreamHeader( aSource, fNStreams, aNChannels, aFormat, anAcqRate, aRecSize, aSampleSize, aDataTypeSize, aDataFormat, aBitDepth ) );
+        fStreamHeaders.push_back( M3StreamHeader( aSource, fNStreams, aNChannels, tFirstNewChannel, aFormat, anAcqRate, aRecSize, aSampleSize, aDataTypeSize, aDataFormat, aBitDepth ) );
         return fNStreams++;
     }
 

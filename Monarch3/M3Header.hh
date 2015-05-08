@@ -50,7 +50,7 @@ namespace monarch3
     {
         public:
             M3StreamHeader();
-            M3StreamHeader( const std::string& aSource, uint32_t aNumber, uint32_t aNChannels, uint32_t aFormat,
+            M3StreamHeader( const std::string& aSource, uint32_t aNumber, uint32_t aNChannels, uint32_t aFirstChannel, uint32_t aFormat,
                            uint32_t anAcqRate, uint32_t aRecSize, uint32_t aSampleSize,
                            uint32_t aDataTypeSize, uint32_t aDataFormat,
                            uint32_t aBitDepth );
@@ -65,6 +65,8 @@ namespace monarch3
             M3MEMBERVARIABLE( std::string, Source );
 
             M3MEMBERVARIABLE( uint32_t, NChannels );
+
+            M3MEMBERVARIABLEREF_NOSET( std::vector< uint32_t >, Channels );
 
             M3MEMBERVARIABLE( uint32_t, ChannelFormat );
 
@@ -88,7 +90,10 @@ namespace monarch3
             void WriteToHDF5( H5::CommonFG* aParent );
             void ReadFromHDF5( const H5::CommonFG* aParent, const std::string& aLabel ) const;
 
-    };
+        private:
+            void WriteChannels( H5::H5Location* aLoc );
+            void ReadChannels( const H5::H5Location* aLoc ) const;
+   };
 
     /*!
      @class M3ChannelHeader
