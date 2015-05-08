@@ -8,6 +8,7 @@
 #include "M3Record.hh"
 
 #include <algorithm>
+#include <cstring> // for strcmp
 #include <sstream>
 
 using namespace monarch3;

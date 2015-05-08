@@ -12,6 +12,8 @@
 #include "M3IToA.hh"
 #include "M3Logger.hh"
 
+#include <cstdlib> // for abs
+
 /* Notes on reading:
  *
  * During reading, both fNRecordsInAcq and fRecordsCount are used, as well as both fAcquisitionId and fNAcquisitions;

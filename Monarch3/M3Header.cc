@@ -16,6 +16,7 @@
 #include "M3Version.hh"
 
 #include <cstdlib> // for atol in parsing timestamp
+#include <cstring> // for strcpy
 
 // for parsing timestamp
 #include <sstream>

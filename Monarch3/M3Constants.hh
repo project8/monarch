@@ -21,14 +21,19 @@
 #  define M3_API
 #endif
 
+// to be able to use numeric_limits<>:max in windows
+#define NOMINMAX
+
 #include "thorax.hh"
+
+#include <limits>
 
 namespace monarch3
 {
     // channel information
 
     /// Specifies whether the data is digitized (unsigned or signed) or analog
-    static const uint32_t sInvalidFormat = UINT32_MAX;
+    static const uint32_t sInvalidFormat = std::numeric_limits< uint32_t >::max();
     static const uint32_t sDigitizedUS = 0;
     static const uint32_t sDigitizedS = 1;
     static const uint32_t sAnalog = 2;

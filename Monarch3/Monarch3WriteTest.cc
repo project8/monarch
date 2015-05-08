@@ -2,6 +2,8 @@
 #include "M3Monarch.hh"
 #include "M3Logger.hh"
 
+#include <cstring> // for strcmp
+
 using namespace monarch3;
 
 M3LOGGER( mlog, "Monarch3WriteTest" );
