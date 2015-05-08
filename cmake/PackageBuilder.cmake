@@ -56,25 +56,15 @@ set (CONFIG_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/${CONFIG_INSTALL_SUBDIR}")
 # global property to hold the names of katydid library targets
 set_property (GLOBAL PROPERTY ${PROJECT_NAME}_LIBRARIES)
 
-# deal with the rpath settings (from http://www.cmake.org/Wiki/CMake_RPATH_handling)
-# use (i.e. don't skip) the full RPATH for the build tree
-#SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
+# turn on RPATH for Mac OSX
+set (CMAKE_MACOSX_RPATH ON)
 
-# when building, don't use the install RPATH already
-# (but later on when installing)
-#SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE) 
-
-#SET(CMAKE_INSTALL_RPATH "${LIB_INSTALL_DIR}")
+# add the library install directory to the rpath
+SET(CMAKE_INSTALL_RPATH "${LIB_INSTALL_DIR}")
 
 # add the automatically determined parts of the RPATH
 # which point to directories outside the build tree to the install RPATH
 set (CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-
-# add to the RPATH to be used when installing, but only if it's not a system directory
-list (FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${LIB_INSTALL_DIR}" isSystemDir)
-if ("${isSystemDir}" STREQUAL "-1")
-   list (APPEND CMAKE_INSTALL_RPATH "${LIB_INSTALL_DIR}")
-endif ("${isSystemDir}" STREQUAL "-1")
 
 
 ##########
