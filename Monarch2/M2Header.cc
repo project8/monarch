@@ -1,7 +1,7 @@
-#include "MonarchHeader.hpp"
+#include "M2Header.hh"
 #include "MonarchHeader.pb.h"
 
-#include "MonarchException.hpp"
+#include "M2Exception.hh"
 
 #include <cstdlib> // for atol in parsing timestamp
 
@@ -9,60 +9,60 @@
 #include <sstream>
 using std::stringstream;
 
-namespace monarch
+namespace monarch2
 {
 
-    MonarchHeader::MonarchHeader() :
+    M2Header::M2Header() :
             fProtobufHeader( new Protobuf::MonarchHeader() )
     {
     }
-    MonarchHeader::~MonarchHeader()
+    M2Header::~M2Header()
     {
         delete fProtobufHeader;
     }
 
-    int MonarchHeader::ByteSize() const
+    int M2Header::ByteSize() const
     {
         return fProtobufHeader->ByteSize();
     }
-    bool MonarchHeader::MarshalToArray( void* data, int size ) const
+    bool M2Header::MarshalToArray( void* data, int size ) const
     {
         return fProtobufHeader->SerializeToArray( data, size );
     }
-    bool MonarchHeader::MarshalToStream( std::ostream* aStream ) const
+    bool M2Header::MarshalToStream( std::ostream* aStream ) const
     {
         return fProtobufHeader->SerializeToOstream( aStream );
     }
-    bool MonarchHeader::DemarshalFromArray( void* anArray, int aSize ) const
+    bool M2Header::DemarshalFromArray( void* anArray, int aSize ) const
     {
         return fProtobufHeader->ParseFromArray( anArray, aSize );
     }
-    bool MonarchHeader::DemarshalFromStream( std::istream* aStream ) const
+    bool M2Header::DemarshalFromStream( std::istream* aStream ) const
     {
         return fProtobufHeader->ParseFromIstream( aStream );
     }
 
-    void MonarchHeader::SetFilename( const string& aFilename )
+    void M2Header::SetFilename( const string& aFilename )
     {
         fProtobufHeader->set_filename( aFilename );
         return;
     }
-    const string& MonarchHeader::GetFilename() const
+    const string& M2Header::GetFilename() const
     {
         return fProtobufHeader->filename();
     }
 
-    void MonarchHeader::SetTimestamp( const string& aTimestamp )
+    void M2Header::SetTimestamp( const string& aTimestamp )
     {
         fProtobufHeader->set_rundate( aTimestamp );
         return;
     }
-    const string& MonarchHeader::GetTimestamp() const
+    const string& M2Header::GetTimestamp() const
     {
         return fProtobufHeader->rundate();
     }
     /*
-const string MonarchHeader::GetDateTime() const
+const string M2Header::GetDateTime() const
 {
     // This shouldn't be called very often, so parsing in place shouldn't be much of a problem
     // If this needs to be called a lot, this strategy should be rethought
@@ -73,7 +73,7 @@ const string MonarchHeader::GetDateTime() const
     return item;
 }
 
-TimeType MonarchHeader::GetRecordTime0() const
+TimeType M2Header::GetRecordTime0() const
 {
     // This shouldn't be called very often, so parsing in place shouldn't be much of a problem
     // If this needs to be called a lot, this strategy should be rethought
@@ -85,18 +85,18 @@ TimeType MonarchHeader::GetRecordTime0() const
     return (long long int)atol(item.c_str());
 }
      */
-    void MonarchHeader::SetDescription( const string& aDescription )
+    void M2Header::SetDescription( const string& aDescription )
     {
         fProtobufHeader->set_runinfo( aDescription );
         return;
     }
-    const string& MonarchHeader::GetDescription() const
+    const string& M2Header::GetDescription() const
     {
         return fProtobufHeader->runinfo();
     }
 
 
-    void MonarchHeader::SetRunType( RunType aRunType )
+    void M2Header::SetRunType( RunType aRunType )
     {
         switch( aRunType )
         {
@@ -110,11 +110,11 @@ TimeType MonarchHeader::GetRecordTime0() const
                 fProtobufHeader->set_runtype( Protobuf::MonarchHeader_RunType_Other );
                 return;
             default:
-                throw MonarchException() << "got unknown content mode";
+                throw M2Exception() << "got unknown content mode";
                 return;
         }
     }
-    RunType MonarchHeader::GetRunType() const
+    RunType M2Header::GetRunType() const
     {
         switch( fProtobufHeader->runtype() )
         {
@@ -125,12 +125,12 @@ TimeType MonarchHeader::GetRecordTime0() const
             case Protobuf::MonarchHeader_RunType_Other:
                 return sRunTypeOther;
             default:
-                throw MonarchException() << "has unknown run type";
+                throw M2Exception() << "has unknown run type";
                 return 1000;
         }
     }
 
-    void MonarchHeader::SetRunSource( RunSourceType aRunSource )
+    void M2Header::SetRunSource( RunSourceType aRunSource )
     {
         switch( aRunSource )
         {
@@ -141,11 +141,11 @@ TimeType MonarchHeader::GetRecordTime0() const
                 fProtobufHeader->set_runsource( Protobuf::MonarchHeader_RunSource_Simulation );
                 return;
             default:
-                throw MonarchException() << "got unknown source mode";
+                throw M2Exception() << "got unknown source mode";
                 return;
         }
     }
-    RunSourceType MonarchHeader::GetRunSource() const
+    RunSourceType M2Header::GetRunSource() const
     {
         switch( fProtobufHeader->runsource() )
         {
@@ -154,12 +154,12 @@ TimeType MonarchHeader::GetRecordTime0() const
             case Protobuf::MonarchHeader_RunSource_Simulation:
                 return sSourceSimulation;
             default:
-                throw MonarchException() << "has unknown source mode";
+                throw M2Exception() << "has unknown source mode";
                 return 1000;
         }
     }
 
-    void MonarchHeader::SetFormatMode( FormatModeType aFormatMode )
+    void M2Header::SetFormatMode( FormatModeType aFormatMode )
     {
         switch( aFormatMode )
         {
@@ -173,11 +173,11 @@ TimeType MonarchHeader::GetRecordTime0() const
                 fProtobufHeader->set_formatmode( Protobuf::MonarchHeader_FormatMode_MultiInterleaved );
                 return;
             default:
-                throw MonarchException() << "got unknown format mode";
+                throw M2Exception() << "got unknown format mode";
                 return;
         }
     }
-    FormatModeType MonarchHeader::GetFormatMode() const
+    FormatModeType M2Header::GetFormatMode() const
     {
         switch( fProtobufHeader->formatmode() )
         {
@@ -188,94 +188,94 @@ TimeType MonarchHeader::GetRecordTime0() const
             case Protobuf::MonarchHeader_FormatMode_MultiInterleaved:
                 return sFormatMultiInterleaved;
             default:
-                throw MonarchException() << "has unknown format mode";
+                throw M2Exception() << "has unknown format mode";
                 return -1;
         }
     }
 
-    void MonarchHeader::SetAcquisitionMode( unsigned int aMode )
+    void M2Header::SetAcquisitionMode( unsigned int aMode )
     {
         fProtobufHeader->set_acqmode( aMode );
         return;
     }
 
-    unsigned int MonarchHeader::GetAcquisitionMode() const
+    unsigned int M2Header::GetAcquisitionMode() const
     {
         return fProtobufHeader->acqmode();
     }
 
-    void MonarchHeader::SetAcquisitionRate( double aRate )
+    void M2Header::SetAcquisitionRate( double aRate )
     {
         fProtobufHeader->set_acqrate( aRate );
         return;
     }
-    double MonarchHeader::GetAcquisitionRate() const
+    double M2Header::GetAcquisitionRate() const
     {
         return fProtobufHeader->acqrate();
     }
 
-    void MonarchHeader::SetRunDuration( unsigned int aDuration )
+    void M2Header::SetRunDuration( unsigned int aDuration )
     {
         fProtobufHeader->set_acqtime( aDuration );
         return;
     }
-    unsigned int MonarchHeader::GetRunDuration() const
+    unsigned int M2Header::GetRunDuration() const
     {
         return fProtobufHeader->acqtime();
     }
 
-    void MonarchHeader::SetRecordSize( unsigned int aSize )
+    void M2Header::SetRecordSize( unsigned int aSize )
     {
         fProtobufHeader->set_recsize( aSize );
         return;
     }
-    unsigned int MonarchHeader::GetRecordSize() const
+    unsigned int M2Header::GetRecordSize() const
     {
         return fProtobufHeader->recsize();
     }
 
-    void MonarchHeader::SetDataTypeSize( unsigned aSize )
+    void M2Header::SetDataTypeSize( unsigned aSize )
     {
         fProtobufHeader->set_datatypesize( aSize );
         return;
     }
-    unsigned MonarchHeader::GetDataTypeSize() const
+    unsigned M2Header::GetDataTypeSize() const
     {
         return fProtobufHeader->datatypesize();
     }
 
-    void MonarchHeader::SetBitDepth( unsigned aBitDepth )
+    void M2Header::SetBitDepth( unsigned aBitDepth )
     {
         fProtobufHeader->set_bitdepth( aBitDepth );
         return;
     }
-    unsigned MonarchHeader::GetBitDepth() const
+    unsigned M2Header::GetBitDepth() const
     {
         return fProtobufHeader->bitdepth();
     }
 
-    void MonarchHeader::SetVoltageMin( double aVoltage )
+    void M2Header::SetVoltageMin( double aVoltage )
     {
         fProtobufHeader->set_voltagemin( aVoltage );
         return;
     }
-    double MonarchHeader::GetVoltageMin() const
+    double M2Header::GetVoltageMin() const
     {
         return fProtobufHeader->voltagemin();
     }
 
-    void MonarchHeader::SetVoltageRange( double aVoltage )
+    void M2Header::SetVoltageRange( double aVoltage )
     {
         fProtobufHeader->set_voltagerange( aVoltage );
         return;
     }
-    double MonarchHeader::GetVoltageRange() const
+    double M2Header::GetVoltageRange() const
     {
         return fProtobufHeader->voltagerange();
     }
 }
 
-std::ostream& operator<<( std::ostream& out, const monarch::MonarchHeader& hdr )
+std::ostream& operator<<( std::ostream& out, const monarch2::M2Header& hdr )
 {
     out << "Monarch Header Content: " << "\n";
     out << "\tFilename: " << hdr.GetFilename() << "\n";

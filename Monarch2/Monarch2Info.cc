@@ -1,18 +1,18 @@
-#include "Monarch.hpp"
-#include "MonarchLogger.hpp"
+#include "M2Monarch.hh"
+#include "M2Logger.hh"
 
 #include <cstring>
 
-using namespace monarch;
+using namespace monarch2;
 
-MLOGGER( mlog, "MonarchInfo" );
+M2LOGGER( mlog, "Monarch2Info" );
 
 int main( const int argc, const char** argv )
 {
     if( argc < 2 )
     {
-        MINFO( mlog, "usage:\n"
-            << "  MonarchInfo [-h] <input egg file>\n"
+        M2INFO( mlog, "usage:\n"
+            << "  Monarch2Info [-h] <input egg file>\n"
             << "      -h: (optional) header only; does not check number of records" );
         return -1;
     }
@@ -23,18 +23,18 @@ int main( const int argc, const char** argv )
     {
         if( argc < 3 )
         {
-            MERROR( mlog, "no filename provided" );
+            M2ERROR( mlog, "no filename provided" );
             return -1;
         }
         ++tFileArg;
         tCheckRecords = false;
     }
 
-    const Monarch* tReadTest = Monarch::OpenForReading( argv[tFileArg] );
+    const Monarch2* tReadTest = Monarch2::OpenForReading( argv[tFileArg] );
     tReadTest->ReadHeader();
 
-    const MonarchHeader* tReadHeader = tReadTest->GetHeader();
-    MINFO( mlog, *tReadHeader );
+    const M2Header* tReadHeader = tReadTest->GetHeader();
+    M2INFO( mlog, *tReadHeader );
 
     if( ! tCheckRecords )
     {
@@ -45,7 +45,7 @@ int main( const int argc, const char** argv )
 
     unsigned int tRecordCount = 0;
     unsigned int tAcquisiontCount = 0;
-    const MonarchRecordBytes* tReadRecord;
+    const M2RecordBytes* tReadRecord;
     if( tReadHeader->GetAcquisitionMode() == 1 /* the FormatMode is ignored for single-channel data */ )
     {
         tReadRecord = tReadTest->GetRecordSeparateOne();
@@ -60,7 +60,7 @@ int main( const int argc, const char** argv )
     }
     else
     {
-        MERROR( mlog, "Unable to read a header with acquisition mode <" << tReadHeader->GetAcquisitionMode() << "> and format mode <" << tReadHeader->GetFormatMode() << ">" );
+        M2ERROR( mlog, "Unable to read a header with acquisition mode <" << tReadHeader->GetAcquisitionMode() << "> and format mode <" << tReadHeader->GetFormatMode() << ">" );
         return -1;
     }
     try
@@ -75,12 +75,12 @@ int main( const int argc, const char** argv )
             //cout << "  record " << tRecordCount << ": time offset: " << tReadRecord->fTime << " ns" << endl;
         }
     }
-    catch (MonarchException& e)
+    catch (M2Exception& e)
     {
-        MWARN( mlog, "Something went wrong during the reading of records!" << "\n\t" << e.what() );
+        M2WARN( mlog, "Something went wrong during the reading of records!" << "\n\t" << e.what() );
     }
-    MINFO( mlog, "record count <" << tRecordCount << ">" );
-    MINFO( mlog, "acquisition count <" << tAcquisiontCount << ">" );
+    M2INFO( mlog, "record count <" << tRecordCount << ">" );
+    M2INFO( mlog, "acquisition count <" << tAcquisiontCount << ">" );
 
     tReadTest->Close();
     delete tReadTest;

@@ -1,62 +1,72 @@
 /*
- * MonarchVersion.cpp
+ * M3Version.cpp
  *
  *  Created on: Mar 21, 2014
  *      Author: nsoblath
  */
 
-#include "MonarchVersion.hpp"
+#define M3_API_EXPORTS
 
-#include "MonarchLogger.hpp"
+#include "M3Version.hh"
+
+#include "M3Logger.hh"
 
 #include <sstream>
 
-namespace monarch
+namespace monarch3
 {
-    MLOGGER( mlog, "Version" );
+    M3LOGGER( mlog, "Version" );
 
-    char MonarchVersion::sDelimeter = '.';
+    M3_API char M3Version::sDelimeter = '.';
 
-    MonarchVersion::MonarchVersion() :
-            fMajorVer( 0 ),
-            fMinorVer( 0 ),
-            fRevision( 0 ),
-            fVersion()
+    M3Version::M3Version() :
+            fMajorVer( Monarch_VERSION_MAJOR ),
+            fMinorVer( Monarch_VERSION_MINOR ),
+            fRevision( Monarch_REVISION ),
+            fVersion(),
+            fEggVersion( TOSTRING(Egg_VERSION) )
     {
+        Combine( fMajorVer, fMinorVer, fRevision );
     }
 
-    MonarchVersion::MonarchVersion( const std::string& aVer ) :
+    M3Version::M3Version( const std::string& aVer ) :
                     fMajorVer( 0 ),
                     fMinorVer( 0 ),
                     fRevision( 0 ),
-                    fVersion()
+                    fVersion(),
+                    fEggVersion( TOSTRING(Egg_VERSION) )
     {
         Parse( aVer );
     }
 
-    MonarchVersion::~MonarchVersion()
+    M3Version::~M3Version()
     {
     }
 
-    unsigned MonarchVersion::MajorVersion() const
+    unsigned M3Version::MajorVersion() const
     {
         return fMajorVer;
     }
-    unsigned MonarchVersion::MinorVersion() const
+    unsigned M3Version::MinorVersion() const
     {
         return fMinorVer;
     }
-    unsigned MonarchVersion::Revision() const
+    unsigned M3Version::Revision() const
     {
         return fRevision;
     }
 
-    const std::string& MonarchVersion::VersionStr() const
+    const std::string& M3Version::VersionStr() const
     {
         return fVersion;
     }
 
-    bool MonarchVersion::Parse( const std::string& aVer )
+    const std::string& M3Version::EggVersion() const
+    {
+        return fEggVersion;
+    }
+
+    bool M3Version::Parse( const std::string& aVer )
     {
         if( aVer == "unknown" )
         {
@@ -70,7 +80,7 @@ namespace monarch
         size_t tDelimPos_1 = aVer.find( sDelimeter, 0 );
         if( tDelimPos_1 == std::string::npos )
         {
-            MERROR( mlog, "version string <" << aVer << "> is not in the right format (did not find first delimeter)" );
+            M3ERROR( mlog, "version string <" << aVer << "> is not in the right format (did not find first delimeter)" );
             return false;
         }
         std::stringstream tMajVerStr;
@@ -79,7 +89,7 @@ namespace monarch
         size_t tDelimPos_2 = aVer.find( sDelimeter, tDelimPos_1 + 1 );
         if( tDelimPos_2 == std::string::npos )
         {
-            MERROR( mlog, "version string <" << aVer << "> is not in the right format (did not find second delimeter)" );
+            M3ERROR( mlog, "version string <" << aVer << "> is not in the right format (did not find second delimeter)" );
             return false;
         }
         std::stringstream tMinVerStr;
@@ -96,7 +106,7 @@ namespace monarch
         return true;
     }
 
-    bool MonarchVersion::Combine( unsigned aMajVer, unsigned aMinVer, unsigned aRev )
+    bool M3Version::Combine( unsigned aMajVer, unsigned aMinVer, unsigned aRev )
     {
         std::stringstream tVerStr;
         tVerStr << aMajVer << sDelimeter << aMinVer << sDelimeter << aRev;

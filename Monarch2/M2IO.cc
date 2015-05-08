@@ -1,15 +1,15 @@
-#include "MonarchIO.hpp"
+#include "M2IO.hh"
 
-namespace monarch
+namespace monarch2
 {
 
-    MonarchIO::MonarchIO( AccessModeType aMode ) :
+    M2IO::M2IO( AccessModeType aMode ) :
             fFile( NULL ),
             fMode( aMode )
     {
 
     }
-    MonarchIO::~MonarchIO()
+    M2IO::~M2IO()
     {
         if( fFile )
         {
@@ -17,7 +17,7 @@ namespace monarch
         }
     }
 
-    bool MonarchIO::Open( const string& aFilename )
+    bool M2IO::Open( const string& aFilename )
     {
         if( fMode == sAccessRead )
         {
@@ -34,7 +34,7 @@ namespace monarch
         }
         return true;
     }
-    bool MonarchIO::Done()
+    bool M2IO::Done()
     {
         if( fFile != NULL )
         {
@@ -46,7 +46,7 @@ namespace monarch
         }
         return false;
     }
-    bool MonarchIO::Close()
+    bool M2IO::Close()
     {
         if( fFile )
         {

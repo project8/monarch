@@ -1,5 +1,5 @@
-#ifndef MONARCHEXCEPTION_HPP_
-#define MONARCHEXCEPTION_HPP_
+#ifndef M2EXCEPTION_HH_
+#define M2EXCEPTION_HH_
 
 #include <exception>
 using std::exception;
@@ -7,22 +7,22 @@ using std::exception;
 #include <sstream>
 using std::stringstream;
 
-namespace monarch
+namespace monarch2
 {
 
-    class MonarchException :
+    class M2Exception :
             public exception
             {
                 public:
-            MonarchException();
-            MonarchException( const MonarchException& aCopy );
-            virtual ~MonarchException() throw();
+            M2Exception();
+            M2Exception( const M2Exception& aCopy );
+            virtual ~M2Exception() throw();
 
                 public:
             virtual const char* what() const throw();
 
             template< class XType >
-            MonarchException& operator<< ( const XType& aReference )
+            M2Exception& operator<< ( const XType& aReference )
             {
                     fStream << aReference;
                     return *this;

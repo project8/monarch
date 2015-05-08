@@ -1,11 +1,11 @@
-#ifndef __MONARCH_TYPES_HPP
-#define __MONARCH_TYPES_HPP
+#ifndef M2_TYPES_HH
+#define M2_TYPES_HH
 
 #include <string>
 
 #include "thorax.hh"
 
-namespace monarch
+namespace monarch2
 {
 
     template<typename T, typename U>
@@ -58,4 +58,4 @@ namespace monarch
 
 }
 
-#endif // __MONARCH_TYPES_HPP
+#endif // __MONARCH_TYPES_HH

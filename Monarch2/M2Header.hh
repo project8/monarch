@@ -1,7 +1,7 @@
-#ifndef MONARCHHEADER_HPP_
-#define MONARCHHEADER_HPP_
+#ifndef MONARCHHEADER_HH_
+#define MONARCHHEADER_HH_
 
-#include "MonarchTypes.hpp"
+#include "M2Types.hh"
 
 #include <string>
 using std::string;
@@ -11,17 +11,17 @@ namespace Protobuf
     class MonarchHeader;
 }
 
-namespace monarch
+namespace monarch2
 {
 
-    class MonarchHeader
+    class M2Header
     {
         private:
             mutable Protobuf::MonarchHeader* fProtobufHeader;
 
         public:
-            MonarchHeader();
-            ~MonarchHeader();
+            M2Header();
+            ~M2Header();
 
             //size of monarch header in bytes (fixed by .proto definition)
             int ByteSize() const;
@@ -92,6 +92,6 @@ namespace monarch
 }
 
 // Pretty printing method
-std::ostream& operator<<( std::ostream& out, const monarch::MonarchHeader& hdr );
+std::ostream& operator<<( std::ostream& out, const monarch2::M2Header& hdr );
 
 #endif

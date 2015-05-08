@@ -1,17 +1,17 @@
-#ifndef MONARCH_HPP_
-#define MONARCH_HPP_
+#ifndef MONARCH2_HH_
+#define MONARCH2_HH_
 
-#include "MonarchIO.hpp"
-#include "MonarchHeader.hpp"
-#include "MonarchRecord.hpp"
+#include "M2IO.hh"
+#include "M2Header.hh"
+#include "M2Record.hh"
 
 #include <string>
 using std::string;
 
-namespace monarch
+namespace monarch2
 {
 
-    class Monarch
+    class Monarch2
     {
             //***********************
             // constructors and state
@@ -19,7 +19,7 @@ namespace monarch
 
         private:
             //private to force use of static constructor methods
-            Monarch();
+            Monarch2();
 
             //current state of monarch
             typedef enum
@@ -31,7 +31,7 @@ namespace monarch
             mutable State fState;
 
         public:
-            ~Monarch();
+            ~Monarch2();
 
             //********************************
             // methods for reading (all const)
@@ -42,7 +42,7 @@ namespace monarch
             //this static method opens the file for reading.
             //if the file exists and can be read, this returns a prepared monarch pointer, and memory is allocated for the header.
             //upon successful return monarch is in the eOpen state.
-            static const Monarch* OpenForReading( const string& filename );
+            static const Monarch2* OpenForReading( const string& filename );
 
             //this method parses the file for the header contents.
             //if the header demarshalled correctly, this returns and the header may be examined, and memory is allocated for the record.
@@ -51,7 +51,7 @@ namespace monarch
             void ReadHeader() const;
 
             //get the pointer to the header.
-            const MonarchHeader* GetHeader() const;
+            const M2Header* GetHeader() const;
 
             //set the interface type to use
             void SetInterface( InterfaceModeType aMode ) const;
@@ -62,13 +62,13 @@ namespace monarch
             bool ReadRecord( int anOffset = 0 ) const;
 
             //get the pointer to the current interleaved record.
-            const MonarchRecordBytes* GetRecordInterleaved() const;
+            const M2RecordBytes* GetRecordInterleaved() const;
 
             //get the pointer to the current separate channel one record.
-            const MonarchRecordBytes* GetRecordSeparateOne() const;
+            const M2RecordBytes* GetRecordSeparateOne() const;
 
             //get the pointer to the current separate channel two record.
-            const MonarchRecordBytes* GetRecordSeparateTwo() const;
+            const M2RecordBytes* GetRecordSeparateTwo() const;
 
             //close the file pointer.
             void Close() const;
@@ -82,7 +82,7 @@ namespace monarch
             //this static method opens the file for writing.
             //if the file exists and can be written, this returns a prepared monarch pointer, and memory is allocated for the header.
             //upon successful return monarch is in the eOpen state.
-            static Monarch* OpenForWriting( const string& filename );
+            static Monarch2* OpenForWriting( const string& filename );
 
             //this method marshals the current header to the file.
             //if the header marshalled correctly, this returns true, memory is allocated for the record(s).
@@ -90,7 +90,7 @@ namespace monarch
             void WriteHeader();
 
             //get the pointer to the header.
-            MonarchHeader* GetHeader();
+            M2Header* GetHeader();
 
             //set the interface type to use.
             void SetInterface( InterfaceModeType aMode );
@@ -100,23 +100,23 @@ namespace monarch
             bool WriteRecord();
 
             //get the pointer to the current interleaved record.
-            MonarchRecordBytes* GetRecordInterleaved();
+            M2RecordBytes* GetRecordInterleaved();
 
             //get the pointer to the current separate channel one record.
-            MonarchRecordBytes* GetRecordSeparateOne();
+            M2RecordBytes* GetRecordSeparateOne();
 
             //get the pointer to the current separate channel two record.
-            MonarchRecordBytes* GetRecordSeparateTwo();
+            M2RecordBytes* GetRecordSeparateTwo();
 
             //close the file pointer
             void Close();
 
         private:
-            //the MonarchIO class wraps a bare C file pointer.
-            MonarchIO* fIO;
+            //the M2IO class wraps a bare C file pointer.
+            M2IO* fIO;
 
             //the header
-            mutable MonarchHeader* fHeader;
+            mutable M2Header* fHeader;
 
             //size of the native type of the records in bytes
             mutable size_t fDataTypeSize;
@@ -129,26 +129,26 @@ namespace monarch
             //number of bytes in an interleaved record
             mutable size_t fInterleavedRecordNBytes;
 
-            //pointer to a MonarchRecordBytes occupying the interleaved record
-            mutable MonarchRecordBytes* fRecordInterleaved;
+            //pointer to a M2RecordBytes occupying the interleaved record
+            mutable M2RecordBytes* fRecordInterleaved;
             //pointer to the bytes that hold the interleaved record
             mutable byte_type* fRecordInterleavedBytes;
 
             //number of bytes in a separate record
             mutable size_t fSeparateRecordNBytes;
 
-            //pointer to a MonarchRecordBytes occupying the first separate record
-            mutable MonarchRecordBytes* fRecordSeparateOne;
+            //pointer to a M2RecordBytes occupying the first separate record
+            mutable M2RecordBytes* fRecordSeparateOne;
             //pointer to the bytes that hold the first separate record
             mutable byte_type* fRecordSeparateOneBytes;
 
-            //pointer to a MonarchRecordBytes occupying the second separate record
-            mutable MonarchRecordBytes* fRecordSeparateTwo;
+            //pointer to a M2RecordBytes occupying the second separate record
+            mutable M2RecordBytes* fRecordSeparateTwo;
             //pointer to the bytes that hold the second separate record
             mutable byte_type* fRecordSeparateTwoBytes;
 
             //the private read functions
-            mutable bool (Monarch::*fReadFunction)( int anOffset ) const;
+            mutable bool (Monarch2::*fReadFunction)( int anOffset ) const;
             bool InterleavedFromSingle( int anOffset ) const;
             bool InterleavedFromSeparate( int anOffset ) const;
             bool InterleavedFromInterleaved( int anOffset ) const;
@@ -157,7 +157,7 @@ namespace monarch
             bool SeparateFromInterleaved( int anOffset ) const;
 
             //the private write functions
-            mutable bool (Monarch::*fWriteFunction)();
+            mutable bool (Monarch2::*fWriteFunction)();
             bool InterleavedToSingle();
             bool InterleavedToSeparate();
             bool InterleavedToInterleaved();
@@ -180,46 +180,46 @@ namespace monarch
 
     };
 
-    inline const MonarchHeader* Monarch::GetHeader() const
+    inline const M2Header* Monarch2::GetHeader() const
     {
         return fHeader;
     }
-    inline MonarchHeader* Monarch::GetHeader()
+    inline M2Header* Monarch2::GetHeader()
     {
         return fHeader;
     }
 
-    inline const MonarchRecordBytes* Monarch::GetRecordSeparateOne() const
+    inline const M2RecordBytes* Monarch2::GetRecordSeparateOne() const
     {
         return fRecordSeparateOne;
     }
-    inline MonarchRecordBytes* Monarch::GetRecordSeparateOne()
+    inline M2RecordBytes* Monarch2::GetRecordSeparateOne()
     {
         return fRecordSeparateOne;
     }
 
-    inline const MonarchRecordBytes* Monarch::GetRecordSeparateTwo() const
+    inline const M2RecordBytes* Monarch2::GetRecordSeparateTwo() const
     {
         return fRecordSeparateTwo;
     }
-    inline MonarchRecordBytes* Monarch::GetRecordSeparateTwo()
+    inline M2RecordBytes* Monarch2::GetRecordSeparateTwo()
     {
         return fRecordSeparateTwo;
     }
 
-    inline const MonarchRecordBytes* Monarch::GetRecordInterleaved() const
+    inline const M2RecordBytes* Monarch2::GetRecordInterleaved() const
     {
         return fRecordInterleaved;
     }
-    inline MonarchRecordBytes* Monarch::GetRecordInterleaved()
+    inline M2RecordBytes* Monarch2::GetRecordInterleaved()
     {
         return fRecordInterleaved;
     }
 
 #ifdef __GNUG__
-    inline void Monarch::Zip( const size_t aSize, const size_t aDataTypeSize, const byte_type* __restrict__ aRecordOne, const byte_type* __restrict__ aRecordTwo, byte_type* __restrict__ anInterleavedRecord )
+    inline void Monarch2::Zip( const size_t aSize, const size_t aDataTypeSize, const byte_type* __restrict__ aRecordOne, const byte_type* __restrict__ aRecordTwo, byte_type* __restrict__ anInterleavedRecord )
 #else
-    inline void Monarch::Zip( const size_t aSize, const size_t aDataTypeSize, const byte_type* aRecordOne, const byte_type* aRecordTwo, byte_type* anInterleavedRecord )
+    inline void Monarch2::Zip( const size_t aSize, const size_t aDataTypeSize, const byte_type* aRecordOne, const byte_type* aRecordTwo, byte_type* anInterleavedRecord )
 #endif
     {
         for( size_t anIndex = 0; anIndex < aSize; anIndex++ )
@@ -235,9 +235,9 @@ namespace monarch
     }
 
 #ifdef __GNUG__
-    inline void Monarch::Unzip( const size_t aSize, const size_t aDataTypeSize, byte_type* __restrict__ aRecordOne, byte_type* __restrict__ aRecordTwo, const byte_type* __restrict__ anInterleavedRecord )
+    inline void Monarch2::Unzip( const size_t aSize, const size_t aDataTypeSize, byte_type* __restrict__ aRecordOne, byte_type* __restrict__ aRecordTwo, const byte_type* __restrict__ anInterleavedRecord )
 #else
-    inline void Monarch::Unzip( const size_t aSize, const size_t aDataTypeSize, byte_type* aRecordOne, byte_type* aRecordTwo, const byte_type* anInterleavedRecord )
+    inline void Monarch2::Unzip( const size_t aSize, const size_t aDataTypeSize, byte_type* aRecordOne, byte_type* aRecordTwo, const byte_type* anInterleavedRecord )
 #endif
     {
         for( size_t anIndex = 0; anIndex < aSize; anIndex++ )

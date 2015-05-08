@@ -1,10 +1,17 @@
 Monarch is the library for file I/O used by the Project 8 collaboration.
 
-Building the library requires Google's Protocol Buffers library (available 
-at https://developers.google.com/protocol-buffers/).  Follow the instructions 
-in the included README file to install.
+The newest version of the Monarch library, Monarch3, produces egg v3 files, 
+which is an HDF5-based file format.
 
-Monarch is installed using CMake (version 2.8 or better).
+The Monarch2 library, which produces egg v2 files (Google Protocol Buffers-based), 
+can also be built.
+
+Requirements:
+- CMake 3.0 or higher
+- HDF5 1.8 or higher (Monarch3 only)
+- Google Protocol Buffers (Monarch2 only)
+
+Monarch is installed using CMake
 We recommend an out-of-source build:
     mkdir build
     cd build

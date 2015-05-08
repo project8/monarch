@@ -33,7 +33,11 @@ endif (SET_INSTALL_PREFIX_TO_DEFAULT)
 
 # install subdirectories
 set (INCLUDE_INSTALL_SUBDIR "include" CACHE PATH "Install subdirectory for headers")
-set (LIB_INSTALL_SUBDIR "lib" CACHE PATH "Install subdirectory for libraries")
+if( ${CMAKE_SYSTEM_NAME} MATCHES "Windows" )
+    set (LIB_INSTALL_SUBDIR "bin" CACHE PATH "Install subdirectory for libraries")
+else( ${CMAKE_SYSTEM_NAME} MATCHES "Windows" )
+    set (LIB_INSTALL_SUBDIR "lib" CACHE PATH "Install subdirectory for libraries")
+endif( ${CMAKE_SYSTEM_NAME} MATCHES "Windows" )
 set (BIN_INSTALL_SUBDIR "bin" CACHE PATH "Install subdirectory for binaries")
 set (CONFIG_INSTALL_SUBDIR "config" CACHE PATH "Install subdirectory for config files")
 
@@ -43,30 +47,24 @@ set (BIN_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/${BIN_INSTALL_SUBDIR}")
 set (CONFIG_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/${CONFIG_INSTALL_SUBDIR}")
 
 # build shared libraries
-set (BUILD_SHARED_LIBS ON)
+#if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+    set (BUILD_SHARED_LIBS ON)
+#elseif (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+#    set (BUILD_SHARED_LIBS OFF)    
+#endif (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
 
 # global property to hold the names of katydid library targets
 set_property (GLOBAL PROPERTY ${PROJECT_NAME}_LIBRARIES)
 
-# deal with the rpath settings (from http://www.cmake.org/Wiki/CMake_RPATH_handling)
-# use (i.e. don't skip) the full RPATH for the build tree
-#SET(CMAKE_SKIP_BUILD_RPATH  FALSE)
+# turn on RPATH for Mac OSX
+set (CMAKE_MACOSX_RPATH ON)
 
-# when building, don't use the install RPATH already
-# (but later on when installing)
-#SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE) 
-
-#SET(CMAKE_INSTALL_RPATH "${LIB_INSTALL_DIR}")
+# add the library install directory to the rpath
+SET(CMAKE_INSTALL_RPATH "${LIB_INSTALL_DIR}")
 
 # add the automatically determined parts of the RPATH
 # which point to directories outside the build tree to the install RPATH
 set (CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-
-# add to the RPATH to be used when installing, but only if it's not a system directory
-list (FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${LIB_INSTALL_DIR}" isSystemDir)
-if ("${isSystemDir}" STREQUAL "-1")
-   list (APPEND CMAKE_INSTALL_RPATH "${LIB_INSTALL_DIR}")
-endif ("${isSystemDir}" STREQUAL "-1")
 
 
 ##########
@@ -151,11 +149,13 @@ macro (pbuilder_install_config_files)
 endmacro ()
 
 macro (pbuilder_variables_for_parent)
+    message(STATUS "in (monarch) variables for parent, standalone: ${PBUILDER_STANDALONE}")
     if (NOT ${PBUILDER_STANDALONE})
-        message(STATUS "in monarch's var for par: ${PROJECT_NAME}")
         get_property (LIBRARIES GLOBAL PROPERTY ${PROJECT_NAME}_LIBRARIES)
         set (${PROJECT_NAME}_LIBRARIES ${LIBRARIES} ${SUBMODULE_LIBRARIES} PARENT_SCOPE)
         set (${PROJECT_NAME}_LIBRARY_DIR ${LIB_INSTALL_DIR} PARENT_SCOPE)
         set (${PROJECT_NAME}_INCLUDE_DIR ${INCLUDE_INSTALL_DIR} PARENT_SCOPE)
+        get_property (DEP_INCLUDE_DIRS DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
+        set (${PROJECT_NAME}_DEP_INCLUDE_DIRS ${DEP_INCLUDE_DIRS} PARENT_SCOPE)
     endif (NOT ${PBUILDER_STANDALONE})
 endmacro ()

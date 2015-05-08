@@ -1,5 +1,5 @@
 /*
- * mt_logger.cc
+ * M3Logger.cc
  *
  *  Created on: Jan 21, 2014
  *      Author: nsoblath
@@ -13,7 +13,9 @@
  *      Author: Marco Haag <marco.haag@kit.edu>
  */
 
-#include "MonarchLogger.hpp"
+#ifndef _WIN32
+
+#include "M3Logger.hh"
 
 #include <algorithm>
 #include <cstdio>
@@ -26,7 +28,7 @@
 
 using namespace std;
 
-namespace monarch
+namespace monarch3
 {
     const string& EndColor() {static string* color = new string(COLOR_PREFIX COLOR_NORMAL COLOR_SUFFIX); return *color;}
     const string& FatalColor() {static string* color = new string(COLOR_PREFIX COLOR_BRIGHT COLOR_SEPARATOR COLOR_FOREGROUND_RED   COLOR_SUFFIX); return *color;}
@@ -36,19 +38,19 @@ namespace monarch
     const string& DebugColor() {static string* color = new string(COLOR_PREFIX COLOR_BRIGHT COLOR_SEPARATOR COLOR_FOREGROUND_CYAN  COLOR_SUFFIX); return *color;}
     const string& OtherColor() {static string* color = new string(COLOR_PREFIX COLOR_BRIGHT COLOR_SEPARATOR COLOR_FOREGROUND_WHITE COLOR_SUFFIX); return *color;}
 
-    struct MonarchLogger::Private
+    struct M3Logger::Private
     {
             static char sDateTimeFormat[16];
-            static time_t sRawTime;
-            static tm* sProcessedTime;
-            static char sTimeBuff[512];
+			static time_t sRawTime;
+			static tm* sProcessedTime;
+			static char sTimeBuff[512];
             static size_t getTimeAbsoluteStr()
             {
-                time(&MonarchLogger::Private::sRawTime);
-                sProcessedTime = gmtime(&MonarchLogger::Private::sRawTime);
-                return strftime(MonarchLogger::Private::sTimeBuff, 512,
-                        MonarchLogger::Private::sDateTimeFormat,
-                        MonarchLogger::Private::sProcessedTime);
+                time(&M3Logger::Private::sRawTime);
+				sProcessedTime = gmtime(&M3Logger::Private::sRawTime);
+				return strftime(M3Logger::Private::sTimeBuff, 512,
+					M3Logger::Private::sDateTimeFormat,
+					M3Logger::Private::sProcessedTime);
             }
 
             const char* fLogger;
@@ -90,7 +92,7 @@ namespace monarch
                 if (fColored)
                 {
                     //cout << color << KTLogger::Private::sTimeBuff << " [" << setw(5) << level << "] " << setw(16) << left << loc.fFileName << "(" << loc.fLineNumber  << "): " << message << skKTEndColor << endl;
-                    cout << Private::level2Color(level) << MonarchLogger::Private::sTimeBuff << " [" << setw(5) << Private::level2Str(level) << "] ";
+                    cout << Private::level2Color(level) << M3Logger::Private::sTimeBuff << " [" << setw(5) << Private::level2Str(level) << "] ";
                     copy(loc.fFileName.end() - std::min< int >(loc.fFileName.size(), 16), loc.fFileName.end(), ostream_iterator<char>(cout));
                     cout << "(" << loc.fLineNumber  << "): ";
                     cout << message << EndColor() << endl;
@@ -98,7 +100,7 @@ namespace monarch
                 else
                 {
                     //cout << KTLogger::Private::sTimeBuff << " [" << setw(5) << level << "] " << setw(16) << left << loc.fFileName << "(" << loc.fLineNumber  << "): " << message << endl;
-                    cout << MonarchLogger::Private::sTimeBuff << " [" << setw(5) << level << "] ";
+                    cout << M3Logger::Private::sTimeBuff << " [" << setw(5) << level << "] ";
                     copy(loc.fFileName.end() - std::min< int >(loc.fFileName.size(), 16), loc.fFileName.end(), ostream_iterator<char>(cout));
                     cout << "(" << loc.fLineNumber  << "): ";
                     cout << message << endl;
@@ -111,7 +113,7 @@ namespace monarch
                 if (fColored)
                 {
                     //cout << color << KTLogger::Private::sTimeBuff << " [" << setw(5) << level << "] " << setw(16) << left << loc.fFileName << "(" << loc.fLineNumber  << "): " << message << skKTEndColor << endl;
-                    cout << Private::level2Color(level) << MonarchLogger::Private::sTimeBuff << " [" << setw(5) << Private::level2Str(level) << "] ";
+                    cout << Private::level2Color(level) << M3Logger::Private::sTimeBuff << " [" << setw(5) << Private::level2Str(level) << "] ";
                     copy(loc.fFileName.end() - std::min< int >(loc.fFileName.size(), 16), loc.fFileName.end(), ostream_iterator<char>(cout));
                     cout << "(" << loc.fLineNumber  << "): ";
                     cout << message << EndColor() << endl;
@@ -119,7 +121,7 @@ namespace monarch
                 else
                 {
                     //cout << KTLogger::Private::sTimeBuff << " [" << setw(5) << level << "] " << setw(16) << left << loc.fFileName << "(" << loc.fLineNumber  << "): " << message << endl;
-                    cout << MonarchLogger::Private::sTimeBuff << " [" << setw(5) << Private::level2Str(level) << "] ";
+                    cout << M3Logger::Private::sTimeBuff << " [" << setw(5) << Private::level2Str(level) << "] ";
                     copy(loc.fFileName.end() - std::min< int >(loc.fFileName.size(), 16), loc.fFileName.end(), ostream_iterator<char>(cout));
                     cout << "(" << loc.fLineNumber  << "): ";
                     cout << message << endl;
@@ -127,12 +129,11 @@ namespace monarch
             }
     };
 
-    char MonarchLogger::Private::sDateTimeFormat[16];
-    time_t MonarchLogger::Private::sRawTime;
-    tm* MonarchLogger::Private::sProcessedTime;
-    char MonarchLogger::Private::sTimeBuff[512];
-
-    MonarchLogger::MonarchLogger(const char* name) : fPrivate(new Private())
+    char M3Logger::Private::sDateTimeFormat[16];
+    char M3Logger::Private::sTimeBuff[512];
+	time_t M3Logger::Private::sRawTime;
+	tm* M3Logger::Private::sProcessedTime;
+    M3Logger::M3Logger(const char* name) : fPrivate(new Private())
     {
         if (name == 0)
         {
@@ -144,29 +145,30 @@ namespace monarch
             fPrivate->fLogger = logName;
         }
         fPrivate->fColored = true;
-        sprintf(MonarchLogger::Private::sDateTimeFormat,  "%%T");
+		sprintf(M3Logger::Private::sDateTimeFormat, "%%T");
         SetLevel(eDebug);
     }
 
-    MonarchLogger::MonarchLogger(const std::string& name) : fPrivate(new Private())
+    M3Logger::M3Logger(const std::string& name) : fPrivate(new Private())
     {
         fPrivate->fLogger = name.c_str();
         fPrivate->fColored = true;
-        sprintf(MonarchLogger::Private::sDateTimeFormat,  "%%T");
+		sprintf(M3Logger::Private::sDateTimeFormat, "%%T");
+		
         SetLevel(eDebug);
     }
 
-    MonarchLogger::~MonarchLogger()
+    M3Logger::~M3Logger()
     {
         delete fPrivate;
     }
 
-    bool MonarchLogger::IsLevelEnabled(ELevel level) const
+    bool M3Logger::IsLevelEnabled(ELevel level) const
     {
         return level >= fPrivate->fThreshold;
     }
 
-    void MonarchLogger::SetLevel(ELevel level) const
+    void M3Logger::SetLevel(ELevel level) const
     {
 #if defined(NDEBUG)
                 fPrivate->fThreshold = level >= eInfo ? level : eInfo;
@@ -175,7 +177,7 @@ namespace monarch
 #endif
     }
 
-    void MonarchLogger::Log(ELevel level, const string& message, const Location& loc)
+    void M3Logger::Log(ELevel level, const string& message, const Location& loc)
     {
         if (level >= eWarn)
         {
@@ -187,3 +189,5 @@ namespace monarch
         }
     }
 }
+
+#endif

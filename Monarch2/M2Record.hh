@@ -1,13 +1,13 @@
-#ifndef MONARCHRECORD_HPP_
-#define MONARCHRECORD_HPP_
+#ifndef M2RECORD_HH_
+#define M2RECORD_HH_
 
-#include "MonarchException.hpp"
-#include "MonarchTypes.hpp"
+#include "M2Exception.hh"
+#include "M2Types.hh"
 
-namespace monarch
+namespace monarch2
 {
     template< typename DataType >
-    struct MonarchRecord
+    struct M2Record
     {
             AcquisitionIdType fAcquisitionId;
             RecordIdType fRecordId;
@@ -15,18 +15,18 @@ namespace monarch
             DataType fData[];
     };
 
-    typedef MonarchRecord< byte_type > MonarchRecordBytes;
+    typedef M2Record< byte_type > M2RecordBytes;
 
     template< typename ReturnType >
-    class MonarchRecordDataInterface
+    class M2RecordDataInterface
     {
         public:
-            MonarchRecordDataInterface( const byte_type* aData, unsigned aDataTypeSize ) :
+            M2RecordDataInterface( const byte_type* aData, unsigned aDataTypeSize ) :
                 fByteData( aData )
             {
                 SetDataTypeSize( aDataTypeSize );
             }
-            ~MonarchRecordDataInterface()
+            ~M2RecordDataInterface()
             {
             }
 
@@ -37,13 +37,13 @@ namespace monarch
 
             void SetDataTypeSize( unsigned aDataTypeSize )
             {
-                if( aDataTypeSize == 1 ) fArrayFcn = &MonarchRecordDataInterface< ReturnType >::at_1_byte;
-                else if( aDataTypeSize == 2 )  fArrayFcn = &MonarchRecordDataInterface< ReturnType >::at_2_byte;
-                else if( aDataTypeSize == 4 )  fArrayFcn = &MonarchRecordDataInterface< ReturnType >::at_4_byte;
-                else if( aDataTypeSize == 8 )  fArrayFcn = &MonarchRecordDataInterface< ReturnType >::at_8_byte;
+                if( aDataTypeSize == 1 ) fArrayFcn = &M2RecordDataInterface< ReturnType >::at_1_byte;
+                else if( aDataTypeSize == 2 )  fArrayFcn = &M2RecordDataInterface< ReturnType >::at_2_byte;
+                else if( aDataTypeSize == 4 )  fArrayFcn = &M2RecordDataInterface< ReturnType >::at_4_byte;
+                else if( aDataTypeSize == 8 )  fArrayFcn = &M2RecordDataInterface< ReturnType >::at_8_byte;
                 else
                 {
-                    throw MonarchException() << "unable to make a record data interface with data type size " << aDataTypeSize;
+                    throw M2Exception() << "unable to make a record data interface with data type size " << aDataTypeSize;
                 }
                 return;
             }
@@ -74,7 +74,7 @@ namespace monarch
                 return fEightBytesData[ index ];
             }
 
-            ReturnType (MonarchRecordDataInterface::*fArrayFcn)( unsigned ) const;
+            ReturnType (M2RecordDataInterface::*fArrayFcn)( unsigned ) const;
 
             union
             {

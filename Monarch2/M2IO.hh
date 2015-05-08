@@ -1,7 +1,7 @@
-#ifndef __MONARCH_IO_HPP
-#define __MONARCH_IO_HPP
+#ifndef M2_IO_HH_
+#define M2_IO_HH_
 
-#include "MonarchTypes.hpp"
+#include "M2Types.hh"
 
 #include <string>
 using std::string;
@@ -12,17 +12,17 @@ using std::endl;
 
 #include <cstdio>
 
-namespace monarch
+namespace monarch2
 {
 
-    class MonarchIO
+    class M2IO
     {
             FILE *fFile;
             AccessModeType fMode;
         public:
             // Constructors and Destructors
-            MonarchIO( AccessModeType aMode );
-            ~MonarchIO();
+            M2IO( AccessModeType aMode );
+            ~M2IO();
 
             // Open the file in whatever mode was given the constructor
             bool Open( const string& aFilename );
@@ -53,43 +53,43 @@ namespace monarch
             bool Close();
     };
 
-    inline bool MonarchIO::Write( byte_type* anArray, size_t aCount )
+    inline bool M2IO::Write( byte_type* anArray, size_t aCount )
     {
         size_t written = fwrite( anArray, sizeof(byte_type), aCount, fFile );
         return (written == sizeof(byte_type) * aCount);
     }
     template< class XType >
-    inline bool MonarchIO::Write( XType* aDatum )
+    inline bool M2IO::Write( XType* aDatum )
     {
             size_t written = fwrite( aDatum, sizeof(XType), 1, fFile );
             return (written == 1);
     }
     template< class XType >
-    inline bool MonarchIO::Write( XType* aDatum, size_t aCount )
+    inline bool M2IO::Write( XType* aDatum, size_t aCount )
     {
             size_t written = fwrite( aDatum, sizeof(XType), aCount, fFile );
             return (written == aCount);
     }
 
-    inline bool MonarchIO::Seek( long int aCount )
+    inline bool M2IO::Seek( long int aCount )
     {
         size_t success = fseek( fFile, aCount, SEEK_CUR );
         return( success == 0 );
     }
 
-    inline bool MonarchIO::Read( byte_type* anArray, size_t aCount )
+    inline bool M2IO::Read( byte_type* anArray, size_t aCount )
     {
         size_t read = fread( anArray, sizeof(byte_type), aCount, fFile );
         return (read == sizeof(byte_type) * aCount);
     }
     template< class XType >
-    inline bool MonarchIO::Read( XType* aDatum )
+    inline bool M2IO::Read( XType* aDatum )
     {
             size_t read = fread( aDatum, sizeof(XType), 1, fFile );
             return (read == 1);
     }
     template< class XType >
-    inline bool MonarchIO::Read( XType* aDatum, size_t aCount )
+    inline bool M2IO::Read( XType* aDatum, size_t aCount )
     {
             size_t read = fread( aDatum, sizeof(XType), aCount, fFile );
             return (read == aCount);
