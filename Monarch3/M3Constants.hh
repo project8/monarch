@@ -21,6 +21,9 @@
 #  define M3_API
 #endif
 
+// to be able to use numeric_limits<>:max in windows
+#define NOMINMAX
+
 #include "thorax.hh"
 
 #include <limits>
