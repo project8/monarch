@@ -341,7 +341,7 @@ namespace monarch3
 
     void M3Stream::Close() const
     {
-        M3DEBUG( mlog, "const M3Stream::Close()" );
+        //M3DEBUG( mlog, "const M3Stream::Close()" );
 
         delete fH5DataSpaceUser; fH5DataSpaceUser = NULL;
         delete fH5CurrentAcqDataSet; fH5CurrentAcqDataSet = NULL;
@@ -421,7 +421,7 @@ namespace monarch3
 
     void M3Stream::Close()
     {
-        M3DEBUG( mlog, "non-const M3Stream::Close()" );
+        //M3DEBUG( mlog, "non-const M3Stream::Close()" );
         FinalizeStream();
 
         delete fH5DataSpaceUser; fH5DataSpaceUser = NULL;
