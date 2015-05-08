@@ -1,9 +1,13 @@
-Egg v3.0.0.b4 File Standard
+Egg v3.0.0 File Standard
 ===========================
 
-Usage history: 1/2015 - 
+Usage history:
+
+:1/2015: - First version
+:5/8/2015: - v3.0.0 finalized
 
 Relevant software:
+
 - Monarch v3
 
 Files are written in HDF5 format.  
@@ -103,7 +107,7 @@ Information there is common to all of the channels included in that stream.
 - number (uint32) -- Sequential integer used to uniquely identify each stream in the file; the stream's group will be named "stream[Number]".
 - source (string) -- Device used to produce the stream
 - n_channels (uint32) -- Number of channels in the stream
-- channels (vector< uint32 > -- Global channel numbers for the channels in this stream
+- channels (vector< uint32 >) -- Global channel numbers for the channels in this stream
 - channel_format (uint32) -- Whether the samples from multiple channels are interleaved or separate (either is valid for single-channel streams)
 
   * 0 == interleaved
@@ -181,3 +185,9 @@ Here are some examples how data might be arranged in an acquisition dataset:
 
     ABCABCABCABCABC
     ABCABCABCABCABC
+
+
+Known Issues
+------------
+
+- Multi-channel, multi-sample, floating-point data doesn't save properly.  A multi-channel RSA might use this format, but we do not currently have such a device.
