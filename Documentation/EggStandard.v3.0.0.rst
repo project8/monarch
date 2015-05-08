@@ -103,6 +103,7 @@ Information there is common to all of the channels included in that stream.
 - number (uint32) -- Sequential integer used to uniquely identify each stream in the file; the stream's group will be named "stream[Number]".
 - source (string) -- Device used to produce the stream
 - n_channels (uint32) -- Number of channels in the stream
+- channels (vector< uint32 > -- Global channel numbers for the channels in this stream
 - channel_format (uint32) -- Whether the samples from multiple channels are interleaved or separate (either is valid for single-channel streams)
 
   * 0 == interleaved
