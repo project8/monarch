@@ -48,5 +48,6 @@ add_custom_target(
         -d "${SPHINX_CACHE_DIR}"
         "${CMAKE_CURRENT_SOURCE_DIR}"
         "${SPHINX_HTML_DIR}"
+    DEPENDS ${PROJECT_NAME}_doc
     COMMENT "Building HTML documentation with Sphinx"
 )
