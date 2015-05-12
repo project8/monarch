@@ -21,8 +21,11 @@
 #  define M3_API
 #endif
 
+#ifdef _WIN32
 // to be able to use numeric_limits<>:max in windows
 #define NOMINMAX
+#include <Windows.h>
+#endif
 
 #include "thorax.hh"
 
