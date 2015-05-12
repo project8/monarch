@@ -2,9 +2,14 @@
 # Author: Noah Oblath
 # Parts of this script are based on work done by Sebastian Voecking and Marco Haag in the Kasper package
 # Convenient macros and default variable settings for the Katydid build.
+#
+# Requires: CMake v3.0 or better (rpath treatment and version variables)
 
-# policy on how if-statements work
-cmake_policy( SET CMP0012 NEW )
+# CMake policies
+cmake_policy( SET CMP0011 NEW )
+cmake_policy( SET CMP0012 NEW ) # how if-statements work
+cmake_policy( SET CMP0042 NEW ) # rpath on mac os x
+cmake_policy( SET CMP0048 NEW ) # version in project()
 
 # check if this is a stand-alone build
 set( PBUILDER_STANDALONE FALSE CACHE INTERNAL "Flag for whether or not this is a stand-alone build" )
@@ -47,11 +52,7 @@ set (BIN_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/${BIN_INSTALL_SUBDIR}")
 set (CONFIG_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/${CONFIG_INSTALL_SUBDIR}")
 
 # build shared libraries
-#if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-    set (BUILD_SHARED_LIBS ON)
-#elseif (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-#    set (BUILD_SHARED_LIBS OFF)    
-#endif (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+set (BUILD_SHARED_LIBS ON)
 
 # global property to hold the names of katydid library targets
 set_property (GLOBAL PROPERTY ${PROJECT_NAME}_LIBRARIES)
@@ -72,15 +73,10 @@ set (CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 ##########
 
 # This should be called immediately after setting the project name
-macro (pbuilder_prepare_project VERSION_MAJOR VERSION_MINOR REVISION)
+macro (pbuilder_prepare_project)
     # define the variables to describe the package (will go in the KatydidConfig.hh file)
-    set (${PROJECT_NAME}_VERSION_MAJOR ${VERSION_MAJOR})
-    set (${PROJECT_NAME}_VERSION_MINOR ${VERSION_MINOR})
-    set (${PROJECT_NAME}_REVISION ${REVISION})
-    set (${PROJECT_NAME}_VERSION "${${PROJECT_NAME}_VERSION_MAJOR}.${${PROJECT_NAME}_VERSION_MINOR}.${${PROJECT_NAME}_REVISION}")
-    set (${PROJECT_NAME}_FULL_VERSION "${${PROJECT_NAME}_VERSION_MAJOR}.${${PROJECT_NAME}_VERSION_MINOR}.${${PROJECT_NAME}_REVISION}")
     set (${PROJECT_NAME}_PACKAGE_NAME "${PROJECT_NAME}")
-    set (${PROJECT_NAME}_PACKAGE_STRING "${PROJECT_NAME} ${${PROJECT_NAME}_FULL_VERSION}")
+    set (${PROJECT_NAME}_PACKAGE_STRING "${PROJECT_NAME} ${${PROJECT_NAME}_VERSION}")
     
     # Configuration header file
     if (EXISTS ${PROJECT_SOURCE_DIR}/${PROJECT_NAME}Config.hh.in)
@@ -149,7 +145,6 @@ macro (pbuilder_install_config_files)
 endmacro ()
 
 macro (pbuilder_variables_for_parent)
-    message(STATUS "in (monarch) variables for parent, standalone: ${PBUILDER_STANDALONE}")
     if (NOT ${PBUILDER_STANDALONE})
         get_property (LIBRARIES GLOBAL PROPERTY ${PROJECT_NAME}_LIBRARIES)
         set (${PROJECT_NAME}_LIBRARIES ${LIBRARIES} ${SUBMODULE_LIBRARIES} PARENT_SCOPE)

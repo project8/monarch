@@ -1,19 +1,17 @@
 # Minimum cmake verison 3.0 required by the way CMake handles rpath information on Mac OSX.
 cmake_minimum_required (VERSION 3.0)
-cmake_policy (SET CMP0042 NEW)
 
 #########
 # setup #
 #########
 
-project( Monarch )
+cmake_policy( SET CMP0048 NEW ) # version in project()
+project( Monarch VERSION 3.0.0 )
 
 list( APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
-#set( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake" )
-message(STATUS "path with append is:${CMAKE_MODULE_PATH}")
+
 include( PackageBuilder)
-pbuilder_prepare_project( 3 0 0 )
-cmake_policy (SET CMP0011 NEW)
+pbuilder_prepare_project()
 
 # Egg file version
 set( Egg_VERSION "3.0.0" )
