@@ -16,9 +16,8 @@
 
 #define Monarch_VERSION_MAJOR @Monarch_VERSION_MAJOR@
 #define Monarch_VERSION_MINOR @Monarch_VERSION_MINOR@
-#define Monarch_REVISION @Monarch_REVISION@
+#define Monarch_VERSION_PATCH @Monarch_VERSION_PATCH@
 #define Monarch_VERSION @Monarch_VERSION@
-#define Monarch_FULL_VERSION @Monarch_FULL_VERSION@
 
 #define Egg_VERSION @Egg_VERSION@
 
@@ -40,13 +39,13 @@ namespace monarch3
             
             unsigned MajorVersion() const;
             unsigned MinorVersion() const;
-            unsigned Revision() const;
+            unsigned PatchVersion() const;
             
             const std::string& VersionStr() const;
             
             bool Parse( const std::string& aVer );
             
-            bool Combine( unsigned aMajVer, unsigned aMinVer, unsigned aRev );
+            bool Combine( unsigned aMajVer, unsigned aMinVer, unsigned aPatchVer );
             
             const std::string& EggVersion() const;
             
@@ -55,7 +54,7 @@ namespace monarch3
         
             unsigned fMajorVer;
             unsigned fMinorVer;
-            unsigned fRevision;
+            unsigned fPatchVer;
             std::string fVersion;
             
             std::string fEggVersion;

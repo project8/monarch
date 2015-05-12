@@ -22,17 +22,17 @@ namespace monarch3
     M3Version::M3Version() :
             fMajorVer( Monarch_VERSION_MAJOR ),
             fMinorVer( Monarch_VERSION_MINOR ),
-            fRevision( Monarch_REVISION ),
+            fPatchVer( Monarch_VERSION_PATCH ),
             fVersion(),
             fEggVersion( TOSTRING(Egg_VERSION) )
     {
-        Combine( fMajorVer, fMinorVer, fRevision );
+        Combine( fMajorVer, fMinorVer, fPatchVer );
     }
 
     M3Version::M3Version( const std::string& aVer ) :
                     fMajorVer( 0 ),
                     fMinorVer( 0 ),
-                    fRevision( 0 ),
+                    fPatchVer( 0 ),
                     fVersion(),
                     fEggVersion( TOSTRING(Egg_VERSION) )
     {
@@ -51,9 +51,9 @@ namespace monarch3
     {
         return fMinorVer;
     }
-    unsigned M3Version::Revision() const
+    unsigned M3Version::PatchVersion() const
     {
-        return fRevision;
+        return fPatchVer;
     }
 
     const std::string& M3Version::VersionStr() const
@@ -72,7 +72,7 @@ namespace monarch3
         {
             fMajorVer = 0;
             fMinorVer = 0;
-            fRevision = 0;
+            fPatchVer = 0;
             fVersion = aVer;
             return true;
         }
@@ -95,21 +95,21 @@ namespace monarch3
         std::stringstream tMinVerStr;
         tMinVerStr << aVer.substr(tDelimPos_1 + 1, tDelimPos_2 );
 
-        std::stringstream tRevStr;
-        tRevStr << aVer.substr( tDelimPos_2 + 1 );
+        std::stringstream tPatchVerStr;
+        tPatchVerStr << aVer.substr( tDelimPos_2 + 1 );
 
         tMajVerStr >> fMajorVer;
         tMinVerStr >> fMinorVer;
-        tRevStr >> fRevision;
+        tPatchVerStr >> fPatchVer;
         fVersion = aVer;
 
         return true;
     }
 
-    bool M3Version::Combine( unsigned aMajVer, unsigned aMinVer, unsigned aRev )
+    bool M3Version::Combine( unsigned aMajVer, unsigned aMinVer, unsigned aPatchVer )
     {
         std::stringstream tVerStr;
-        tVerStr << aMajVer << sDelimeter << aMinVer << sDelimeter << aRev;
+        tVerStr << aMajVer << sDelimeter << aMinVer << sDelimeter << aPatchVer;
         fVersion = tVerStr.str();
         return true;
     }
