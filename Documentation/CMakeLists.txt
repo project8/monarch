@@ -18,7 +18,17 @@ endif(DOXYGEN_FOUND)
 find_package(Sphinx REQUIRED)
 
 if(NOT DEFINED SPHINX_THEME)
-    set(SPHINX_THEME default CACHE STRING "Sphinx string name")
+    execute_process( COMMAND python -c "import sphinx_rtd_theme"
+                     RESULT_VARIABLE SPHINX_RTD_THEME_FOUND
+                     OUTPUT_QUIET
+                     ERROR_QUIET
+                   )
+    if(SPHINX_RTD_THEME_FOUND EQUAL 0)
+        set(SPHINX_THEME sphinx_rtd_theme CACHE STRING "Sphinx string name")
+    else(SPHINX_RTD_THEME_FOUND EQUAL 0)
+        message( WARNING "sphinx_rtd_theme python package not found, using default sphinx theme")
+        set(SPHINX_THEME classic CACHE STRING "Sphinx string name")
+    endif(SPHINX_RTD_THEME_FOUND EQUAL 0)
 endif()
 
 if(NOT DEFINED SPHINX_THEME_DIR)
@@ -39,6 +49,7 @@ configure_file(
     "${BINARY_BUILD_DIR}/conf.py"
     @ONLY
 )
+file (COPY "${CMAKE_CURRENT_SOURCE_DIR}/favicon.ico" DESTINATION "${BINARY_BUILD_DIR}")
 
 add_custom_target(
     ${PROJECT_NAME}_sphinx ALL
