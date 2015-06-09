@@ -1,0 +1,268 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>How to use Monarch3 &mdash; Monarch 3.0.1 documentation</title>
+  
+
+  
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Monarch 3.0.1 documentation" href="index.html"/>
+        <link rel="next" title="Full Doxygen Reference" href="from_doxygen.html"/>
+        <link rel="prev" title="Egg v3.0.0 File Standard" href="EggStandard.v3.0.0.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+
+        
+          <a href="index.html" class="icon icon-home"> Monarch
+        
+
+        
+        </a>
+
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+        
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Monarch_versions.html">EggStandards</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="EggStandard.v1.html">Egg v1 File Standard</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="EggStandard.v1.html#file-structure">File Structure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="EggStandard.v1.html#prelude">Prelude</a></li>
+<li class="toctree-l3"><a class="reference internal" href="EggStandard.v1.html#header">Header</a></li>
+<li class="toctree-l3"><a class="reference internal" href="EggStandard.v1.html#record">Record</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="EggStandard.v2.html">Egg v2 File Standard</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="EggStandard.v2.html#file-structure">File Structure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="EggStandard.v2.html#prelude">Prelude</a></li>
+<li class="toctree-l3"><a class="reference internal" href="EggStandard.v2.html#header">Header</a></li>
+<li class="toctree-l3"><a class="reference internal" href="EggStandard.v2.html#record">Record</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="EggStandard.v3.0.0.html">Egg v3.0.0 File Standard</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="EggStandard.v3.0.0.html#file-structure">File Structure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="EggStandard.v3.0.0.html#file-attributes">File Attributes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="EggStandard.v3.0.0.html#stream-attributes">Stream Attributes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="EggStandard.v3.0.0.html#channel-attributes">Channel Attributes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="EggStandard.v3.0.0.html#acquisitions">Acquisitions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="EggStandard.v3.0.0.html#known-issues">Known Issues</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">How to use Monarch3</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#reading-egg3-files">Reading Egg3 Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#writing-egg3-files">Writing Egg3 Files</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="from_doxygen.html">Full Doxygen Reference</a></li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">Monarch</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>How to use Monarch3</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/UsageMonarch3.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <div class="section" id="how-to-use-monarch3">
+<h1>How to use Monarch3<a class="headerlink" href="#how-to-use-monarch3" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="reading-egg3-files">
+<h2>Reading Egg3 Files<a class="headerlink" href="#reading-egg3-files" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li>Open the file: <code class="docutils literal"><span class="pre">Monarch3::OpenForReading(</span> <span class="pre">[filename]</span> <span class="pre">)</span></code></li>
+<li>Access the header information: <code class="docutils literal"><span class="pre">Monarch3::ReadHeader()</span></code></li>
+<li>Get the pointer to the header, and use as needed: <code class="docutils literal"><span class="pre">Monarch3::GetHeader()</span></code></li>
+<li>Get the pointer(s) to the stream(s) in the file: <code class="docutils literal"><span class="pre">Monarch3::GetStream(</span> <span class="pre">[stream</span> <span class="pre">number]</span> <span class="pre">)</span></code></li>
+<li>Setup to access the data in a stream.  You can acces either the record for the entire stream with <code class="docutils literal"><span class="pre">Monarch3::GetStreamRecord()</span></code>,
+or for individual channels with <code class="docutils literal"><span class="pre">Monarch3::GetChannelRecord(</span> <span class="pre">[record</span> <span class="pre">number]</span> <span class="pre">)</span></code>.
+If you have only one channel in the stream, the distinction between those is irrelevant.
+The record objects have a function <code class="docutils literal"><span class="pre">M3Record::GetData()</span></code> to get the data array.
+There are two ways in which you can interact with the data array:<ul>
+<li>If you want to access the data as an array of bytes (e.g. because either your data is of type <code class="docutils literal"><span class="pre">uint8_t</span></code>, or you want to use <code class="docutils literal"><span class="pre">memcpy</span></code>), you can use the pointer returned by <code class="docutils literal"><span class="pre">M3Record::GetData()</span></code>;</li>
+<li>If you want to access the data as an array of other integer or floating-point data types, you can pass the data pointer from <code class="docutils literal"><span class="pre">M3Record::GetData()</span></code> to an <code class="docutils literal"><span class="pre">M3DataReader</span></code> object, along with the data type size and data format flag. The type of the values that are returned is specified as a template argument for <code class="docutils literal"><span class="pre">M3DataReader</span></code>; it doesn&#8217;t have to match the data type in the data array exactly, but it should have at least as many bytes as the data elements, and if the data elements are integer, it should be an integer, and if the data elements are floating-point, it should be floating-point.</li>
+<li>If you want to access the data as an array of complex floating-point data types, you can pass the data pointer from <code class="docutils literal"><span class="pre">M3Record::GetData()</span></code> to an <code class="docutils literal"><span class="pre">M3ComplexDataReader</span></code> object, along with the data type size and data format flag (you can also specify the element size, but for complex data it should be the default, 2).  The type of the values that are returned is specified as a template argument for <code class="docutils literal"><span class="pre">M3ComplexDataReader</span></code>; it should either be f4_complex or f8_complex, or the equivalent.</li>
+</ul>
+</li>
+<li>When moving from record to record in the file, the memory used for the data stays the same, but it gets updated with new values.
+To move to a new record use the <code class="docutils literal"><span class="pre">M3Stream::ReadRecord(</span> <span class="pre">[offset]</span> <span class="pre">)</span></code> function.  The offset parameter allows you to move forward and
+backward within the file. If the last record read was <code class="docutils literal"><span class="pre">[J]</span></code> (<code class="docutils literal"><span class="pre">=</span> <span class="pre">-1</span></code> for a just-opened file), ReadRecord will access the <code class="docutils literal"><span class="pre">[J+1+offset]</span></code> record.
+This means that the offset parameter has the following meanings:<ul>
+<li>if <code class="docutils literal"><span class="pre">offset</span> <span class="pre">==</span> <span class="pre">0</span></code> (default), the next record will be accessed;</li>
+<li>if <code class="docutils literal"><span class="pre">offset</span> <span class="pre">==</span> <span class="pre">-1</span></code>, the current record will be reread;</li>
+<li><code class="docutils literal"><span class="pre">offset</span> <span class="pre">&lt;</span> <span class="pre">-1</span></code> will go backwards in the file;</li>
+<li><code class="docutils literal"><span class="pre">offset</span> <span class="pre">&gt;</span> <span class="pre">0</span></code> will skip forward in the file.</li>
+</ul>
+</li>
+<li>When you&#8217;re finished reading, use <code class="docutils literal"><span class="pre">Monarch3::FinishReading()</span></code> to close the file.</li>
+</ol>
+</div>
+<div class="section" id="writing-egg3-files">
+<h2>Writing Egg3 Files<a class="headerlink" href="#writing-egg3-files" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic simple">
+<li>Open the file: <code class="docutils literal"><span class="pre">Monarch3::OpenForWriting(</span> <span class="pre">[filename]</span> <span class="pre">)</span></code></li>
+<li>Get the pointer to the header, and use as needed: <code class="docutils literal"><span class="pre">Monarch3::GetHeader()</span></code></li>
+<li>Fill in the header information and setup the streams.  For the latter, use the AddStream functions to add streams with one or multiple channels.</li>
+<li>Write the header information: <code class="docutils literal"><span class="pre">Monarch3::WriteHeader()</span></code></li>
+<li>Get the pointer(s) to the stream(s) in the file: <code class="docutils literal"><span class="pre">Monarch3::GetStream(</span> <span class="pre">[stream</span> <span class="pre">number]</span> <span class="pre">)</span></code></li>
+<li>Setup to access the data in a stream.  You can acces either the record for the entire stream with <code class="docutils literal"><span class="pre">Monarch3::GetStreamRecord()</span></code>,
+or for individual channels with <code class="docutils literal"><span class="pre">Monarch3::GetChannelRecord(</span> <span class="pre">[record</span> <span class="pre">number]</span> <span class="pre">)</span></code>.
+If you have only one channel in the stream, the distinction between those is irrelevant.
+The record objects have a function <code class="docutils literal"><span class="pre">M3Record::GetData()</span></code> to get the data array.
+There are two ways in which you can interact with the data array:<ul>
+<li>If you want to access the data as an array of bytes (e.g. because either your data is of type <code class="docutils literal"><span class="pre">uint8_t</span></code>, or you want to use <code class="docutils literal"><span class="pre">memcpy</span></code>), you can use the pointer returned by <code class="docutils literal"><span class="pre">M3Record::GetData()</span></code>;</li>
+<li>If you want to access the data as an array of other integer or floating-point data types, you can pass the data pointer from <code class="docutils literal"><span class="pre">M3Record::GetData()</span></code> to an <code class="docutils literal"><span class="pre">M3DataWriter</span></code> object, along with the data type size and data format flag. The type of the values that are passed to the writer is specified as a template argument for <code class="docutils literal"><span class="pre">M3DataWriter</span></code>; it doesn&#8217;t have to match the data type in the data array exactly, but it should be no larger than the data elements, and if the data elements are integer, it should be an integer, and if the data elements are floating-point, it should be floating-point.</li>
+<li>If you want to access the data as an array of complex floating-point data types, you can pass the data pointer from <code class="docutils literal"><span class="pre">M3Record::GetData()</span></code> to an <code class="docutils literal"><span class="pre">M3ComplexDataWriter</span></code> object, along with the data type size and data format flag (you can also specify the element size, but for complex data it should be the default, 2).  The type of the values that are returned is specified as a template argument for <code class="docutils literal"><span class="pre">M3ComplexDataWriter</span></code>; it should either be <code class="docutils literal"><span class="pre">f4_complex</span></code> or <code class="docutils literal"><span class="pre">f8_complex</span></code>, or the equivalent.</li>
+</ul>
+</li>
+<li>For each record, copy the data to the stream data memory using the access method you chose above, and then write to disk with <code class="docutils literal"><span class="pre">M3Stream::WriteRecord(</span> <span class="pre">[is</span> <span class="pre">new</span> <span class="pre">acquisition?]</span> <span class="pre">)</span></code>.  When a record is from a different acquisition than the previous record, the flag passed to <code class="docutils literal"><span class="pre">WriteRecord</span></code> should be <code class="docutils literal"><span class="pre">true</span></code>; otherwise it should be <code class="docutils literal"><span class="pre">false</span></code>.</li>
+<li>When you&#8217;re finished writing, use <code class="docutils literal"><span class="pre">Monarch3::FinishWriting()</span></code> to close the file.</li>
+</ol>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="from_doxygen.html" class="btn btn-neutral float-right" title="Full Doxygen Reference" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="EggStandard.v3.0.0.html" class="btn btn-neutral" title="Egg v3.0.0 File Standard" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015, Project 8 Collaboration.
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'3.0.1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
