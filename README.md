@@ -31,20 +31,26 @@ Installation
 
 Monarch is installed using CMake
 We recommend an out-of-source build:
+```
     mkdir build
     cd build
-    
+```
+
 To configure the installation:
+```
     cmake ..
-    
+```
+
 The .. argument points to the top-level Monarch directory, in this case
 assuming that the build is taking place in the "build" subdirectory.
 ccmake, or cmake-gui may also be used, of course.
 
 To build and install:
+```
     make
     make install
-    
+```
+
 The install prefix is specified by the CMake variable CMAKE_INSTALL_PREFIX.
 The library, binaries, and header files will be installed in the 
 lib, bin, and include subdirectories. The default install prefix is the

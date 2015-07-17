@@ -80,7 +80,15 @@ namespace monarch3
     {
         Monarch3* tMonarch3 = new Monarch3();
 
-        tMonarch3->fFile = new H5::H5File( aFilename.c_str(), H5F_ACC_TRUNC );
+        try
+        {
+            tMonarch3->fFile = new H5::H5File( aFilename.c_str(), H5F_ACC_TRUNC );
+        }
+        catch( H5::Exception& e )
+        {
+            throw M3Exception() << "Could not open <" << aFilename << "> for writing; an exception was thrown: " << e.getDetailMsg();
+            return NULL;
+        }
         if( tMonarch3->fFile == NULL )
         {
             delete tMonarch3;
