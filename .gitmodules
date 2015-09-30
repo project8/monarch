@@ -1,3 +1,3 @@
 [submodule "libthorax"]
 	path = libthorax
-	url = git://github.com/project8/libthorax.git
+	url = https://github.com/project8/libthorax.git
