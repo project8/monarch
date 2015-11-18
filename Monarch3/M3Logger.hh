@@ -338,8 +338,13 @@ namespace monarch3
 #define M3LOGGER(I,K)      
 
 #define M3LOG(I,K)         std::cout << "LOG: " << K << std::endl;
+#ifndef NDEBUG
 #define M3TRACE(I,K)       std::cout << "TRACE: " << K << std::endl;
 #define M3DEBUG(I,K)       std::cout << "DEBUG: " << K << std::endl;
+#else
+#define M3TRACE(I,K)
+#define M3DEBUG(I,K)
+#endif
 #define M3INFO(I,K)        std::cout << "INFO: " << K << std::endl;
 #define M3WARN(I,K)        std::cout << "WARN: " << K << std::endl;
 #define M3ERROR(I,K)       std::cout << "ERROR: " << K << std::endl;
@@ -347,8 +352,13 @@ namespace monarch3
 #define M3ASSERT(I,K)      std::cout << "ASSERT: " << K << std::endl;
 
 #define M3LOG_ONCE(I,K)    std::cout << "LOG: " << K << std::endl;
+#ifndef NDEBUG
 #define M3TRACE_ONCE(I,K)  std::cout << "TRACE: " << K << std::endl;
 #define M3DEBUG_ONCE(I,K)  std::cout << "DEBUG: " << K << std::endl;
+#else
+#define M3TRACE_ONCE(I,K)
+#define M3DEBUG_ONCE(I,K)
+#endif
 #define M3INFO_ONCE(I,K)   std::cout << "INFO: " << K << std::endl;
 #define M3WARN_ONCE(I,K)   std::cout << "WARN: " << K << std::endl;
 #define M3ERROR_ONCE(I,K)  std::cout << "ERROR: " << K << std::endl;
