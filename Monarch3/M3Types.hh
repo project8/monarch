@@ -12,10 +12,13 @@
 
 #include "H5Cpp.h"
 
+#include <inttypes.h>
 #include <string>
 
 namespace monarch3
 {
+    typedef uint8_t byte_type;
+
 
     template<typename T, typename U>
     struct is_same
