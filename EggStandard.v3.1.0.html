@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Egg v3.0.0 File Standard &mdash; Monarch 3.1.0 documentation</title>
+  <title>Egg v3.1.0 File Standard &mdash; Monarch 3.1.0 documentation</title>
   
 
   
@@ -34,8 +34,8 @@
   
     <link rel="top" title="Monarch 3.1.0 documentation" href="index.html"/>
         <link rel="up" title="EggStandards" href="Monarch_versions.html"/>
-        <link rel="next" title="Egg v3.0.0 File Standard" href="EggStandard.v3.1.0.html"/>
-        <link rel="prev" title="Egg v2 File Standard" href="EggStandard.v2.html"/> 
+        <link rel="next" title="How to use Monarch3" href="UsageMonarch3.html"/>
+        <link rel="prev" title="Egg v3.0.0 File Standard" href="EggStandard.v3.0.0.html"/> 
 
   
   <script src="_static/js/modernizr.min.js"></script>
@@ -90,22 +90,22 @@
 <li class="toctree-l3"><a class="reference internal" href="EggStandard.v2.html#record">Record</a></li>
 </ul>
 </li>
-<li class="toctree-l2 current"><a class="current reference internal" href="">Egg v3.0.0 File Standard</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="EggStandard.v3.0.0.html">Egg v3.0.0 File Standard</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="EggStandard.v3.0.0.html#file-structure">File Structure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="EggStandard.v3.0.0.html#file-attributes">File Attributes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="EggStandard.v3.0.0.html#stream-attributes">Stream Attributes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="EggStandard.v3.0.0.html#channel-attributes">Channel Attributes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="EggStandard.v3.0.0.html#acquisitions">Acquisitions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="EggStandard.v3.0.0.html#known-issues">Known Issues</a></li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Egg v3.1.0 File Standard</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#file-structure">File Structure</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#file-attributes">File Attributes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#stream-attributes">Stream Attributes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#channel-attributes">Channel Attributes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#acquisitions">Acquisitions</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#known-issues">Known Issues</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="EggStandard.v3.1.0.html">Egg v3.0.0 File Standard</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="EggStandard.v3.1.0.html#file-structure">File Structure</a></li>
-<li class="toctree-l3"><a class="reference internal" href="EggStandard.v3.1.0.html#file-attributes">File Attributes</a></li>
-<li class="toctree-l3"><a class="reference internal" href="EggStandard.v3.1.0.html#stream-attributes">Stream Attributes</a></li>
-<li class="toctree-l3"><a class="reference internal" href="EggStandard.v3.1.0.html#channel-attributes">Channel Attributes</a></li>
-<li class="toctree-l3"><a class="reference internal" href="EggStandard.v3.1.0.html#acquisitions">Acquisitions</a></li>
-<li class="toctree-l3"><a class="reference internal" href="EggStandard.v3.1.0.html#known-issues">Known Issues</a></li>
 </ul>
 </li>
 </ul>
@@ -142,11 +142,11 @@
       
           <li><a href="Monarch_versions.html">EggStandards</a> &raquo;</li>
       
-    <li>Egg v3.0.0 File Standard</li>
+    <li>Egg v3.1.0 File Standard</li>
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="_sources/EggStandard.v3.0.0.txt" rel="nofollow"> View page source</a>
+            <a href="_sources/EggStandard.v3.1.0.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -155,8 +155,8 @@
 </div>
           <div role="main" class="document">
             
-  <div class="section" id="egg-v3-0-0-file-standard">
-<h1>Egg v3.0.0 File Standard<a class="headerlink" href="#egg-v3-0-0-file-standard" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="egg-v3-1-0-file-standard">
+<h1>Egg v3.1.0 File Standard<a class="headerlink" href="#egg-v3-1-0-file-standard" title="Permalink to this headline">¶</a></h1>
 <p>Usage history:</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />
@@ -167,8 +167,13 @@
 </ul>
 </td>
 </tr>
-<tr class="field-even field"><th class="field-name">5/8/2015:</th><td class="field-body"><ul class="first last simple">
+<tr class="field-even field"><th class="field-name">5/8/2015:</th><td class="field-body"><ul class="first simple">
 <li>v3.0.0 finalized</li>
+</ul>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">11/19/2015:</th><td class="field-body"><ul class="first last simple">
+<li>v3.1.0 finalized &#8211; Added Bit Alignment</li>
 </ul>
 </td>
 </tr>
@@ -279,6 +284,11 @@ Information there is common to all of the channels included in that stream.</p>
 </ul>
 </li>
 <li>bit_depth (uint32) &#8211; Number of bits with which the data was digitized</li>
+<li>bit_alignment (uint32) &#8211; Whether the bits within each sample are left-aligned or right-aligned within the sample data word (if the bit depth is less that the data type size)<ul>
+<li>0 == left-aligned</li>
+<li>1 == right-aligned</li>
+</ul>
+</li>
 <li>n_acquisitions (uint32) &#8211; Number of acquisitions recorded</li>
 <li>n_records (uint32) &#8211; Number of records recorded</li>
 </ul>
@@ -304,6 +314,11 @@ users will care about how the data is divided into channels.</p>
 </ul>
 </li>
 <li>bit_depth (uint32) &#8211; Number of bits with which the data was digitized</li>
+<li>bit_alignment (uint32) &#8211; Whether the bits within each sample are left-aligned or right-aligned within the sample data word (if the bit depth is less that the data type size)<ul>
+<li>0 == left-aligned</li>
+<li>1 == right-aligned</li>
+</ul>
+</li>
 <li>voltage_offset (double) &#8211; Voltage value represented by an ADC value of 0 (the minimum voltage for unsigned digital data, and the center voltage for signed digital data)</li>
 <li>voltage_range (double) &#8211; Voltage range accepted above the minimum</li>
 <li>dac_gain (double) &#8211; Gain value needed to convert digital values to analog (analog = digital * gain + voltage_min)</li>
@@ -357,10 +372,10 @@ AAAAAAAAAA  &lt;-- record 2
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="EggStandard.v3.1.0.html" class="btn btn-neutral float-right" title="Egg v3.0.0 File Standard" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="UsageMonarch3.html" class="btn btn-neutral float-right" title="How to use Monarch3" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="EggStandard.v2.html" class="btn btn-neutral" title="Egg v2 File Standard" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="EggStandard.v3.0.0.html" class="btn btn-neutral" title="Egg v3.0.0 File Standard" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

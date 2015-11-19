@@ -24,7 +24,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">Monarch
-   &#160;<span id="projectnumber">3.0.1</span>
+   &#160;<span id="projectnumber">3.1.0</span>
    </div>
    <div id="projectbrief">Project 8 Data File Format Library</div>
   </td>
@@ -147,10 +147,10 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ae83fdfac4e4fb0d69e1720ca42ed8d3b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af3cfba07ca9cbfec5184f712269b67ca"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="classmonarch3_1_1_m3_stream_header.html">M3StreamHeader</a> &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmonarch3_1_1_m3_header.html#af3cfba07ca9cbfec5184f712269b67ca">GetStreamHeaders</a> ()</td></tr>
 <tr class="separator:af3cfba07ca9cbfec5184f712269b67ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a82c80bbbdc30a88795d4b61cf13d0654"><td class="memItemLeft" align="right" valign="top">unsigned&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmonarch3_1_1_m3_header.html#a82c80bbbdc30a88795d4b61cf13d0654">AddStream</a> (const std::string &amp;aSource, uint32_t anAcqRate, uint32_t aRecSize, uint32_t aSampleSize, uint32_t aDataTypeSize, uint32_t aDataFormat, uint32_t aBitDepth, std::vector&lt; unsigned &gt; *aChanVec=NULL)</td></tr>
-<tr class="separator:a82c80bbbdc30a88795d4b61cf13d0654"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a07de5cf3cc5f6520a990beceb39d686b"><td class="memItemLeft" align="right" valign="top">unsigned&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmonarch3_1_1_m3_header.html#a07de5cf3cc5f6520a990beceb39d686b">AddStream</a> (const std::string &amp;aSource, uint32_t aNChannels, uint32_t aFormat, uint32_t anAcqRate, uint32_t aRecSize, uint32_t aSampleSize, uint32_t aDataTypeSize, uint32_t aDataFormat, uint32_t aBitDepth, std::vector&lt; unsigned &gt; *aChanVec=NULL)</td></tr>
-<tr class="separator:a07de5cf3cc5f6520a990beceb39d686b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a16143551eef5fa6db834b48fa50865f3"><td class="memItemLeft" align="right" valign="top">unsigned&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmonarch3_1_1_m3_header.html#a16143551eef5fa6db834b48fa50865f3">AddStream</a> (const std::string &amp;aSource, uint32_t anAcqRate, uint32_t aRecSize, uint32_t aSampleSize, uint32_t aDataTypeSize, uint32_t aDataFormat, uint32_t aBitDepth, uint32_t aBitAlignment, std::vector&lt; unsigned &gt; *aChanVec=NULL)</td></tr>
+<tr class="separator:a16143551eef5fa6db834b48fa50865f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6dd140145121c550ffb302a123fbf641"><td class="memItemLeft" align="right" valign="top">unsigned&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmonarch3_1_1_m3_header.html#a6dd140145121c550ffb302a123fbf641">AddStream</a> (const std::string &amp;aSource, uint32_t aNChannels, uint32_t aFormat, uint32_t anAcqRate, uint32_t aRecSize, uint32_t aSampleSize, uint32_t aDataTypeSize, uint32_t aDataFormat, uint32_t aBitDepth, uint32_t aBitAlignment, std::vector&lt; unsigned &gt; *aChanVec=NULL)</td></tr>
+<tr class="separator:a6dd140145121c550ffb302a123fbf641"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae87168f78fc1982a59b7bf79eaa9125e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmonarch3_1_1_m3_header.html#ae87168f78fc1982a59b7bf79eaa9125e">WriteToHDF5</a> (H5::H5File *aFile)</td></tr>
 <tr class="separator:ae87168f78fc1982a59b7bf79eaa9125e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4b3fa4d91ddbd3f3167d02d7a348b253"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmonarch3_1_1_m3_header.html#a4b3fa4d91ddbd3f3167d02d7a348b253">ReadFromHDF5</a> (const H5::H5File *aFile) const </td></tr>
@@ -204,7 +204,7 @@ Private Attributes</h2></td></tr>
 <p>General run setup can be configured by setting variables in this header object.</p>
 <p>The stream structure of the data is also configured using the AddStream functions. </p>
 
-<p>Definition at line <a class="el" href="_m3_header_8hh_source.html#l00164">164</a> of file <a class="el" href="_m3_header_8hh_source.html">M3Header.hh</a>.</p>
+<p>Definition at line <a class="el" href="_m3_header_8hh_source.html#l00152">152</a> of file <a class="el" href="_m3_header_8hh_source.html">M3Header.hh</a>.</p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
 <a class="anchor" id="a917c5525a25393d7284c1c3658837bc8"></a>
 <div class="memitem">
@@ -216,7 +216,7 @@ Private Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_m3_header_8hh_source.html#l00167">167</a> of file <a class="el" href="_m3_header_8hh_source.html">M3Header.hh</a>.</p>
+<p>Definition at line <a class="el" href="_m3_header_8hh_source.html#l00155">155</a> of file <a class="el" href="_m3_header_8hh_source.html">M3Header.hh</a>.</p>
 
 </div>
 </div>
@@ -230,7 +230,7 @@ Private Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_m3_header_8hh_source.html#l00168">168</a> of file <a class="el" href="_m3_header_8hh_source.html">M3Header.hh</a>.</p>
+<p>Definition at line <a class="el" href="_m3_header_8hh_source.html#l00156">156</a> of file <a class="el" href="_m3_header_8hh_source.html">M3Header.hh</a>.</p>
 
 </div>
 </div>
@@ -248,7 +248,7 @@ Private Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_m3_header_8cc_source.html#l00347">347</a> of file <a class="el" href="_m3_header_8cc_source.html">M3Header.cc</a>.</p>
+<p>Definition at line <a class="el" href="_m3_header_8cc_source.html#l00357">357</a> of file <a class="el" href="_m3_header_8cc_source.html">M3Header.cc</a>.</p>
 
 </div>
 </div>
@@ -265,12 +265,12 @@ Private Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_m3_header_8cc_source.html#l00363">363</a> of file <a class="el" href="_m3_header_8cc_source.html">M3Header.cc</a>.</p>
+<p>Definition at line <a class="el" href="_m3_header_8cc_source.html#l00373">373</a> of file <a class="el" href="_m3_header_8cc_source.html">M3Header.cc</a>.</p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="a82c80bbbdc30a88795d4b61cf13d0654"></a>
+<a class="anchor" id="a16143551eef5fa6db834b48fa50865f3"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -319,6 +319,12 @@ Private Attributes</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>aBitAlignment</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">std::vector&lt; unsigned &gt; *&#160;</td>
           <td class="paramname"><em>aChanVec</em> = <code>NULL</code>&#160;</td>
         </tr>
@@ -331,11 +337,11 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Add a stream with one channel with aRecSize samples per record Returns the stream number (used to address the stream later) </p>
 
-<p>Definition at line <a class="el" href="_m3_header_8cc_source.html#l00380">380</a> of file <a class="el" href="_m3_header_8cc_source.html">M3Header.cc</a>.</p>
+<p>Definition at line <a class="el" href="_m3_header_8cc_source.html#l00390">390</a> of file <a class="el" href="_m3_header_8cc_source.html">M3Header.cc</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="a07de5cf3cc5f6520a990beceb39d686b"></a>
+<a class="anchor" id="a6dd140145121c550ffb302a123fbf641"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
@@ -396,6 +402,12 @@ Private Attributes</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>aBitAlignment</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">std::vector&lt; unsigned &gt; *&#160;</td>
           <td class="paramname"><em>aChanVec</em> = <code>NULL</code>&#160;</td>
         </tr>
@@ -408,7 +420,7 @@ Private Attributes</h2></td></tr>
 </div><div class="memdoc">
 <p>Add a stream with multiple channels with aRecSize samples per record Returns the stream number (used to address the stream later) </p>
 
-<p>Definition at line <a class="el" href="_m3_header_8cc_source.html#l00402">402</a> of file <a class="el" href="_m3_header_8cc_source.html">M3Header.cc</a>.</p>
+<p>Definition at line <a class="el" href="_m3_header_8cc_source.html#l00412">412</a> of file <a class="el" href="_m3_header_8cc_source.html">M3Header.cc</a>.</p>
 
 </div>
 </div>
@@ -433,7 +445,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_m3_header_8hh_source.html#l00272">272</a> of file <a class="el" href="_m3_header_8hh_source.html">M3Header.hh</a>.</p>
+<p>Definition at line <a class="el" href="_m3_header_8hh_source.html#l00260">260</a> of file <a class="el" href="_m3_header_8hh_source.html">M3Header.hh</a>.</p>
 
 </div>
 </div>
@@ -458,7 +470,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_m3_header_8hh_source.html#l00262">262</a> of file <a class="el" href="_m3_header_8hh_source.html">M3Header.hh</a>.</p>
+<p>Definition at line <a class="el" href="_m3_header_8hh_source.html#l00250">250</a> of file <a class="el" href="_m3_header_8hh_source.html">M3Header.hh</a>.</p>
 
 </div>
 </div>
@@ -483,7 +495,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_m3_header_8hh_source.html#l00267">267</a> of file <a class="el" href="_m3_header_8hh_source.html">M3Header.hh</a>.</p>
+<p>Definition at line <a class="el" href="_m3_header_8hh_source.html#l00255">255</a> of file <a class="el" href="_m3_header_8hh_source.html">M3Header.hh</a>.</p>
 
 </div>
 </div>
@@ -508,7 +520,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_m3_header_8hh_source.html#l00277">277</a> of file <a class="el" href="_m3_header_8hh_source.html">M3Header.hh</a>.</p>
+<p>Definition at line <a class="el" href="_m3_header_8hh_source.html#l00265">265</a> of file <a class="el" href="_m3_header_8hh_source.html">M3Header.hh</a>.</p>
 
 </div>
 </div>
@@ -533,7 +545,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_m3_header_8hh_source.html#l00252">252</a> of file <a class="el" href="_m3_header_8hh_source.html">M3Header.hh</a>.</p>
+<p>Definition at line <a class="el" href="_m3_header_8hh_source.html#l00240">240</a> of file <a class="el" href="_m3_header_8hh_source.html">M3Header.hh</a>.</p>
 
 </div>
 </div>
@@ -558,7 +570,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_m3_header_8hh_source.html#l00257">257</a> of file <a class="el" href="_m3_header_8hh_source.html">M3Header.hh</a>.</p>
+<p>Definition at line <a class="el" href="_m3_header_8hh_source.html#l00245">245</a> of file <a class="el" href="_m3_header_8hh_source.html">M3Header.hh</a>.</p>
 
 </div>
 </div>
@@ -870,7 +882,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_m3_header_8cc_source.html#l00636">636</a> of file <a class="el" href="_m3_header_8cc_source.html">M3Header.cc</a>.</p>
+<p>Definition at line <a class="el" href="_m3_header_8cc_source.html#l00646">646</a> of file <a class="el" href="_m3_header_8cc_source.html">M3Header.cc</a>.</p>
 
 </div>
 </div>
@@ -896,7 +908,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_m3_header_8cc_source.html#l00577">577</a> of file <a class="el" href="_m3_header_8cc_source.html">M3Header.cc</a>.</p>
+<p>Definition at line <a class="el" href="_m3_header_8cc_source.html#l00587">587</a> of file <a class="el" href="_m3_header_8cc_source.html">M3Header.cc</a>.</p>
 
 </div>
 </div>
@@ -914,7 +926,7 @@ Private Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_m3_header_8cc_source.html#l00480">480</a> of file <a class="el" href="_m3_header_8cc_source.html">M3Header.cc</a>.</p>
+<p>Definition at line <a class="el" href="_m3_header_8cc_source.html#l00490">490</a> of file <a class="el" href="_m3_header_8cc_source.html">M3Header.cc</a>.</p>
 
 </div>
 </div>
@@ -950,7 +962,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_m3_header_8hh_source.html#l00343">343</a> of file <a class="el" href="_m3_header_8hh_source.html">M3Header.hh</a>.</p>
+<p>Definition at line <a class="el" href="_m3_header_8hh_source.html#l00331">331</a> of file <a class="el" href="_m3_header_8hh_source.html">M3Header.hh</a>.</p>
 
 </div>
 </div>
@@ -986,7 +998,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_m3_header_8hh_source.html#l00328">328</a> of file <a class="el" href="_m3_header_8hh_source.html">M3Header.hh</a>.</p>
+<p>Definition at line <a class="el" href="_m3_header_8hh_source.html#l00316">316</a> of file <a class="el" href="_m3_header_8hh_source.html">M3Header.hh</a>.</p>
 
 </div>
 </div>
@@ -1020,7 +1032,7 @@ Private Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_m3_header_8cc_source.html#l00369">369</a> of file <a class="el" href="_m3_header_8cc_source.html">M3Header.cc</a>.</p>
+<p>Definition at line <a class="el" href="_m3_header_8cc_source.html#l00379">379</a> of file <a class="el" href="_m3_header_8cc_source.html">M3Header.cc</a>.</p>
 
 </div>
 </div>
@@ -1046,7 +1058,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_m3_header_8cc_source.html#l00610">610</a> of file <a class="el" href="_m3_header_8cc_source.html">M3Header.cc</a>.</p>
+<p>Definition at line <a class="el" href="_m3_header_8cc_source.html#l00620">620</a> of file <a class="el" href="_m3_header_8cc_source.html">M3Header.cc</a>.</p>
 
 </div>
 </div>
@@ -1072,7 +1084,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_m3_header_8cc_source.html#l00554">554</a> of file <a class="el" href="_m3_header_8cc_source.html">M3Header.cc</a>.</p>
+<p>Definition at line <a class="el" href="_m3_header_8cc_source.html#l00564">564</a> of file <a class="el" href="_m3_header_8cc_source.html">M3Header.cc</a>.</p>
 
 </div>
 </div>
@@ -1114,7 +1126,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_m3_header_8hh_source.html#l00283">283</a> of file <a class="el" href="_m3_header_8hh_source.html">M3Header.hh</a>.</p>
+<p>Definition at line <a class="el" href="_m3_header_8hh_source.html#l00271">271</a> of file <a class="el" href="_m3_header_8hh_source.html">M3Header.hh</a>.</p>
 
 </div>
 </div>
@@ -1156,7 +1168,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_m3_header_8hh_source.html#l00293">293</a> of file <a class="el" href="_m3_header_8hh_source.html">M3Header.hh</a>.</p>
+<p>Definition at line <a class="el" href="_m3_header_8hh_source.html#l00281">281</a> of file <a class="el" href="_m3_header_8hh_source.html">M3Header.hh</a>.</p>
 
 </div>
 </div>
@@ -1174,7 +1186,7 @@ Private Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_m3_header_8cc_source.html#l00436">436</a> of file <a class="el" href="_m3_header_8cc_source.html">M3Header.cc</a>.</p>
+<p>Definition at line <a class="el" href="_m3_header_8cc_source.html#l00446">446</a> of file <a class="el" href="_m3_header_8cc_source.html">M3Header.cc</a>.</p>
 
 </div>
 </div>
@@ -1197,7 +1209,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_m3_header_8hh_source.html#l00234">234</a> of file <a class="el" href="_m3_header_8hh_source.html">M3Header.hh</a>.</p>
+<p>Definition at line <a class="el" href="_m3_header_8hh_source.html#l00222">222</a> of file <a class="el" href="_m3_header_8hh_source.html">M3Header.hh</a>.</p>
 
 </div>
 </div>
@@ -1219,7 +1231,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_m3_header_8hh_source.html#l00232">232</a> of file <a class="el" href="_m3_header_8hh_source.html">M3Header.hh</a>.</p>
+<p>Definition at line <a class="el" href="_m3_header_8hh_source.html#l00220">220</a> of file <a class="el" href="_m3_header_8hh_source.html">M3Header.hh</a>.</p>
 
 </div>
 </div>
@@ -1241,7 +1253,7 @@ Private Attributes</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_m3_header_8hh_source.html#l00233">233</a> of file <a class="el" href="_m3_header_8hh_source.html">M3Header.hh</a>.</p>
+<p>Definition at line <a class="el" href="_m3_header_8hh_source.html#l00221">221</a> of file <a class="el" href="_m3_header_8hh_source.html">M3Header.hh</a>.</p>
 
 </div>
 </div>
@@ -1252,7 +1264,7 @@ Private Attributes</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Jun 8 2015 22:14:05 for Monarch by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Nov 19 2015 16:16:18 for Monarch by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.9.1
 </small></address>

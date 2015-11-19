@@ -24,7 +24,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">Monarch
-   &#160;<span id="projectnumber">3.0.1</span>
+   &#160;<span id="projectnumber">3.1.0</span>
    </div>
    <div id="projectbrief">Project 8 Data File Format Library</div>
   </td>
@@ -133,27 +133,30 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> uint32_t sDigitizedS = 1;</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> uint32_t sAnalog = 2;</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    <span class="comment">// stream information</span></div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> uint32_t sInterleaved = 0;</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> uint32_t sSeparate = 1;</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <span class="comment">// re-typdefing for aesthetic purposes</span></div>
-<div class="line"><a name="l00051"></a><span class="lineno"><a class="line" href="namespacemonarch3.html#a4c6480d98296d9778cebddb4ef4b21ce">   51</a></span>&#160;    <span class="keyword">typedef</span> acquisition_id_type <a class="code" href="namespacemonarch3.html#a4c6480d98296d9778cebddb4ef4b21ce">AcquisitionIdType</a>; <span class="comment">// 8 bytes</span></div>
-<div class="line"><a name="l00052"></a><span class="lineno"><a class="line" href="namespacemonarch3.html#a616ae6792627f967a9164280adac2b23">   52</a></span>&#160;    <span class="keyword">typedef</span> record_id_type <a class="code" href="namespacemonarch3.html#a616ae6792627f967a9164280adac2b23">RecordIdType</a>; <span class="comment">// 8 bytes</span></div>
-<div class="line"><a name="l00053"></a><span class="lineno"><a class="line" href="namespacemonarch3.html#af0f0f4c319e81e95b37156be6ad53b34">   53</a></span>&#160;    <span class="keyword">typedef</span> time_nsec_type <a class="code" href="namespacemonarch3.html#af0f0f4c319e81e95b37156be6ad53b34">TimeType</a>; <span class="comment">// 8 bytes</span></div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> uint32_t sBitsAlignedLeft = 0;</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> uint32_t sBitsAlignedRight = 1;</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    <span class="comment">// stream information</span></div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> uint32_t sInterleaved = 0;</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> uint32_t sSeparate = 1;</div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;}</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="preprocessor">#endif // M3CONSTANTS_HH_</span></div>
-<div class="ttc" id="namespacemonarch3_html_a4c6480d98296d9778cebddb4ef4b21ce"><div class="ttname"><a href="namespacemonarch3.html#a4c6480d98296d9778cebddb4ef4b21ce">monarch3::AcquisitionIdType</a></div><div class="ttdeci">acquisition_id_type AcquisitionIdType</div><div class="ttdef"><b>Definition:</b> <a href="_m3_constants_8hh_source.html#l00051">M3Constants.hh:51</a></div></div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="comment">// re-typdefing for aesthetic purposes</span></div>
+<div class="line"><a name="l00056"></a><span class="lineno"><a class="line" href="namespacemonarch3.html#a4c6480d98296d9778cebddb4ef4b21ce">   56</a></span>&#160;    <span class="keyword">typedef</span> acquisition_id_type <a class="code" href="namespacemonarch3.html#a4c6480d98296d9778cebddb4ef4b21ce">AcquisitionIdType</a>; <span class="comment">// 8 bytes</span></div>
+<div class="line"><a name="l00057"></a><span class="lineno"><a class="line" href="namespacemonarch3.html#a616ae6792627f967a9164280adac2b23">   57</a></span>&#160;    <span class="keyword">typedef</span> record_id_type <a class="code" href="namespacemonarch3.html#a616ae6792627f967a9164280adac2b23">RecordIdType</a>; <span class="comment">// 8 bytes</span></div>
+<div class="line"><a name="l00058"></a><span class="lineno"><a class="line" href="namespacemonarch3.html#af0f0f4c319e81e95b37156be6ad53b34">   58</a></span>&#160;    <span class="keyword">typedef</span> time_nsec_type <a class="code" href="namespacemonarch3.html#af0f0f4c319e81e95b37156be6ad53b34">TimeType</a>; <span class="comment">// 8 bytes</span></div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;}</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="preprocessor">#endif // M3CONSTANTS_HH_</span></div>
+<div class="ttc" id="namespacemonarch3_html_a4c6480d98296d9778cebddb4ef4b21ce"><div class="ttname"><a href="namespacemonarch3.html#a4c6480d98296d9778cebddb4ef4b21ce">monarch3::AcquisitionIdType</a></div><div class="ttdeci">acquisition_id_type AcquisitionIdType</div><div class="ttdef"><b>Definition:</b> <a href="_m3_constants_8hh_source.html#l00056">M3Constants.hh:56</a></div></div>
 <div class="ttc" id="namespacemonarch3_html"><div class="ttname"><a href="namespacemonarch3.html">monarch3</a></div><div class="ttdef"><b>Definition:</b> <a href="_m3_constants_8hh_source.html#l00034">M3Constants.hh:34</a></div></div>
-<div class="ttc" id="namespacemonarch3_html_af0f0f4c319e81e95b37156be6ad53b34"><div class="ttname"><a href="namespacemonarch3.html#af0f0f4c319e81e95b37156be6ad53b34">monarch3::TimeType</a></div><div class="ttdeci">time_nsec_type TimeType</div><div class="ttdef"><b>Definition:</b> <a href="_m3_constants_8hh_source.html#l00053">M3Constants.hh:53</a></div></div>
-<div class="ttc" id="namespacemonarch3_html_a616ae6792627f967a9164280adac2b23"><div class="ttname"><a href="namespacemonarch3.html#a616ae6792627f967a9164280adac2b23">monarch3::RecordIdType</a></div><div class="ttdeci">record_id_type RecordIdType</div><div class="ttdef"><b>Definition:</b> <a href="_m3_constants_8hh_source.html#l00052">M3Constants.hh:52</a></div></div>
+<div class="ttc" id="namespacemonarch3_html_af0f0f4c319e81e95b37156be6ad53b34"><div class="ttname"><a href="namespacemonarch3.html#af0f0f4c319e81e95b37156be6ad53b34">monarch3::TimeType</a></div><div class="ttdeci">time_nsec_type TimeType</div><div class="ttdef"><b>Definition:</b> <a href="_m3_constants_8hh_source.html#l00058">M3Constants.hh:58</a></div></div>
+<div class="ttc" id="namespacemonarch3_html_a616ae6792627f967a9164280adac2b23"><div class="ttname"><a href="namespacemonarch3.html#a616ae6792627f967a9164280adac2b23">monarch3::RecordIdType</a></div><div class="ttdeci">record_id_type RecordIdType</div><div class="ttdef"><b>Definition:</b> <a href="_m3_constants_8hh_source.html#l00057">M3Constants.hh:57</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Jun 8 2015 22:14:04 for Monarch by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Nov 19 2015 16:16:17 for Monarch by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.9.1
 </small></address>

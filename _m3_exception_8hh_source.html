@@ -24,7 +24,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">Monarch
-   &#160;<span id="projectnumber">3.0.1</span>
+   &#160;<span id="projectnumber">3.1.0</span>
    </div>
    <div id="projectbrief">Project 8 Data File Format Library</div>
   </td>
@@ -107,50 +107,45 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &lt;string&gt;</span></div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &lt;sstream&gt;</span></div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="comment">//#ifdef _WIN32</span></div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="comment">//M3_EXPIMP_TEMPLATE template class M3_API std::basic_stringstream&lt; char, std::char_traits&lt; char &gt;, std::allocator&lt; char &gt; &gt;;</span></div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="comment">//M3_EXPIMP_TEMPLATE template class M3_API std::basic_string&lt; char, std::char_traits&lt; char &gt;, std::allocator&lt; char &gt; &gt;;</span></div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="comment">//#endif</span></div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacemonarch3.html">monarch3</a></div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;{</div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;</div>
-<div class="line"><a name="l00033"></a><span class="lineno"><a class="line" href="classmonarch3_1_1_m3_exception.html">   33</a></span>&#160;    <span class="keyword">class </span><a class="code" href="_m3_constants_8hh.html#aced4881fd530d8c488081fed74b90242">M3_API</a> <a class="code" href="classmonarch3_1_1_m3_exception.html">M3Exception</a> : <span class="keyword">public</span> std::exception</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    {</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacemonarch3.html">monarch3</a></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;{</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;</div>
+<div class="line"><a name="l00028"></a><span class="lineno"><a class="line" href="classmonarch3_1_1_m3_exception.html">   28</a></span>&#160;    <span class="keyword">class </span><a class="code" href="_m3_constants_8hh.html#aced4881fd530d8c488081fed74b90242">M3_API</a> <a class="code" href="classmonarch3_1_1_m3_exception.html">M3Exception</a> : <span class="keyword">public</span> std::exception</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    {</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;        <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;            <a class="code" href="classmonarch3_1_1_m3_exception.html">M3Exception</a>();</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;            <a class="code" href="classmonarch3_1_1_m3_exception.html">M3Exception</a>( <span class="keyword">const</span> <a class="code" href="classmonarch3_1_1_m3_exception.html">M3Exception</a>&amp; aCopy );</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;            <span class="keyword">virtual</span> ~<a class="code" href="classmonarch3_1_1_m3_exception.html">M3Exception</a>() <span class="keywordflow">throw</span>();</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;</div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;        <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;            <a class="code" href="classmonarch3_1_1_m3_exception.html">M3Exception</a>();</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;            <a class="code" href="classmonarch3_1_1_m3_exception.html">M3Exception</a>( <span class="keyword">const</span> <a class="code" href="classmonarch3_1_1_m3_exception.html">M3Exception</a>&amp; aCopy );</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;            <span class="keyword">virtual</span> ~<a class="code" href="classmonarch3_1_1_m3_exception.html">M3Exception</a>() <span class="keywordflow">throw</span>();</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;            <span class="keyword">virtual</span> <span class="keyword">const</span> <span class="keywordtype">char</span>* what() <span class="keyword">const</span> <span class="keywordflow">throw</span>();</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;            <span class="keyword">template</span>&lt; <span class="keyword">class</span> XType &gt;</div>
-<div class="line"><a name="l00044"></a><span class="lineno"><a class="line" href="classmonarch3_1_1_m3_exception.html#afecf249e420bd9c8fbffe05247a450f7">   44</a></span>&#160;            <a class="code" href="classmonarch3_1_1_m3_exception.html">M3Exception</a>&amp; <a class="code" href="_m3_header_8cc.html#ae79ce17fa3f18c043cea2e0f8be5a242">operator&lt;&lt; </a>( <span class="keyword">const</span> XType&amp; aReference )</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;            {</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;                std::stringstream tStream;</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;                tStream &lt;&lt; aReference;</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;                fMessage += tStream.str();</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;                <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;            }</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00053"></a><span class="lineno"><a class="line" href="classmonarch3_1_1_m3_exception.html#a431556ea30f51f2f9a41ae89dc671a94">   53</a></span>&#160;            std::string <a class="code" href="classmonarch3_1_1_m3_exception.html#a431556ea30f51f2f9a41ae89dc671a94">fMessage</a>;</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    };</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;}</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* M3EXCEPTION_HH_ */</span><span class="preprocessor"></span></div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;            <span class="keyword">virtual</span> <span class="keyword">const</span> <span class="keywordtype">char</span>* what() <span class="keyword">const</span> <span class="keywordflow">throw</span>();</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;            <span class="keyword">template</span>&lt; <span class="keyword">class</span> XType &gt;</div>
+<div class="line"><a name="l00039"></a><span class="lineno"><a class="line" href="classmonarch3_1_1_m3_exception.html#afecf249e420bd9c8fbffe05247a450f7">   39</a></span>&#160;            <a class="code" href="classmonarch3_1_1_m3_exception.html">M3Exception</a>&amp; <a class="code" href="_m3_header_8cc.html#ae79ce17fa3f18c043cea2e0f8be5a242">operator&lt;&lt; </a>( <span class="keyword">const</span> XType&amp; aReference )</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;            {</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;                std::stringstream tStream;</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;                tStream &lt;&lt; aReference;</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;                fMessage += tStream.str();</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;                <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;            }</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00048"></a><span class="lineno"><a class="line" href="classmonarch3_1_1_m3_exception.html#a431556ea30f51f2f9a41ae89dc671a94">   48</a></span>&#160;            std::string <a class="code" href="classmonarch3_1_1_m3_exception.html#a431556ea30f51f2f9a41ae89dc671a94">fMessage</a>;</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    };</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;}</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* M3EXCEPTION_HH_ */</span><span class="preprocessor"></span></div>
 <div class="ttc" id="namespacemonarch3_html"><div class="ttname"><a href="namespacemonarch3.html">monarch3</a></div><div class="ttdef"><b>Definition:</b> <a href="_m3_constants_8hh_source.html#l00034">M3Constants.hh:34</a></div></div>
 <div class="ttc" id="_m3_constants_8hh_html"><div class="ttname"><a href="_m3_constants_8hh.html">M3Constants.hh</a></div></div>
-<div class="ttc" id="classmonarch3_1_1_m3_exception_html"><div class="ttname"><a href="classmonarch3_1_1_m3_exception.html">monarch3::M3Exception</a></div><div class="ttdoc">Specialized exception class for Monarch3. </div><div class="ttdef"><b>Definition:</b> <a href="_m3_exception_8hh_source.html#l00033">M3Exception.hh:33</a></div></div>
-<div class="ttc" id="classmonarch3_1_1_m3_exception_html_a431556ea30f51f2f9a41ae89dc671a94"><div class="ttname"><a href="classmonarch3_1_1_m3_exception.html#a431556ea30f51f2f9a41ae89dc671a94">monarch3::M3Exception::fMessage</a></div><div class="ttdeci">std::string fMessage</div><div class="ttdef"><b>Definition:</b> <a href="_m3_exception_8hh_source.html#l00053">M3Exception.hh:53</a></div></div>
-<div class="ttc" id="_m3_header_8cc_html_ae79ce17fa3f18c043cea2e0f8be5a242"><div class="ttname"><a href="_m3_header_8cc.html#ae79ce17fa3f18c043cea2e0f8be5a242">operator&lt;&lt;</a></div><div class="ttdeci">M3_API std::ostream &amp; operator&lt;&lt;(std::ostream &amp;out, const monarch3::M3StreamHeader &amp;hdr)</div><div class="ttdef"><b>Definition:</b> <a href="_m3_header_8cc_source.html#l00675">M3Header.cc:675</a></div></div>
+<div class="ttc" id="classmonarch3_1_1_m3_exception_html"><div class="ttname"><a href="classmonarch3_1_1_m3_exception.html">monarch3::M3Exception</a></div><div class="ttdoc">Specialized exception class for Monarch3. </div><div class="ttdef"><b>Definition:</b> <a href="_m3_exception_8hh_source.html#l00028">M3Exception.hh:28</a></div></div>
+<div class="ttc" id="classmonarch3_1_1_m3_exception_html_a431556ea30f51f2f9a41ae89dc671a94"><div class="ttname"><a href="classmonarch3_1_1_m3_exception.html#a431556ea30f51f2f9a41ae89dc671a94">monarch3::M3Exception::fMessage</a></div><div class="ttdeci">std::string fMessage</div><div class="ttdef"><b>Definition:</b> <a href="_m3_exception_8hh_source.html#l00048">M3Exception.hh:48</a></div></div>
+<div class="ttc" id="_m3_header_8cc_html_ae79ce17fa3f18c043cea2e0f8be5a242"><div class="ttname"><a href="_m3_header_8cc.html#ae79ce17fa3f18c043cea2e0f8be5a242">operator&lt;&lt;</a></div><div class="ttdeci">M3_API std::ostream &amp; operator&lt;&lt;(std::ostream &amp;out, const monarch3::M3StreamHeader &amp;hdr)</div><div class="ttdef"><b>Definition:</b> <a href="_m3_header_8cc_source.html#l00685">M3Header.cc:685</a></div></div>
 <div class="ttc" id="_m3_constants_8hh_html_aced4881fd530d8c488081fed74b90242"><div class="ttname"><a href="_m3_constants_8hh.html#aced4881fd530d8c488081fed74b90242">M3_API</a></div><div class="ttdeci">#define M3_API</div><div class="ttdef"><b>Definition:</b> <a href="_m3_constants_8hh_source.html#l00021">M3Constants.hh:21</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Jun 8 2015 22:14:04 for Monarch by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Nov 19 2015 16:16:17 for Monarch by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.9.1
 </small></address>
