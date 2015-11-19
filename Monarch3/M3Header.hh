@@ -37,7 +37,7 @@ namespace monarch3
             M3StreamHeader( const std::string& aSource, uint32_t aNumber, uint32_t aNChannels, uint32_t aFirstChannel, uint32_t aFormat,
                            uint32_t anAcqRate, uint32_t aRecSize, uint32_t aSampleSize,
                            uint32_t aDataTypeSize, uint32_t aDataFormat,
-                           uint32_t aBitDepth );
+                           uint32_t aBitDepth, uint32_t aBitAlignment );
             M3StreamHeader( const M3StreamHeader& orig );
             ~M3StreamHeader();
 
@@ -65,6 +65,8 @@ namespace monarch3
             M3MEMBERVARIABLE( uint32_t, DataFormat );
 
             M3MEMBERVARIABLE( uint32_t, BitDepth );
+
+            M3MEMBERVARIABLE( uint32_t, BitAlignment );
 
             M3MEMBERVARIABLE( uint32_t, NAcquisitions );
 
@@ -94,7 +96,7 @@ namespace monarch3
             M3ChannelHeader( const std::string& aSource, uint32_t aNumber,
                             uint32_t anAcqRate, uint32_t aRecSize, uint32_t aSampleSize,
                             uint32_t aDataTypeSize, uint32_t aDataFormat,
-                            uint32_t aBitDepth );
+                            uint32_t aBitDepth, uint32_t aBitAlignment );
             M3ChannelHeader( const M3ChannelHeader& orig );
             ~M3ChannelHeader();
 
@@ -116,6 +118,8 @@ namespace monarch3
             M3MEMBERVARIABLE( uint32_t, DataFormat );
 
             M3MEMBERVARIABLE( uint32_t, BitDepth );
+
+            M3MEMBERVARIABLE( uint32_t, BitAlignment );
 
             M3MEMBERVARIABLE( double, VoltageOffset );
 
@@ -186,14 +190,14 @@ namespace monarch3
             unsigned AddStream( const std::string& aSource,
                                 uint32_t anAcqRate, uint32_t aRecSize, uint32_t aSampleSize,
                                 uint32_t aDataTypeSize, uint32_t aDataFormat,
-                                uint32_t aBitDepth,
+                                uint32_t aBitDepth, uint32_t aBitAlignment,
                                 std::vector< unsigned >* aChanVec = NULL );
             /// Add a stream with multiple channels with aRecSize samples per record
             /// Returns the stream number (used to address the stream later)
             unsigned AddStream( const std::string& aSource, uint32_t aNChannels, uint32_t aFormat,
                                 uint32_t anAcqRate, uint32_t aRecSize, uint32_t aSampleSize,
                                 uint32_t aDataTypeSize, uint32_t aDataFormat,
-                                uint32_t aBitDepth,
+                                uint32_t aBitDepth, uint32_t aBitAlignment,
                                 std::vector< unsigned >* aChanVec = NULL );
 
         public:
