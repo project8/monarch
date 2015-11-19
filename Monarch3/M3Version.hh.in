@@ -24,10 +24,6 @@
 #define Monarch_GIT_COMMIT @Monarch_GIT_COMMIT@
 #define Monarch_GIT_DESCRIBE @Monarch_GIT_DESCRIBE@
 
-//#ifdef _WIN32
-//M3_EXPIMP_TEMPLATE template class M3_API std::basic_string< char, std::char_traits< char >, std::allocator< char > >;
-//#endif
-
 namespace monarch3
 {
     class M3_API M3Version

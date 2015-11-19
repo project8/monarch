@@ -6,7 +6,7 @@ cmake_minimum_required (VERSION 3.0)
 #########
 
 cmake_policy( SET CMP0048 NEW ) # version in project()
-project( Monarch VERSION 3.0.1 )
+project( Monarch VERSION 3.2.0 )
 
 list( APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
@@ -14,7 +14,7 @@ include( PackageBuilder)
 pbuilder_prepare_project()
 
 # Egg file version
-set( Egg_VERSION "3.0.0" )
+set( Egg_VERSION "3.1.0" )
 
 set( Monarch_BUILD_MONARCH2 FALSE CACHE BOOL "Build Monarch2 library (requires Protobuf)" )
 set( Monarch_BUILD_MONARCH3 TRUE CACHE BOOL "Build Monarch3 library (requires HDF5)" )
@@ -49,14 +49,6 @@ if( Monarch_BUILD_MONARCH2 )
     add_subdirectory( Protobuf )
 endif( Monarch_BUILD_MONARCH2 )
 
-add_subdirectory( libthorax )
-pbuilder_add_submodule_libraries( ${libthorax_LIBRARIES} )
-include_directories( ${libthorax_DEP_INCLUDE_DIRS} )
-# add to the RPATH to be used when installing, but only if it's not a system directory
-list( FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${libthorax_LIBRARY_DIR}" isSystemDir )
-if ( "${isSystemDir}" STREQUAL "-1" )
-   list( APPEND CMAKE_INSTALL_RPATH ${libthorax_LIBRARY_DIR} )
-endif( "${isSystemDir}" STREQUAL "-1" )
 
 
 #############################

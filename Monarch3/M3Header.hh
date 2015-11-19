@@ -13,26 +13,10 @@
 #include "M3MemberVariable.hh"
 #include "M3Types.hh"
 
-//#ifdef _WIN32
-//M3_EXPIMP_TEMPLATE template class M3_API std::basic_string< char, std::char_traits< char >, std::allocator< char > >;
-//#endif
 #include "H5Cpp.h"
 
 #include <string>
 #include <vector>
-
-//#ifdef _WIN32
-//M3_EXPIMP_TEMPLATE template class M3_API std::basic_string< char, std::char_traits< char >, std::allocator< char > >;
-//namespace monarch3
-//{
-//    class M3ChannelHeader;
-//    class M3StreamHeader;
-//}
-//M3_EXPIMP_TEMPLATE template class M3_API std::vector< uint32_t, std::allocator< uint32_t > >;
-//M3_EXPIMP_TEMPLATE template class M3_API std::vector< std::vector< bool, std::allocator< bool > >, std::allocator< std::vector< bool, std::allocator< bool > > > >;
-//M3_EXPIMP_TEMPLATE template class M3_API std::vector< monarch3::M3ChannelHeader >;
-//M3_EXPIMP_TEMPLATE template class M3_API std::vector< monarch3::M3StreamHeader >;
-//#endif
 
 namespace monarch3
 {
@@ -53,7 +37,7 @@ namespace monarch3
             M3StreamHeader( const std::string& aSource, uint32_t aNumber, uint32_t aNChannels, uint32_t aFirstChannel, uint32_t aFormat,
                            uint32_t anAcqRate, uint32_t aRecSize, uint32_t aSampleSize,
                            uint32_t aDataTypeSize, uint32_t aDataFormat,
-                           uint32_t aBitDepth );
+                           uint32_t aBitDepth, uint32_t aBitAlignment );
             M3StreamHeader( const M3StreamHeader& orig );
             ~M3StreamHeader();
 
@@ -81,6 +65,8 @@ namespace monarch3
             M3MEMBERVARIABLE( uint32_t, DataFormat );
 
             M3MEMBERVARIABLE( uint32_t, BitDepth );
+
+            M3MEMBERVARIABLE( uint32_t, BitAlignment );
 
             M3MEMBERVARIABLE( uint32_t, NAcquisitions );
 
@@ -110,7 +96,7 @@ namespace monarch3
             M3ChannelHeader( const std::string& aSource, uint32_t aNumber,
                             uint32_t anAcqRate, uint32_t aRecSize, uint32_t aSampleSize,
                             uint32_t aDataTypeSize, uint32_t aDataFormat,
-                            uint32_t aBitDepth );
+                            uint32_t aBitDepth, uint32_t aBitAlignment );
             M3ChannelHeader( const M3ChannelHeader& orig );
             ~M3ChannelHeader();
 
@@ -132,6 +118,8 @@ namespace monarch3
             M3MEMBERVARIABLE( uint32_t, DataFormat );
 
             M3MEMBERVARIABLE( uint32_t, BitDepth );
+
+            M3MEMBERVARIABLE( uint32_t, BitAlignment );
 
             M3MEMBERVARIABLE( double, VoltageOffset );
 
@@ -202,14 +190,14 @@ namespace monarch3
             unsigned AddStream( const std::string& aSource,
                                 uint32_t anAcqRate, uint32_t aRecSize, uint32_t aSampleSize,
                                 uint32_t aDataTypeSize, uint32_t aDataFormat,
-                                uint32_t aBitDepth,
+                                uint32_t aBitDepth, uint32_t aBitAlignment,
                                 std::vector< unsigned >* aChanVec = NULL );
             /// Add a stream with multiple channels with aRecSize samples per record
             /// Returns the stream number (used to address the stream later)
             unsigned AddStream( const std::string& aSource, uint32_t aNChannels, uint32_t aFormat,
                                 uint32_t anAcqRate, uint32_t aRecSize, uint32_t aSampleSize,
                                 uint32_t aDataTypeSize, uint32_t aDataFormat,
-                                uint32_t aBitDepth,
+                                uint32_t aBitDepth, uint32_t aBitAlignment,
                                 std::vector< unsigned >* aChanVec = NULL );
 
         public:

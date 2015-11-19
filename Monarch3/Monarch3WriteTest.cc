@@ -36,10 +36,10 @@ int main( const int argc, const char** argv )
         //unsigned tFlCompSamples = 5;
 
         M3INFO( mlog, "Adding streams" );
-        unsigned tSingleStreamNum = tHeader->AddStream( "1-channel device", 500, tSSSamples, 1, 1, sDigitizedUS, 8 );
-        unsigned tDoubleStreamNum = tHeader->AddStream( "2-channel device", 2, sInterleaved, 250, tDSSamples, 1, 2, sDigitizedUS, 16 );
-        unsigned tTripleStreamNum = tHeader->AddStream( "3-channel device", 3, sSeparate, 100, tTSSamples, 1, 1, sDigitizedUS, 8 );
-        unsigned tFloatStreamNum = tHeader->AddStream( "Floating-point device", 100, tFlSSamples, 1, 4, sAnalog, 8 );
+        unsigned tSingleStreamNum = tHeader->AddStream( "1-channel device", 500, tSSSamples, 1, 1, sDigitizedUS, 8, sBitsAlignedLeft );
+        unsigned tDoubleStreamNum = tHeader->AddStream( "2-channel device", 2, sInterleaved, 250, tDSSamples, 1, 2, sDigitizedUS, 16, sBitsAlignedLeft );
+        unsigned tTripleStreamNum = tHeader->AddStream( "3-channel device", 3, sSeparate, 100, tTSSamples, 1, 1, sDigitizedUS, 8, sBitsAlignedLeft );
+        unsigned tFloatStreamNum = tHeader->AddStream( "Floating-point device", 100, tFlSSamples, 1, 4, sAnalog, 8, sBitsAlignedLeft );
         // multi-channel multi-sample writing commented out until fixed
         //unsigned tFlCompStreamNum = tHeader->AddStream( "Complex Floating-point device", 5, sInterleaved, 100, tFlCompSamples, 2, 8, sAnalog, 16 );
 

@@ -14,11 +14,6 @@
 #include <string>
 #include <sstream>
 
-//#ifdef _WIN32
-//M3_EXPIMP_TEMPLATE template class M3_API std::basic_stringstream< char, std::char_traits< char >, std::allocator< char > >;
-//M3_EXPIMP_TEMPLATE template class M3_API std::basic_string< char, std::char_traits< char >, std::allocator< char > >;
-//#endif
-
 namespace monarch3
 {
 

@@ -27,8 +27,7 @@
 #include <Windows.h>
 #endif
 
-#include "thorax.hh"
-
+#include <inttypes.h>
 #include <limits>
 
 namespace monarch3
@@ -41,6 +40,11 @@ namespace monarch3
     static const uint32_t sDigitizedS = 1;
     static const uint32_t sAnalog = 2;
 
+    /// Specifies whether the meaningful bits for each sample are aligned to the left or right in each sample word
+    /// e.g. For 14-bit digitizer bit depth, represented by a 16-bit sample word, are the 14 bits aligned to the left or right in the 16-bit word?
+    static const uint32_t sBitsAlignedLeft = 0;
+    static const uint32_t sBitsAlignedRight = 1;
+
     // stream information
 
     /// Specifies whether the data channels are interleaved or separate in a stream
@@ -48,9 +52,9 @@ namespace monarch3
     static const uint32_t sSeparate = 1;
 
     // re-typdefing for aesthetic purposes
-    typedef acquisition_id_type AcquisitionIdType; // 8 bytes
-    typedef record_id_type RecordIdType; // 8 bytes
-    typedef time_nsec_type TimeType; // 8 bytes
+    typedef uint64_t AcquisitionIdType; // 8 bytes
+    typedef uint64_t RecordIdType; // 8 bytes
+    typedef uint64_t TimeType; // 8 bytes
 
 }
 

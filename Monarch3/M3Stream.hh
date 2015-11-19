@@ -15,10 +15,6 @@
 
 #include "H5Cpp.h"
 
-//#ifdef _WIN32
-//M3_EXPIMP_TEMPLATE template class M3_API std::vector< std::pair< unsigned, unsigned > >;
-//#endif
-
 namespace monarch3
 {
     /*!
