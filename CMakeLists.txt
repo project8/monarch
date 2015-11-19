@@ -6,7 +6,7 @@ cmake_minimum_required (VERSION 3.0)
 #########
 
 cmake_policy( SET CMP0048 NEW ) # version in project()
-project( Monarch VERSION 3.2.0 )
+project( Monarch VERSION 3.2.1 )
 
 list( APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
 
@@ -33,10 +33,13 @@ if( GIT_FOUND )
 endif( GIT_FOUND )
 
 if( Monarch_BUILD_MONARCH3 )
-    find_package( HDF5 REQUIRED COMPONENTS CXX )
+    find_package( HDF5 REQUIRED COMPONENTS C CXX )
     include_directories( BEFORE ${PROJECT_SOURCE_DIR}/Monarch3 ${PROJECT_BINARY_DIR} )
     include_directories( BEFORE ${HDF5_INCLUDE_DIR} )
+    # It seems that all 3 of the following lines are needed to make Monarch compile on both Mac/Linux and Windows
     pbuilder_add_ext_libraries( ${HDF5_CXX_LIBRARIES} )
+    pbuilder_add_ext_libraries( ${HDF5_C_LIBRARY} )
+    pbuilder_add_ext_libraries( ${HDF5_CXX_LIBRARY} )
 endif( Monarch_BUILD_MONARCH3 )
 
 if( Monarch_BUILD_MONARCH2 )
