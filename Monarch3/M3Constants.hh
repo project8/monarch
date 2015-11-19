@@ -27,8 +27,7 @@
 #include <Windows.h>
 #endif
 
-#include "thorax.hh"
-
+#include <inttypes.h>
 #include <limits>
 
 namespace monarch3
@@ -53,9 +52,9 @@ namespace monarch3
     static const uint32_t sSeparate = 1;
 
     // re-typdefing for aesthetic purposes
-    typedef acquisition_id_type AcquisitionIdType; // 8 bytes
-    typedef record_id_type RecordIdType; // 8 bytes
-    typedef time_nsec_type TimeType; // 8 bytes
+    typedef uint64_t AcquisitionIdType; // 8 bytes
+    typedef uint64_t RecordIdType; // 8 bytes
+    typedef uint64_t TimeType; // 8 bytes
 
 }
 
