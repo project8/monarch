@@ -1,12 +1,14 @@
 #ifndef M2_TYPES_HH
 #define M2_TYPES_HH
 
+#include <inttypes.h>
 #include <string>
 
-#include "thorax.hh"
 
 namespace monarch2
 {
+    typedef uint8_t byte_type;
+
 
     template<typename T, typename U>
     struct is_same
@@ -52,9 +54,9 @@ namespace monarch2
     static const FormatModeType sFormatMultiInterleaved = 2;
 
     // re-typdefing for aesthetic purposes
-    typedef acquisition_id_type AcquisitionIdType; // 8 bytes
-    typedef record_id_type RecordIdType; // 8 bytes
-    typedef time_nsec_type TimeType; // 8 bytes
+    typedef uint64_t AcquisitionIdType; // 8 bytes
+    typedef uint64_t RecordIdType; // 8 bytes
+    typedef uint64_t TimeType; // 8 bytes
 
 }
 
