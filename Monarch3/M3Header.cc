@@ -154,7 +154,7 @@ namespace monarch3
         SetDataTypeSize( M3Header::ReadScalarFromHDF5< uint32_t >( &tThisStreamGroup, "data_type_size" ) );
         SetDataFormat( M3Header::ReadScalarFromHDF5< uint32_t >( &tThisStreamGroup, "data_format" ) );
         SetBitDepth( M3Header::ReadScalarFromHDF5< uint32_t >( &tThisStreamGroup, "bit_depth" ) );
-        SetBitAlignment( M3Header::ReadScalarFromHDF5< uint32_t >( &tThisStreamGroup, "bit_alignment" ) );
+        SetBitAlignment( M3Header::ReadScalarFromHDF5< uint32_t >( &tThisStreamGroup, "bit_alignment", fBitAlignment ) );
         SetNAcquisitions( M3Header::ReadScalarFromHDF5< uint32_t >( &tThisStreamGroup, "n_acquisitions" ) );
         SetNRecords( M3Header::ReadScalarFromHDF5< uint32_t >( &tThisStreamGroup, "n_records" ) );
 
@@ -339,7 +339,7 @@ namespace monarch3
         SetDataTypeSize( M3Header::ReadScalarFromHDF5< uint32_t >( &tThisChannelGroup, "data_type_size" ) );
         SetDataFormat( M3Header::ReadScalarFromHDF5< uint32_t >( &tThisChannelGroup, "data_format" ) );
         SetBitDepth( M3Header::ReadScalarFromHDF5< uint32_t >( &tThisChannelGroup, "bit_depth" ) );
-        SetBitAlignment( M3Header::ReadScalarFromHDF5< uint32_t >( &tThisChannelGroup, "bit_alignment" ) );
+        SetBitAlignment( M3Header::ReadScalarFromHDF5< uint32_t >( &tThisChannelGroup, "bit_alignment", fBitAlignment ) );
         SetVoltageOffset( M3Header::ReadScalarFromHDF5< double >( &tThisChannelGroup, "voltage_offset" ) );
         SetVoltageRange( M3Header::ReadScalarFromHDF5< double >( &tThisChannelGroup, "voltage_range" ) );
         SetDACGain( M3Header::ReadScalarFromHDF5< double >( &tThisChannelGroup, "dac_gain" ) );
