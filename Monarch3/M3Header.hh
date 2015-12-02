@@ -232,6 +232,9 @@ namespace monarch3
             template< typename XType >
             static XType ReadScalarFromHDF5( const H5::H5Location* aLoc, const std::string& aName );
 
+            template< typename XType >
+            static XType ReadScalarFromHDF5( const H5::H5Location* aLoc, const std::string& aName, const XType& aDefault );
+
             //template< typename XArrayType >
             //static void Read1DFromHDF5( const H5::H5Location* aLoc, const std::string& aName, XArrayType& anArray );
 
@@ -330,6 +333,38 @@ namespace monarch3
     template< typename XType >
     XType M3Header::ReadScalarFromHDF5( const H5::H5Location* aLoc, const std::string& aName )
     {
+        XType tValue;
+        H5::Attribute* tAttr = new H5::Attribute( aLoc->openAttribute( aName.c_str() ) );
+        tAttr->read( tAttr->getDataType(), &tValue );
+        delete tAttr;
+        M3DEBUG( mlog_mheader, "Reading value <" << aName << ">: " << tValue );
+        return tValue;
+    }
+
+
+    // Read functions with default values
+
+    // read specialization for strings
+    template<>
+    inline std::string M3Header::ReadScalarFromHDF5( const H5::H5Location* aLoc, const std::string& aName, const std::string& aDefaultValue )
+    {
+        if( ! aLoc->attrExists( aName.c_str() ) ) return aDefaultValue;
+        //std::string tValue;
+        char tBuffer[ 256 ];
+        H5::Attribute* tAttr = new H5::Attribute( aLoc->openAttribute( aName.c_str() ) );
+        //tAttr->read( tAttr->getDataType(), tValue );
+        tAttr->read( tAttr->getDataType(), tBuffer );
+        delete tAttr;
+        std::string tValue( tBuffer );
+        M3DEBUG( mlog_mheader, "Reading string <" << aName << ">: " << tValue << "; size = " << tValue.size() );
+        return tValue;
+    }
+
+    // templated read function
+    template< typename XType >
+    XType M3Header::ReadScalarFromHDF5( const H5::H5Location* aLoc, const std::string& aName, const XType& aDefaultValue )
+    {
+        if( ! aLoc->attrExists( aName.c_str() ) ) return aDefaultValue;
         XType tValue;
         H5::Attribute* tAttr = new H5::Attribute( aLoc->openAttribute( aName.c_str() ) );
         tAttr->read( tAttr->getDataType(), &tValue );
