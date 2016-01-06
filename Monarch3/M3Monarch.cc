@@ -8,13 +8,13 @@
 
 #include "M3Monarch.hh"
 
-#include "M3Logger.hh"
+#include "logger.hh"
 
 using std::string;
 
 namespace monarch3
 {
-    M3LOGGER( mlog, "MMonarch3" );
+    LOGGER( mlog, "MMonarch3" );
 
     Monarch3::Monarch3() :
                 fState( eClosed ),
@@ -71,7 +71,7 @@ namespace monarch3
             throw M3Exception() << "Could not open <" << aFilename << "> for reading";
             return NULL;
         }
-        M3DEBUG( mlog, "Opened egg file <" << aFilename << "> for reading" );
+        DEBUG( mlog, "Opened egg file <" << aFilename << "> for reading" );
 
         tMonarch3->fHeader = new M3Header();
         tMonarch3->fHeader->SetFilename( aFilename );
@@ -105,7 +105,7 @@ namespace monarch3
             throw M3Exception() << "Could not open <" << aFilename << "> for writing";
             return NULL;
         }
-        M3DEBUG( mlog, "Opened egg file <" << aFilename << "> for writing" );
+        DEBUG( mlog, "Opened egg file <" << aFilename << "> for writing" );
 
         tMonarch3->fHeader = new M3Header();
         tMonarch3->fHeader->SetFilename( aFilename );
@@ -211,7 +211,7 @@ namespace monarch3
 
     void Monarch3::FinishReading() const
     {
-        M3DEBUG( mlog, "Finishing reading" );
+        DEBUG( mlog, "Finishing reading" );
         try
         {
             if( fHeader != NULL )
@@ -242,7 +242,7 @@ namespace monarch3
 
     void Monarch3::FinishWriting()
     {
-        M3DEBUG( mlog, "Finishing writing" );
+        DEBUG( mlog, "Finishing writing" );
         try
         {
             if( fHeader != NULL )

@@ -9,13 +9,13 @@
 
 #include "M3Version.hh"
 
-#include "M3Logger.hh"
+#include "logger.hh"
 
 #include <sstream>
 
 namespace monarch3
 {
-    M3LOGGER( mlog, "Version" );
+    LOGGER( mlog, "Version" );
 
     M3_API char M3Version::sDelimeter = '.';
 
@@ -80,7 +80,7 @@ namespace monarch3
         size_t tDelimPos_1 = aVer.find( sDelimeter, 0 );
         if( tDelimPos_1 == std::string::npos )
         {
-            M3ERROR( mlog, "version string <" << aVer << "> is not in the right format (did not find first delimeter)" );
+            ERROR( mlog, "version string <" << aVer << "> is not in the right format (did not find first delimeter)" );
             return false;
         }
         std::stringstream tMajVerStr;
@@ -89,7 +89,7 @@ namespace monarch3
         size_t tDelimPos_2 = aVer.find( sDelimeter, tDelimPos_1 + 1 );
         if( tDelimPos_2 == std::string::npos )
         {
-            M3ERROR( mlog, "version string <" << aVer << "> is not in the right format (did not find second delimeter)" );
+            ERROR( mlog, "version string <" << aVer << "> is not in the right format (did not find second delimeter)" );
             return false;
         }
         std::stringstream tMinVerStr;

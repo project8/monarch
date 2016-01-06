@@ -4,7 +4,7 @@
 
 #include "M3DataInterface.hh"
 #include "M3Monarch.hh"
-#include "M3Logger.hh"
+#include "logger.hh"
 #include "M3Record.hh"
 
 #include <algorithm>
@@ -14,7 +14,7 @@
 using namespace monarch3;
 using std::stringstream;
 
-M3LOGGER( mlog, "Monarch3Info" );
+LOGGER( mlog, "Monarch3Info" );
 
 bool PrintChannelsUInt( const M3Stream* aStream );
 bool PrintChannelsInt( const M3Stream* aStream );
@@ -25,7 +25,7 @@ int main( const int argc, const char** argv )
 {
     if( argc < 2 || strcmp( argv[1], "-h" ) == 0 )
     {
-        M3INFO( mlog, "usage:\n"
+        INFO( mlog, "usage:\n"
             << "  Monarch3Info [-Hh] <input egg file>\n"
             << "      -h: print this usage information\n"
             << "      -H: (optional) header only; does not check number of records" );
@@ -38,7 +38,7 @@ int main( const int argc, const char** argv )
     {
         if( argc < 3 )
         {
-            M3ERROR( mlog, "no filename provided" );
+            ERROR( mlog, "no filename provided" );
             return -1;
         }
         ++tFileArg;
@@ -47,14 +47,14 @@ int main( const int argc, const char** argv )
 
     try
     {
-        M3INFO( mlog, "Opening file <" << argv[tFileArg] << ">" );
+        INFO( mlog, "Opening file <" << argv[tFileArg] << ">" );
         const Monarch3* tReadTest = Monarch3::OpenForReading( argv[tFileArg] );
 
-        M3INFO( mlog, "Reading header" );
+        INFO( mlog, "Reading header" );
         tReadTest->ReadHeader();
 
         const M3Header* tReadHeader = tReadTest->GetHeader();
-        M3INFO( mlog, *tReadHeader );
+        INFO( mlog, *tReadHeader );
 
         if( ! tCheckRecords )
         {
@@ -63,7 +63,7 @@ int main( const int argc, const char** argv )
             return 0;
         }
 
-        M3INFO( mlog, "Reading data" );
+        INFO( mlog, "Reading data" );
 
         unsigned tNStreams = tReadHeader->GetNStreams();
         for( unsigned iStream = 0; iStream < tNStreams; ++iStream )
@@ -71,13 +71,13 @@ int main( const int argc, const char** argv )
             const M3StreamHeader& tStrHeader = tReadHeader->GetStreamHeaders().at( iStream );
             unsigned tNChannels = tStrHeader.GetNChannels();
             //unsigned tRecSize = tStrHeader.GetRecordSize();
-            M3INFO( mlog, "Stream " << iStream << " has " << tNChannels << " channel(s) stored in format mode " << tStrHeader.GetChannelFormat() );
+            INFO( mlog, "Stream " << iStream << " has " << tNChannels << " channel(s) stored in format mode " << tStrHeader.GetChannelFormat() );
 
             const M3Stream* tStream = tReadTest->GetStream( iStream );
 
             if( tStream->GetNAcquisitions() == 0 )
             {
-                M3INFO( mlog, "\tThis stream has no acquisitions" );
+                INFO( mlog, "\tThis stream has no acquisitions" );
                 continue;
             }
 
@@ -86,7 +86,7 @@ int main( const int argc, const char** argv )
             {
                 if( ! tStream->ReadRecord() )
                 {
-                    M3ERROR( mlog, "There was a problem reading a record from this stream" );
+                    ERROR( mlog, "There was a problem reading a record from this stream" );
                     break;
                 }
                 switch( tStrHeader.GetDataFormat() )
@@ -94,14 +94,14 @@ int main( const int argc, const char** argv )
                     case sDigitizedUS:
                         if( ! PrintChannelsUInt( tStream ) )
                         {
-                            M3ERROR( mlog, "Problem printing channels (int)" );
+                            ERROR( mlog, "Problem printing channels (int)" );
                             return 0;
                         }
                         break;
                     case sDigitizedS:
                         if( ! PrintChannelsInt( tStream ) )
                         {
-                            M3ERROR( mlog, "Problem printing channels (int)" );
+                            ERROR( mlog, "Problem printing channels (int)" );
                             return 0;
                         }
                         break;
@@ -111,21 +111,21 @@ int main( const int argc, const char** argv )
                             case 1:
                                 if( ! PrintChannelsFloat( tStream ) )
                                 {
-                                    M3ERROR( mlog, "Problem printing channels (float)" );
+                                    ERROR( mlog, "Problem printing channels (float)" );
                                     return 0;
                                 }
                                 break;
                             default:
                                 if( ! PrintChannelsFloatComplex( tStream ) )
                                 {
-                                    M3ERROR( mlog, "Problem printing channels (float-complex)" );
+                                    ERROR( mlog, "Problem printing channels (float-complex)" );
                                     return 0;
                                 }
                                 break;
                         }
                         break;
                     default:
-                        M3ERROR( mlog, "Invalid data format: "<<tStrHeader.GetDataFormat() );
+                        ERROR( mlog, "Invalid data format: "<<tStrHeader.GetDataFormat() );
                         break;
                 }
             }
@@ -137,7 +137,7 @@ int main( const int argc, const char** argv )
     }
     catch( M3Exception& e )
     {
-        M3ERROR( mlog, "Exception thrown during file reading:\n" << e.what() );
+        ERROR( mlog, "Exception thrown during file reading:\n" << e.what() );
     }
 
     return 0;
@@ -158,7 +158,7 @@ bool PrintChannelsUInt( const M3Stream* aStream )
             if( iSample != tRecSize - 1 ) tDataOut << ", ";
         }
         if( tRecSize > tMaxSamples ) tDataOut << " . . .";
-        M3INFO( mlog, "\tChannel " << iChan << ": " << tDataOut.str() );
+        INFO( mlog, "\tChannel " << iChan << ": " << tDataOut.str() );
     }
     return true;
 }
@@ -178,7 +178,7 @@ bool PrintChannelsInt( const M3Stream* aStream )
             if( iSample != tRecSize - 1 ) tDataOut << ", ";
         }
         if( tRecSize > tMaxSamples ) tDataOut << " . . .";
-        M3INFO( mlog, "\tChannel " << iChan << ": " << tDataOut.str() );
+        INFO( mlog, "\tChannel " << iChan << ": " << tDataOut.str() );
     }
     return true;
 }
@@ -198,7 +198,7 @@ bool PrintChannelsFloat( const M3Stream* aStream )
             if( iSample != tRecSize - 1 ) tDataOut << ", ";
         }
         if( tRecSize > tMaxSamples ) tDataOut << " . . .";
-        M3INFO( mlog, "\tChannel " << iChan << ": " << tDataOut.str() );
+        INFO( mlog, "\tChannel " << iChan << ": " << tDataOut.str() );
     }
     return true;
 }
@@ -222,7 +222,7 @@ bool PrintChannelsFloatComplex( const M3Stream* aStream )
                     if( iSample != tRecSize - 1 ) tDataOut << ", ";
                 }
                 if( tRecSize > tMaxSamples ) tDataOut << " . . .";
-                M3INFO( mlog, "\tChannel " << iChan << ": " << tDataOut.str() );
+                INFO( mlog, "\tChannel " << iChan << ": " << tDataOut.str() );
             }
             break;
         case 8:
@@ -237,11 +237,11 @@ bool PrintChannelsFloatComplex( const M3Stream* aStream )
                     if( iSample != tRecSize - 1 ) tDataOut << ", ";
                 }
                 if( tRecSize > tMaxSamples ) tDataOut << " . . .";
-                M3INFO( mlog, "\tChannel " << iChan << ": " << tDataOut.str() );
+                INFO( mlog, "\tChannel " << iChan << ": " << tDataOut.str() );
             }
             break;
         default:
-            M3ERROR( mlog, "Cannot print channels for complex floating-point data with type size " << aStream->GetDataTypeSize() );
+            ERROR( mlog, "Cannot print channels for complex floating-point data with type size " << aStream->GetDataTypeSize() );
             return false;
             break;
     }

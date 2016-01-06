@@ -10,7 +10,7 @@
 #include "M3Stream.hh"
 
 #include "M3IToA.hh"
-#include "M3Logger.hh"
+#include "logger.hh"
 
 #include <cstdlib> // for abs
 
@@ -35,7 +35,7 @@
 
 namespace monarch3
 {
-    M3LOGGER( mlog, "M3Stream" );
+    LOGGER( mlog, "M3Stream" );
 
     M3Stream::M3Stream( const M3StreamHeader& aHeader, H5::CommonFG* aH5StreamsLoc, uint32_t aAccessFormat ) :
             fMode( kRead ),
@@ -66,7 +66,7 @@ namespace monarch3
             fH5CurrentAcqDataSet( NULL ),
             fH5DataSpaceUser( NULL )
     {
-        M3DEBUG( mlog, "Creating stream for <" << aHeader.GetLabel() << ">" );
+        DEBUG( mlog, "Creating stream for <" << aHeader.GetLabel() << ">" );
 
         if( aHeader.GetDataFormat() == sDigitizedUS )
         {
@@ -147,7 +147,7 @@ namespace monarch3
             H5::Exception::dontPrint();
 
             fH5AcqLoc = new H5::Group( fH5StreamParentLoc->openGroup( "acquisitions" ) );
-            M3DEBUG( mlog, "Opened acquisition group in <read> mode" );
+            DEBUG( mlog, "Opened acquisition group in <read> mode" );
 
             // turn HDF5 error printing back on
             H5::Exception::setAutoPrint( tAutoPrintFunc, tClientData );
@@ -165,7 +165,7 @@ namespace monarch3
                 throw M3Exception() << "Acquisitions group is not properly setup for reading\n";
             }
 
-            M3DEBUG( mlog, "\tNumber of acquisitions found: " << fNAcquisitions << "; Number of records found: " << fNRecordsInFile );
+            DEBUG( mlog, "\tNumber of acquisitions found: " << fNAcquisitions << "; Number of records found: " << fNRecordsInFile );
             fMode = kRead;
         }
         catch( H5::Exception& )
@@ -178,7 +178,7 @@ namespace monarch3
             try
             {
                 fH5AcqLoc = new H5::Group( fH5StreamParentLoc->createGroup( "acquisitions" ) );
-                M3DEBUG( mlog, "Opened acquisition group in <write> mode" );
+                DEBUG( mlog, "Opened acquisition group in <write> mode" );
                 fMode = kWrite;
             }
             catch( H5::Exception& )
@@ -202,7 +202,7 @@ namespace monarch3
 
     void M3Stream::Initialize() const
     {
-        M3DEBUG( mlog, "Initializing stream" );
+        DEBUG( mlog, "Initializing stream" );
         fIsInitialized = false;
 
         // The case where the access format is separate, but the data in the file is interleaved is special.
@@ -320,7 +320,7 @@ namespace monarch3
         fRecordCountInFile = fRecordCountInFile + anOffset;
         unsigned nextAcq = fRecordIndex.at( fRecordCountInFile ).first;
         fRecordCountInAcq = fRecordIndex.at( fRecordCountInFile ).second;
-        M3DEBUG( mlog, "Going to record " << fRecordCountInFile << " -- " << nextAcq << " -- " << fRecordCountInAcq );
+        DEBUG( mlog, "Going to record " << fRecordCountInFile << " -- " << nextAcq << " -- " << fRecordCountInAcq );
 
         if( nextAcq != fAcquisitionId || ! fRecordsAccessed )
         {
@@ -343,7 +343,7 @@ namespace monarch3
 
     void M3Stream::Close() const
     {
-        //M3DEBUG( mlog, "const M3Stream::Close()" );
+        //DEBUG( mlog, "const M3Stream::Close()" );
 
         delete fH5DataSpaceUser; fH5DataSpaceUser = NULL;
         delete fH5CurrentAcqDataSet; fH5CurrentAcqDataSet = NULL;
@@ -399,7 +399,7 @@ namespace monarch3
                 fH5CurrentAcqDataSet->extend( fStrDataDims );
             }
 
-            M3DEBUG( mlog, "Writing acq. " << fAcquisitionId << ", record " << fRecordCountInAcq );
+            DEBUG( mlog, "Writing acq. " << fAcquisitionId << ", record " << fRecordCountInAcq );
 
             fDataOffset[ 0 ] = fRecordCountInAcq;
 
@@ -411,11 +411,11 @@ namespace monarch3
         }
         catch( H5::Exception& e )
         {
-            M3ERROR( mlog, "HDF5 error while writing a record:\n\t" << e.getCDetailMsg() << " (function: " << e.getFuncName() << ")" );
+            ERROR( mlog, "HDF5 error while writing a record:\n\t" << e.getCDetailMsg() << " (function: " << e.getFuncName() << ")" );
         }
         catch( M3Exception& e )
         {
-            M3ERROR( mlog, e.what() );
+            ERROR( mlog, e.what() );
         }
 
         return false;
@@ -423,7 +423,7 @@ namespace monarch3
 
     void M3Stream::Close()
     {
-        //M3DEBUG( mlog, "non-const M3Stream::Close()" );
+        //DEBUG( mlog, "non-const M3Stream::Close()" );
         FinalizeStream();
 
         delete fH5DataSpaceUser; fH5DataSpaceUser = NULL;
@@ -492,12 +492,12 @@ namespace monarch3
             u32toa( iAcq, fAcqNameBuffer );
             H5::Attribute tAttr( fH5AcqLoc->openDataSet( fAcqNameBuffer ).openAttribute( "n_records" ) );
             tAttr.read( tAttr.getDataType(), &tNRecInAcq );
-            M3DEBUG( mlog, "Acquisition <" << fAcqNameBuffer << "> has " << tNRecInAcq << " records" );
+            DEBUG( mlog, "Acquisition <" << fAcqNameBuffer << "> has " << tNRecInAcq << " records" );
             for( unsigned iRecInAcq = 0; iRecInAcq < tNRecInAcq; ++iRecInAcq )
             {
                 fRecordIndex.at( iRecInFile ).first = iAcq;
                 fRecordIndex.at( iRecInFile ).second = iRecInAcq;
-                M3DEBUG( mlog, "Record index: " << iRecInFile << " -- " << iAcq << " -- " << iRecInAcq );
+                DEBUG( mlog, "Record index: " << iRecInFile << " -- " << iAcq << " -- " << iRecInAcq );
                 ++iRecInFile;
             }
         }
@@ -511,7 +511,7 @@ namespace monarch3
         fNRecordsInAcq = fRecordCountInAcq;
 
         fH5CurrentAcqDataSet->createAttribute( "n_records", MH5Type< unsigned >::H5(), H5::DataSpace( H5S_SCALAR ) ).write( MH5Type< unsigned >::Native(), &fNRecordsInAcq );
-        M3DEBUG( mlog, "Finalizing acq. " << fAcquisitionId << " with " << fNRecordsInAcq << " records" );
+        DEBUG( mlog, "Finalizing acq. " << fAcquisitionId << " with " << fNRecordsInAcq << " records" );
 
         fRecordCountInAcq = 0;
         delete fH5CurrentAcqDataSet;
@@ -529,7 +529,7 @@ namespace monarch3
         fNAcquisitions = ( fAcquisitionId + 1 ) * (unsigned)fRecordsAccessed;
         fH5StreamParentLoc->openAttribute( "n_acquisitions" ).write( MH5Type< unsigned >::Native(), &fNAcquisitions );
         fH5StreamParentLoc->openAttribute( "n_records" ).write( MH5Type< unsigned >::Native(), &fRecordCountInFile );
-        M3DEBUG( mlog, "Finalizing stream with " << fNAcquisitions << " acquisitions and " << fRecordCountInFile << " records" );
+        DEBUG( mlog, "Finalizing stream with " << fNAcquisitions << " acquisitions and " << fRecordCountInFile << " records" );
 
         return;
     }

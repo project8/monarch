@@ -10,7 +10,7 @@
 
 #include "M3Exception.hh"
 #include "M3Header.hh"
-#include "M3Logger.hh"
+#include "logger.hh"
 #include "M3Stream.hh"
 
 #include "H5Cpp.h"
@@ -19,7 +19,7 @@
 
 namespace monarch3
 {
-    M3LOGGER( mlog_mmonarch, "M3Monarch3.h" );
+    LOGGER( mlog_mmonarch, "M3Monarch3.h" );
 
     /*!
      @class Monarch3
