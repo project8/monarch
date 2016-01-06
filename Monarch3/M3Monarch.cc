@@ -57,7 +57,12 @@ namespace monarch3
         }
         catch( H5::Exception& e )
         {
-            throw M3Exception() << "Could not open <" << aFilename << "> for reading; an exception was thrown: " << e.getDetailMsg();
+            throw M3Exception() << "Could not open <" << aFilename << "> for reading; an H5::Exception was thrown: " << e.getCDetailMsg();
+            return NULL;
+        }
+        catch( std::exception& e )
+        {
+            throw M3Exception() << "Could not open <" << aFilename << "> for reading; a std::exception was thrown: " << e.what();
             return NULL;
         }
         if( tMonarch3->fFile == NULL )
@@ -86,7 +91,12 @@ namespace monarch3
         }
         catch( H5::Exception& e )
         {
-            throw M3Exception() << "Could not open <" << aFilename << "> for writing; an exception was thrown: " << e.getDetailMsg();
+            throw M3Exception() << "Could not open <" << aFilename << "> for writing; an H5::Exception was thrown: " << e.getCDetailMsg();
+            return NULL;
+        }
+        catch( std::exception& e )
+        {
+            throw M3Exception() << "Could not open <" << aFilename << "> for writing; a std::exception was thrown: " << e.what();
             return NULL;
         }
         if( tMonarch3->fFile == NULL )
