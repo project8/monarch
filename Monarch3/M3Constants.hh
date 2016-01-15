@@ -51,11 +51,6 @@ namespace monarch3
     static const uint32_t sInterleaved = 0;
     static const uint32_t sSeparate = 1;
 
-    // re-typdefing for aesthetic purposes
-    typedef uint64_t AcquisitionIdType; // 8 bytes
-    typedef uint64_t RecordIdType; // 8 bytes
-    typedef uint64_t TimeType; // 8 bytes
-
 }
 
 #endif // M3CONSTANTS_HH_
