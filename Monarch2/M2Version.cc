@@ -7,13 +7,13 @@
 
 #include "M2Version.hh"
 
-#include "M2Logger.hh"
+#include "logger.hh"
 
 #include <sstream>
 
 namespace monarch2
 {
-    M2LOGGER( mlog, "Version" );
+    LOGGER( mlog, "Version" );
 
     char M2Version::sDelimeter = '.';
 
@@ -70,7 +70,7 @@ namespace monarch2
         size_t tDelimPos_1 = aVer.find( sDelimeter, 0 );
         if( tDelimPos_1 == std::string::npos )
         {
-            M2ERROR( mlog, "version string <" << aVer << "> is not in the right format (did not find first delimeter)" );
+            ERROR( mlog, "version string <" << aVer << "> is not in the right format (did not find first delimeter)" );
             return false;
         }
         std::stringstream tMajVerStr;
@@ -79,7 +79,7 @@ namespace monarch2
         size_t tDelimPos_2 = aVer.find( sDelimeter, tDelimPos_1 + 1 );
         if( tDelimPos_2 == std::string::npos )
         {
-            M2ERROR( mlog, "version string <" << aVer << "> is not in the right format (did not find second delimeter)" );
+            ERROR( mlog, "version string <" << aVer << "> is not in the right format (did not find second delimeter)" );
             return false;
         }
         std::stringstream tMinVerStr;

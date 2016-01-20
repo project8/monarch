@@ -6,20 +6,20 @@
  */
 
 #include "M2Monarch.hh"
-#include "M2Logger.hh"
+#include "logger.hh"
 
 #include <fstream>
 using std::ofstream;
 
 using namespace monarch2;
 
-M2LOGGER( mlog, "Monarch2TimeCheck" );
+LOGGER( mlog, "Monarch2TimeCheck" );
 
 int main( const int argc, const char** argv )
 {
     if( argc < 3 )
     {
-        M2INFO( mlog, "usage:\n"
+        INFO( mlog, "usage:\n"
             << "  Monarch2TimeCheck <input egg file> <output text file>" );
         return -1;
     }
@@ -27,7 +27,7 @@ int main( const int argc, const char** argv )
     ofstream tOutput( argv[ 2 ] );
     if( tOutput.is_open() == false )
     {
-        M2ERROR( mlog, "could not open output file!" );
+        ERROR( mlog, "could not open output file!" );
         return -1;
     }
 
@@ -35,7 +35,7 @@ int main( const int argc, const char** argv )
     tReadTest->ReadHeader();
 
     const M2Header* tReadHeader = tReadTest->GetHeader();
-    M2INFO( mlog, *tReadHeader );
+    INFO( mlog, *tReadHeader );
 
     TimeType tRecordSize = (TimeType)tReadHeader->GetRecordSize();
     TimeType tBinWidthNS = (TimeType)(1000. / tReadHeader->GetAcquisitionRate()); // in ns
@@ -55,7 +55,7 @@ int main( const int argc, const char** argv )
     }
     else
     {
-        M2ERROR( mlog, "Unable to read a header with acquisition mode <" << tReadHeader->GetAcquisitionMode() << "> and format mode <" << tReadHeader->GetFormatMode() << ">" );
+        ERROR( mlog, "Unable to read a header with acquisition mode <" << tReadHeader->GetAcquisitionMode() << "> and format mode <" << tReadHeader->GetFormatMode() << ">" );
         return -1;
     }
 
@@ -69,7 +69,7 @@ int main( const int argc, const char** argv )
     // read first record
     if (! tReadTest->ReadRecord())
     {
-        M2ERROR( mlog, "No records in the file" );
+        ERROR( mlog, "No records in the file" );
         return -1;
     }
     tRecordCount = 1;
@@ -101,8 +101,8 @@ int main( const int argc, const char** argv )
 
         //cout << "  record " << tRecordCount << ": time offset: " << tReadRecord->fTime << " ns" << endl;
     }
-    M2INFO( mlog, "record count <" << tRecordCount << ">" );
-    M2INFO( mlog, "acquisition count <" << tAcquisitionCount << ">" );
+    INFO( mlog, "record count <" << tRecordCount << ">" );
+    INFO( mlog, "acquisition count <" << tAcquisitionCount << ">" );
 
     tReadTest->Close();
     delete tReadTest;

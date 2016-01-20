@@ -1,5 +1,5 @@
 #include "M2Monarch.hh"
-#include "M2Logger.hh"
+#include "logger.hh"
 
 #include <cstdlib>
 
@@ -8,13 +8,13 @@ using std::ofstream;
 
 using namespace monarch2;
 
-M2LOGGER( mlog, "Monarch2Dump" );
+LOGGER( mlog, "Monarch2Dump" );
 
 int main( const int argc, const char** argv )
 {
     if( argc < 3 )
     {
-        M2INFO( mlog, "usage:\n"
+        INFO( mlog, "usage:\n"
             << "  Monarch2Dump <input egg file> <output text file> <# of records per channel [optional]>\n"
             << "# of records is optional; the default is 1; use 0 to dump the whole file" );
         return -1;
@@ -31,7 +31,7 @@ int main( const int argc, const char** argv )
     tReadTest->SetInterface( sInterfaceSeparate );
 
     const M2Header* tReadHeader = tReadTest->GetHeader();
-    M2INFO( mlog, *tReadHeader );
+    INFO( mlog, *tReadHeader );
 
     unsigned int tRecordCount = 0;
     unsigned int tAcquisitionCount = 0;
@@ -41,7 +41,7 @@ int main( const int argc, const char** argv )
         ofstream tOutputOne( (string( argv[ 2 ] ) + string( "_ch1.txt" )).c_str() );
         if( tOutputOne.is_open() == false )
         {
-            M2ERROR( mlog, "could not open channel one output file!" );
+            ERROR( mlog, "could not open channel one output file!" );
             tReadTest->Close();
             delete tReadTest;
             return -1;
@@ -76,14 +76,14 @@ int main( const int argc, const char** argv )
         ofstream tOutputTwo( (string( argv[ 2 ] ) + string( "_ch2.txt" )).c_str() );
         if( tOutputOne.is_open() == false )
         {
-            M2ERROR( mlog, "could not open channel one output file!" );
+            ERROR( mlog, "could not open channel one output file!" );
             tReadTest->Close();
             delete tReadTest;
             return -1;
         }
         if( tOutputTwo.is_open() == false )
         {
-            M2ERROR( mlog, "could not open channel two output file!" );
+            ERROR( mlog, "could not open channel two output file!" );
             tReadTest->Close();
             delete tReadTest;
             return -1;
@@ -118,8 +118,8 @@ int main( const int argc, const char** argv )
         tOutputTwo.close();
     }
 
-    M2INFO( mlog, "record count <" << tRecordCount << ">" );
-    M2INFO( mlog, "acquisition count <" << tAcquisitionCount << ">" );
+    INFO( mlog, "record count <" << tRecordCount << ">" );
+    INFO( mlog, "acquisition count <" << tAcquisitionCount << ">" );
 
     tReadTest->Close();
     delete tReadTest;

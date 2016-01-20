@@ -6,7 +6,6 @@ set( MONARCH2_HEADERFILES
     M2Exception.hh
     M2Header.hh
     M2IO.hh
-    M2Logger.hh
     M2Monarch.hh
     M2Record.hh
     M2Types.hh
@@ -16,7 +15,6 @@ set( MONARCH2_SOURCEFILES
     M2Exception.cc
     M2Header.cc
     M2IO.cc
-    M2Logger.cc
     M2Monarch.cc
     M2Version.cc
 )
@@ -27,28 +25,40 @@ set( MONARCH2_HEADERFILES
     ${PROJECT_BINARY_DIR}/M2Version.hh
 )
 
-add_library( Monarch2 ${MONARCH2_SOURCEFILES} )
-target_link_libraries( Monarch2 MonarchProto ${EXTERNAL_LIBRARIES} )
+pbuilder_library( Monarch2 MONARCH2_SOURCEFILES "" )
 
 pbuilder_install_headers( ${MONARCH2_HEADERFILES} )
-pbuilder_install_libraries( Monarch2 )
 
 
 ########################
 # monarch2 executables #
 ########################
 
-add_executable( Monarch2Dump Monarch2Dump.cc )
-target_link_libraries( Monarch2Dump Monarch2 MonarchProto ${EXTERNAL_LIBRARIES})
+if( Monarch_ENABLE_EXECUTABLES )
 
-add_executable( Monarch2Info Monarch2Info.cc )
-target_link_libraries( Monarch2Info Monarch2 MonarchProto ${EXTERNAL_LIBRARIES})
+    set( lib_dependencies 
+        Monarch2
+    )
+    
+    set( programs
+        Monarch2Info
+        Monarch2Dump
+    )
+    
+    pbuilder_executables( programs lib_dependencies )
 
-add_executable( Monarch2TimeCheck Monarch2TimeCheck.cc )
-target_link_libraries( Monarch2TimeCheck Monarch2 MonarchProto ${EXTERNAL_LIBRARIES})
+endif( Monarch_ENABLE_EXECUTABLES )
 
-pbuilder_install_executables (
-    Monarch2Dump
-    Monarch2Info
-    Monarch2TimeCheck
-)
+if( Monarch_ENABLE_TESTING )
+
+    set( lib_dependencies 
+        Monarch2
+    )
+    
+    set( programs
+        Monarch2TimeCheck
+    )
+    
+    pbuilder_executables( programs lib_dependencies )
+    
+endif( Monarch_ENABLE_TESTING )
