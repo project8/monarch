@@ -6,7 +6,6 @@
 #include "M2Record.hh"
 
 #include <string>
-using std::string;
 
 namespace monarch2
 {
@@ -42,7 +41,7 @@ namespace monarch2
             //this static method opens the file for reading.
             //if the file exists and can be read, this returns a prepared monarch pointer, and memory is allocated for the header.
             //upon successful return monarch is in the eOpen state.
-            static const Monarch2* OpenForReading( const string& filename );
+            static const Monarch2* OpenForReading( const std::string& filename );
 
             //this method parses the file for the header contents.
             //if the header demarshalled correctly, this returns and the header may be examined, and memory is allocated for the record.

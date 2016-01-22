@@ -4,7 +4,6 @@
 #include "M2Types.hh"
 
 #include <string>
-using std::string;
 
 namespace Protobuf
 {
@@ -38,8 +37,8 @@ namespace monarch2
 
             // Required in protobuf header
 
-            void SetFilename( const string& aFilename );
-            const string& GetFilename() const;
+            void SetFilename( const std::string& aFilename );
+            const std::string& GetFilename() const;
 
             // Acquisition mode: how many channels?
             void SetAcquisitionMode( AcquisitionModeType aMode );
@@ -60,11 +59,11 @@ namespace monarch2
 
             // Optional in protobuf header
 
-            void SetTimestamp( const string& aTimestamp );
-            const string& GetTimestamp() const;
+            void SetTimestamp( const std::string& aTimestamp );
+            const std::string& GetTimestamp() const;
 
-            void SetDescription( const string& aDescription );
-            const string& GetDescription() const;
+            void SetDescription( const std::string& aDescription );
+            const std::string& GetDescription() const;
 
             void SetRunType( RunType aRunType );
             RunType GetRunType() const;
