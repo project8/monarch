@@ -1,17 +1,19 @@
 /*
- * M2Version.cpp
+ * M3Version.cpp
  *
  *  Created on: Mar 21, 2014
  *      Author: nsoblath
  */
 
-#include "M2Version.hh"
+#define M3_API_EXPORTS
 
-#include "logger.hh"
+#include "M3Version.hh"
 
-namespace monarch2
+#include "logger.hh" // for TOSTRING macro
+
+namespace monarch3
 {
-    M2Version::M2Version() :
+    M3Version::M3Version() :
             scarab::version_semantic()
     {
         f_major_ver = @Monarch_VERSION_MAJOR@;
@@ -22,10 +24,10 @@ namespace monarch2
         f_commit = TOSTRING(@Monarch_GIT_COMMIT@);
     }
 
-    M2Version::~M2Version()
+    M3Version::~M3Version()
     {
     }
 
-} /* namespace monarch2 */
+} /* namespace monarch3 */
 
 

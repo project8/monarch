@@ -9,6 +9,7 @@ set( MONARCH2_HEADERFILES
     M2Monarch.hh
     M2Record.hh
     M2Types.hh
+    M2Version.hh
 )
 
 set( MONARCH2_SOURCEFILES
@@ -16,13 +17,12 @@ set( MONARCH2_SOURCEFILES
     M2Header.cc
     M2IO.cc
     M2Monarch.cc
-    M2Version.cc
 )
 
-configure_file( M2Version.hh.in ${PROJECT_BINARY_DIR}/M2Version.hh )
-set( MONARCH2_HEADERFILES
-    ${MONARCH2_HEADERFILES}
-    ${PROJECT_BINARY_DIR}/M2Version.hh
+configure_file( M2Version.cc.in ${CMAKE_CURRENT_BINARY_DIR}/M2Version.cc )
+set( MONARCH2_SOURCEFILES
+    ${MONARCH2_SOURCEFILES}
+    ${CMAKE_CURRENT_BINARY_DIR}/M2Version.cc
 )
 
 pbuilder_library( Monarch2 MONARCH2_SOURCEFILES "" )
