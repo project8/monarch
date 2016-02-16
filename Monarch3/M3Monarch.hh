@@ -134,11 +134,25 @@ namespace monarch3
 
     inline const M3Stream* Monarch3::GetStream( unsigned iStream ) const
     {
-        return fStreams.at( iStream );
+        try
+        {
+            return fStreams.at( iStream );
+        }
+        catch( std::out_of_range& e )
+        {
+            return NULL;
+        }
     }
     inline M3Stream* Monarch3::GetStream( unsigned iStream )
     {
-        return fStreams.at( iStream );
+        try
+        {
+            return fStreams.at( iStream );
+        }
+        catch( std::out_of_range& e )
+        {
+            return NULL;
+        }
     }
 
 }
