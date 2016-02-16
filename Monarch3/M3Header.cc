@@ -399,7 +399,7 @@ namespace monarch3
         fChannelHeaders.push_back( M3ChannelHeader( aSource, fNChannels, anAcqRate, aRecSize, aSampleSize, aDataTypeSize, aDataFormat, aBitDepth, aBitAlignment ) );
         fStreamHeaders.push_back( M3StreamHeader( aSource, fNStreams, 1, fNChannels, sSeparate, anAcqRate, aRecSize, aSampleSize, aDataTypeSize, aDataFormat, aBitDepth, aBitAlignment ) );
         ++fNChannels;
-        std::cout << "resizing to " << fNChannels << std::endl;
+        //std::cout << "resizing to " << fNChannels << std::endl;
         fChannelCoherence.resize( fNChannels ); // resize number of columns
         for( unsigned i = 0; i < fNChannels; ++i ) // resize each row
         {
