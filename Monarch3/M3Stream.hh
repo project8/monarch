@@ -98,7 +98,7 @@ namespace monarch3
             /// Write the record contents to the file
             bool WriteRecord( bool aIsNewAcquisition );
 
-            /// Close the file
+            /// Close the stream
             void Close();
 
 
