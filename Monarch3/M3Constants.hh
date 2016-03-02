@@ -34,6 +34,7 @@ namespace monarch3
 {
     // channel information
 
+    /// Data Format
     /// Specifies whether the data is digitized (unsigned or signed) or analog
     static const uint32_t sInvalidFormat = std::numeric_limits< uint32_t >::max();
     static const uint32_t sDigitizedUS = 0;
