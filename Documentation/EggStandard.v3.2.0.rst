@@ -183,8 +183,14 @@ Each acquisition has the following attributes:
 - n_records (uint32) -- Number of records in that acquisition
 
 When reading a file, the time and ID for each record are calculated from those of the first record in the acquisition.  
-Backwards compatibility is maintained for files that did not retain the first-time or first-ID information.  
 When writing a file, only the time and ID of the first record in the acquisition are retained.
+
+Backwards compatibility is maintained for files that did not retain the first-time or first-ID information.  
+The first time and first ID in every acquisition will be 0, and they will increment by the record length and 1, respectively.  
+However, they start over at 0 for every acquisition, and therefore should not be trusted.  
+If the first record in an acquisition has a time of 0 (realistically this will never happen in reality), 
+you know that you're reading a file without the time and ID information stored properly, 
+and you should therefore ignore the record time and ID parameters reported by Monarch.
 
 Here are some examples how data might be arranged in an acquisition dataset:
 

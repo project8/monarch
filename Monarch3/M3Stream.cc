@@ -472,9 +472,15 @@ namespace monarch3
                 H5::Attribute tAttrAFRI( fH5CurrentAcqDataSet->openAttribute( "first_record_id" ) );
                 tAttrAFRI.read( tAttrAFRI.getDataType(), fAcqFirstRecIds );
             }
-            catch(...)
+            catch( H5::Exception& )
             {
-                throw;
+                // Backwards compatibility with older files that don't have first_record_time and first_record_id
+                // Times increment by the record length starting at 0, but ID increments starting at 0
+                for( unsigned iChan = 0; iChan < fNChannels; ++iChan )
+                {
+                    fAcqFirstRecTimes[ iChan ] = 0;
+                    fAcqFirstRecIds[ iChan ] = 0;
+                }
             }
         }
 
@@ -501,9 +507,12 @@ namespace monarch3
                 H5::Attribute tAttrAFRI( fH5CurrentAcqDataSet->openAttribute( "first_record_id" ) );
                 tAttrAFRI.read( tAttrAFRI.getDataType(), &fAcqFirstRecId );
             }
-            catch(...)
+            catch( H5::Exception& )
             {
-                throw;
+                // Backwards compatibility with older files that don't have first_record_time and first_record_id
+                // Times increment by the record length starting at 0, but ID increments starting at 0
+                fAcqFirstRecTime = 0;
+                fAcqFirstRecId = 0;
             }
         }
 
