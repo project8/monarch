@@ -13,6 +13,7 @@ set( MONARCH3_HEADERFILES
     M3Record.hh
     M3Stream.hh
     M3Types.hh
+    M3Version.hh
 )
 
 set( MONARCH3_SOURCEFILES
@@ -22,13 +23,12 @@ set( MONARCH3_SOURCEFILES
     M3Monarch.cc
     M3Record.cc
     M3Stream.cc
-    M3Version.cc
 )
 
-configure_file( M3Version.hh.in ${PROJECT_BINARY_DIR}/M3Version.hh )
-set( MONARCH3_HEADERFILES
-    ${MONARCH3_HEADERFILES}
-    ${PROJECT_BINARY_DIR}/M3Version.hh
+configure_file( M3Version.cc.in ${CMAKE_CURRENT_BINARY_DIR}/M3Version.cc )
+set( MONARCH3_SOURCEFILES
+    ${MONARCH3_SOURCEFILES}
+    ${CMAKE_CURRENT_BINARY_DIR}/M3Version.cc
 )
 
 pbuilder_library( Monarch3 MONARCH3_SOURCEFILES "" )

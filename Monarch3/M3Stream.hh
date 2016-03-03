@@ -36,7 +36,9 @@ namespace monarch3
     When a stream object is created, most of the information needed to define the stream characteristics is extracted from the
     stream header object that is passed to the constructor.  Most users won't need to worry about this, as it's already taken
     care of by the Monarch3 object.
-    */    class M3_API M3Stream
+    */
+
+    class M3_API M3Stream
     {
         public:
             enum Mode
@@ -96,7 +98,7 @@ namespace monarch3
             /// Write the record contents to the file
             bool WriteRecord( bool aIsNewAcquisition );
 
-            /// Close the file
+            /// Close the stream
             void Close();
 
 

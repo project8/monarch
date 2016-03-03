@@ -15,6 +15,7 @@ pbuilder_prepare_project()
 
 # Egg file version
 set( Egg_VERSION "3.1.0" )
+add_definitions( -DEgg_VERSION=${Egg_VERSION} )
 
 set( Monarch_BUILD_MONARCH2 FALSE CACHE BOOL "Build Monarch2 library (requires Protobuf)" )
 set( Monarch_BUILD_MONARCH3 TRUE CACHE BOOL "Build Monarch3 library (requires HDF5)" )
@@ -30,18 +31,6 @@ set( Monarch_ENABLE_DOC_BUILD FALSE CACHE BOOL "Enable the options to build the 
 ########
 
 pbuilder_add_submodule( Scarab Scarab/library )
-
-
-#####
-# Git
-#####
-
-# if git is used, get the commit SHA1
-find_package( Git )
-if( GIT_FOUND )
-    execute_process( COMMAND ${GIT_EXECUTABLE} rev-parse -q HEAD  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR} OUTPUT_VARIABLE Monarch_GIT_COMMIT  OUTPUT_STRIP_TRAILING_WHITESPACE )
-    execute_process( COMMAND ${GIT_EXECUTABLE} describe --tags --long  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR} OUTPUT_VARIABLE Monarch_GIT_DESCRIBE  OUTPUT_STRIP_TRAILING_WHITESPACE )
-endif( GIT_FOUND )
 
 
 ######
