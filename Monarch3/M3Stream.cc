@@ -513,6 +513,11 @@ namespace monarch3
                 // Times increment by the record length starting at 0, but ID increments starting at 0
                 fAcqFirstRecTime = 0;
                 fAcqFirstRecId = 0;
+                for( unsigned iChan = 0; iChan < fNChannels; ++iChan )
+                {
+                    fAcqFirstRecTimes[ iChan ] = 0;
+                    fAcqFirstRecIds[ iChan ] = 0;
+                }
             }
         }
 
@@ -521,6 +526,11 @@ namespace monarch3
         fH5CurrentAcqDataSet->read( fStreamRecord.GetData(), fDataTypeUser, *fH5DataSpaceUser, tDataSpaceInFile );
         fStreamRecord.SetTime( fAcqFirstRecTime + fRecordCountInAcq * fChanRecLength );
         fStreamRecord.SetRecordId( fAcqFirstRecId + fRecordCountInAcq );
+        for( unsigned iChan = 0; iChan < fNChannels; ++iChan )
+        {
+            fChannelRecords[ iChan ].SetTime( fStreamRecord.GetTime() );
+            fChannelRecords[ iChan ].SetRecordId( fStreamRecord.GetRecordId() );
+        }
         return;
     }
 
