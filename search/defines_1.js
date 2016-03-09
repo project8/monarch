@@ -1,13 +1,13 @@
 var searchData=
 [
-  ['color_5fbright',['COLOR_BRIGHT',['../_m3_logger_8hh.html#a916dc2ddc27e228e2e292ff707b18903',1,'COLOR_BRIGHT():&#160;M3Logger.hh'],['../_m2_logger_8hh.html#a916dc2ddc27e228e2e292ff707b18903',1,'COLOR_BRIGHT():&#160;M2Logger.hh']]],
-  ['color_5fforeground_5fcyan',['COLOR_FOREGROUND_CYAN',['../_m3_logger_8hh.html#ab38aa0ef4f934e8aa6a86d1e8f16ef46',1,'COLOR_FOREGROUND_CYAN():&#160;M3Logger.hh'],['../_m2_logger_8hh.html#ab38aa0ef4f934e8aa6a86d1e8f16ef46',1,'COLOR_FOREGROUND_CYAN():&#160;M2Logger.hh']]],
-  ['color_5fforeground_5fgreen',['COLOR_FOREGROUND_GREEN',['../_m3_logger_8hh.html#a35e905aa6179220ed2ce7f0bc1f59157',1,'COLOR_FOREGROUND_GREEN():&#160;M3Logger.hh'],['../_m2_logger_8hh.html#a35e905aa6179220ed2ce7f0bc1f59157',1,'COLOR_FOREGROUND_GREEN():&#160;M2Logger.hh']]],
-  ['color_5fforeground_5fred',['COLOR_FOREGROUND_RED',['../_m3_logger_8hh.html#a31cb1c78b8a3a33306a279cbd92f9ccd',1,'COLOR_FOREGROUND_RED():&#160;M3Logger.hh'],['../_m2_logger_8hh.html#a31cb1c78b8a3a33306a279cbd92f9ccd',1,'COLOR_FOREGROUND_RED():&#160;M2Logger.hh']]],
-  ['color_5fforeground_5fwhite',['COLOR_FOREGROUND_WHITE',['../_m3_logger_8hh.html#abcfbe5ff82dca8799c43b12374cd3669',1,'COLOR_FOREGROUND_WHITE():&#160;M3Logger.hh'],['../_m2_logger_8hh.html#abcfbe5ff82dca8799c43b12374cd3669',1,'COLOR_FOREGROUND_WHITE():&#160;M2Logger.hh']]],
-  ['color_5fforeground_5fyellow',['COLOR_FOREGROUND_YELLOW',['../_m3_logger_8hh.html#a3a974ca756338c1c0f83d37bfe86249a',1,'COLOR_FOREGROUND_YELLOW():&#160;M3Logger.hh'],['../_m2_logger_8hh.html#a3a974ca756338c1c0f83d37bfe86249a',1,'COLOR_FOREGROUND_YELLOW():&#160;M2Logger.hh']]],
-  ['color_5fnormal',['COLOR_NORMAL',['../_m3_logger_8hh.html#ac366dc6682d1d12bcae1eb1ae8ae09c5',1,'COLOR_NORMAL():&#160;M3Logger.hh'],['../_m2_logger_8hh.html#ac366dc6682d1d12bcae1eb1ae8ae09c5',1,'COLOR_NORMAL():&#160;M2Logger.hh']]],
-  ['color_5fprefix',['COLOR_PREFIX',['../_m3_logger_8hh.html#ac41d3ec815d8c06ae85678e7e4a410bc',1,'COLOR_PREFIX():&#160;M3Logger.hh'],['../_m2_logger_8hh.html#ac41d3ec815d8c06ae85678e7e4a410bc',1,'COLOR_PREFIX():&#160;M2Logger.hh']]],
-  ['color_5fseparator',['COLOR_SEPARATOR',['../_m3_logger_8hh.html#aee0d111e041e613ad1a07b8ce588ac22',1,'COLOR_SEPARATOR():&#160;M3Logger.hh'],['../_m2_logger_8hh.html#aee0d111e041e613ad1a07b8ce588ac22',1,'COLOR_SEPARATOR():&#160;M2Logger.hh']]],
-  ['color_5fsuffix',['COLOR_SUFFIX',['../_m3_logger_8hh.html#a358ed2fc9200ac3b2f81f15c96c32a00',1,'COLOR_SUFFIX():&#160;M3Logger.hh'],['../_m2_logger_8hh.html#a358ed2fc9200ac3b2f81f15c96c32a00',1,'COLOR_SUFFIX():&#160;M2Logger.hh']]]
+  ['m3_5fapi',['M3_API',['../_m3_constants_8hh.html#aced4881fd530d8c488081fed74b90242',1,'M3Constants.hh']]],
+  ['m3_5fapi_5fexports',['M3_API_EXPORTS',['../_m3_exception_8cc.html#acfbf2cf171957be053f4674a2b372bac',1,'M3_API_EXPORTS():&#160;M3Exception.cc'],['../_m3_header_8cc.html#acfbf2cf171957be053f4674a2b372bac',1,'M3_API_EXPORTS():&#160;M3Header.cc'],['../_m3_i_to_a_8cc.html#acfbf2cf171957be053f4674a2b372bac',1,'M3_API_EXPORTS():&#160;M3IToA.cc'],['../_m3_monarch_8cc.html#acfbf2cf171957be053f4674a2b372bac',1,'M3_API_EXPORTS():&#160;M3Monarch.cc'],['../_m3_record_8cc.html#acfbf2cf171957be053f4674a2b372bac',1,'M3_API_EXPORTS():&#160;M3Record.cc'],['../_m3_stream_8cc.html#acfbf2cf171957be053f4674a2b372bac',1,'M3_API_EXPORTS():&#160;M3Stream.cc']]],
+  ['m3membervariable',['M3MEMBERVARIABLE',['../_m3_member_variable_8hh.html#a89dba88d627bae7f90b4b13a002d82eb',1,'M3MemberVariable.hh']]],
+  ['m3membervariable_5fnoset',['M3MEMBERVARIABLE_NOSET',['../_m3_member_variable_8hh.html#a6e057cb1a690ee95174c429e2cf57a77',1,'M3MemberVariable.hh']]],
+  ['m3membervariable_5fprotected',['M3MEMBERVARIABLE_PROTECTED',['../_m3_member_variable_8hh.html#a4d00c9dc2153182a94a047c2bb2cd0bd',1,'M3MemberVariable.hh']]],
+  ['m3membervariable_5fprotected_5fnoset',['M3MEMBERVARIABLE_PROTECTED_NOSET',['../_m3_member_variable_8hh.html#ae0f3ef2f1f2d1416acbc612017364108',1,'M3MemberVariable.hh']]],
+  ['m3membervariableref',['M3MEMBERVARIABLEREF',['../_m3_member_variable_8hh.html#a55149d90d08571096b3bb993f76cbdd7',1,'M3MemberVariable.hh']]],
+  ['m3membervariableref_5fnoset',['M3MEMBERVARIABLEREF_NOSET',['../_m3_member_variable_8hh.html#a8a25db9e872187b02f1967afbce8b8ef',1,'M3MemberVariable.hh']]],
+  ['m3membervariableref_5fprotected',['M3MEMBERVARIABLEREF_PROTECTED',['../_m3_member_variable_8hh.html#aff6b1722004ee13d06e5ca626f1abb30',1,'M3MemberVariable.hh']]],
+  ['m3membervariableref_5fprotected_5fnoset',['M3MEMBERVARIABLEREF_PROTECTED_NOSET',['../_m3_member_variable_8hh.html#adcb8b1d78f9cc98ab39815e7c1418dc2',1,'M3MemberVariable.hh']]]
 ];

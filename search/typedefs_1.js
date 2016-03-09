@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['doreadrecordfunc',['DoReadRecordFunc',['../classmonarch3_1_1_m3_stream.html#a4b8719c4ed4dc8f7ef53827ae502a6c0',1,'monarch3::M3Stream']]],
-  ['dowriterecordfunc',['DoWriteRecordFunc',['../classmonarch3_1_1_m3_stream.html#ac9d6127f6c74361ddca2eefc292b077f',1,'monarch3::M3Stream']]]
+  ['byte_5ftype',['byte_type',['../namespacemonarch3.html#aa2b8c14fe6bf7d77f658c699cb3cb201',1,'monarch3::byte_type()'],['../namespacemonarch2.html#aa2b8c14fe6bf7d77f658c699cb3cb201',1,'monarch2::byte_type()']]]
 ];

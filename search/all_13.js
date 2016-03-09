@@ -1,6 +1,4 @@
 var searchData=
 [
-  ['u32toa',['u32toa',['../namespacemonarch3.html#aa1f848c3efdc1b6c424a68e9d5aabcab',1,'monarch3']]],
-  ['u64toa',['u64toa',['../namespacemonarch3.html#aec84b714beea6b4ae864776572796722',1,'monarch3']]],
-  ['unzip',['Unzip',['../classmonarch2_1_1_monarch2.html#a94a641f84f090e37695e7df083ea950b',1,'monarch2::Monarch2']]]
+  ['value',['value',['../structmonarch3_1_1is__same.html#a11ddd051208250c32dc4985abcafa86d',1,'monarch3::is_same::value()'],['../structmonarch3_1_1is__same_3_01_t_00_01_t_01_4.html#a11ddd051208250c32dc4985abcafa86d',1,'monarch3::is_same&lt; T, T &gt;::value()'],['../structmonarch2_1_1is__same.html#a11ddd051208250c32dc4985abcafa86d',1,'monarch2::is_same::value()'],['../structmonarch2_1_1is__same_3_01_t_00_01_t_01_4.html#a11ddd051208250c32dc4985abcafa86d',1,'monarch2::is_same&lt; T, T &gt;::value()']]]
 ];

@@ -24,7 +24,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">Monarch
-   &#160;<span id="projectnumber">3.1.0</span>
+   &#160;<span id="projectnumber">3.2.4</span>
    </div>
    <div id="projectbrief">Project 8 Data File Format Library</div>
   </td>
@@ -102,7 +102,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#define M3HEADER_HH_</span></div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;</div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="_m3_constants_8hh.html">M3Constants.hh</a>&quot;</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="_m3_logger_8hh.html">M3Logger.hh</a>&quot;</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &quot;logger.hh&quot;</span></div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="_m3_member_variable_8hh.html">M3MemberVariable.hh</a>&quot;</span></div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="_m3_types_8hh.html">M3Types.hh</a>&quot;</span></div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;</div>
@@ -113,7 +113,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;</div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacemonarch3.html">monarch3</a></div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;{</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    <a class="code" href="namespacemonarch3.html#acb867372f8a8cfd07ab3f10de0874b3f">M3LOGGER</a>( mlog_mheader, <span class="stringliteral">&quot;M3Header.hh&quot;</span> );</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;    <a class="code" href="namespacemonarch3.html#abb4ec9bb7f1cf1cc54ebec0ff04367cf">LOGGER</a>( mlog_mheader, <span class="stringliteral">&quot;M3Header.hh&quot;</span> );</div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;</div>
 <div class="line"><a name="l00033"></a><span class="lineno"><a class="line" href="classmonarch3_1_1_m3_stream_header.html">   33</a></span>&#160;    <span class="keyword">class </span><a class="code" href="_m3_constants_8hh.html#aced4881fd530d8c488081fed74b90242">M3_API</a> <a class="code" href="classmonarch3_1_1_m3_stream_header.html">M3StreamHeader</a></div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    {</div>
@@ -294,176 +294,209 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;            <span class="keyword">template</span>&lt; <span class="keyword">typename</span> XType &gt;</div>
 <div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;            <span class="keyword">static</span> XType ReadScalarFromHDF5( <span class="keyword">const</span> H5::H5Location* aLoc, <span class="keyword">const</span> std::string&amp; aName );</div>
 <div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;</div>
-<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;            <span class="comment">//template&lt; typename XArrayType &gt;</span></div>
-<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;            <span class="comment">//static void Read1DFromHDF5( const H5::H5Location* aLoc, const std::string&amp; aName, XArrayType&amp; anArray );</span></div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;            <span class="keyword">template</span>&lt; <span class="keyword">typename</span> XType &gt;</div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;            <span class="keyword">static</span> XType ReadScalarFromHDF5( <span class="keyword">const</span> H5::H5Location* aLoc, <span class="keyword">const</span> std::string&amp; aName, <span class="keyword">const</span> XType&amp; aDefault );</div>
 <div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;</div>
-<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;    };</div>
-<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;</div>
-<div class="line"><a name="l00240"></a><span class="lineno"><a class="line" href="classmonarch3_1_1_m3_header.html#a7b3a28f12ffa2d6dc7e76c959d2b256c">  240</a></span>&#160;    <span class="keyword">inline</span> <span class="keyword">const</span> H5::Group* <a class="code" href="classmonarch3_1_1_m3_header.html#a7b3a28f12ffa2d6dc7e76c959d2b256c">M3Header::GetStreamsGroup</a>()<span class="keyword"> const</span></div>
-<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;<span class="keyword">    </span>{</div>
-<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="classmonarch3_1_1_m3_header.html#aef05c7cddb0a7b9df7c7b8a8bba03399">fStreamsGroup</a>;</div>
-<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;    }</div>
-<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;</div>
-<div class="line"><a name="l00245"></a><span class="lineno"><a class="line" href="classmonarch3_1_1_m3_header.html#af6e4adeab01a8a4f4886304123d12519">  245</a></span>&#160;    <span class="keyword">inline</span> H5::Group* <a class="code" href="classmonarch3_1_1_m3_header.html#a7b3a28f12ffa2d6dc7e76c959d2b256c">M3Header::GetStreamsGroup</a>()</div>
-<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;    {</div>
-<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="classmonarch3_1_1_m3_header.html#aef05c7cddb0a7b9df7c7b8a8bba03399">fStreamsGroup</a>;</div>
-<div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;    }</div>
-<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;</div>
-<div class="line"><a name="l00250"></a><span class="lineno"><a class="line" href="classmonarch3_1_1_m3_header.html#ab28d58c4bfa083a0e956026c4daa59c8">  250</a></span>&#160;    <span class="keyword">inline</span> <span class="keyword">const</span> H5::Group* <a class="code" href="classmonarch3_1_1_m3_header.html#ab28d58c4bfa083a0e956026c4daa59c8">M3Header::GetChannelsGroup</a>()<span class="keyword"> const</span></div>
-<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;<span class="keyword">    </span>{</div>
-<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="classmonarch3_1_1_m3_header.html#acd74c6517181c35cb23c5aa30a6df059">fChannelsGroup</a>;</div>
-<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;    }</div>
-<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;</div>
-<div class="line"><a name="l00255"></a><span class="lineno"><a class="line" href="classmonarch3_1_1_m3_header.html#a0469a172326eb0444532af4b46a58ca1">  255</a></span>&#160;    <span class="keyword">inline</span> H5::Group* <a class="code" href="classmonarch3_1_1_m3_header.html#ab28d58c4bfa083a0e956026c4daa59c8">M3Header::GetChannelsGroup</a>()</div>
-<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;    {</div>
-<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="classmonarch3_1_1_m3_header.html#acd74c6517181c35cb23c5aa30a6df059">fChannelsGroup</a>;</div>
-<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;    }</div>
-<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;</div>
-<div class="line"><a name="l00260"></a><span class="lineno"><a class="line" href="classmonarch3_1_1_m3_header.html#a329f3f66d4cf1d99ce6f16405bd19914">  260</a></span>&#160;    <span class="keyword">inline</span> std::vector&lt; M3ChannelHeader &gt;&amp; <a class="code" href="classmonarch3_1_1_m3_header.html#a329f3f66d4cf1d99ce6f16405bd19914">M3Header::GetChannelHeaders</a>()</div>
-<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;    {</div>
-<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;        <span class="keywordflow">return</span> fChannelHeaders;</div>
-<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;    }</div>
-<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;</div>
-<div class="line"><a name="l00265"></a><span class="lineno"><a class="line" href="classmonarch3_1_1_m3_header.html#af3cfba07ca9cbfec5184f712269b67ca">  265</a></span>&#160;    <span class="keyword">inline</span> std::vector&lt; M3StreamHeader &gt;&amp; <a class="code" href="classmonarch3_1_1_m3_header.html#af3cfba07ca9cbfec5184f712269b67ca">M3Header::GetStreamHeaders</a>()</div>
-<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;    {</div>
-<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;        <span class="keywordflow">return</span> fStreamHeaders;</div>
-<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;    }</div>
-<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;</div>
-<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;</div>
-<div class="line"><a name="l00271"></a><span class="lineno"><a class="line" href="classmonarch3_1_1_m3_header.html#ab563a91522999d7ac13c0d836ef6c9d4">  271</a></span>&#160;    <span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code" href="classmonarch3_1_1_m3_header.html#ab563a91522999d7ac13c0d836ef6c9d4">M3Header::WriteScalarToHDF5</a>( H5::H5Location* aLoc, <span class="keyword">const</span> std::string&amp; aName, <span class="keyword">const</span> std::string&amp; aValue )</div>
-<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;    {</div>
-<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;        <a class="code" href="_m3_logger_8hh.html#a8220cc6f5c3c109ba01b6c74c95a8643">M3DEBUG</a>( mlog_mheader, <span class="stringliteral">&quot;Writing string to new scalar metadata &lt;&quot;</span> &lt;&lt; aName &lt;&lt; <span class="stringliteral">&quot;&gt;: &quot;</span> &lt;&lt; aValue &lt;&lt; <span class="stringliteral">&quot;; size = &quot;</span> &lt;&lt; aValue.size() );</div>
-<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;        <span class="comment">// aName.c_str() and aValue.c_str() are used because while using the std::string itself, the value was getting mangled</span></div>
-<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;        H5::DataType tType = <a class="code" href="structmonarch3_1_1_m_h5_type.html#a796ed7c3f04b0736843a014fc2fc84b7">MH5Type&lt; std::string &gt;::H5</a>( aValue );</div>
-<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;        aLoc-&gt;createAttribute( aName.c_str(), tType, H5::DataSpace( H5S_SCALAR ) ).write( tType, aValue.c_str() );</div>
-<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;        <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;    }</div>
-<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;</div>
-<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;    <span class="keyword">template</span>&lt; <span class="keyword">typename</span> XType &gt;</div>
-<div class="line"><a name="l00281"></a><span class="lineno"><a class="line" href="classmonarch3_1_1_m3_header.html#a880896fddc11e3f66ee5fec4f54082cc">  281</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classmonarch3_1_1_m3_header.html#ab563a91522999d7ac13c0d836ef6c9d4">M3Header::WriteScalarToHDF5</a>( H5::H5Location* aLoc, <span class="keyword">const</span> std::string&amp; aName, XType aValue )</div>
-<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;    {</div>
-<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;        <a class="code" href="_m3_logger_8hh.html#a8220cc6f5c3c109ba01b6c74c95a8643">M3DEBUG</a>( mlog_mheader, <span class="stringliteral">&quot;Writing value to new scalar metadata &lt;&quot;</span> &lt;&lt; aName &lt;&lt; <span class="stringliteral">&quot;&gt;: &quot;</span> &lt;&lt; aValue );</div>
-<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;        <span class="comment">// aName.c_str() is used because while using the std::string itself, the value was getting mangled</span></div>
-<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;        aLoc-&gt;createAttribute( aName.c_str(), <a class="code" href="structmonarch3_1_1_m_h5_type.html#a796ed7c3f04b0736843a014fc2fc84b7">MH5Type&lt; XType &gt;::H5</a>(), H5::DataSpace( H5S_SCALAR ) ).write( <a class="code" href="structmonarch3_1_1_m_h5_type.html">MH5Type&lt; XType &gt;::Native</a>(), &amp;aValue );</div>
-<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;        <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;    }</div>
-<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;<span class="comment">/*</span></div>
-<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;<span class="comment">    template&lt; typename XArrayType &gt;</span></div>
-<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;<span class="comment">    void M3Header::Write1DToHDF5( H5::CommonFG* aLoc, const std::string&amp; aName, const XArrayType&amp; anArray )</span></div>
-<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;<span class="comment">    {</span></div>
-<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;<span class="comment">        typedef typename XArrayType::value_type XValueType;</span></div>
-<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;<span class="comment">        M3DEBUG( mlog_mheader, &quot;Writing vector to new 1-D metadata &lt;&quot; &lt;&lt; aName &lt;&lt; &quot;&gt;; size = &quot; &lt;&lt; anArray.size() );</span></div>
-<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;<span class="comment">        hsize_t tDims[ 1 ] = { anArray.size() };</span></div>
-<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;<span class="comment">        std::cout &lt;&lt; &quot;tDims[0] = &quot; &lt;&lt; tDims[0] &lt;&lt; std::endl;</span></div>
-<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;<span class="comment">        //H5::ArrayType tTypeNative( MH5Type&lt; XValueType &gt;::Native(), 1, tDims );</span></div>
-<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;<span class="comment">        //H5::ArrayType tTypeH5( MH5Type&lt; XValueType &gt;::H5(), 1, tDims );</span></div>
-<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;<span class="comment">        H5::DataSpace dspace( 1, tDims, tDims );</span></div>
-<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;<span class="comment">        XValueType* buffer = new XValueType( anArray.size() );</span></div>
-<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;<span class="comment">        for( unsigned i = 0; i &lt; anArray.size(); ++i )</span></div>
-<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;<span class="comment">        {</span></div>
-<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;<span class="comment">            buffer[ i ] = anArray[ i ];</span></div>
-<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;<span class="comment">            std::cout &lt;&lt; &quot;writing bin &quot; &lt;&lt; i &lt;&lt; &quot;: &quot; &lt;&lt; buffer[i] &lt;&lt; &quot; &lt;-- &quot; &lt;&lt; anArray[i] &lt;&lt; std::endl;</span></div>
-<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;<span class="comment">        }</span></div>
-<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;<span class="comment">        //aLoc-&gt;createAttribute( aName, MH5Type&lt; XValueType &gt;::H5(), dspace ).write( MH5Type&lt; XValueType &gt;::Native(), buffer );</span></div>
-<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;<span class="comment">        aLoc-&gt;createDataSet( aName, MH5Type&lt; XValueType &gt;::H5(), dspace ).write( buffer, MH5Type&lt; XValueType &gt;::Native() );</span></div>
-<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;<span class="comment">        delete [] buffer;</span></div>
-<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;<span class="comment">        return;</span></div>
-<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;<span class="comment">    }</span></div>
-<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;<span class="comment">*/</span></div>
-<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;</div>
-<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;    <span class="comment">// Read functions</span></div>
-<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;</div>
-<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;    <span class="comment">// read specialization for strings</span></div>
-<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;    <span class="keyword">template</span>&lt;&gt;</div>
-<div class="line"><a name="l00316"></a><span class="lineno"><a class="line" href="classmonarch3_1_1_m3_header.html#aad2a15ed7bb957877ec53a675e5f590b">  316</a></span>&#160;    <span class="keyword">inline</span> std::string <a class="code" href="classmonarch3_1_1_m3_header.html#a5b599376a431c8ba7b2394b7af29f6a5">M3Header::ReadScalarFromHDF5</a>( <span class="keyword">const</span> H5::H5Location* aLoc, <span class="keyword">const</span> std::string&amp; aName )</div>
-<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;    {</div>
-<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;        <span class="comment">//std::string tValue;</span></div>
-<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;        <span class="keywordtype">char</span> tBuffer[ 256 ];</div>
-<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;        H5::Attribute* tAttr = <span class="keyword">new</span> H5::Attribute( aLoc-&gt;openAttribute( aName.c_str() ) );</div>
-<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;        <span class="comment">//tAttr-&gt;read( tAttr-&gt;getDataType(), tValue );</span></div>
-<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;        tAttr-&gt;read( tAttr-&gt;getDataType(), tBuffer );</div>
-<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;        <span class="keyword">delete</span> tAttr;</div>
-<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;        std::string tValue( tBuffer );</div>
-<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;        <a class="code" href="_m3_logger_8hh.html#a8220cc6f5c3c109ba01b6c74c95a8643">M3DEBUG</a>( mlog_mheader, <span class="stringliteral">&quot;Reading string &lt;&quot;</span> &lt;&lt; aName &lt;&lt; <span class="stringliteral">&quot;&gt;: &quot;</span> &lt;&lt; tValue &lt;&lt; <span class="stringliteral">&quot;; size = &quot;</span> &lt;&lt; tValue.size() );</div>
-<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;        <span class="keywordflow">return</span> tValue;</div>
-<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;    }</div>
-<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;</div>
-<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;    <span class="comment">// templated read function</span></div>
-<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;    <span class="keyword">template</span>&lt; <span class="keyword">typename</span> XType &gt;</div>
-<div class="line"><a name="l00331"></a><span class="lineno"><a class="line" href="classmonarch3_1_1_m3_header.html#a5b599376a431c8ba7b2394b7af29f6a5">  331</a></span>&#160;    XType <a class="code" href="classmonarch3_1_1_m3_header.html#a5b599376a431c8ba7b2394b7af29f6a5">M3Header::ReadScalarFromHDF5</a>( <span class="keyword">const</span> H5::H5Location* aLoc, <span class="keyword">const</span> std::string&amp; aName )</div>
-<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;    {</div>
-<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;        XType tValue;</div>
-<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;        H5::Attribute* tAttr = <span class="keyword">new</span> H5::Attribute( aLoc-&gt;openAttribute( aName.c_str() ) );</div>
-<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;        tAttr-&gt;read( tAttr-&gt;getDataType(), &amp;tValue );</div>
-<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;        <span class="keyword">delete</span> tAttr;</div>
-<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;        <a class="code" href="_m3_logger_8hh.html#a8220cc6f5c3c109ba01b6c74c95a8643">M3DEBUG</a>( mlog_mheader, <span class="stringliteral">&quot;Reading value &lt;&quot;</span> &lt;&lt; aName &lt;&lt; <span class="stringliteral">&quot;&gt;: &quot;</span> &lt;&lt; tValue );</div>
-<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;        <span class="keywordflow">return</span> tValue;</div>
-<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;    }</div>
-<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;<span class="comment">/*</span></div>
-<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;<span class="comment">    template&lt; typename XArrayType &gt;</span></div>
-<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;<span class="comment">    void M3Header::Read1DFromHDF5( const H5::H5Location* aLoc, const std::string&amp; aName, XArrayType&amp; anArray )</span></div>
-<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;<span class="comment">    {</span></div>
-<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;<span class="comment">        typedef typename XArrayType::value_type XValueType;</span></div>
-<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;<span class="comment">        H5::Attribute tAttr( aLoc-&gt;openAttribute( aName ) );</span></div>
-<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;<span class="comment">        H5::DataSpace tDataspace( tAttr.getSpace() );</span></div>
-<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;<span class="comment">        if( tDataspace.getSimpleExtentNdims() != 1 )</span></div>
-<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;<span class="comment">        {</span></div>
-<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;<span class="comment">            throw M3Exception() &lt;&lt; &quot;Attribute &lt;&quot; &lt;&lt; aName &lt;&lt; &quot;&gt; has &quot; &lt;&lt; tDataspace.getSimpleExtentNdims() &lt;&lt; &quot; dimensions; 1 dimension was expected&quot;;</span></div>
-<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;<span class="comment">        }</span></div>
-<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;<span class="comment">        hsize_t tDims[ 1 ];</span></div>
-<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;<span class="comment">        tDataspace.getSimpleExtentDims( tDims );</span></div>
-<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;<span class="comment">        XValueType* buffer = new XValueType( tDims[0] );</span></div>
-<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;<span class="comment">        M3DEBUG( mlog_mheader, &quot;Reading 1-D metadata &lt;&quot; &lt;&lt; aName &lt;&lt; &quot;&gt; to vector; size = &quot; &lt;&lt; tDims[0] );</span></div>
-<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;<span class="comment">        tAttr.read( tAttr.getDataType(), buffer );</span></div>
-<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;<span class="comment">        for( unsigned i = 0; i &lt; anArray.size(); ++i )</span></div>
-<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;<span class="comment">        {</span></div>
-<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;<span class="comment">            anArray[ i ] = buffer[ i ];</span></div>
-<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;<span class="comment">        }</span></div>
-<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;<span class="comment">        delete [] buffer;</span></div>
-<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;<span class="comment">        return;</span></div>
-<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;<span class="comment">    }</span></div>
-<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;<span class="comment">*/</span></div>
-<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;}</div>
-<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;</div>
-<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;<span class="comment">// Pretty printing methods</span></div>
-<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;<a class="code" href="_m3_constants_8hh.html#aced4881fd530d8c488081fed74b90242">M3_API</a> std::ostream&amp; <a class="code" href="_m3_header_8hh.html#ae79ce17fa3f18c043cea2e0f8be5a242">operator&lt;&lt;</a>( std::ostream&amp; out, <span class="keyword">const</span> <a class="code" href="classmonarch3_1_1_m3_stream_header.html">monarch3::M3StreamHeader</a>&amp; hdr );</div>
-<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;<a class="code" href="_m3_constants_8hh.html#aced4881fd530d8c488081fed74b90242">M3_API</a> std::ostream&amp; <a class="code" href="_m3_header_8hh.html#ae79ce17fa3f18c043cea2e0f8be5a242">operator&lt;&lt;</a>( std::ostream&amp; out, <span class="keyword">const</span> <a class="code" href="classmonarch3_1_1_m3_channel_header.html">monarch3::M3ChannelHeader</a>&amp; hdr );</div>
-<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;<a class="code" href="_m3_constants_8hh.html#aced4881fd530d8c488081fed74b90242">M3_API</a> std::ostream&amp; <a class="code" href="_m3_header_8hh.html#ae79ce17fa3f18c043cea2e0f8be5a242">operator&lt;&lt;</a>( std::ostream&amp; out, <span class="keyword">const</span> <a class="code" href="classmonarch3_1_1_m3_header.html">monarch3::M3Header</a>&amp; hdr );</div>
-<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;</div>
-<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;            <span class="comment">//template&lt; typename XArrayType &gt;</span></div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;            <span class="comment">//static void Read1DFromHDF5( const H5::H5Location* aLoc, const std::string&amp; aName, XArrayType&amp; anArray );</span></div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;</div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;    };</div>
+<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;</div>
+<div class="line"><a name="l00243"></a><span class="lineno"><a class="line" href="classmonarch3_1_1_m3_header.html#a7b3a28f12ffa2d6dc7e76c959d2b256c">  243</a></span>&#160;    <span class="keyword">inline</span> <span class="keyword">const</span> H5::Group* <a class="code" href="classmonarch3_1_1_m3_header.html#a7b3a28f12ffa2d6dc7e76c959d2b256c">M3Header::GetStreamsGroup</a>()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;<span class="keyword">    </span>{</div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="classmonarch3_1_1_m3_header.html#aef05c7cddb0a7b9df7c7b8a8bba03399">fStreamsGroup</a>;</div>
+<div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;    }</div>
+<div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;</div>
+<div class="line"><a name="l00248"></a><span class="lineno"><a class="line" href="classmonarch3_1_1_m3_header.html#af6e4adeab01a8a4f4886304123d12519">  248</a></span>&#160;    <span class="keyword">inline</span> H5::Group* <a class="code" href="classmonarch3_1_1_m3_header.html#a7b3a28f12ffa2d6dc7e76c959d2b256c">M3Header::GetStreamsGroup</a>()</div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;    {</div>
+<div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="classmonarch3_1_1_m3_header.html#aef05c7cddb0a7b9df7c7b8a8bba03399">fStreamsGroup</a>;</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;    }</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;</div>
+<div class="line"><a name="l00253"></a><span class="lineno"><a class="line" href="classmonarch3_1_1_m3_header.html#ab28d58c4bfa083a0e956026c4daa59c8">  253</a></span>&#160;    <span class="keyword">inline</span> <span class="keyword">const</span> H5::Group* <a class="code" href="classmonarch3_1_1_m3_header.html#ab28d58c4bfa083a0e956026c4daa59c8">M3Header::GetChannelsGroup</a>()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;<span class="keyword">    </span>{</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="classmonarch3_1_1_m3_header.html#acd74c6517181c35cb23c5aa30a6df059">fChannelsGroup</a>;</div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;    }</div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;</div>
+<div class="line"><a name="l00258"></a><span class="lineno"><a class="line" href="classmonarch3_1_1_m3_header.html#a0469a172326eb0444532af4b46a58ca1">  258</a></span>&#160;    <span class="keyword">inline</span> H5::Group* <a class="code" href="classmonarch3_1_1_m3_header.html#ab28d58c4bfa083a0e956026c4daa59c8">M3Header::GetChannelsGroup</a>()</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;    {</div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="classmonarch3_1_1_m3_header.html#acd74c6517181c35cb23c5aa30a6df059">fChannelsGroup</a>;</div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;    }</div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;</div>
+<div class="line"><a name="l00263"></a><span class="lineno"><a class="line" href="classmonarch3_1_1_m3_header.html#a329f3f66d4cf1d99ce6f16405bd19914">  263</a></span>&#160;    <span class="keyword">inline</span> std::vector&lt; M3ChannelHeader &gt;&amp; <a class="code" href="classmonarch3_1_1_m3_header.html#a329f3f66d4cf1d99ce6f16405bd19914">M3Header::GetChannelHeaders</a>()</div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;    {</div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;        <span class="keywordflow">return</span> fChannelHeaders;</div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;    }</div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;</div>
+<div class="line"><a name="l00268"></a><span class="lineno"><a class="line" href="classmonarch3_1_1_m3_header.html#af3cfba07ca9cbfec5184f712269b67ca">  268</a></span>&#160;    <span class="keyword">inline</span> std::vector&lt; M3StreamHeader &gt;&amp; <a class="code" href="classmonarch3_1_1_m3_header.html#af3cfba07ca9cbfec5184f712269b67ca">M3Header::GetStreamHeaders</a>()</div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;    {</div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;        <span class="keywordflow">return</span> fStreamHeaders;</div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;    }</div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;</div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;</div>
+<div class="line"><a name="l00274"></a><span class="lineno"><a class="line" href="classmonarch3_1_1_m3_header.html#ab563a91522999d7ac13c0d836ef6c9d4">  274</a></span>&#160;    <span class="keyword">inline</span> <span class="keywordtype">void</span> <a class="code" href="classmonarch3_1_1_m3_header.html#ab563a91522999d7ac13c0d836ef6c9d4">M3Header::WriteScalarToHDF5</a>( H5::H5Location* aLoc, <span class="keyword">const</span> std::string&amp; aName, <span class="keyword">const</span> std::string&amp; aValue )</div>
+<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;    {</div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;        DEBUG( mlog_mheader, <span class="stringliteral">&quot;Writing string to new scalar metadata &lt;&quot;</span> &lt;&lt; aName &lt;&lt; <span class="stringliteral">&quot;&gt;: &quot;</span> &lt;&lt; aValue &lt;&lt; <span class="stringliteral">&quot;; size = &quot;</span> &lt;&lt; aValue.size() );</div>
+<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;        <span class="comment">// aName.c_str() and aValue.c_str() are used because while using the std::string itself, the value was getting mangled</span></div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;        H5::DataType tType = <a class="code" href="structmonarch3_1_1_m_h5_type.html#a796ed7c3f04b0736843a014fc2fc84b7">MH5Type&lt; std::string &gt;::H5</a>( aValue );</div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;        aLoc-&gt;createAttribute( aName.c_str(), tType, H5::DataSpace( H5S_SCALAR ) ).write( tType, aValue.c_str() );</div>
+<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;        <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;    }</div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;</div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;    <span class="keyword">template</span>&lt; <span class="keyword">typename</span> XType &gt;</div>
+<div class="line"><a name="l00284"></a><span class="lineno"><a class="line" href="classmonarch3_1_1_m3_header.html#a880896fddc11e3f66ee5fec4f54082cc">  284</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classmonarch3_1_1_m3_header.html#ab563a91522999d7ac13c0d836ef6c9d4">M3Header::WriteScalarToHDF5</a>( H5::H5Location* aLoc, <span class="keyword">const</span> std::string&amp; aName, XType aValue )</div>
+<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;    {</div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;        DEBUG( mlog_mheader, <span class="stringliteral">&quot;Writing value to new scalar metadata &lt;&quot;</span> &lt;&lt; aName &lt;&lt; <span class="stringliteral">&quot;&gt;: &quot;</span> &lt;&lt; aValue );</div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;        <span class="comment">// aName.c_str() is used because while using the std::string itself, the value was getting mangled</span></div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;        aLoc-&gt;createAttribute( aName.c_str(), <a class="code" href="structmonarch3_1_1_m_h5_type.html#a796ed7c3f04b0736843a014fc2fc84b7">MH5Type&lt; XType &gt;::H5</a>(), H5::DataSpace( H5S_SCALAR ) ).write( <a class="code" href="structmonarch3_1_1_m_h5_type.html">MH5Type&lt; XType &gt;::Native</a>(), &amp;aValue );</div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;        <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;    }</div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;<span class="comment">/*</span></div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;<span class="comment">    template&lt; typename XArrayType &gt;</span></div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;<span class="comment">    void M3Header::Write1DToHDF5( H5::CommonFG* aLoc, const std::string&amp; aName, const XArrayType&amp; anArray )</span></div>
+<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;<span class="comment">    {</span></div>
+<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;<span class="comment">        typedef typename XArrayType::value_type XValueType;</span></div>
+<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;<span class="comment">        DEBUG( mlog_mheader, &quot;Writing vector to new 1-D metadata &lt;&quot; &lt;&lt; aName &lt;&lt; &quot;&gt;; size = &quot; &lt;&lt; anArray.size() );</span></div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;<span class="comment">        hsize_t tDims[ 1 ] = { anArray.size() };</span></div>
+<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;<span class="comment">        std::cout &lt;&lt; &quot;tDims[0] = &quot; &lt;&lt; tDims[0] &lt;&lt; std::endl;</span></div>
+<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;<span class="comment">        //H5::ArrayType tTypeNative( MH5Type&lt; XValueType &gt;::Native(), 1, tDims );</span></div>
+<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;<span class="comment">        //H5::ArrayType tTypeH5( MH5Type&lt; XValueType &gt;::H5(), 1, tDims );</span></div>
+<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;<span class="comment">        H5::DataSpace dspace( 1, tDims, tDims );</span></div>
+<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;<span class="comment">        XValueType* buffer = new XValueType( anArray.size() );</span></div>
+<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;<span class="comment">        for( unsigned i = 0; i &lt; anArray.size(); ++i )</span></div>
+<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;<span class="comment">        {</span></div>
+<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;<span class="comment">            buffer[ i ] = anArray[ i ];</span></div>
+<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;<span class="comment">            std::cout &lt;&lt; &quot;writing bin &quot; &lt;&lt; i &lt;&lt; &quot;: &quot; &lt;&lt; buffer[i] &lt;&lt; &quot; &lt;-- &quot; &lt;&lt; anArray[i] &lt;&lt; std::endl;</span></div>
+<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;<span class="comment">        }</span></div>
+<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;<span class="comment">        //aLoc-&gt;createAttribute( aName, MH5Type&lt; XValueType &gt;::H5(), dspace ).write( MH5Type&lt; XValueType &gt;::Native(), buffer );</span></div>
+<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;<span class="comment">        aLoc-&gt;createDataSet( aName, MH5Type&lt; XValueType &gt;::H5(), dspace ).write( buffer, MH5Type&lt; XValueType &gt;::Native() );</span></div>
+<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;<span class="comment">        delete [] buffer;</span></div>
+<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;<span class="comment">        return;</span></div>
+<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;<span class="comment">    }</span></div>
+<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;<span class="comment">*/</span></div>
+<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;</div>
+<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;    <span class="comment">// Read functions</span></div>
+<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;</div>
+<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;    <span class="comment">// read specialization for strings</span></div>
+<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;    <span class="keyword">template</span>&lt;&gt;</div>
+<div class="line"><a name="l00319"></a><span class="lineno"><a class="line" href="classmonarch3_1_1_m3_header.html#aad2a15ed7bb957877ec53a675e5f590b">  319</a></span>&#160;    <span class="keyword">inline</span> std::string <a class="code" href="classmonarch3_1_1_m3_header.html#a5b599376a431c8ba7b2394b7af29f6a5">M3Header::ReadScalarFromHDF5</a>( <span class="keyword">const</span> H5::H5Location* aLoc, <span class="keyword">const</span> std::string&amp; aName )</div>
+<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;    {</div>
+<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;        <span class="comment">//std::string tValue;</span></div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;        <span class="keywordtype">char</span> tBuffer[ 256 ];</div>
+<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;        H5::Attribute* tAttr = <span class="keyword">new</span> H5::Attribute( aLoc-&gt;openAttribute( aName.c_str() ) );</div>
+<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;        <span class="comment">//tAttr-&gt;read( tAttr-&gt;getDataType(), tValue );</span></div>
+<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;        tAttr-&gt;read( tAttr-&gt;getDataType(), tBuffer );</div>
+<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;        <span class="keyword">delete</span> tAttr;</div>
+<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;        std::string tValue( tBuffer );</div>
+<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;        DEBUG( mlog_mheader, <span class="stringliteral">&quot;Reading string &lt;&quot;</span> &lt;&lt; aName &lt;&lt; <span class="stringliteral">&quot;&gt;: &quot;</span> &lt;&lt; tValue &lt;&lt; <span class="stringliteral">&quot;; size = &quot;</span> &lt;&lt; tValue.size() );</div>
+<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;        <span class="keywordflow">return</span> tValue;</div>
+<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;    }</div>
+<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;</div>
+<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;    <span class="comment">// templated read function</span></div>
+<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;    <span class="keyword">template</span>&lt; <span class="keyword">typename</span> XType &gt;</div>
+<div class="line"><a name="l00334"></a><span class="lineno"><a class="line" href="classmonarch3_1_1_m3_header.html#a5b599376a431c8ba7b2394b7af29f6a5">  334</a></span>&#160;    XType <a class="code" href="classmonarch3_1_1_m3_header.html#a5b599376a431c8ba7b2394b7af29f6a5">M3Header::ReadScalarFromHDF5</a>( <span class="keyword">const</span> H5::H5Location* aLoc, <span class="keyword">const</span> std::string&amp; aName )</div>
+<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;    {</div>
+<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;        XType tValue;</div>
+<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;        H5::Attribute* tAttr = <span class="keyword">new</span> H5::Attribute( aLoc-&gt;openAttribute( aName.c_str() ) );</div>
+<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;        tAttr-&gt;read( tAttr-&gt;getDataType(), &amp;tValue );</div>
+<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;        <span class="keyword">delete</span> tAttr;</div>
+<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;        DEBUG( mlog_mheader, <span class="stringliteral">&quot;Reading value &lt;&quot;</span> &lt;&lt; aName &lt;&lt; <span class="stringliteral">&quot;&gt;: &quot;</span> &lt;&lt; tValue );</div>
+<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;        <span class="keywordflow">return</span> tValue;</div>
+<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;    }</div>
+<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;</div>
+<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;</div>
+<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;    <span class="comment">// Read functions with default values</span></div>
+<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;</div>
+<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;    <span class="comment">// read specialization for strings</span></div>
+<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;    <span class="keyword">template</span>&lt;&gt;</div>
+<div class="line"><a name="l00349"></a><span class="lineno"><a class="line" href="classmonarch3_1_1_m3_header.html#a8e81548e4a2e2fcedeb2b12dd8626c17">  349</a></span>&#160;    <span class="keyword">inline</span> std::string <a class="code" href="classmonarch3_1_1_m3_header.html#a5b599376a431c8ba7b2394b7af29f6a5">M3Header::ReadScalarFromHDF5</a>( <span class="keyword">const</span> H5::H5Location* aLoc, <span class="keyword">const</span> std::string&amp; aName, <span class="keyword">const</span> std::string&amp; aDefaultValue )</div>
+<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;    {</div>
+<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;        <span class="keywordflow">if</span>( ! aLoc-&gt;attrExists( aName.c_str() ) ) <span class="keywordflow">return</span> aDefaultValue;</div>
+<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;        <span class="comment">//std::string tValue;</span></div>
+<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;        <span class="keywordtype">char</span> tBuffer[ 256 ];</div>
+<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;        H5::Attribute* tAttr = <span class="keyword">new</span> H5::Attribute( aLoc-&gt;openAttribute( aName.c_str() ) );</div>
+<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;        <span class="comment">//tAttr-&gt;read( tAttr-&gt;getDataType(), tValue );</span></div>
+<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;        tAttr-&gt;read( tAttr-&gt;getDataType(), tBuffer );</div>
+<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;        <span class="keyword">delete</span> tAttr;</div>
+<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;        std::string tValue( tBuffer );</div>
+<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;        DEBUG( mlog_mheader, <span class="stringliteral">&quot;Reading string &lt;&quot;</span> &lt;&lt; aName &lt;&lt; <span class="stringliteral">&quot;&gt;: &quot;</span> &lt;&lt; tValue &lt;&lt; <span class="stringliteral">&quot;; size = &quot;</span> &lt;&lt; tValue.size() );</div>
+<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;        <span class="keywordflow">return</span> tValue;</div>
+<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;    }</div>
+<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;</div>
+<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;    <span class="comment">// templated read function</span></div>
+<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;    <span class="keyword">template</span>&lt; <span class="keyword">typename</span> XType &gt;</div>
+<div class="line"><a name="l00365"></a><span class="lineno"><a class="line" href="classmonarch3_1_1_m3_header.html#aa2d62b70139814483d5cb394e44840ce">  365</a></span>&#160;    XType <a class="code" href="classmonarch3_1_1_m3_header.html#a5b599376a431c8ba7b2394b7af29f6a5">M3Header::ReadScalarFromHDF5</a>( <span class="keyword">const</span> H5::H5Location* aLoc, <span class="keyword">const</span> std::string&amp; aName, <span class="keyword">const</span> XType&amp; aDefaultValue )</div>
+<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;    {</div>
+<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;        <span class="keywordflow">if</span>( ! aLoc-&gt;attrExists( aName.c_str() ) ) <span class="keywordflow">return</span> aDefaultValue;</div>
+<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;        XType tValue;</div>
+<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;        H5::Attribute* tAttr = <span class="keyword">new</span> H5::Attribute( aLoc-&gt;openAttribute( aName.c_str() ) );</div>
+<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;        tAttr-&gt;read( tAttr-&gt;getDataType(), &amp;tValue );</div>
+<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;        <span class="keyword">delete</span> tAttr;</div>
+<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;        DEBUG( mlog_mheader, <span class="stringliteral">&quot;Reading value &lt;&quot;</span> &lt;&lt; aName &lt;&lt; <span class="stringliteral">&quot;&gt;: &quot;</span> &lt;&lt; tValue );</div>
+<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;        <span class="keywordflow">return</span> tValue;</div>
+<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;    }</div>
+<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;<span class="comment">/*</span></div>
+<div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;<span class="comment">    template&lt; typename XArrayType &gt;</span></div>
+<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;<span class="comment">    void M3Header::Read1DFromHDF5( const H5::H5Location* aLoc, const std::string&amp; aName, XArrayType&amp; anArray )</span></div>
+<div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;<span class="comment">    {</span></div>
+<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;<span class="comment">        typedef typename XArrayType::value_type XValueType;</span></div>
+<div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;<span class="comment">        H5::Attribute tAttr( aLoc-&gt;openAttribute( aName ) );</span></div>
+<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;<span class="comment">        H5::DataSpace tDataspace( tAttr.getSpace() );</span></div>
+<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;<span class="comment">        if( tDataspace.getSimpleExtentNdims() != 1 )</span></div>
+<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;<span class="comment">        {</span></div>
+<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;<span class="comment">            throw M3Exception() &lt;&lt; &quot;Attribute &lt;&quot; &lt;&lt; aName &lt;&lt; &quot;&gt; has &quot; &lt;&lt; tDataspace.getSimpleExtentNdims() &lt;&lt; &quot; dimensions; 1 dimension was expected&quot;;</span></div>
+<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;<span class="comment">        }</span></div>
+<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;<span class="comment">        hsize_t tDims[ 1 ];</span></div>
+<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;<span class="comment">        tDataspace.getSimpleExtentDims( tDims );</span></div>
+<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;<span class="comment">        XValueType* buffer = new XValueType( tDims[0] );</span></div>
+<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;<span class="comment">        DEBUG( mlog_mheader, &quot;Reading 1-D metadata &lt;&quot; &lt;&lt; aName &lt;&lt; &quot;&gt; to vector; size = &quot; &lt;&lt; tDims[0] );</span></div>
+<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;<span class="comment">        tAttr.read( tAttr.getDataType(), buffer );</span></div>
+<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;<span class="comment">        for( unsigned i = 0; i &lt; anArray.size(); ++i )</span></div>
+<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;<span class="comment">        {</span></div>
+<div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;<span class="comment">            anArray[ i ] = buffer[ i ];</span></div>
+<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;<span class="comment">        }</span></div>
+<div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160;<span class="comment">        delete [] buffer;</span></div>
+<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;<span class="comment">        return;</span></div>
+<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;<span class="comment">    }</span></div>
+<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;<span class="comment">*/</span></div>
+<div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;}</div>
+<div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;</div>
+<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;<span class="comment">// Pretty printing methods</span></div>
+<div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;<a class="code" href="_m3_constants_8hh.html#aced4881fd530d8c488081fed74b90242">M3_API</a> std::ostream&amp; <a class="code" href="_m3_header_8hh.html#ae79ce17fa3f18c043cea2e0f8be5a242">operator&lt;&lt;</a>( std::ostream&amp; out, <span class="keyword">const</span> <a class="code" href="classmonarch3_1_1_m3_stream_header.html">monarch3::M3StreamHeader</a>&amp; hdr );</div>
+<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;<a class="code" href="_m3_constants_8hh.html#aced4881fd530d8c488081fed74b90242">M3_API</a> std::ostream&amp; <a class="code" href="_m3_header_8hh.html#ae79ce17fa3f18c043cea2e0f8be5a242">operator&lt;&lt;</a>( std::ostream&amp; out, <span class="keyword">const</span> <a class="code" href="classmonarch3_1_1_m3_channel_header.html">monarch3::M3ChannelHeader</a>&amp; hdr );</div>
+<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;<a class="code" href="_m3_constants_8hh.html#aced4881fd530d8c488081fed74b90242">M3_API</a> std::ostream&amp; <a class="code" href="_m3_header_8hh.html#ae79ce17fa3f18c043cea2e0f8be5a242">operator&lt;&lt;</a>( std::ostream&amp; out, <span class="keyword">const</span> <a class="code" href="classmonarch3_1_1_m3_header.html">monarch3::M3Header</a>&amp; hdr );</div>
+<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;</div>
+<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="_m3_types_8hh_html"><div class="ttname"><a href="_m3_types_8hh.html">M3Types.hh</a></div></div>
 <div class="ttc" id="_m3_member_variable_8hh_html"><div class="ttname"><a href="_m3_member_variable_8hh.html">M3MemberVariable.hh</a></div></div>
 <div class="ttc" id="_m3_header_8hh_html_ae79ce17fa3f18c043cea2e0f8be5a242"><div class="ttname"><a href="_m3_header_8hh.html#ae79ce17fa3f18c043cea2e0f8be5a242">operator&lt;&lt;</a></div><div class="ttdeci">M3_API std::ostream &amp; operator&lt;&lt;(std::ostream &amp;out, const monarch3::M3StreamHeader &amp;hdr)</div><div class="ttdef"><b>Definition:</b> <a href="_m3_header_8cc_source.html#l00685">M3Header.cc:685</a></div></div>
-<div class="ttc" id="classmonarch3_1_1_m3_header_html_ab28d58c4bfa083a0e956026c4daa59c8"><div class="ttname"><a href="classmonarch3_1_1_m3_header.html#ab28d58c4bfa083a0e956026c4daa59c8">monarch3::M3Header::GetChannelsGroup</a></div><div class="ttdeci">const H5::Group * GetChannelsGroup() const </div><div class="ttdef"><b>Definition:</b> <a href="_m3_header_8hh_source.html#l00250">M3Header.hh:250</a></div></div>
+<div class="ttc" id="classmonarch3_1_1_m3_header_html_ab28d58c4bfa083a0e956026c4daa59c8"><div class="ttname"><a href="classmonarch3_1_1_m3_header.html#ab28d58c4bfa083a0e956026c4daa59c8">monarch3::M3Header::GetChannelsGroup</a></div><div class="ttdeci">const H5::Group * GetChannelsGroup() const </div><div class="ttdef"><b>Definition:</b> <a href="_m3_header_8hh_source.html#l00253">M3Header.hh:253</a></div></div>
 <div class="ttc" id="_m3_member_variable_8hh_html_a8a25db9e872187b02f1967afbce8b8ef"><div class="ttname"><a href="_m3_member_variable_8hh.html#a8a25db9e872187b02f1967afbce8b8ef">M3MEMBERVARIABLEREF_NOSET</a></div><div class="ttdeci">#define M3MEMBERVARIABLEREF_NOSET(TYPE, NAME)</div><div class="ttdef"><b>Definition:</b> <a href="_m3_member_variable_8hh_source.html#l00081">M3MemberVariable.hh:81</a></div></div>
-<div class="ttc" id="classmonarch3_1_1_m3_header_html_a329f3f66d4cf1d99ce6f16405bd19914"><div class="ttname"><a href="classmonarch3_1_1_m3_header.html#a329f3f66d4cf1d99ce6f16405bd19914">monarch3::M3Header::GetChannelHeaders</a></div><div class="ttdeci">std::vector&lt; M3ChannelHeader &gt; &amp; GetChannelHeaders()</div><div class="ttdef"><b>Definition:</b> <a href="_m3_header_8hh_source.html#l00260">M3Header.hh:260</a></div></div>
+<div class="ttc" id="classmonarch3_1_1_m3_header_html_a329f3f66d4cf1d99ce6f16405bd19914"><div class="ttname"><a href="classmonarch3_1_1_m3_header.html#a329f3f66d4cf1d99ce6f16405bd19914">monarch3::M3Header::GetChannelHeaders</a></div><div class="ttdeci">std::vector&lt; M3ChannelHeader &gt; &amp; GetChannelHeaders()</div><div class="ttdef"><b>Definition:</b> <a href="_m3_header_8hh_source.html#l00263">M3Header.hh:263</a></div></div>
 <div class="ttc" id="_m3_member_variable_8hh_html_a55149d90d08571096b3bb993f76cbdd7"><div class="ttname"><a href="_m3_member_variable_8hh.html#a55149d90d08571096b3bb993f76cbdd7">M3MEMBERVARIABLEREF</a></div><div class="ttdeci">#define M3MEMBERVARIABLEREF(TYPE, NAME)</div><div class="ttdef"><b>Definition:</b> <a href="_m3_member_variable_8hh_source.html#l00087">M3MemberVariable.hh:87</a></div></div>
-<div class="ttc" id="_m3_logger_8hh_html"><div class="ttname"><a href="_m3_logger_8hh.html">M3Logger.hh</a></div><div class="ttdoc">Contains the logger class and macros, based on Kasper&#39;s KLogger class. </div></div>
-<div class="ttc" id="classmonarch3_1_1_m3_header_html_a7b3a28f12ffa2d6dc7e76c959d2b256c"><div class="ttname"><a href="classmonarch3_1_1_m3_header.html#a7b3a28f12ffa2d6dc7e76c959d2b256c">monarch3::M3Header::GetStreamsGroup</a></div><div class="ttdeci">const H5::Group * GetStreamsGroup() const </div><div class="ttdef"><b>Definition:</b> <a href="_m3_header_8hh_source.html#l00240">M3Header.hh:240</a></div></div>
-<div class="ttc" id="structmonarch3_1_1_m_h5_type_html"><div class="ttname"><a href="structmonarch3_1_1_m_h5_type.html">monarch3::MH5Type</a></div><div class="ttdef"><b>Definition:</b> <a href="_m3_types_8hh_source.html#l00036">M3Types.hh:36</a></div></div>
-<div class="ttc" id="namespacemonarch3_html"><div class="ttname"><a href="namespacemonarch3.html">monarch3</a></div><div class="ttdef"><b>Definition:</b> <a href="_m3_constants_8hh_source.html#l00034">M3Constants.hh:34</a></div></div>
+<div class="ttc" id="classmonarch3_1_1_m3_header_html_a7b3a28f12ffa2d6dc7e76c959d2b256c"><div class="ttname"><a href="classmonarch3_1_1_m3_header.html#a7b3a28f12ffa2d6dc7e76c959d2b256c">monarch3::M3Header::GetStreamsGroup</a></div><div class="ttdeci">const H5::Group * GetStreamsGroup() const </div><div class="ttdef"><b>Definition:</b> <a href="_m3_header_8hh_source.html#l00243">M3Header.hh:243</a></div></div>
+<div class="ttc" id="structmonarch3_1_1_m_h5_type_html"><div class="ttname"><a href="structmonarch3_1_1_m_h5_type.html">monarch3::MH5Type</a></div><div class="ttdef"><b>Definition:</b> <a href="_m3_types_8hh_source.html#l00042">M3Types.hh:42</a></div></div>
+<div class="ttc" id="namespacemonarch3_html"><div class="ttname"><a href="namespacemonarch3.html">monarch3</a></div><div class="ttdef"><b>Definition:</b> <a href="_m3_constants_8hh_source.html#l00033">M3Constants.hh:33</a></div></div>
 <div class="ttc" id="_m3_constants_8hh_html"><div class="ttname"><a href="_m3_constants_8hh.html">M3Constants.hh</a></div></div>
-<div class="ttc" id="_m3_logger_8hh_html_a8220cc6f5c3c109ba01b6c74c95a8643"><div class="ttname"><a href="_m3_logger_8hh.html#a8220cc6f5c3c109ba01b6c74c95a8643">M3DEBUG</a></div><div class="ttdeci">#define M3DEBUG(...)</div><div class="ttdef"><b>Definition:</b> <a href="_m3_logger_8hh_source.html#l00320">M3Logger.hh:320</a></div></div>
 <div class="ttc" id="classmonarch3_1_1_m3_header_html"><div class="ttname"><a href="classmonarch3_1_1_m3_header.html">monarch3::M3Header</a></div><div class="ttdoc">Egg file header information. </div><div class="ttdef"><b>Definition:</b> <a href="_m3_header_8hh_source.html#l00152">M3Header.hh:152</a></div></div>
 <div class="ttc" id="classmonarch3_1_1_m3_channel_header_html"><div class="ttname"><a href="classmonarch3_1_1_m3_channel_header.html">monarch3::M3ChannelHeader</a></div><div class="ttdoc">Single-channel header information. </div><div class="ttdef"><b>Definition:</b> <a href="_m3_header_8hh_source.html#l00092">M3Header.hh:92</a></div></div>
 <div class="ttc" id="classmonarch3_1_1_m3_header_html_aef05c7cddb0a7b9df7c7b8a8bba03399"><div class="ttname"><a href="classmonarch3_1_1_m3_header.html#aef05c7cddb0a7b9df7c7b8a8bba03399">monarch3::M3Header::fStreamsGroup</a></div><div class="ttdeci">H5::Group * fStreamsGroup</div><div class="ttdef"><b>Definition:</b> <a href="_m3_header_8hh_source.html#l00221">M3Header.hh:221</a></div></div>
-<div class="ttc" id="classmonarch3_1_1_m3_header_html_ab563a91522999d7ac13c0d836ef6c9d4"><div class="ttname"><a href="classmonarch3_1_1_m3_header.html#ab563a91522999d7ac13c0d836ef6c9d4">monarch3::M3Header::WriteScalarToHDF5</a></div><div class="ttdeci">static void WriteScalarToHDF5(H5::H5Location *aLoc, const std::string &amp;aName, const std::string &amp;aValue)</div><div class="ttdef"><b>Definition:</b> <a href="_m3_header_8hh_source.html#l00271">M3Header.hh:271</a></div></div>
+<div class="ttc" id="classmonarch3_1_1_m3_header_html_ab563a91522999d7ac13c0d836ef6c9d4"><div class="ttname"><a href="classmonarch3_1_1_m3_header.html#ab563a91522999d7ac13c0d836ef6c9d4">monarch3::M3Header::WriteScalarToHDF5</a></div><div class="ttdeci">static void WriteScalarToHDF5(H5::H5Location *aLoc, const std::string &amp;aName, const std::string &amp;aValue)</div><div class="ttdef"><b>Definition:</b> <a href="_m3_header_8hh_source.html#l00274">M3Header.hh:274</a></div></div>
 <div class="ttc" id="classmonarch3_1_1_m3_header_html_a8ae90861c3c4f72cb2a33c10c2f2c7c2"><div class="ttname"><a href="classmonarch3_1_1_m3_header.html#a8ae90861c3c4f72cb2a33c10c2f2c7c2">monarch3::M3Header::M3StreamHeaders</a></div><div class="ttdeci">std::vector&lt; M3StreamHeader &gt; M3StreamHeaders</div><div class="ttdef"><b>Definition:</b> <a href="_m3_header_8hh_source.html#l00156">M3Header.hh:156</a></div></div>
+<div class="ttc" id="namespacemonarch3_html_abb4ec9bb7f1cf1cc54ebec0ff04367cf"><div class="ttname"><a href="namespacemonarch3.html#abb4ec9bb7f1cf1cc54ebec0ff04367cf">monarch3::LOGGER</a></div><div class="ttdeci">LOGGER(mlog,&quot;M3Header&quot;)</div></div>
 <div class="ttc" id="classmonarch3_1_1_m3_stream_header_html"><div class="ttname"><a href="classmonarch3_1_1_m3_stream_header.html">monarch3::M3StreamHeader</a></div><div class="ttdoc">Single-stream header information. </div><div class="ttdef"><b>Definition:</b> <a href="_m3_header_8hh_source.html#l00033">M3Header.hh:33</a></div></div>
 <div class="ttc" id="classmonarch3_1_1_m3_header_html_a8a00a3990f510bd8ef1a699856d72df4"><div class="ttname"><a href="classmonarch3_1_1_m3_header.html#a8a00a3990f510bd8ef1a699856d72df4">monarch3::M3Header::fFile</a></div><div class="ttdeci">H5::H5File * fFile</div><div class="ttdef"><b>Definition:</b> <a href="_m3_header_8hh_source.html#l00220">M3Header.hh:220</a></div></div>
-<div class="ttc" id="namespacemonarch3_html_acb867372f8a8cfd07ab3f10de0874b3f"><div class="ttname"><a href="namespacemonarch3.html#acb867372f8a8cfd07ab3f10de0874b3f">monarch3::M3LOGGER</a></div><div class="ttdeci">M3LOGGER(mlog,&quot;M3Header&quot;)</div></div>
 <div class="ttc" id="_m3_member_variable_8hh_html_a6e057cb1a690ee95174c429e2cf57a77"><div class="ttname"><a href="_m3_member_variable_8hh.html#a6e057cb1a690ee95174c429e2cf57a77">M3MEMBERVARIABLE_NOSET</a></div><div class="ttdeci">#define M3MEMBERVARIABLE_NOSET(TYPE, NAME)</div><div class="ttdef"><b>Definition:</b> <a href="_m3_member_variable_8hh_source.html#l00036">M3MemberVariable.hh:36</a></div></div>
-<div class="ttc" id="classmonarch3_1_1_m3_header_html_af3cfba07ca9cbfec5184f712269b67ca"><div class="ttname"><a href="classmonarch3_1_1_m3_header.html#af3cfba07ca9cbfec5184f712269b67ca">monarch3::M3Header::GetStreamHeaders</a></div><div class="ttdeci">std::vector&lt; M3StreamHeader &gt; &amp; GetStreamHeaders()</div><div class="ttdef"><b>Definition:</b> <a href="_m3_header_8hh_source.html#l00265">M3Header.hh:265</a></div></div>
+<div class="ttc" id="classmonarch3_1_1_m3_header_html_af3cfba07ca9cbfec5184f712269b67ca"><div class="ttname"><a href="classmonarch3_1_1_m3_header.html#af3cfba07ca9cbfec5184f712269b67ca">monarch3::M3Header::GetStreamHeaders</a></div><div class="ttdeci">std::vector&lt; M3StreamHeader &gt; &amp; GetStreamHeaders()</div><div class="ttdef"><b>Definition:</b> <a href="_m3_header_8hh_source.html#l00268">M3Header.hh:268</a></div></div>
 <div class="ttc" id="_m3_member_variable_8hh_html_a89dba88d627bae7f90b4b13a002d82eb"><div class="ttname"><a href="_m3_member_variable_8hh.html#a89dba88d627bae7f90b4b13a002d82eb">M3MEMBERVARIABLE</a></div><div class="ttdeci">#define M3MEMBERVARIABLE(TYPE, NAME)</div><div class="ttdef"><b>Definition:</b> <a href="_m3_member_variable_8hh_source.html#l00042">M3MemberVariable.hh:42</a></div></div>
 <div class="ttc" id="_m3_constants_8hh_html_aced4881fd530d8c488081fed74b90242"><div class="ttname"><a href="_m3_constants_8hh.html#aced4881fd530d8c488081fed74b90242">M3_API</a></div><div class="ttdeci">#define M3_API</div><div class="ttdef"><b>Definition:</b> <a href="_m3_constants_8hh_source.html#l00021">M3Constants.hh:21</a></div></div>
 <div class="ttc" id="classmonarch3_1_1_m3_header_html_acd74c6517181c35cb23c5aa30a6df059"><div class="ttname"><a href="classmonarch3_1_1_m3_header.html#acd74c6517181c35cb23c5aa30a6df059">monarch3::M3Header::fChannelsGroup</a></div><div class="ttdeci">H5::Group * fChannelsGroup</div><div class="ttdef"><b>Definition:</b> <a href="_m3_header_8hh_source.html#l00222">M3Header.hh:222</a></div></div>
-<div class="ttc" id="classmonarch3_1_1_m3_header_html_a5b599376a431c8ba7b2394b7af29f6a5"><div class="ttname"><a href="classmonarch3_1_1_m3_header.html#a5b599376a431c8ba7b2394b7af29f6a5">monarch3::M3Header::ReadScalarFromHDF5</a></div><div class="ttdeci">static XType ReadScalarFromHDF5(const H5::H5Location *aLoc, const std::string &amp;aName)</div><div class="ttdef"><b>Definition:</b> <a href="_m3_header_8hh_source.html#l00331">M3Header.hh:331</a></div></div>
-<div class="ttc" id="structmonarch3_1_1_m_h5_type_html_a796ed7c3f04b0736843a014fc2fc84b7"><div class="ttname"><a href="structmonarch3_1_1_m_h5_type.html#a796ed7c3f04b0736843a014fc2fc84b7">monarch3::MH5Type::H5</a></div><div class="ttdeci">static H5::DataType H5(T)</div><div class="ttdef"><b>Definition:</b> <a href="_m3_types_8hh_source.html#l00042">M3Types.hh:42</a></div></div>
+<div class="ttc" id="classmonarch3_1_1_m3_header_html_a5b599376a431c8ba7b2394b7af29f6a5"><div class="ttname"><a href="classmonarch3_1_1_m3_header.html#a5b599376a431c8ba7b2394b7af29f6a5">monarch3::M3Header::ReadScalarFromHDF5</a></div><div class="ttdeci">static XType ReadScalarFromHDF5(const H5::H5Location *aLoc, const std::string &amp;aName)</div><div class="ttdef"><b>Definition:</b> <a href="_m3_header_8hh_source.html#l00334">M3Header.hh:334</a></div></div>
+<div class="ttc" id="structmonarch3_1_1_m_h5_type_html_a796ed7c3f04b0736843a014fc2fc84b7"><div class="ttname"><a href="structmonarch3_1_1_m_h5_type.html#a796ed7c3f04b0736843a014fc2fc84b7">monarch3::MH5Type::H5</a></div><div class="ttdeci">static H5::DataType H5(T)</div><div class="ttdef"><b>Definition:</b> <a href="_m3_types_8hh_source.html#l00048">M3Types.hh:48</a></div></div>
 <div class="ttc" id="classmonarch3_1_1_m3_header_html_a917c5525a25393d7284c1c3658837bc8"><div class="ttname"><a href="classmonarch3_1_1_m3_header.html#a917c5525a25393d7284c1c3658837bc8">monarch3::M3Header::M3ChannelHeaders</a></div><div class="ttdeci">std::vector&lt; M3ChannelHeader &gt; M3ChannelHeaders</div><div class="ttdef"><b>Definition:</b> <a href="_m3_header_8hh_source.html#l00155">M3Header.hh:155</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Nov 19 2015 16:16:17 for Monarch by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Mar 9 2016 13:19:27 for Monarch by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.9.1
 </small></address>

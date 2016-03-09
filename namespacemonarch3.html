@@ -24,7 +24,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">Monarch
-   &#160;<span id="projectnumber">3.1.0</span>
+   &#160;<span id="projectnumber">3.2.4</span>
    </div>
    <div id="projectbrief">Project 8 Data File Format Library</div>
   </td>
@@ -120,8 +120,6 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmonarch3_1_1_m3_header.html">M3Header</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Egg file header information.  <a href="classmonarch3_1_1_m3_header.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmonarch3_1_1_m3_logger.html">M3Logger</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmonarch3_1_1_m3_record.html">M3Record</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Contains the information that makes up a record.  <a href="classmonarch3_1_1_m3_record.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -130,6 +128,8 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmonarch3_1_1_m3_stream_header.html">M3StreamHeader</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Single-stream header information.  <a href="classmonarch3_1_1_m3_stream_header.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmonarch3_1_1_m3_version.html">M3Version</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmonarch3_1_1_m_h5_type.html">MH5Type</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -167,25 +167,27 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:a4c6480d98296d9778cebddb4ef4b21ce"><td class="memItemLeft" align="right" valign="top">typedef acquisition_id_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch3.html#a4c6480d98296d9778cebddb4ef4b21ce">AcquisitionIdType</a></td></tr>
-<tr class="separator:a4c6480d98296d9778cebddb4ef4b21ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a616ae6792627f967a9164280adac2b23"><td class="memItemLeft" align="right" valign="top">typedef record_id_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch3.html#a616ae6792627f967a9164280adac2b23">RecordIdType</a></td></tr>
-<tr class="separator:a616ae6792627f967a9164280adac2b23"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af0f0f4c319e81e95b37156be6ad53b34"><td class="memItemLeft" align="right" valign="top">typedef time_nsec_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch3.html#af0f0f4c319e81e95b37156be6ad53b34">TimeType</a></td></tr>
-<tr class="separator:af0f0f4c319e81e95b37156be6ad53b34"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af83f9e08fa427b22d11d7c0a11a127db"><td class="memItemLeft" align="right" valign="top">typedef float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch3.html#af83f9e08fa427b22d11d7c0a11a127db">f4_complex</a>[2]</td></tr>
 <tr class="memdesc:af83f9e08fa427b22d11d7c0a11a127db"><td class="mdescLeft">&#160;</td><td class="mdescRight">Binary-compatible to fftwf_complex.  <a href="#af83f9e08fa427b22d11d7c0a11a127db">More...</a><br /></td></tr>
 <tr class="separator:af83f9e08fa427b22d11d7c0a11a127db"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac56bad8ee776200b93582df08f338907"><td class="memItemLeft" align="right" valign="top">typedef double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch3.html#ac56bad8ee776200b93582df08f338907">f8_complex</a>[2]</td></tr>
 <tr class="memdesc:ac56bad8ee776200b93582df08f338907"><td class="mdescLeft">&#160;</td><td class="mdescRight">Binary-compatible to fftw_complex.  <a href="#ac56bad8ee776200b93582df08f338907">More...</a><br /></td></tr>
 <tr class="separator:ac56bad8ee776200b93582df08f338907"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa2b8c14fe6bf7d77f658c699cb3cb201"><td class="memItemLeft" align="right" valign="top">typedef uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch3.html#aa2b8c14fe6bf7d77f658c699cb3cb201">byte_type</a></td></tr>
+<tr class="separator:aa2b8c14fe6bf7d77f658c699cb3cb201"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab45d7522f6a60822c8f045e92c6207e6"><td class="memItemLeft" align="right" valign="top">typedef uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch3.html#ab45d7522f6a60822c8f045e92c6207e6">AcquisitionIdType</a></td></tr>
+<tr class="separator:ab45d7522f6a60822c8f045e92c6207e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad5b20f57039aa3c5933e39b2a92233a5"><td class="memItemLeft" align="right" valign="top">typedef uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch3.html#ad5b20f57039aa3c5933e39b2a92233a5">RecordIdType</a></td></tr>
+<tr class="separator:ad5b20f57039aa3c5933e39b2a92233a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1ed79a410d8fb896f2fac52e32162d66"><td class="memItemLeft" align="right" valign="top">typedef uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch3.html#a1ed79a410d8fb896f2fac52e32162d66">TimeType</a></td></tr>
+<tr class="separator:a1ed79a410d8fb896f2fac52e32162d66"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:acb867372f8a8cfd07ab3f10de0874b3f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch3.html#acb867372f8a8cfd07ab3f10de0874b3f">M3LOGGER</a> (mlog,&quot;M3Header&quot;)</td></tr>
-<tr class="separator:acb867372f8a8cfd07ab3f10de0874b3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad7067222fc9ace85cb09401b191e7770"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch3.html#ad7067222fc9ace85cb09401b191e7770">M3LOGGER</a> (mlog_mheader,&quot;M3Header.hh&quot;)</td></tr>
-<tr class="separator:ad7067222fc9ace85cb09401b191e7770"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abb4ec9bb7f1cf1cc54ebec0ff04367cf"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch3.html#abb4ec9bb7f1cf1cc54ebec0ff04367cf">LOGGER</a> (mlog,&quot;M3Header&quot;)</td></tr>
+<tr class="separator:abb4ec9bb7f1cf1cc54ebec0ff04367cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad8f19e243f38c150016051a249ea1117"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch3.html#ad8f19e243f38c150016051a249ea1117">LOGGER</a> (mlog_mheader,&quot;M3Header.hh&quot;)</td></tr>
+<tr class="separator:ad8f19e243f38c150016051a249ea1117"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa1f848c3efdc1b6c424a68e9d5aabcab"><td class="memItemLeft" align="right" valign="top"><a class="el" href="_m3_constants_8hh.html#aced4881fd530d8c488081fed74b90242">M3_API</a> void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch3.html#aa1f848c3efdc1b6c424a68e9d5aabcab">u32toa</a> (uint32_t value, char *buffer)</td></tr>
 <tr class="memdesc:aa1f848c3efdc1b6c424a68e9d5aabcab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Quickly convert a 32-bit unsigned integer to a char array (buffer should already be allocated)  <a href="#aa1f848c3efdc1b6c424a68e9d5aabcab">More...</a><br /></td></tr>
 <tr class="separator:aa1f848c3efdc1b6c424a68e9d5aabcab"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -202,28 +204,12 @@ Functions</h2></td></tr>
 <tr class="separator:af6a250ef67f68e4fe8492a191ec342a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab89f3162a8316dc1002370251411980a"><td class="memItemLeft" align="right" valign="top">unsigned&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch3.html#ab89f3162a8316dc1002370251411980a">CountDecimalDigit64</a> (uint64_t n)</td></tr>
 <tr class="separator:ab89f3162a8316dc1002370251411980a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af310f73436adeab2acfece1db424f76e"><td class="memItemLeft" align="right" valign="top">const string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch3.html#af310f73436adeab2acfece1db424f76e">EndColor</a> ()</td></tr>
-<tr class="separator:af310f73436adeab2acfece1db424f76e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab129671da5375a9a190d4c00fae9f515"><td class="memItemLeft" align="right" valign="top">const string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch3.html#ab129671da5375a9a190d4c00fae9f515">FatalColor</a> ()</td></tr>
-<tr class="separator:ab129671da5375a9a190d4c00fae9f515"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4c59839bb934cc86e44aa37d52fd6dc1"><td class="memItemLeft" align="right" valign="top">const string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch3.html#a4c59839bb934cc86e44aa37d52fd6dc1">ErrorColor</a> ()</td></tr>
-<tr class="separator:a4c59839bb934cc86e44aa37d52fd6dc1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4cb497dd75f57b55c3daa929c198bf15"><td class="memItemLeft" align="right" valign="top">const string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch3.html#a4cb497dd75f57b55c3daa929c198bf15">WarnColor</a> ()</td></tr>
-<tr class="separator:a4cb497dd75f57b55c3daa929c198bf15"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a422ae760e6eb18b3ab28598920e6b9f9"><td class="memItemLeft" align="right" valign="top">const string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch3.html#a422ae760e6eb18b3ab28598920e6b9f9">InfoColor</a> ()</td></tr>
-<tr class="separator:a422ae760e6eb18b3ab28598920e6b9f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa5955a66ba03c6621c99aff76945c855"><td class="memItemLeft" align="right" valign="top">const string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch3.html#aa5955a66ba03c6621c99aff76945c855">DebugColor</a> ()</td></tr>
-<tr class="separator:aa5955a66ba03c6621c99aff76945c855"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afc853509a7efe6db108531d77f2cc9f9"><td class="memItemLeft" align="right" valign="top">const string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch3.html#afc853509a7efe6db108531d77f2cc9f9">OtherColor</a> ()</td></tr>
-<tr class="separator:afc853509a7efe6db108531d77f2cc9f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8f170f54dc4c475c56634518df292580"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch3.html#a8f170f54dc4c475c56634518df292580">M3LOGGER</a> (mlog,&quot;MMonarch3&quot;)</td></tr>
-<tr class="separator:a8f170f54dc4c475c56634518df292580"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeb453724d901cffbfa11a134c99fd3d1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch3.html#aeb453724d901cffbfa11a134c99fd3d1">M3LOGGER</a> (mlog_mmonarch,&quot;M3Monarch3.h&quot;)</td></tr>
-<tr class="separator:aeb453724d901cffbfa11a134c99fd3d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6750e47faa5075ec8601f65d292f39f1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch3.html#a6750e47faa5075ec8601f65d292f39f1">M3LOGGER</a> (mlog,&quot;M3Stream&quot;)</td></tr>
-<tr class="separator:a6750e47faa5075ec8601f65d292f39f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a32259f406f6e28187b336389e7c9ae4f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch3.html#a32259f406f6e28187b336389e7c9ae4f">M3LOGGER</a> (mlog,&quot;Version&quot;)</td></tr>
-<tr class="separator:a32259f406f6e28187b336389e7c9ae4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6a6e25d7bbdfb32ddd0066e117984e58"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch3.html#a6a6e25d7bbdfb32ddd0066e117984e58">LOGGER</a> (mlog,&quot;MMonarch3&quot;)</td></tr>
+<tr class="separator:a6a6e25d7bbdfb32ddd0066e117984e58"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3922d3b6a75f9a03e04984944861117f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch3.html#a3922d3b6a75f9a03e04984944861117f">LOGGER</a> (mlog_mmonarch,&quot;M3Monarch3.h&quot;)</td></tr>
+<tr class="separator:a3922d3b6a75f9a03e04984944861117f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9fdf6a63d435abab30e37f284dae6cc6"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch3.html#a9fdf6a63d435abab30e37f284dae6cc6">LOGGER</a> (mlog,&quot;M3Stream&quot;)</td></tr>
+<tr class="separator:a9fdf6a63d435abab30e37f284dae6cc6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
@@ -231,17 +217,31 @@ Variables</h2></td></tr>
 <tr class="separator:a9d6a86801a12ce71c89dfe25780c4804"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Typedef Documentation</h2>
-<a class="anchor" id="a4c6480d98296d9778cebddb4ef4b21ce"></a>
+<a class="anchor" id="ab45d7522f6a60822c8f045e92c6207e6"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef acquisition_id_type <a class="el" href="namespacemonarch3.html#a4c6480d98296d9778cebddb4ef4b21ce">AcquisitionIdType</a></td>
+          <td class="memname">typedef uint64_t <a class="el" href="namespacemonarch3.html#ab45d7522f6a60822c8f045e92c6207e6">AcquisitionIdType</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_m3_constants_8hh_source.html#l00056">56</a> of file <a class="el" href="_m3_constants_8hh_source.html">M3Constants.hh</a>.</p>
+<p>Definition at line <a class="el" href="_m3_types_8hh_source.html#l00022">22</a> of file <a class="el" href="_m3_types_8hh_source.html">M3Types.hh</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="aa2b8c14fe6bf7d77f658c699cb3cb201"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef uint8_t <a class="el" href="namespacemonarch3.html#aa2b8c14fe6bf7d77f658c699cb3cb201">byte_type</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Definition at line <a class="el" href="_m3_types_8hh_source.html#l00020">20</a> of file <a class="el" href="_m3_types_8hh_source.html">M3Types.hh</a>.</p>
 
 </div>
 </div>
@@ -277,31 +277,31 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a616ae6792627f967a9164280adac2b23"></a>
+<a class="anchor" id="ad5b20f57039aa3c5933e39b2a92233a5"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef record_id_type <a class="el" href="namespacemonarch3.html#a616ae6792627f967a9164280adac2b23">RecordIdType</a></td>
+          <td class="memname">typedef uint64_t <a class="el" href="namespacemonarch3.html#ad5b20f57039aa3c5933e39b2a92233a5">RecordIdType</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_m3_constants_8hh_source.html#l00057">57</a> of file <a class="el" href="_m3_constants_8hh_source.html">M3Constants.hh</a>.</p>
+<p>Definition at line <a class="el" href="_m3_types_8hh_source.html#l00023">23</a> of file <a class="el" href="_m3_types_8hh_source.html">M3Types.hh</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="af0f0f4c319e81e95b37156be6ad53b34"></a>
+<a class="anchor" id="a1ed79a410d8fb896f2fac52e32162d66"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef time_nsec_type <a class="el" href="namespacemonarch3.html#af0f0f4c319e81e95b37156be6ad53b34">TimeType</a></td>
+          <td class="memname">typedef uint64_t <a class="el" href="namespacemonarch3.html#a1ed79a410d8fb896f2fac52e32162d66">TimeType</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_m3_constants_8hh_source.html#l00058">58</a> of file <a class="el" href="_m3_constants_8hh_source.html">M3Constants.hh</a>.</p>
+<p>Definition at line <a class="el" href="_m3_types_8hh_source.html#l00024">24</a> of file <a class="el" href="_m3_types_8hh_source.html">M3Types.hh</a>.</p>
 
 </div>
 </div>
@@ -355,74 +355,6 @@ Variables</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Definition at line <a class="el" href="_m3_i_to_a_8hh_source.html#l00122">122</a> of file <a class="el" href="_m3_i_to_a_8hh_source.html">M3IToA.hh</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="aa5955a66ba03c6621c99aff76945c855"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const string&amp; monarch3::DebugColor </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="_m3_logger_8cc_source.html#l00038">38</a> of file <a class="el" href="_m3_logger_8cc_source.html">M3Logger.cc</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="af310f73436adeab2acfece1db424f76e"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const string&amp; monarch3::EndColor </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="_m3_logger_8cc_source.html#l00033">33</a> of file <a class="el" href="_m3_logger_8cc_source.html">M3Logger.cc</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a4c59839bb934cc86e44aa37d52fd6dc1"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const string&amp; monarch3::ErrorColor </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="_m3_logger_8cc_source.html#l00035">35</a> of file <a class="el" href="_m3_logger_8cc_source.html">M3Logger.cc</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="ab129671da5375a9a190d4c00fae9f515"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const string&amp; monarch3::FatalColor </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="_m3_logger_8cc_source.html#l00034">34</a> of file <a class="el" href="_m3_logger_8cc_source.html">M3Logger.cc</a>.</p>
 
 </div>
 </div>
@@ -486,29 +418,12 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a422ae760e6eb18b3ab28598920e6b9f9"></a>
+<a class="anchor" id="a6a6e25d7bbdfb32ddd0066e117984e58"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">const string&amp; monarch3::InfoColor </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="_m3_logger_8cc_source.html#l00037">37</a> of file <a class="el" href="_m3_logger_8cc_source.html">M3Logger.cc</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a8f170f54dc4c475c56634518df292580"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">monarch3::M3LOGGER </td>
+          <td class="memname">monarch3::LOGGER </td>
           <td>(</td>
           <td class="paramtype">mlog&#160;</td>
           <td class="paramname">, </td>
@@ -529,38 +444,12 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a32259f406f6e28187b336389e7c9ae4f"></a>
+<a class="anchor" id="a3922d3b6a75f9a03e04984944861117f"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">monarch3::M3LOGGER </td>
-          <td>(</td>
-          <td class="paramtype">mlog&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&quot;Version&quot;&#160;</td>
-          <td class="paramname">&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a class="anchor" id="aeb453724d901cffbfa11a134c99fd3d1"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">monarch3::M3LOGGER </td>
+          <td class="memname">monarch3::LOGGER </td>
           <td>(</td>
           <td class="paramtype">mlog_mmonarch&#160;</td>
           <td class="paramname">, </td>
@@ -581,12 +470,12 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="ad7067222fc9ace85cb09401b191e7770"></a>
+<a class="anchor" id="ad8f19e243f38c150016051a249ea1117"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">monarch3::M3LOGGER </td>
+          <td class="memname">monarch3::LOGGER </td>
           <td>(</td>
           <td class="paramtype">mlog_mheader&#160;</td>
           <td class="paramname">, </td>
@@ -607,12 +496,12 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="acb867372f8a8cfd07ab3f10de0874b3f"></a>
+<a class="anchor" id="abb4ec9bb7f1cf1cc54ebec0ff04367cf"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">monarch3::M3LOGGER </td>
+          <td class="memname">monarch3::LOGGER </td>
           <td>(</td>
           <td class="paramtype">mlog&#160;</td>
           <td class="paramname">, </td>
@@ -633,12 +522,12 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a6750e47faa5075ec8601f65d292f39f1"></a>
+<a class="anchor" id="a9fdf6a63d435abab30e37f284dae6cc6"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">monarch3::M3LOGGER </td>
+          <td class="memname">monarch3::LOGGER </td>
           <td>(</td>
           <td class="paramtype">mlog&#160;</td>
           <td class="paramname">, </td>
@@ -656,23 +545,6 @@ Variables</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-
-</div>
-</div>
-<a class="anchor" id="afc853509a7efe6db108531d77f2cc9f9"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const string&amp; monarch3::OtherColor </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="_m3_logger_8cc_source.html#l00039">39</a> of file <a class="el" href="_m3_logger_8cc_source.html">M3Logger.cc</a>.</p>
 
 </div>
 </div>
@@ -736,23 +608,6 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="a4cb497dd75f57b55c3daa929c198bf15"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const string&amp; monarch3::WarnColor </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="_m3_logger_8cc_source.html#l00036">36</a> of file <a class="el" href="_m3_logger_8cc_source.html">M3Logger.cc</a>.</p>
-
-</div>
-</div>
 <h2 class="groupheader">Variable Documentation</h2>
 <a class="anchor" id="a9d6a86801a12ce71c89dfe25780c4804"></a>
 <div class="memitem">
@@ -783,7 +638,7 @@ Variables</h2></td></tr>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Nov 19 2015 16:16:18 for Monarch by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Mar 9 2016 13:19:28 for Monarch by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.9.1
 </small></address>

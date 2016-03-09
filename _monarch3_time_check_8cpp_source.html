@@ -24,7 +24,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">Monarch
-   &#160;<span id="projectnumber">3.1.0</span>
+   &#160;<span id="projectnumber">3.2.4</span>
    </div>
    <div id="projectbrief">Project 8 Data File Format Library</div>
   </td>
@@ -130,8 +130,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <span class="keyword">const</span> MonarchHeader* tReadHeader = tReadTest-&gt;GetHeader();</div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    MINFO( mlog, *tReadHeader );</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    <a class="code" href="namespacemonarch3.html#af0f0f4c319e81e95b37156be6ad53b34">TimeType</a> tRecordSize = (<a class="code" href="namespacemonarch3.html#af0f0f4c319e81e95b37156be6ad53b34">TimeType</a>)tReadHeader-&gt;GetRecordSize();</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    <a class="code" href="namespacemonarch3.html#af0f0f4c319e81e95b37156be6ad53b34">TimeType</a> tBinWidthNS = (<a class="code" href="namespacemonarch3.html#af0f0f4c319e81e95b37156be6ad53b34">TimeType</a>)(1000. / tReadHeader-&gt;GetAcquisitionRate()); <span class="comment">// in ns</span></div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    <a class="code" href="namespacemonarch3.html#a1ed79a410d8fb896f2fac52e32162d66">TimeType</a> tRecordSize = (<a class="code" href="namespacemonarch3.html#a1ed79a410d8fb896f2fac52e32162d66">TimeType</a>)tReadHeader-&gt;GetRecordSize();</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    <a class="code" href="namespacemonarch3.html#a1ed79a410d8fb896f2fac52e32162d66">TimeType</a> tBinWidthNS = (<a class="code" href="namespacemonarch3.html#a1ed79a410d8fb896f2fac52e32162d66">TimeType</a>)(1000. / tReadHeader-&gt;GetAcquisitionRate()); <span class="comment">// in ns</span></div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    <span class="keyword">const</span> MonarchRecordBytes* tReadRecord;</div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    <span class="keywordflow">if</span>( tReadHeader-&gt;GetAcquisitionMode() == 1 <span class="comment">/* the FormatMode is ignored for single-channel data */</span> )</div>
@@ -155,9 +155,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> tRecordCount = 0;</div>
 <div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <span class="keywordtype">unsigned</span> <span class="keywordtype">long</span> <span class="keywordtype">long</span> tAcquisitionCount = 0;</div>
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <a class="code" href="namespacemonarch3.html#af0f0f4c319e81e95b37156be6ad53b34">TimeType</a> tNSTimeInRunClock = 0;</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <a class="code" href="namespacemonarch3.html#af0f0f4c319e81e95b37156be6ad53b34">TimeType</a> tNSTimeInRunBins = 0;</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <a class="code" href="namespacemonarch3.html#af0f0f4c319e81e95b37156be6ad53b34">TimeType</a> tNSTimeInRunBinsCorr = 0; <span class="comment">// corrected to the Clock time when there&#39;s a new acquisition</span></div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <a class="code" href="namespacemonarch3.html#a1ed79a410d8fb896f2fac52e32162d66">TimeType</a> tNSTimeInRunClock = 0;</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <a class="code" href="namespacemonarch3.html#a1ed79a410d8fb896f2fac52e32162d66">TimeType</a> tNSTimeInRunBins = 0;</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <a class="code" href="namespacemonarch3.html#a1ed79a410d8fb896f2fac52e32162d66">TimeType</a> tNSTimeInRunBinsCorr = 0; <span class="comment">// corrected to the Clock time when there&#39;s a new acquisition</span></div>
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;</div>
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <span class="comment">// read first record</span></div>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    <span class="keywordflow">if</span> (! tReadTest-&gt;ReadRecord())</div>
@@ -208,13 +208,13 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;</div>
 <div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;</div>
 <div class="ttc" id="_monarch3_time_check_8cpp_html_ac762d48b889bd832ec0d42abcbc50624"><div class="ttname"><a href="_monarch3_time_check_8cpp.html#ac762d48b889bd832ec0d42abcbc50624">main</a></div><div class="ttdeci">int main(const int argc, const char **argv)</div><div class="ttdef"><b>Definition:</b> <a href="_monarch3_time_check_8cpp_source.html#l00018">Monarch3TimeCheck.cpp:18</a></div></div>
-<div class="ttc" id="namespacemonarch3_html_af0f0f4c319e81e95b37156be6ad53b34"><div class="ttname"><a href="namespacemonarch3.html#af0f0f4c319e81e95b37156be6ad53b34">monarch3::TimeType</a></div><div class="ttdeci">time_nsec_type TimeType</div><div class="ttdef"><b>Definition:</b> <a href="_m3_constants_8hh_source.html#l00058">M3Constants.hh:58</a></div></div>
+<div class="ttc" id="namespacemonarch3_html_a1ed79a410d8fb896f2fac52e32162d66"><div class="ttname"><a href="namespacemonarch3.html#a1ed79a410d8fb896f2fac52e32162d66">monarch3::TimeType</a></div><div class="ttdeci">uint64_t TimeType</div><div class="ttdef"><b>Definition:</b> <a href="_m3_types_8hh_source.html#l00024">M3Types.hh:24</a></div></div>
 <div class="ttc" id="namespacemonarch_html"><div class="ttname"><a href="namespacemonarch.html">monarch</a></div></div>
 <div class="ttc" id="_monarch3_time_check_8cpp_html_aab6f00c54d2d743333822a2956d17139"><div class="ttname"><a href="_monarch3_time_check_8cpp.html#aab6f00c54d2d743333822a2956d17139">MLOGGER</a></div><div class="ttdeci">MLOGGER(mlog,&quot;MonarchTimeCheck&quot;)</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Nov 19 2015 16:16:18 for Monarch by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Mar 9 2016 13:19:28 for Monarch by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.9.1
 </small></address>

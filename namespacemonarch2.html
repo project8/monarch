@@ -24,7 +24,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">Monarch
-   &#160;<span id="projectnumber">3.1.0</span>
+   &#160;<span id="projectnumber">3.2.4</span>
    </div>
    <div id="projectbrief">Project 8 Data File Format Library</div>
   </td>
@@ -85,8 +85,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
-<a href="#typedef-members">Typedefs</a> &#124;
-<a href="#func-members">Functions</a>  </div>
+<a href="#typedef-members">Typedefs</a>  </div>
   <div class="headertitle">
 <div class="title">monarch2 Namespace Reference</div>  </div>
 </div><!--header-->
@@ -104,11 +103,11 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmonarch2_1_1_m2_i_o.html">M2IO</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmonarch2_1_1_m2_logger.html">M2Logger</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmonarch2_1_1_m2_record.html">M2Record</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmonarch2_1_1_m2_record_data_interface.html">M2RecordDataInterface</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmonarch2_1_1_m2_version.html">M2Version</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmonarch2_1_1_monarch2.html">Monarch2</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -119,8 +118,10 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:a20a0639d3fba18df3b000650e115db10"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="structmonarch2_1_1_m2_record.html">M2Record</a>&lt; byte_type &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch2.html#a20a0639d3fba18df3b000650e115db10">M2RecordBytes</a></td></tr>
+<tr class="memitem:a20a0639d3fba18df3b000650e115db10"><td class="memItemLeft" align="right" valign="top">typedef <a class="el" href="structmonarch2_1_1_m2_record.html">M2Record</a>&lt; <a class="el" href="namespacemonarch2.html#aa2b8c14fe6bf7d77f658c699cb3cb201">byte_type</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch2.html#a20a0639d3fba18df3b000650e115db10">M2RecordBytes</a></td></tr>
 <tr class="separator:a20a0639d3fba18df3b000650e115db10"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa2b8c14fe6bf7d77f658c699cb3cb201"><td class="memItemLeft" align="right" valign="top">typedef uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch2.html#aa2b8c14fe6bf7d77f658c699cb3cb201">byte_type</a></td></tr>
+<tr class="separator:aa2b8c14fe6bf7d77f658c699cb3cb201"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a70030eb1ef5e4d7844bdbda224cafdd5"><td class="memItemLeft" align="right" valign="top">typedef size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch2.html#a70030eb1ef5e4d7844bdbda224cafdd5">PreludeType</a></td></tr>
 <tr class="separator:a70030eb1ef5e4d7844bdbda224cafdd5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4012f7377e8bf348d26cab5acd31d92e"><td class="memItemLeft" align="right" valign="top">typedef uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch2.html#a4012f7377e8bf348d26cab5acd31d92e">AccessModeType</a></td></tr>
@@ -135,35 +136,14 @@ Typedefs</h2></td></tr>
 <tr class="separator:aaafdc98d74fea45025633640b7e5b14a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a881131d905dc9c9bdc1d52c4ab8c68df"><td class="memItemLeft" align="right" valign="top">typedef uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch2.html#a881131d905dc9c9bdc1d52c4ab8c68df">FormatModeType</a></td></tr>
 <tr class="separator:a881131d905dc9c9bdc1d52c4ab8c68df"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4c6480d98296d9778cebddb4ef4b21ce"><td class="memItemLeft" align="right" valign="top">typedef acquisition_id_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch2.html#a4c6480d98296d9778cebddb4ef4b21ce">AcquisitionIdType</a></td></tr>
-<tr class="separator:a4c6480d98296d9778cebddb4ef4b21ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a616ae6792627f967a9164280adac2b23"><td class="memItemLeft" align="right" valign="top">typedef record_id_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch2.html#a616ae6792627f967a9164280adac2b23">RecordIdType</a></td></tr>
-<tr class="separator:a616ae6792627f967a9164280adac2b23"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af0f0f4c319e81e95b37156be6ad53b34"><td class="memItemLeft" align="right" valign="top">typedef time_nsec_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch2.html#af0f0f4c319e81e95b37156be6ad53b34">TimeType</a></td></tr>
-<tr class="separator:af0f0f4c319e81e95b37156be6ad53b34"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
-Functions</h2></td></tr>
-<tr class="memitem:ad14cccb50199af94f0e139aacc071807"><td class="memItemLeft" align="right" valign="top">const string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch2.html#ad14cccb50199af94f0e139aacc071807">EndColor</a> ()</td></tr>
-<tr class="separator:ad14cccb50199af94f0e139aacc071807"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a60e094076bc243a4fd95a1ed084f4356"><td class="memItemLeft" align="right" valign="top">const string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch2.html#a60e094076bc243a4fd95a1ed084f4356">FatalColor</a> ()</td></tr>
-<tr class="separator:a60e094076bc243a4fd95a1ed084f4356"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a57648a15065dfb1cd6a869bc7832121e"><td class="memItemLeft" align="right" valign="top">const string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch2.html#a57648a15065dfb1cd6a869bc7832121e">ErrorColor</a> ()</td></tr>
-<tr class="separator:a57648a15065dfb1cd6a869bc7832121e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aea4ce4777ca874e72f2229e9d8ea3484"><td class="memItemLeft" align="right" valign="top">const string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch2.html#aea4ce4777ca874e72f2229e9d8ea3484">WarnColor</a> ()</td></tr>
-<tr class="separator:aea4ce4777ca874e72f2229e9d8ea3484"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1cca04f7c90025a30eaac82d5f2c6694"><td class="memItemLeft" align="right" valign="top">const string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch2.html#a1cca04f7c90025a30eaac82d5f2c6694">InfoColor</a> ()</td></tr>
-<tr class="separator:a1cca04f7c90025a30eaac82d5f2c6694"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a37df4e4ea9d0964a0b0f34e99516d56a"><td class="memItemLeft" align="right" valign="top">const string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch2.html#a37df4e4ea9d0964a0b0f34e99516d56a">DebugColor</a> ()</td></tr>
-<tr class="separator:a37df4e4ea9d0964a0b0f34e99516d56a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a27eea920ecea07234b633cc239dda0f7"><td class="memItemLeft" align="right" valign="top">const string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch2.html#a27eea920ecea07234b633cc239dda0f7">OtherColor</a> ()</td></tr>
-<tr class="separator:a27eea920ecea07234b633cc239dda0f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aefd565ae44628998033977c23ed6df12"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch2.html#aefd565ae44628998033977c23ed6df12">M2LOGGER</a> (mlog,&quot;Version&quot;)</td></tr>
-<tr class="separator:aefd565ae44628998033977c23ed6df12"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab45d7522f6a60822c8f045e92c6207e6"><td class="memItemLeft" align="right" valign="top">typedef uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch2.html#ab45d7522f6a60822c8f045e92c6207e6">AcquisitionIdType</a></td></tr>
+<tr class="separator:ab45d7522f6a60822c8f045e92c6207e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad5b20f57039aa3c5933e39b2a92233a5"><td class="memItemLeft" align="right" valign="top">typedef uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch2.html#ad5b20f57039aa3c5933e39b2a92233a5">RecordIdType</a></td></tr>
+<tr class="separator:ad5b20f57039aa3c5933e39b2a92233a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1ed79a410d8fb896f2fac52e32162d66"><td class="memItemLeft" align="right" valign="top">typedef uint64_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch2.html#a1ed79a410d8fb896f2fac52e32162d66">TimeType</a></td></tr>
+<tr class="separator:a1ed79a410d8fb896f2fac52e32162d66"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>The standard monarch namespace. </p>
-</div><h2 class="groupheader">Typedef Documentation</h2>
+<h2 class="groupheader">Typedef Documentation</h2>
 <a class="anchor" id="a4012f7377e8bf348d26cab5acd31d92e"></a>
 <div class="memitem">
 <div class="memproto">
@@ -174,21 +154,21 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_m2_types_8hh_source.html#l00028">28</a> of file <a class="el" href="_m2_types_8hh_source.html">M2Types.hh</a>.</p>
+<p>Definition at line <a class="el" href="_m2_types_8hh_source.html#l00030">30</a> of file <a class="el" href="_m2_types_8hh_source.html">M2Types.hh</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="a4c6480d98296d9778cebddb4ef4b21ce"></a>
+<a class="anchor" id="ab45d7522f6a60822c8f045e92c6207e6"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef acquisition_id_type <a class="el" href="namespacemonarch2.html#a4c6480d98296d9778cebddb4ef4b21ce">AcquisitionIdType</a></td>
+          <td class="memname">typedef uint64_t <a class="el" href="namespacemonarch2.html#ab45d7522f6a60822c8f045e92c6207e6">AcquisitionIdType</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_m2_types_8hh_source.html#l00055">55</a> of file <a class="el" href="_m2_types_8hh_source.html">M2Types.hh</a>.</p>
+<p>Definition at line <a class="el" href="_m2_types_8hh_source.html#l00057">57</a> of file <a class="el" href="_m2_types_8hh_source.html">M2Types.hh</a>.</p>
 
 </div>
 </div>
@@ -202,7 +182,21 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_m2_types_8hh_source.html#l00036">36</a> of file <a class="el" href="_m2_types_8hh_source.html">M2Types.hh</a>.</p>
+<p>Definition at line <a class="el" href="_m2_types_8hh_source.html#l00038">38</a> of file <a class="el" href="_m2_types_8hh_source.html">M2Types.hh</a>.</p>
+
+</div>
+</div>
+<a class="anchor" id="aa2b8c14fe6bf7d77f658c699cb3cb201"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef uint8_t <a class="el" href="namespacemonarch2.html#aa2b8c14fe6bf7d77f658c699cb3cb201">byte_type</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Definition at line <a class="el" href="_m2_types_8hh_source.html#l00010">10</a> of file <a class="el" href="_m2_types_8hh_source.html">M2Types.hh</a>.</p>
 
 </div>
 </div>
@@ -216,7 +210,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_m2_types_8hh_source.html#l00049">49</a> of file <a class="el" href="_m2_types_8hh_source.html">M2Types.hh</a>.</p>
+<p>Definition at line <a class="el" href="_m2_types_8hh_source.html#l00051">51</a> of file <a class="el" href="_m2_types_8hh_source.html">M2Types.hh</a>.</p>
 
 </div>
 </div>
@@ -230,7 +224,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_m2_types_8hh_source.html#l00032">32</a> of file <a class="el" href="_m2_types_8hh_source.html">M2Types.hh</a>.</p>
+<p>Definition at line <a class="el" href="_m2_types_8hh_source.html#l00034">34</a> of file <a class="el" href="_m2_types_8hh_source.html">M2Types.hh</a>.</p>
 
 </div>
 </div>
@@ -239,7 +233,7 @@ Functions</h2></td></tr>
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef <a class="el" href="structmonarch2_1_1_m2_record.html">M2Record</a>&lt; byte_type &gt; <a class="el" href="namespacemonarch2.html#a20a0639d3fba18df3b000650e115db10">M2RecordBytes</a></td>
+          <td class="memname">typedef <a class="el" href="structmonarch2_1_1_m2_record.html">M2Record</a>&lt; <a class="el" href="namespacemonarch2.html#aa2b8c14fe6bf7d77f658c699cb3cb201">byte_type</a> &gt; <a class="el" href="namespacemonarch2.html#a20a0639d3fba18df3b000650e115db10">M2RecordBytes</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -258,21 +252,21 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_m2_types_8hh_source.html#l00026">26</a> of file <a class="el" href="_m2_types_8hh_source.html">M2Types.hh</a>.</p>
+<p>Definition at line <a class="el" href="_m2_types_8hh_source.html#l00028">28</a> of file <a class="el" href="_m2_types_8hh_source.html">M2Types.hh</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="a616ae6792627f967a9164280adac2b23"></a>
+<a class="anchor" id="ad5b20f57039aa3c5933e39b2a92233a5"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef record_id_type <a class="el" href="namespacemonarch2.html#a616ae6792627f967a9164280adac2b23">RecordIdType</a></td>
+          <td class="memname">typedef uint64_t <a class="el" href="namespacemonarch2.html#ad5b20f57039aa3c5933e39b2a92233a5">RecordIdType</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_m2_types_8hh_source.html#l00056">56</a> of file <a class="el" href="_m2_types_8hh_source.html">M2Types.hh</a>.</p>
+<p>Definition at line <a class="el" href="_m2_types_8hh_source.html#l00058">58</a> of file <a class="el" href="_m2_types_8hh_source.html">M2Types.hh</a>.</p>
 
 </div>
 </div>
@@ -286,7 +280,7 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_m2_types_8hh_source.html#l00045">45</a> of file <a class="el" href="_m2_types_8hh_source.html">M2Types.hh</a>.</p>
+<p>Definition at line <a class="el" href="_m2_types_8hh_source.html#l00047">47</a> of file <a class="el" href="_m2_types_8hh_source.html">M2Types.hh</a>.</p>
 
 </div>
 </div>
@@ -300,174 +294,28 @@ Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_m2_types_8hh_source.html#l00040">40</a> of file <a class="el" href="_m2_types_8hh_source.html">M2Types.hh</a>.</p>
+<p>Definition at line <a class="el" href="_m2_types_8hh_source.html#l00042">42</a> of file <a class="el" href="_m2_types_8hh_source.html">M2Types.hh</a>.</p>
 
 </div>
 </div>
-<a class="anchor" id="af0f0f4c319e81e95b37156be6ad53b34"></a>
+<a class="anchor" id="a1ed79a410d8fb896f2fac52e32162d66"></a>
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">typedef time_nsec_type <a class="el" href="namespacemonarch2.html#af0f0f4c319e81e95b37156be6ad53b34">TimeType</a></td>
+          <td class="memname">typedef uint64_t <a class="el" href="namespacemonarch2.html#a1ed79a410d8fb896f2fac52e32162d66">TimeType</a></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Definition at line <a class="el" href="_m2_types_8hh_source.html#l00057">57</a> of file <a class="el" href="_m2_types_8hh_source.html">M2Types.hh</a>.</p>
-
-</div>
-</div>
-<h2 class="groupheader">Function Documentation</h2>
-<a class="anchor" id="a37df4e4ea9d0964a0b0f34e99516d56a"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const string&amp; monarch2::DebugColor </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="_m2_logger_8cc_source.html#l00036">36</a> of file <a class="el" href="_m2_logger_8cc_source.html">M2Logger.cc</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="ad14cccb50199af94f0e139aacc071807"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const string&amp; monarch2::EndColor </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="_m2_logger_8cc_source.html#l00031">31</a> of file <a class="el" href="_m2_logger_8cc_source.html">M2Logger.cc</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a57648a15065dfb1cd6a869bc7832121e"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const string&amp; monarch2::ErrorColor </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="_m2_logger_8cc_source.html#l00033">33</a> of file <a class="el" href="_m2_logger_8cc_source.html">M2Logger.cc</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a60e094076bc243a4fd95a1ed084f4356"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const string&amp; monarch2::FatalColor </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="_m2_logger_8cc_source.html#l00032">32</a> of file <a class="el" href="_m2_logger_8cc_source.html">M2Logger.cc</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="a1cca04f7c90025a30eaac82d5f2c6694"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const string&amp; monarch2::InfoColor </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="_m2_logger_8cc_source.html#l00035">35</a> of file <a class="el" href="_m2_logger_8cc_source.html">M2Logger.cc</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="aefd565ae44628998033977c23ed6df12"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">monarch2::M2LOGGER </td>
-          <td>(</td>
-          <td class="paramtype">mlog&#160;</td>
-          <td class="paramname">, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">&quot;Version&quot;&#160;</td>
-          <td class="paramname">&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a class="anchor" id="a27eea920ecea07234b633cc239dda0f7"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const string&amp; monarch2::OtherColor </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="_m2_logger_8cc_source.html#l00037">37</a> of file <a class="el" href="_m2_logger_8cc_source.html">M2Logger.cc</a>.</p>
-
-</div>
-</div>
-<a class="anchor" id="aea4ce4777ca874e72f2229e9d8ea3484"></a>
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">const string&amp; monarch2::WarnColor </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p>Definition at line <a class="el" href="_m2_logger_8cc_source.html#l00034">34</a> of file <a class="el" href="_m2_logger_8cc_source.html">M2Logger.cc</a>.</p>
+<p>Definition at line <a class="el" href="_m2_types_8hh_source.html#l00059">59</a> of file <a class="el" href="_m2_types_8hh_source.html">M2Types.hh</a>.</p>
 
 </div>
 </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Nov 19 2015 16:16:18 for Monarch by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Mar 9 2016 13:19:28 for Monarch by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.9.1
 </small></address>

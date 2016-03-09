@@ -1,9 +1,10 @@
 var searchData=
 [
-  ['debugcolor',['DebugColor',['../namespacemonarch3.html#aa5955a66ba03c6621c99aff76945c855',1,'monarch3::DebugColor()'],['../namespacemonarch2.html#a37df4e4ea9d0964a0b0f34e99516d56a',1,'monarch2::DebugColor()']]],
-  ['demarshalfromarray',['DemarshalFromArray',['../classmonarch2_1_1_m2_header.html#a5416710128e63667b837ef0b57a740aa',1,'monarch2::M2Header']]],
-  ['demarshalfromstream',['DemarshalFromStream',['../classmonarch2_1_1_m2_header.html#ab9c6f15810e42d14186e9518c45635a8',1,'monarch2::M2Header']]],
-  ['done',['Done',['../classmonarch2_1_1_m2_i_o.html#a950b56506a3a27d431dbe1fca7efd0c7',1,'monarch2::M2IO']]],
-  ['doreadrecordfunc',['DoReadRecordFunc',['../classmonarch3_1_1_m3_stream.html#a4b8719c4ed4dc8f7ef53827ae502a6c0',1,'monarch3::M3Stream']]],
-  ['dowriterecordfunc',['DoWriteRecordFunc',['../classmonarch3_1_1_m3_stream.html#ac9d6127f6c74361ddca2eefc292b077f',1,'monarch3::M3Stream']]]
+  ['eclosed',['eClosed',['../classmonarch3_1_1_monarch3.html#a5d74787dedbc4e11c1ab15bf487e61f8a0af18f3560aac51be427be44744de513',1,'monarch3::Monarch3::eClosed()'],['../classmonarch2_1_1_monarch2.html#a5d74787dedbc4e11c1ab15bf487e61f8a0af18f3560aac51be427be44744de513',1,'monarch2::Monarch2::eClosed()']]],
+  ['eopen',['eOpen',['../classmonarch2_1_1_monarch2.html#a5d74787dedbc4e11c1ab15bf487e61f8a74d2f1983c0db4f4c92643d6ca4238d2',1,'monarch2::Monarch2']]],
+  ['eopentoread',['eOpenToRead',['../classmonarch3_1_1_monarch3.html#a5d74787dedbc4e11c1ab15bf487e61f8aa9f5cd71ce5dbb26c8a903b6e67db1f5',1,'monarch3::Monarch3']]],
+  ['eopentowrite',['eOpenToWrite',['../classmonarch3_1_1_monarch3.html#a5d74787dedbc4e11c1ab15bf487e61f8ab4756b6bde42666e1d8be00985d8fe46',1,'monarch3::Monarch3']]],
+  ['eready',['eReady',['../classmonarch2_1_1_monarch2.html#a5d74787dedbc4e11c1ab15bf487e61f8a8570b65f331057b2cf92c504f0a2bc83',1,'monarch2::Monarch2']]],
+  ['ereadytoread',['eReadyToRead',['../classmonarch3_1_1_monarch3.html#a5d74787dedbc4e11c1ab15bf487e61f8a0014f5d895369d506ace5487b5aa39fd',1,'monarch3::Monarch3']]],
+  ['ereadytowrite',['eReadyToWrite',['../classmonarch3_1_1_monarch3.html#a5d74787dedbc4e11c1ab15bf487e61f8a0edd8219f88b2618406d282fffef47d1',1,'monarch3::Monarch3']]]
 ];

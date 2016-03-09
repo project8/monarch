@@ -1,5 +1,7 @@
 var searchData=
 [
-  ['endcolor',['EndColor',['../namespacemonarch3.html#af310f73436adeab2acfece1db424f76e',1,'monarch3::EndColor()'],['../namespacemonarch2.html#ad14cccb50199af94f0e139aacc071807',1,'monarch2::EndColor()']]],
-  ['errorcolor',['ErrorColor',['../namespacemonarch3.html#a4c59839bb934cc86e44aa37d52fd6dc1',1,'monarch3::ErrorColor()'],['../namespacemonarch2.html#a57648a15065dfb1cd6a869bc7832121e',1,'monarch2::ErrorColor()']]]
+  ['finalizecurrentacq',['FinalizeCurrentAcq',['../classmonarch3_1_1_m3_stream.html#a31ffdd0155e906fb9f3bc8f8f1dabd53',1,'monarch3::M3Stream']]],
+  ['finalizestream',['FinalizeStream',['../classmonarch3_1_1_m3_stream.html#acdc9b2ac7108ebd8290846f6c635ad46',1,'monarch3::M3Stream']]],
+  ['finishreading',['FinishReading',['../classmonarch3_1_1_monarch3.html#a88021f88cf4f614d7cf1abbda3228de3',1,'monarch3::Monarch3']]],
+  ['finishwriting',['FinishWriting',['../classmonarch3_1_1_monarch3.html#a47b79b7c9ac8a82db07fd17bebd60d3f',1,'monarch3::Monarch3']]]
 ];

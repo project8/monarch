@@ -24,7 +24,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">Monarch
-   &#160;<span id="projectnumber">3.1.0</span>
+   &#160;<span id="projectnumber">3.2.4</span>
    </div>
    <div id="projectbrief">Project 8 Data File Format Library</div>
   </td>
@@ -104,76 +104,93 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespacemonarch3.html">monarch3</a></div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;{</div>
 <div class="line"><a name="l00013"></a><span class="lineno"><a class="line" href="classmonarch3_1_1_m3_record.html#a9a4cdaf7409c07276ebe2da311fb2f34">   13</a></span>&#160;    <a class="code" href="classmonarch3_1_1_m3_record.html#a9a4cdaf7409c07276ebe2da311fb2f34">M3Record::M3Record</a>( <span class="keywordtype">unsigned</span> aNBytes ) :</div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;            fRecordId( 0 ),</div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;            fTime( 0 ),</div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;            fOwnsData( true )</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;    {</div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;        <span class="keywordflow">if</span>( aNBytes == 0 )</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;        {</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;            <a class="code" href="classmonarch3_1_1_m3_record.html#ac662500138ea4e66c219fd2190f65e7d">fData</a> = NULL;</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;            fOwnsData = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;        }</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;        <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;        {</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;            <a class="code" href="classmonarch3_1_1_m3_record.html#ac662500138ea4e66c219fd2190f65e7d">fData</a> = <span class="keyword">new</span> byte_type[ aNBytes ];</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;        }</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    }</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;</div>
-<div class="line"><a name="l00029"></a><span class="lineno"><a class="line" href="classmonarch3_1_1_m3_record.html#a7c0fce3c1550754c59ddbb3798c7afff">   29</a></span>&#160;    <a class="code" href="classmonarch3_1_1_m3_record.html#a9a4cdaf7409c07276ebe2da311fb2f34">M3Record::M3Record</a>( byte_type* aDataPtr ) :</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;            fRecordId( 0 ),</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;            fTime( 0 ),</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;            fOwnsData( false ),</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;            fData( aDataPtr )</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    {</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    }</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;</div>
-<div class="line"><a name="l00037"></a><span class="lineno"><a class="line" href="classmonarch3_1_1_m3_record.html#a9d6fddad228dbf0a96cf35989dbe34ae">   37</a></span>&#160;    <a class="code" href="classmonarch3_1_1_m3_record.html#a9d6fddad228dbf0a96cf35989dbe34ae">M3Record::~M3Record</a>()</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    {</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        <a class="code" href="classmonarch3_1_1_m3_record.html#a9add8b6011235ca1b34036076fc22637">ClearData</a>();</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    }</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;</div>
-<div class="line"><a name="l00042"></a><span class="lineno"><a class="line" href="classmonarch3_1_1_m3_record.html#a9c2ae48d7b39c544cfa4e59c22e718a1">   42</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classmonarch3_1_1_m3_record.html#a9c2ae48d7b39c544cfa4e59c22e718a1">M3Record::SetData</a>()</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    {</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        <a class="code" href="classmonarch3_1_1_m3_record.html#a9add8b6011235ca1b34036076fc22637">ClearData</a>();</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        fOwnsData = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    }</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;</div>
-<div class="line"><a name="l00049"></a><span class="lineno"><a class="line" href="classmonarch3_1_1_m3_record.html#a44aaaf875c44539a1d3fbb3827daa6d4">   49</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classmonarch3_1_1_m3_record.html#a9c2ae48d7b39c544cfa4e59c22e718a1">M3Record::SetData</a>( <span class="keywordtype">unsigned</span> aNBytes )</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    {</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        <a class="code" href="classmonarch3_1_1_m3_record.html#a9add8b6011235ca1b34036076fc22637">ClearData</a>();</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        fOwnsData = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        <a class="code" href="classmonarch3_1_1_m3_record.html#ac662500138ea4e66c219fd2190f65e7d">fData</a> = <span class="keyword">new</span> byte_type[ aNBytes ];</div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;            fOwnsData( true ),</div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;            fRecordId( NULL ),</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;            fTime( NULL ),</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;            fData( NULL )</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;    {</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;        <span class="keywordflow">if</span>( aNBytes != 0 )</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;        {</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;            <a class="code" href="classmonarch3_1_1_m3_record.html#a7f70a7682b44f69b3556adb2c71c3e9a">fRecordId</a> = <span class="keyword">new</span> <a class="code" href="namespacemonarch3.html#ad5b20f57039aa3c5933e39b2a92233a5">RecordIdType</a>();</div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;            <a class="code" href="classmonarch3_1_1_m3_record.html#a91a651d51f854f8a7cc545cabd0288c9">fTime</a> = <span class="keyword">new</span> <a class="code" href="namespacemonarch3.html#a1ed79a410d8fb896f2fac52e32162d66">TimeType</a>();</div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;            <a class="code" href="classmonarch3_1_1_m3_record.html#ac662500138ea4e66c219fd2190f65e7d">fData</a> = <span class="keyword">new</span> <a class="code" href="namespacemonarch3.html#aa2b8c14fe6bf7d77f658c699cb3cb201">byte_type</a>[ aNBytes ];</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;        }</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    }</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;</div>
+<div class="line"><a name="l00027"></a><span class="lineno"><a class="line" href="classmonarch3_1_1_m3_record.html#a9c98b9a8a21e9d18a6da8fb98dc62452">   27</a></span>&#160;    <a class="code" href="classmonarch3_1_1_m3_record.html#a9a4cdaf7409c07276ebe2da311fb2f34">M3Record::M3Record</a>( <a class="code" href="namespacemonarch3.html#ad5b20f57039aa3c5933e39b2a92233a5">RecordIdType</a>* aRecPtr, <a class="code" href="namespacemonarch3.html#a1ed79a410d8fb896f2fac52e32162d66">TimeType</a>* aTimePtr, <a class="code" href="namespacemonarch3.html#aa2b8c14fe6bf7d77f658c699cb3cb201">byte_type</a>* aDataPtr ) :</div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;            fOwnsData( false ),</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;            fRecordId( aRecPtr ),</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;            fTime( aTimePtr ),</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;            fData( aDataPtr )</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    {</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    }</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;</div>
+<div class="line"><a name="l00035"></a><span class="lineno"><a class="line" href="classmonarch3_1_1_m3_record.html#a9d6fddad228dbf0a96cf35989dbe34ae">   35</a></span>&#160;    <a class="code" href="classmonarch3_1_1_m3_record.html#a9d6fddad228dbf0a96cf35989dbe34ae">M3Record::~M3Record</a>()</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    {</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        <a class="code" href="classmonarch3_1_1_m3_record.html#a9add8b6011235ca1b34036076fc22637">ClearData</a>();</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    }</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;</div>
+<div class="line"><a name="l00040"></a><span class="lineno"><a class="line" href="classmonarch3_1_1_m3_record.html#a98b1050f09da390896f964fb7a892391">   40</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classmonarch3_1_1_m3_record.html#a98b1050f09da390896f964fb7a892391">M3Record::Initialize</a>()</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    {</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        <a class="code" href="classmonarch3_1_1_m3_record.html#a9add8b6011235ca1b34036076fc22637">ClearData</a>();</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    }</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;</div>
+<div class="line"><a name="l00046"></a><span class="lineno"><a class="line" href="classmonarch3_1_1_m3_record.html#a0c3f28d0dc7b5274aecaf4fc025622d6">   46</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classmonarch3_1_1_m3_record.html#a98b1050f09da390896f964fb7a892391">M3Record::Initialize</a>( <span class="keywordtype">unsigned</span> aNBytes )</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    {</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        <a class="code" href="classmonarch3_1_1_m3_record.html#a9add8b6011235ca1b34036076fc22637">ClearData</a>();</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        <a class="code" href="classmonarch3_1_1_m3_record.html#a7f70a7682b44f69b3556adb2c71c3e9a">fRecordId</a> = <span class="keyword">new</span> <a class="code" href="namespacemonarch3.html#ad5b20f57039aa3c5933e39b2a92233a5">RecordIdType</a>();</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        <a class="code" href="classmonarch3_1_1_m3_record.html#a91a651d51f854f8a7cc545cabd0288c9">fTime</a> = <span class="keyword">new</span> <a class="code" href="namespacemonarch3.html#a1ed79a410d8fb896f2fac52e32162d66">TimeType</a>();</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        <a class="code" href="classmonarch3_1_1_m3_record.html#aa8680e36538ed19c8b3431a98b8c052c">SetRecordId</a>( 0 );</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        <a class="code" href="classmonarch3_1_1_m3_record.html#a9bec3a5bfd8a76ac9c5f00b42578e6f4">SetTime</a>( 0 );</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        <a class="code" href="classmonarch3_1_1_m3_record.html#ac662500138ea4e66c219fd2190f65e7d">fData</a> = <span class="keyword">new</span> <a class="code" href="namespacemonarch3.html#aa2b8c14fe6bf7d77f658c699cb3cb201">byte_type</a>[ aNBytes ];</div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        <span class="keywordflow">return</span>;</div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    }</div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;</div>
-<div class="line"><a name="l00057"></a><span class="lineno"><a class="line" href="classmonarch3_1_1_m3_record.html#a2b99aaf0b78f5a9f1eb2a8da3e2daf32">   57</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classmonarch3_1_1_m3_record.html#a9c2ae48d7b39c544cfa4e59c22e718a1">M3Record::SetData</a>( byte_type* aDataPtr )</div>
+<div class="line"><a name="l00057"></a><span class="lineno"><a class="line" href="classmonarch3_1_1_m3_record.html#abc4329d3760c23d3609ad00caad11028">   57</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classmonarch3_1_1_m3_record.html#a98b1050f09da390896f964fb7a892391">M3Record::Initialize</a>( <a class="code" href="namespacemonarch3.html#ad5b20f57039aa3c5933e39b2a92233a5">RecordIdType</a>* aRecPtr, <a class="code" href="namespacemonarch3.html#a1ed79a410d8fb896f2fac52e32162d66">TimeType</a>* aTimePtr, <a class="code" href="namespacemonarch3.html#aa2b8c14fe6bf7d77f658c699cb3cb201">byte_type</a>* aDataPtr )</div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    {</div>
 <div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;        <a class="code" href="classmonarch3_1_1_m3_record.html#a9add8b6011235ca1b34036076fc22637">ClearData</a>();</div>
 <div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;        fOwnsData = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        <a class="code" href="classmonarch3_1_1_m3_record.html#ac662500138ea4e66c219fd2190f65e7d">fData</a> = aDataPtr;</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;        <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    }</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;</div>
-<div class="line"><a name="l00065"></a><span class="lineno"><a class="line" href="classmonarch3_1_1_m3_record.html#a9add8b6011235ca1b34036076fc22637">   65</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classmonarch3_1_1_m3_record.html#a9add8b6011235ca1b34036076fc22637">M3Record::ClearData</a>()</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    {</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        <span class="keywordflow">if</span>( fOwnsData &amp;&amp; <a class="code" href="classmonarch3_1_1_m3_record.html#ac662500138ea4e66c219fd2190f65e7d">fData</a> != NULL ) <span class="keyword">delete</span> [] <a class="code" href="classmonarch3_1_1_m3_record.html#ac662500138ea4e66c219fd2190f65e7d">fData</a>;</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;        <a class="code" href="classmonarch3_1_1_m3_record.html#ac662500138ea4e66c219fd2190f65e7d">fData</a> = NULL;</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    }</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;}</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        <a class="code" href="classmonarch3_1_1_m3_record.html#a7f70a7682b44f69b3556adb2c71c3e9a">fRecordId</a> = aRecPtr;</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;        <a class="code" href="classmonarch3_1_1_m3_record.html#a91a651d51f854f8a7cc545cabd0288c9">fTime</a> = aTimePtr;</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;        <a class="code" href="classmonarch3_1_1_m3_record.html#ac662500138ea4e66c219fd2190f65e7d">fData</a> = aDataPtr;</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;        <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    }</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;</div>
+<div class="line"><a name="l00067"></a><span class="lineno"><a class="line" href="classmonarch3_1_1_m3_record.html#a9add8b6011235ca1b34036076fc22637">   67</a></span>&#160;    <span class="keywordtype">void</span> <a class="code" href="classmonarch3_1_1_m3_record.html#a9add8b6011235ca1b34036076fc22637">M3Record::ClearData</a>()</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    {</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        <span class="keywordflow">if</span>( fOwnsData )</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;        {</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;            <span class="keyword">delete</span> <a class="code" href="classmonarch3_1_1_m3_record.html#a7f70a7682b44f69b3556adb2c71c3e9a">fRecordId</a>;</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;            <span class="keyword">delete</span> <a class="code" href="classmonarch3_1_1_m3_record.html#a91a651d51f854f8a7cc545cabd0288c9">fTime</a>;</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;            <span class="keyword">delete</span> [] <a class="code" href="classmonarch3_1_1_m3_record.html#ac662500138ea4e66c219fd2190f65e7d">fData</a>;</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;        }</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;        <a class="code" href="classmonarch3_1_1_m3_record.html#a7f70a7682b44f69b3556adb2c71c3e9a">fRecordId</a> = NULL;</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;        <a class="code" href="classmonarch3_1_1_m3_record.html#a91a651d51f854f8a7cc545cabd0288c9">fTime</a> = NULL;</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;        <a class="code" href="classmonarch3_1_1_m3_record.html#ac662500138ea4e66c219fd2190f65e7d">fData</a> = NULL;</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        fOwnsData = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;        <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    }</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;}</div>
 <div class="ttc" id="_m3_record_8hh_html"><div class="ttname"><a href="_m3_record_8hh.html">M3Record.hh</a></div></div>
-<div class="ttc" id="classmonarch3_1_1_m3_record_html_ac662500138ea4e66c219fd2190f65e7d"><div class="ttname"><a href="classmonarch3_1_1_m3_record.html#ac662500138ea4e66c219fd2190f65e7d">monarch3::M3Record::fData</a></div><div class="ttdeci">byte_type * fData</div><div class="ttdef"><b>Definition:</b> <a href="_m3_record_8hh_source.html#l00061">M3Record.hh:61</a></div></div>
-<div class="ttc" id="namespacemonarch3_html"><div class="ttname"><a href="namespacemonarch3.html">monarch3</a></div><div class="ttdef"><b>Definition:</b> <a href="_m3_constants_8hh_source.html#l00034">M3Constants.hh:34</a></div></div>
-<div class="ttc" id="classmonarch3_1_1_m3_record_html_a9c2ae48d7b39c544cfa4e59c22e718a1"><div class="ttname"><a href="classmonarch3_1_1_m3_record.html#a9c2ae48d7b39c544cfa4e59c22e718a1">monarch3::M3Record::SetData</a></div><div class="ttdeci">void SetData()</div><div class="ttdoc">Allocate no memory for the record; data pointer is to NULL. </div><div class="ttdef"><b>Definition:</b> <a href="_m3_record_8cc_source.html#l00042">M3Record.cc:42</a></div></div>
-<div class="ttc" id="classmonarch3_1_1_m3_record_html_a9d6fddad228dbf0a96cf35989dbe34ae"><div class="ttname"><a href="classmonarch3_1_1_m3_record.html#a9d6fddad228dbf0a96cf35989dbe34ae">monarch3::M3Record::~M3Record</a></div><div class="ttdeci">~M3Record()</div><div class="ttdef"><b>Definition:</b> <a href="_m3_record_8cc_source.html#l00037">M3Record.cc:37</a></div></div>
+<div class="ttc" id="classmonarch3_1_1_m3_record_html_ac662500138ea4e66c219fd2190f65e7d"><div class="ttname"><a href="classmonarch3_1_1_m3_record.html#ac662500138ea4e66c219fd2190f65e7d">monarch3::M3Record::fData</a></div><div class="ttdeci">byte_type * fData</div><div class="ttdef"><b>Definition:</b> <a href="_m3_record_8hh_source.html#l00068">M3Record.hh:68</a></div></div>
+<div class="ttc" id="namespacemonarch3_html"><div class="ttname"><a href="namespacemonarch3.html">monarch3</a></div><div class="ttdef"><b>Definition:</b> <a href="_m3_constants_8hh_source.html#l00033">M3Constants.hh:33</a></div></div>
+<div class="ttc" id="classmonarch3_1_1_m3_record_html_a98b1050f09da390896f964fb7a892391"><div class="ttname"><a href="classmonarch3_1_1_m3_record.html#a98b1050f09da390896f964fb7a892391">monarch3::M3Record::Initialize</a></div><div class="ttdeci">void Initialize()</div><div class="ttdoc">Allocate no memory for the record; data pointer is to NULL. </div><div class="ttdef"><b>Definition:</b> <a href="_m3_record_8cc_source.html#l00040">M3Record.cc:40</a></div></div>
+<div class="ttc" id="namespacemonarch3_html_aa2b8c14fe6bf7d77f658c699cb3cb201"><div class="ttname"><a href="namespacemonarch3.html#aa2b8c14fe6bf7d77f658c699cb3cb201">monarch3::byte_type</a></div><div class="ttdeci">uint8_t byte_type</div><div class="ttdef"><b>Definition:</b> <a href="_m3_types_8hh_source.html#l00020">M3Types.hh:20</a></div></div>
+<div class="ttc" id="classmonarch3_1_1_m3_record_html_a9d6fddad228dbf0a96cf35989dbe34ae"><div class="ttname"><a href="classmonarch3_1_1_m3_record.html#a9d6fddad228dbf0a96cf35989dbe34ae">monarch3::M3Record::~M3Record</a></div><div class="ttdeci">~M3Record()</div><div class="ttdef"><b>Definition:</b> <a href="_m3_record_8cc_source.html#l00035">M3Record.cc:35</a></div></div>
+<div class="ttc" id="classmonarch3_1_1_m3_record_html_a7f70a7682b44f69b3556adb2c71c3e9a"><div class="ttname"><a href="classmonarch3_1_1_m3_record.html#a7f70a7682b44f69b3556adb2c71c3e9a">monarch3::M3Record::fRecordId</a></div><div class="ttdeci">RecordIdType * fRecordId</div><div class="ttdef"><b>Definition:</b> <a href="_m3_record_8hh_source.html#l00065">M3Record.hh:65</a></div></div>
+<div class="ttc" id="classmonarch3_1_1_m3_record_html_aa8680e36538ed19c8b3431a98b8c052c"><div class="ttname"><a href="classmonarch3_1_1_m3_record.html#aa8680e36538ed19c8b3431a98b8c052c">monarch3::M3Record::SetRecordId</a></div><div class="ttdeci">void SetRecordId(RecordIdType aId)</div><div class="ttdef"><b>Definition:</b> <a href="_m3_record_8hh_source.html#l00082">M3Record.hh:82</a></div></div>
 <div class="ttc" id="classmonarch3_1_1_m3_record_html_a9a4cdaf7409c07276ebe2da311fb2f34"><div class="ttname"><a href="classmonarch3_1_1_m3_record.html#a9a4cdaf7409c07276ebe2da311fb2f34">monarch3::M3Record::M3Record</a></div><div class="ttdeci">M3Record(unsigned aNBytes=0)</div><div class="ttdef"><b>Definition:</b> <a href="_m3_record_8cc_source.html#l00013">M3Record.cc:13</a></div></div>
-<div class="ttc" id="classmonarch3_1_1_m3_record_html_a9add8b6011235ca1b34036076fc22637"><div class="ttname"><a href="classmonarch3_1_1_m3_record.html#a9add8b6011235ca1b34036076fc22637">monarch3::M3Record::ClearData</a></div><div class="ttdeci">void ClearData()</div><div class="ttdef"><b>Definition:</b> <a href="_m3_record_8cc_source.html#l00065">M3Record.cc:65</a></div></div>
+<div class="ttc" id="classmonarch3_1_1_m3_record_html_a9bec3a5bfd8a76ac9c5f00b42578e6f4"><div class="ttname"><a href="classmonarch3_1_1_m3_record.html#a9bec3a5bfd8a76ac9c5f00b42578e6f4">monarch3::M3Record::SetTime</a></div><div class="ttdeci">void SetTime(TimeType aTime)</div><div class="ttdef"><b>Definition:</b> <a href="_m3_record_8hh_source.html#l00098">M3Record.hh:98</a></div></div>
+<div class="ttc" id="namespacemonarch3_html_ad5b20f57039aa3c5933e39b2a92233a5"><div class="ttname"><a href="namespacemonarch3.html#ad5b20f57039aa3c5933e39b2a92233a5">monarch3::RecordIdType</a></div><div class="ttdeci">uint64_t RecordIdType</div><div class="ttdef"><b>Definition:</b> <a href="_m3_types_8hh_source.html#l00023">M3Types.hh:23</a></div></div>
+<div class="ttc" id="namespacemonarch3_html_a1ed79a410d8fb896f2fac52e32162d66"><div class="ttname"><a href="namespacemonarch3.html#a1ed79a410d8fb896f2fac52e32162d66">monarch3::TimeType</a></div><div class="ttdeci">uint64_t TimeType</div><div class="ttdef"><b>Definition:</b> <a href="_m3_types_8hh_source.html#l00024">M3Types.hh:24</a></div></div>
+<div class="ttc" id="classmonarch3_1_1_m3_record_html_a9add8b6011235ca1b34036076fc22637"><div class="ttname"><a href="classmonarch3_1_1_m3_record.html#a9add8b6011235ca1b34036076fc22637">monarch3::M3Record::ClearData</a></div><div class="ttdeci">void ClearData()</div><div class="ttdef"><b>Definition:</b> <a href="_m3_record_8cc_source.html#l00067">M3Record.cc:67</a></div></div>
+<div class="ttc" id="classmonarch3_1_1_m3_record_html_a91a651d51f854f8a7cc545cabd0288c9"><div class="ttname"><a href="classmonarch3_1_1_m3_record.html#a91a651d51f854f8a7cc545cabd0288c9">monarch3::M3Record::fTime</a></div><div class="ttdeci">TimeType * fTime</div><div class="ttdef"><b>Definition:</b> <a href="_m3_record_8hh_source.html#l00066">M3Record.hh:66</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Nov 19 2015 16:16:17 for Monarch by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Mar 9 2016 13:19:27 for Monarch by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.9.1
 </small></address>

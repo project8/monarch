@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.9.1"/>
-<title>Monarch: M2Logger.cc File Reference</title>
+<title>Monarch: M2Version.hh File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -24,7 +24,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">Monarch
-   &#160;<span id="projectnumber">3.1.0</span>
+   &#160;<span id="projectnumber">3.2.4</span>
    </div>
    <div id="projectbrief">Project 8 Data File Format Library</div>
   </td>
@@ -89,55 +89,29 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
-<a href="#namespaces">Namespaces</a> &#124;
-<a href="#func-members">Functions</a>  </div>
+<a href="#namespaces">Namespaces</a>  </div>
   <div class="headertitle">
-<div class="title">M2Logger.cc File Reference</div>  </div>
+<div class="title">M2Version.hh File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &quot;<a class="el" href="_m2_logger_8hh_source.html">M2Logger.hh</a>&quot;</code><br />
-<code>#include &lt;algorithm&gt;</code><br />
-<code>#include &lt;cstdio&gt;</code><br />
-<code>#include &lt;cstdlib&gt;</code><br />
-<code>#include &lt;cstring&gt;</code><br />
-<code>#include &lt;iomanip&gt;</code><br />
-<code>#include &lt;iterator&gt;</code><br />
-<code>#include &lt;sys/time.h&gt;</code><br />
-<code>#include &lt;time.h&gt;</code><br />
+<div class="textblock"><code>#include &quot;scarab_version.hh&quot;</code><br />
 </div>
-<p><a href="_m2_logger_8cc_source.html">Go to the source code of this file.</a></p>
+<p><a href="_m2_version_8hh_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmonarch2_1_1_m2_logger_1_1_private.html">M2Logger::Private</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmonarch2_1_1_m2_version.html">M2Version</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>
 Namespaces</h2></td></tr>
 <tr class="memitem:namespacemonarch2"><td class="memItemLeft" align="right" valign="top"> &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch2.html">monarch2</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
-Functions</h2></td></tr>
-<tr class="memitem:ad14cccb50199af94f0e139aacc071807"><td class="memItemLeft" align="right" valign="top">const string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch2.html#ad14cccb50199af94f0e139aacc071807">EndColor</a> ()</td></tr>
-<tr class="separator:ad14cccb50199af94f0e139aacc071807"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a60e094076bc243a4fd95a1ed084f4356"><td class="memItemLeft" align="right" valign="top">const string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch2.html#a60e094076bc243a4fd95a1ed084f4356">FatalColor</a> ()</td></tr>
-<tr class="separator:a60e094076bc243a4fd95a1ed084f4356"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a57648a15065dfb1cd6a869bc7832121e"><td class="memItemLeft" align="right" valign="top">const string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch2.html#a57648a15065dfb1cd6a869bc7832121e">ErrorColor</a> ()</td></tr>
-<tr class="separator:a57648a15065dfb1cd6a869bc7832121e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aea4ce4777ca874e72f2229e9d8ea3484"><td class="memItemLeft" align="right" valign="top">const string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch2.html#aea4ce4777ca874e72f2229e9d8ea3484">WarnColor</a> ()</td></tr>
-<tr class="separator:aea4ce4777ca874e72f2229e9d8ea3484"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1cca04f7c90025a30eaac82d5f2c6694"><td class="memItemLeft" align="right" valign="top">const string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch2.html#a1cca04f7c90025a30eaac82d5f2c6694">InfoColor</a> ()</td></tr>
-<tr class="separator:a1cca04f7c90025a30eaac82d5f2c6694"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a37df4e4ea9d0964a0b0f34e99516d56a"><td class="memItemLeft" align="right" valign="top">const string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch2.html#a37df4e4ea9d0964a0b0f34e99516d56a">DebugColor</a> ()</td></tr>
-<tr class="separator:a37df4e4ea9d0964a0b0f34e99516d56a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a27eea920ecea07234b633cc239dda0f7"><td class="memItemLeft" align="right" valign="top">const string &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemonarch2.html#a27eea920ecea07234b633cc239dda0f7">OtherColor</a> ()</td></tr>
-<tr class="separator:a27eea920ecea07234b633cc239dda0f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Nov 19 2015 16:16:18 for Monarch by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Mar 9 2016 13:19:28 for Monarch by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.9.1
 </small></address>

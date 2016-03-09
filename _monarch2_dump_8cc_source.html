@@ -24,7 +24,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">Monarch
-   &#160;<span id="projectnumber">3.1.0</span>
+   &#160;<span id="projectnumber">3.2.4</span>
    </div>
    <div id="projectbrief">Project 8 Data File Format Library</div>
   </td>
@@ -92,7 +92,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!--header-->
 <div class="contents">
 <a href="_monarch2_dump_8cc.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="_m2_monarch_8hh.html">M2Monarch.hh</a>&quot;</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#include &quot;<a class="code" href="_m2_logger_8hh.html">M2Logger.hh</a>&quot;</span></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#include &quot;logger.hh&quot;</span></div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;</div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &lt;cstdlib&gt;</span></div>
 <div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;</div>
@@ -101,13 +101,13 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;</div>
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="keyword">using namespace </span><a class="code" href="namespacemonarch2.html">monarch2</a>;</div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;</div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<a class="code" href="namespacemonarch2.html#aefd565ae44628998033977c23ed6df12">M2LOGGER</a>( mlog, <span class="stringliteral">&quot;Monarch2Dump&quot;</span> );</div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<a class="code" href="_monarch2_dump_8cc.html#abfd3e4402afd2c2381f20f8716ebeffa">LOGGER</a>( mlog, <span class="stringliteral">&quot;Monarch2Dump&quot;</span> );</div>
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;</div>
 <div class="line"><a name="l00013"></a><span class="lineno"><a class="line" href="_monarch2_dump_8cc.html#ac762d48b889bd832ec0d42abcbc50624">   13</a></span>&#160;<span class="keywordtype">int</span> <a class="code" href="_monarch2_dump_8cc.html#ac762d48b889bd832ec0d42abcbc50624">main</a>( <span class="keyword">const</span> <span class="keywordtype">int</span> argc, <span class="keyword">const</span> <span class="keywordtype">char</span>** argv )</div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;{</div>
 <div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;    <span class="keywordflow">if</span>( argc &lt; 3 )</div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;    {</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;        <a class="code" href="_m2_logger_8hh.html#a51caa268a93343f7cab2f2772256ba21">M2INFO</a>( mlog, <span class="stringliteral">&quot;usage:\n&quot;</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;        INFO( mlog, <span class="stringliteral">&quot;usage:\n&quot;</span></div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;            &lt;&lt; <span class="stringliteral">&quot;  Monarch2Dump &lt;input egg file&gt; &lt;output text file&gt; &lt;# of records per channel [optional]&gt;\n&quot;</span></div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;            &lt;&lt; <span class="stringliteral">&quot;# of records is optional; the default is 1; use 0 to dump the whole file&quot;</span> );</div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;        <span class="keywordflow">return</span> -1;</div>
@@ -119,12 +119,12 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;        nRecords = atoi( argv[3] );</div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    }</div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    <span class="keyword">const</span> <a class="code" href="classmonarch2_1_1_monarch2.html">Monarch2</a>* tReadTest = <a class="code" href="classmonarch2_1_1_monarch2.html#acaecac8759fc34b5eae20358107bfed2">Monarch2::OpenForReading</a>( argv[ 1 ] );</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    <span class="keyword">const</span> <a class="code" href="classmonarch2_1_1_monarch2.html">Monarch2</a>* tReadTest = <a class="code" href="classmonarch2_1_1_monarch2.html#a6230cba2e32f4698431d711be3f18bbd">Monarch2::OpenForReading</a>( argv[ 1 ] );</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    tReadTest-&gt;<a class="code" href="classmonarch2_1_1_monarch2.html#a914a6a86dbb4d0314d3b3e117840ed3f">ReadHeader</a>();</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    tReadTest-&gt;<a class="code" href="classmonarch2_1_1_monarch2.html#ad65cd0625f80ef7be45e844db507290b">SetInterface</a>( sInterfaceSeparate );</div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;</div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    <span class="keyword">const</span> <a class="code" href="classmonarch2_1_1_m2_header.html">M2Header</a>* tReadHeader = tReadTest-&gt;<a class="code" href="classmonarch2_1_1_monarch2.html#a98f9a97178b5c97bd8a749807ff40504">GetHeader</a>();</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <a class="code" href="_m2_logger_8hh.html#a51caa268a93343f7cab2f2772256ba21">M2INFO</a>( mlog, *tReadHeader );</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    INFO( mlog, *tReadHeader );</div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> tRecordCount = 0;</div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <span class="keywordtype">unsigned</span> <span class="keywordtype">int</span> tAcquisitionCount = 0;</div>
@@ -134,7 +134,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        ofstream tOutputOne( (<span class="keywordtype">string</span>( argv[ 2 ] ) + <span class="keywordtype">string</span>( <span class="stringliteral">&quot;_ch1.txt&quot;</span> )).c_str() );</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        <span class="keywordflow">if</span>( tOutputOne.is_open() == false )</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        {</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;            <a class="code" href="_m2_logger_8hh.html#af76b64d9a5b3212f81b4894948d661c4">M2ERROR</a>( mlog, <span class="stringliteral">&quot;could not open channel one output file!&quot;</span> );</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;            ERROR( mlog, <span class="stringliteral">&quot;could not open channel one output file!&quot;</span> );</div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;            tReadTest-&gt;<a class="code" href="classmonarch2_1_1_monarch2.html#a247328312b294fbc7b0c6dcd87b76718">Close</a>();</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;            <span class="keyword">delete</span> tReadTest;</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;            <span class="keywordflow">return</span> -1;</div>
@@ -169,14 +169,14 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;        ofstream tOutputTwo( (<span class="keywordtype">string</span>( argv[ 2 ] ) + <span class="keywordtype">string</span>( <span class="stringliteral">&quot;_ch2.txt&quot;</span> )).c_str() );</div>
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;        <span class="keywordflow">if</span>( tOutputOne.is_open() == false )</div>
 <div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        {</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;            <a class="code" href="_m2_logger_8hh.html#af76b64d9a5b3212f81b4894948d661c4">M2ERROR</a>( mlog, <span class="stringliteral">&quot;could not open channel one output file!&quot;</span> );</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;            ERROR( mlog, <span class="stringliteral">&quot;could not open channel one output file!&quot;</span> );</div>
 <div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;            tReadTest-&gt;<a class="code" href="classmonarch2_1_1_monarch2.html#a247328312b294fbc7b0c6dcd87b76718">Close</a>();</div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;            <span class="keyword">delete</span> tReadTest;</div>
 <div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;            <span class="keywordflow">return</span> -1;</div>
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        }</div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;        <span class="keywordflow">if</span>( tOutputTwo.is_open() == false )</div>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        {</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;            <a class="code" href="_m2_logger_8hh.html#af76b64d9a5b3212f81b4894948d661c4">M2ERROR</a>( mlog, <span class="stringliteral">&quot;could not open channel two output file!&quot;</span> );</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;            ERROR( mlog, <span class="stringliteral">&quot;could not open channel two output file!&quot;</span> );</div>
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;            tReadTest-&gt;<a class="code" href="classmonarch2_1_1_monarch2.html#a247328312b294fbc7b0c6dcd87b76718">Close</a>();</div>
 <div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;            <span class="keyword">delete</span> tReadTest;</div>
 <div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;            <span class="keywordflow">return</span> -1;</div>
@@ -211,8 +211,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;        tOutputTwo.close();</div>
 <div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;    }</div>
 <div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    <a class="code" href="_m2_logger_8hh.html#a51caa268a93343f7cab2f2772256ba21">M2INFO</a>( mlog, <span class="stringliteral">&quot;record count &lt;&quot;</span> &lt;&lt; tRecordCount &lt;&lt; <span class="stringliteral">&quot;&gt;&quot;</span> );</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    <a class="code" href="_m2_logger_8hh.html#a51caa268a93343f7cab2f2772256ba21">M2INFO</a>( mlog, <span class="stringliteral">&quot;acquisition count &lt;&quot;</span> &lt;&lt; tAcquisitionCount &lt;&lt; <span class="stringliteral">&quot;&gt;&quot;</span> );</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    INFO( mlog, <span class="stringliteral">&quot;record count &lt;&quot;</span> &lt;&lt; tRecordCount &lt;&lt; <span class="stringliteral">&quot;&gt;&quot;</span> );</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    INFO( mlog, <span class="stringliteral">&quot;acquisition count &lt;&quot;</span> &lt;&lt; tAcquisitionCount &lt;&lt; <span class="stringliteral">&quot;&gt;&quot;</span> );</div>
 <div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;</div>
 <div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;    tReadTest-&gt;<a class="code" href="classmonarch2_1_1_monarch2.html#a247328312b294fbc7b0c6dcd87b76718">Close</a>();</div>
 <div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;    <span class="keyword">delete</span> tReadTest;</div>
@@ -221,34 +221,31 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;}</div>
 <div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;</div>
 <div class="ttc" id="classmonarch2_1_1_m2_header_html_a0d10fc7ded83f320928df253eb52c341"><div class="ttname"><a href="classmonarch2_1_1_m2_header.html#a0d10fc7ded83f320928df253eb52c341">monarch2::M2Header::GetFormatMode</a></div><div class="ttdeci">FormatModeType GetFormatMode() const </div><div class="ttdef"><b>Definition:</b> <a href="_m2_header_8cc_source.html#l00180">M2Header.cc:180</a></div></div>
-<div class="ttc" id="classmonarch2_1_1_m2_header_html"><div class="ttname"><a href="classmonarch2_1_1_m2_header.html">monarch2::M2Header</a></div><div class="ttdef"><b>Definition:</b> <a href="_m2_header_8hh_source.html#l00017">M2Header.hh:17</a></div></div>
+<div class="ttc" id="classmonarch2_1_1_m2_header_html"><div class="ttname"><a href="classmonarch2_1_1_m2_header.html">monarch2::M2Header</a></div><div class="ttdef"><b>Definition:</b> <a href="_m2_header_8hh_source.html#l00016">M2Header.hh:16</a></div></div>
 <div class="ttc" id="_m2_monarch_8hh_html"><div class="ttname"><a href="_m2_monarch_8hh.html">M2Monarch.hh</a></div></div>
 <div class="ttc" id="classmonarch2_1_1_m2_header_html_a68ef118abef2a536d649ffdcaa0be7f5"><div class="ttname"><a href="classmonarch2_1_1_m2_header.html#a68ef118abef2a536d649ffdcaa0be7f5">monarch2::M2Header::GetDataTypeSize</a></div><div class="ttdeci">unsigned GetDataTypeSize() const </div><div class="ttdef"><b>Definition:</b> <a href="_m2_header_8cc_source.html#l00242">M2Header.cc:242</a></div></div>
 <div class="ttc" id="structmonarch2_1_1_m2_record_html"><div class="ttname"><a href="structmonarch2_1_1_m2_record.html">monarch2::M2Record</a></div><div class="ttdef"><b>Definition:</b> <a href="_m2_record_8hh_source.html#l00010">M2Record.hh:10</a></div></div>
 <div class="ttc" id="structmonarch2_1_1_m2_record_html_a7f8c599133ae77e2bbf65cd03178f138"><div class="ttname"><a href="structmonarch2_1_1_m2_record.html#a7f8c599133ae77e2bbf65cd03178f138">monarch2::M2Record::fData</a></div><div class="ttdeci">DataType fData[]</div><div class="ttdef"><b>Definition:</b> <a href="_m2_record_8hh_source.html#l00015">M2Record.hh:15</a></div></div>
 <div class="ttc" id="classmonarch2_1_1_monarch2_html_a247328312b294fbc7b0c6dcd87b76718"><div class="ttname"><a href="classmonarch2_1_1_monarch2.html#a247328312b294fbc7b0c6dcd87b76718">monarch2::Monarch2::Close</a></div><div class="ttdeci">void Close() const </div><div class="ttdef"><b>Definition:</b> <a href="_m2_monarch_8cc_source.html#l00665">M2Monarch.cc:665</a></div></div>
 <div class="ttc" id="_monarch2_dump_8cc_html_ac762d48b889bd832ec0d42abcbc50624"><div class="ttname"><a href="_monarch2_dump_8cc.html#ac762d48b889bd832ec0d42abcbc50624">main</a></div><div class="ttdeci">int main(const int argc, const char **argv)</div><div class="ttdef"><b>Definition:</b> <a href="_monarch2_dump_8cc_source.html#l00013">Monarch2Dump.cc:13</a></div></div>
-<div class="ttc" id="classmonarch2_1_1_monarch2_html_acaecac8759fc34b5eae20358107bfed2"><div class="ttname"><a href="classmonarch2_1_1_monarch2.html#acaecac8759fc34b5eae20358107bfed2">monarch2::Monarch2::OpenForReading</a></div><div class="ttdeci">static const Monarch2 * OpenForReading(const string &amp;filename)</div><div class="ttdef"><b>Definition:</b> <a href="_m2_monarch_8cc_source.html#l00062">M2Monarch.cc:62</a></div></div>
 <div class="ttc" id="namespacemonarch2_html"><div class="ttname"><a href="namespacemonarch2.html">monarch2</a></div><div class="ttdef"><b>Definition:</b> <a href="_m2_exception_8cc_source.html#l00003">M2Exception.cc:3</a></div></div>
 <div class="ttc" id="structmonarch2_1_1_m2_record_html_acc6bcf999658f8b7ff601effe54073be"><div class="ttname"><a href="structmonarch2_1_1_m2_record.html#acc6bcf999658f8b7ff601effe54073be">monarch2::M2Record::fAcquisitionId</a></div><div class="ttdeci">AcquisitionIdType fAcquisitionId</div><div class="ttdef"><b>Definition:</b> <a href="_m2_record_8hh_source.html#l00012">M2Record.hh:12</a></div></div>
 <div class="ttc" id="classmonarch2_1_1_m2_record_data_interface_html"><div class="ttname"><a href="classmonarch2_1_1_m2_record_data_interface.html">monarch2::M2RecordDataInterface</a></div><div class="ttdef"><b>Definition:</b> <a href="_m2_record_8hh_source.html#l00021">M2Record.hh:21</a></div></div>
-<div class="ttc" id="_m2_logger_8hh_html_a51caa268a93343f7cab2f2772256ba21"><div class="ttname"><a href="_m2_logger_8hh.html#a51caa268a93343f7cab2f2772256ba21">M2INFO</a></div><div class="ttdeci">#define M2INFO(...)</div><div class="ttdef"><b>Definition:</b> <a href="_m2_logger_8hh_source.html#l00321">M2Logger.hh:321</a></div></div>
-<div class="ttc" id="classmonarch2_1_1_monarch2_html_a98f9a97178b5c97bd8a749807ff40504"><div class="ttname"><a href="classmonarch2_1_1_monarch2.html#a98f9a97178b5c97bd8a749807ff40504">monarch2::Monarch2::GetHeader</a></div><div class="ttdeci">const M2Header * GetHeader() const </div><div class="ttdef"><b>Definition:</b> <a href="_m2_monarch_8hh_source.html#l00183">M2Monarch.hh:183</a></div></div>
+<div class="ttc" id="classmonarch2_1_1_monarch2_html_a98f9a97178b5c97bd8a749807ff40504"><div class="ttname"><a href="classmonarch2_1_1_monarch2.html#a98f9a97178b5c97bd8a749807ff40504">monarch2::Monarch2::GetHeader</a></div><div class="ttdeci">const M2Header * GetHeader() const </div><div class="ttdef"><b>Definition:</b> <a href="_m2_monarch_8hh_source.html#l00182">M2Monarch.hh:182</a></div></div>
 <div class="ttc" id="classmonarch2_1_1_monarch2_html_ad65cd0625f80ef7be45e844db507290b"><div class="ttname"><a href="classmonarch2_1_1_monarch2.html#ad65cd0625f80ef7be45e844db507290b">monarch2::Monarch2::SetInterface</a></div><div class="ttdeci">void SetInterface(InterfaceModeType aMode) const </div><div class="ttdef"><b>Definition:</b> <a href="_m2_monarch_8cc_source.html#l00303">M2Monarch.cc:303</a></div></div>
-<div class="ttc" id="classmonarch2_1_1_monarch2_html_a3cfe27429529e4ab829108bab336cc11"><div class="ttname"><a href="classmonarch2_1_1_monarch2.html#a3cfe27429529e4ab829108bab336cc11">monarch2::Monarch2::GetRecordSeparateTwo</a></div><div class="ttdeci">const M2RecordBytes * GetRecordSeparateTwo() const </div><div class="ttdef"><b>Definition:</b> <a href="_m2_monarch_8hh_source.html#l00201">M2Monarch.hh:201</a></div></div>
+<div class="ttc" id="classmonarch2_1_1_monarch2_html_a3cfe27429529e4ab829108bab336cc11"><div class="ttname"><a href="classmonarch2_1_1_monarch2.html#a3cfe27429529e4ab829108bab336cc11">monarch2::Monarch2::GetRecordSeparateTwo</a></div><div class="ttdeci">const M2RecordBytes * GetRecordSeparateTwo() const </div><div class="ttdef"><b>Definition:</b> <a href="_m2_monarch_8hh_source.html#l00200">M2Monarch.hh:200</a></div></div>
 <div class="ttc" id="classmonarch2_1_1_monarch2_html_ae18fe5d507828d0e3d0b06634333cf92"><div class="ttname"><a href="classmonarch2_1_1_monarch2.html#ae18fe5d507828d0e3d0b06634333cf92">monarch2::Monarch2::ReadRecord</a></div><div class="ttdeci">bool ReadRecord(int anOffset=0) const </div><div class="ttdef"><b>Definition:</b> <a href="_m2_monarch_8cc_source.html#l00373">M2Monarch.cc:373</a></div></div>
-<div class="ttc" id="_m2_logger_8hh_html"><div class="ttname"><a href="_m2_logger_8hh.html">M2Logger.hh</a></div><div class="ttdoc">Contains the logger class and macros, based on Kasper&#39;s KLogger class. </div></div>
 <div class="ttc" id="classmonarch2_1_1_m2_record_data_interface_html_ab929b1297d62b4c01e070eec4c325f18"><div class="ttname"><a href="classmonarch2_1_1_m2_record_data_interface.html#ab929b1297d62b4c01e070eec4c325f18">monarch2::M2RecordDataInterface::at</a></div><div class="ttdeci">ReturnType at(unsigned index) const </div><div class="ttdef"><b>Definition:</b> <a href="_m2_record_8hh_source.html#l00033">M2Record.hh:33</a></div></div>
-<div class="ttc" id="classmonarch2_1_1_monarch2_html_a06923b19c843435a5afdf0da19091276"><div class="ttname"><a href="classmonarch2_1_1_monarch2.html#a06923b19c843435a5afdf0da19091276">monarch2::Monarch2::GetRecordSeparateOne</a></div><div class="ttdeci">const M2RecordBytes * GetRecordSeparateOne() const </div><div class="ttdef"><b>Definition:</b> <a href="_m2_monarch_8hh_source.html#l00192">M2Monarch.hh:192</a></div></div>
-<div class="ttc" id="classmonarch2_1_1_monarch2_html"><div class="ttname"><a href="classmonarch2_1_1_monarch2.html">monarch2::Monarch2</a></div><div class="ttdef"><b>Definition:</b> <a href="_m2_monarch_8hh_source.html#l00014">M2Monarch.hh:14</a></div></div>
-<div class="ttc" id="_m2_logger_8hh_html_af76b64d9a5b3212f81b4894948d661c4"><div class="ttname"><a href="_m2_logger_8hh.html#af76b64d9a5b3212f81b4894948d661c4">M2ERROR</a></div><div class="ttdeci">#define M2ERROR(...)</div><div class="ttdef"><b>Definition:</b> <a href="_m2_logger_8hh_source.html#l00323">M2Logger.hh:323</a></div></div>
-<div class="ttc" id="namespacemonarch2_html_aefd565ae44628998033977c23ed6df12"><div class="ttname"><a href="namespacemonarch2.html#aefd565ae44628998033977c23ed6df12">monarch2::M2LOGGER</a></div><div class="ttdeci">M2LOGGER(mlog,&quot;Version&quot;)</div></div>
+<div class="ttc" id="classmonarch2_1_1_monarch2_html_a06923b19c843435a5afdf0da19091276"><div class="ttname"><a href="classmonarch2_1_1_monarch2.html#a06923b19c843435a5afdf0da19091276">monarch2::Monarch2::GetRecordSeparateOne</a></div><div class="ttdeci">const M2RecordBytes * GetRecordSeparateOne() const </div><div class="ttdef"><b>Definition:</b> <a href="_m2_monarch_8hh_source.html#l00191">M2Monarch.hh:191</a></div></div>
+<div class="ttc" id="classmonarch2_1_1_monarch2_html"><div class="ttname"><a href="classmonarch2_1_1_monarch2.html">monarch2::Monarch2</a></div><div class="ttdef"><b>Definition:</b> <a href="_m2_monarch_8hh_source.html#l00013">M2Monarch.hh:13</a></div></div>
+<div class="ttc" id="classmonarch2_1_1_monarch2_html_a6230cba2e32f4698431d711be3f18bbd"><div class="ttname"><a href="classmonarch2_1_1_monarch2.html#a6230cba2e32f4698431d711be3f18bbd">monarch2::Monarch2::OpenForReading</a></div><div class="ttdeci">static const Monarch2 * OpenForReading(const std::string &amp;filename)</div><div class="ttdef"><b>Definition:</b> <a href="_m2_monarch_8cc_source.html#l00062">M2Monarch.cc:62</a></div></div>
+<div class="ttc" id="_monarch2_dump_8cc_html_abfd3e4402afd2c2381f20f8716ebeffa"><div class="ttname"><a href="_monarch2_dump_8cc.html#abfd3e4402afd2c2381f20f8716ebeffa">LOGGER</a></div><div class="ttdeci">LOGGER(mlog,&quot;Monarch2Dump&quot;)</div></div>
 <div class="ttc" id="classmonarch2_1_1_m2_header_html_a9d7f0eacfa07d4bc6c869d7135f72fca"><div class="ttname"><a href="classmonarch2_1_1_m2_header.html#a9d7f0eacfa07d4bc6c869d7135f72fca">monarch2::M2Header::GetRecordSize</a></div><div class="ttdeci">unsigned int GetRecordSize() const </div><div class="ttdef"><b>Definition:</b> <a href="_m2_header_8cc_source.html#l00232">M2Header.cc:232</a></div></div>
 <div class="ttc" id="classmonarch2_1_1_monarch2_html_a914a6a86dbb4d0314d3b3e117840ed3f"><div class="ttname"><a href="classmonarch2_1_1_monarch2.html#a914a6a86dbb4d0314d3b3e117840ed3f">monarch2::Monarch2::ReadHeader</a></div><div class="ttdeci">void ReadHeader() const </div><div class="ttdef"><b>Definition:</b> <a href="_m2_monarch_8cc_source.html#l00102">M2Monarch.cc:102</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Nov 19 2015 16:16:17 for Monarch by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Mar 9 2016 13:19:27 for Monarch by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.9.1
 </small></address>
