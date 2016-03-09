@@ -34,6 +34,7 @@ namespace monarch3
 {
     // channel information
 
+    /// Data Format
     /// Specifies whether the data is digitized (unsigned or signed) or analog
     static const uint32_t sInvalidFormat = std::numeric_limits< uint32_t >::max();
     static const uint32_t sDigitizedUS = 0;
@@ -50,11 +51,6 @@ namespace monarch3
     /// Specifies whether the data channels are interleaved or separate in a stream
     static const uint32_t sInterleaved = 0;
     static const uint32_t sSeparate = 1;
-
-    // re-typdefing for aesthetic purposes
-    typedef uint64_t AcquisitionIdType; // 8 bytes
-    typedef uint64_t RecordIdType; // 8 bytes
-    typedef uint64_t TimeType; // 8 bytes
 
 }
 

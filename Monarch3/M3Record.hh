@@ -35,32 +35,71 @@ namespace monarch3
     {
         public:
             M3Record( unsigned aNBytes = 0 );
-            M3Record( byte_type* aDataPtr );
+            M3Record( RecordIdType* aRecPtr, TimeType* aTimePtr, byte_type* aDataPtr );
             ~M3Record();
 
-            M3MEMBERVARIABLE( RecordIdType, RecordId );
-            M3MEMBERVARIABLE( TimeType, Time );
-
-            M3MEMBERVARIABLE_NOSET( bool, OwnsData );
-
-        public:
-            const byte_type* GetData() const;
-            byte_type* GetData();
-
             /// Allocate no memory for the record; data pointer is to NULL
-            void SetData();
+            void Initialize();
             /// Allocate aNBytes of memory for the record
-            void SetData( unsigned aNBytes );
+            void Initialize( unsigned aNBytes );
             /// Do not allocate memory for the record; instead point to someone else's memory.
             /// Warning: if the memory pointed to is de-allocated, use of this record should be discontinued
-            void SetData( byte_type* aDataPtr );
+            void Initialize( RecordIdType* aRecPtr, TimeType* aTimePtr, byte_type* aDataPtr );
 
             void ClearData();
 
+            RecordIdType GetRecordId() const;
+            RecordIdType* GetRecordIdPtr() const;
+            void SetRecordId( RecordIdType aId );
+
+            TimeType GetTime() const;
+            TimeType* GetTimePtr() const;
+            void SetTime( TimeType aTime );
+
+            const byte_type* GetData() const;
+            byte_type* GetData();
+
+            M3MEMBERVARIABLE_NOSET( bool, OwnsData );
+
         private:
+            RecordIdType* fRecordId;
+            TimeType* fTime;
+
             byte_type* fData;
 
     };
+
+    inline RecordIdType M3Record::GetRecordId() const
+    {
+        return *fRecordId;
+    }
+
+    inline RecordIdType* M3Record::GetRecordIdPtr() const
+    {
+        return fRecordId;
+    }
+
+    inline void M3Record::SetRecordId( RecordIdType aId )
+    {
+        (*fRecordId) = aId;
+        return;
+    }
+
+    inline TimeType M3Record::GetTime() const
+    {
+        return *fTime;
+    }
+
+    inline TimeType* M3Record::GetTimePtr() const
+    {
+        return fTime;
+    }
+
+    inline void M3Record::SetTime( TimeType aTime )
+    {
+        (*fTime) = aTime;
+        return;
+    }
 
     inline const byte_type* M3Record::GetData() const
     {

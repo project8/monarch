@@ -12,7 +12,7 @@
 #include "M3Header.hh"
 
 #include "M3IToA.hh"
-#include "M3Logger.hh"
+#include "logger.hh"
 #include "M3Version.hh"
 
 #include <cstdlib> // for atol in parsing timestamp
@@ -25,7 +25,7 @@ using std::string;
 
 namespace monarch3
 {
-    M3LOGGER( mlog, "M3Header" );
+    LOGGER( mlog, "M3Header" );
 
     //*********************
     // M3StreamHeader
@@ -117,7 +117,7 @@ namespace monarch3
 
     void M3StreamHeader::WriteToHDF5( H5::CommonFG* aParent )
     {
-        M3DEBUG( mlog, "Writing stream <" << fLabel << ">" );
+        DEBUG( mlog, "Writing stream <" << fLabel << ">" );
         H5::Group tThisStreamGroup = aParent->createGroup( fLabel );
 
         M3Header::WriteScalarToHDF5( &tThisStreamGroup, "number", fNumber );
@@ -141,7 +141,7 @@ namespace monarch3
 
     void M3StreamHeader::ReadFromHDF5( const H5::CommonFG* aParent, const std::string& aLabel ) const
     {
-        M3DEBUG( mlog, "Reading stream <" << aLabel << ">" );
+        DEBUG( mlog, "Reading stream <" << aLabel << ">" );
         H5::Group tThisStreamGroup = aParent->openGroup( aLabel.c_str() );
 
         SetNumber( M3Header::ReadScalarFromHDF5< uint32_t >( &tThisStreamGroup, "number" ) );
@@ -199,7 +199,7 @@ namespace monarch3
 
         if( tDims[ 0 ] != fNChannels )
         {
-            M3ERROR( mlog, "Channels dataset dimensions (" << tDims[ 0 ] << ") do not match number of channels, " << fNChannels );
+            ERROR( mlog, "Channels dataset dimensions (" << tDims[ 0 ] << ") do not match number of channels, " << fNChannels );
             return;
         }
 
@@ -305,7 +305,7 @@ namespace monarch3
 
     void M3ChannelHeader::WriteToHDF5( H5::CommonFG* aParent )
     {
-        M3DEBUG( mlog, "Writing channel <" << fLabel << ">" );
+        DEBUG( mlog, "Writing channel <" << fLabel << ">" );
         H5::Group tThisChannelGroup = aParent->createGroup( fLabel );
 
         M3Header::WriteScalarToHDF5( &tThisChannelGroup, "number", fNumber );
@@ -328,7 +328,7 @@ namespace monarch3
 
     void M3ChannelHeader::ReadFromHDF5( const H5::CommonFG* aParent, const std::string& aLabel ) const
     {
-        M3DEBUG( mlog, "Reading channel <" << aLabel << ">" );
+        DEBUG( mlog, "Reading channel <" << aLabel << ">" );
         H5::Group tThisChannelGroup = aParent->openGroup( aLabel.c_str() );
 
         SetNumber( M3Header::ReadScalarFromHDF5< uint32_t >( &tThisChannelGroup, "number" ) );
@@ -393,13 +393,13 @@ namespace monarch3
                                  uint32_t aBitDepth, uint32_t aBitAlignment,
                                  std::vector< unsigned >* aChanVec )
     {
-        M3DEBUG( mlog, "Adding stream " << fNStreams << " for channel " << fNChannels << " with record size " << aRecSize );
+        DEBUG( mlog, "Adding stream " << fNStreams << " for channel " << fNChannels << " with record size " << aRecSize );
         if( aChanVec != NULL ) aChanVec->push_back( fNChannels );
         fChannelStreams.push_back( fNStreams );
         fChannelHeaders.push_back( M3ChannelHeader( aSource, fNChannels, anAcqRate, aRecSize, aSampleSize, aDataTypeSize, aDataFormat, aBitDepth, aBitAlignment ) );
         fStreamHeaders.push_back( M3StreamHeader( aSource, fNStreams, 1, fNChannels, sSeparate, anAcqRate, aRecSize, aSampleSize, aDataTypeSize, aDataFormat, aBitDepth, aBitAlignment ) );
         ++fNChannels;
-        std::cout << "resizing to " << fNChannels << std::endl;
+        //std::cout << "resizing to " << fNChannels << std::endl;
         fChannelCoherence.resize( fNChannels ); // resize number of columns
         for( unsigned i = 0; i < fNChannels; ++i ) // resize each row
         {
@@ -415,11 +415,11 @@ namespace monarch3
                                  uint32_t aBitDepth, uint32_t aBitAlignment,
                                  std::vector< unsigned >* aChanVec )
     {
-        M3DEBUG( mlog, "Adding stream " << fNStreams << " for multiple channels with record size " << aRecSize );
+        DEBUG( mlog, "Adding stream " << fNStreams << " for multiple channels with record size " << aRecSize );
         unsigned tFirstNewChannel = fNChannels;
         for( uint32_t iNewChannel = 0; iNewChannel < aNChannels; ++iNewChannel )
         {
-            M3DEBUG( mlog, "Adding channel " << fNChannels );
+            DEBUG( mlog, "Adding channel " << fNChannels );
             if( aChanVec != NULL ) aChanVec->push_back( fNChannels );
             fChannelStreams.push_back( fNStreams );
             fChannelHeaders.push_back( M3ChannelHeader( aSource, fNChannels, anAcqRate, aRecSize, aSampleSize, aDataTypeSize, aDataFormat, aBitDepth, aBitAlignment ) );
@@ -447,7 +447,7 @@ namespace monarch3
     {
         try
         {
-            M3DEBUG( mlog, "Writing run header" );
+            DEBUG( mlog, "Writing run header" );
             fFile = aFile;
             WriteScalarToHDF5( fFile, "egg_version",   fEggVersion );
             WriteScalarToHDF5( fFile, "filename",      fFilename );
@@ -460,14 +460,14 @@ namespace monarch3
             WriteChannelStreams( fFile );
             WriteChannelCoherence( fFile );
 
-            M3DEBUG( mlog, "Writing stream headers" );
+            DEBUG( mlog, "Writing stream headers" );
             fStreamsGroup = new H5::Group( fFile->createGroup( "streams" ) );
             for( uint32_t iStream = 0; iStream < fNStreams; ++iStream )
             {
                 fStreamHeaders[ iStream ].WriteToHDF5( fStreamsGroup );
             }
 
-            M3DEBUG( mlog, "Writing channel headers" );
+            DEBUG( mlog, "Writing channel headers" );
             fChannelsGroup = new H5::Group( fFile->createGroup( "channels" ) );
             for( uint32_t iChan = 0; iChan < fNChannels; ++iChan )
             {
@@ -480,7 +480,7 @@ namespace monarch3
         }
         catch( M3Exception& e )
         {
-            M3DEBUG( mlog, "M3Exception: " << e.what() );
+            DEBUG( mlog, "M3Exception: " << e.what() );
             throw;
         }
 
@@ -491,7 +491,7 @@ namespace monarch3
     {
         try
         {
-            M3DEBUG( mlog, "Reading run header" );
+            DEBUG( mlog, "Reading run header" );
             fFile = const_cast< H5::H5File* >( aFile );
             SetEggVersion( ReadScalarFromHDF5< string >( fFile, string("egg_version") ) );
             SetFilename( ReadScalarFromHDF5< string >( fFile, "filename" ) );
@@ -521,7 +521,7 @@ namespace monarch3
 			const unsigned tBuffSize = 256;
 			char tBuffer[ tBuffSize ];
 
-            M3DEBUG( mlog, "Reading stream headers" );
+            DEBUG( mlog, "Reading stream headers" );
             fStreamHeaders.clear();
             fStreamsGroup = new H5::Group( fFile->openGroup( "streams" ) );
             hsize_t nStreams = fStreamsGroup->getNumObjs();
@@ -534,13 +534,13 @@ namespace monarch3
                 //string tStreamLabel = fStreamsGroup->getObjnameByIdx( iStream );
                 unsigned tLabelSize = fStreamsGroup->getObjnameByIdx( iStream, tBuffer, tBuffSize );
                 std::string tStreamLabel( tBuffer, tLabelSize );
-				M3DEBUG( mlog, "Attempting to read stream header #" << iStream << "; label <" << tStreamLabel << ">" );
+				DEBUG( mlog, "Attempting to read stream header #" << iStream << "; label <" << tStreamLabel << ">" );
                 fStreamHeaders.push_back( M3StreamHeader() );
-                M3DEBUG( mlog, "Testing if we can access the last header: " << fStreamHeaders.back().GetLabel() );
+                DEBUG( mlog, "Testing if we can access the last header: " << fStreamHeaders.back().GetLabel() );
                 fStreamHeaders.back().ReadFromHDF5( fStreamsGroup, tStreamLabel );
             }
 
-            M3DEBUG( mlog, "Reading channel headers" );
+            DEBUG( mlog, "Reading channel headers" );
             fChannelHeaders.clear();
             fChannelsGroup = new H5::Group( fFile->openGroup( "channels" ) );
             hsize_t nChannels = fChannelsGroup->getNumObjs();
@@ -597,7 +597,7 @@ namespace monarch3
 
         if( tDims[ 0 ] != fNChannels )
         {
-            M3ERROR( mlog, "Channel-streams dataset dimensions (" << tDims[ 0 ] << ") do not match number of channels, " << fNChannels );
+            ERROR( mlog, "Channel-streams dataset dimensions (" << tDims[ 0 ] << ") do not match number of channels, " << fNChannels );
             return;
         }
 
@@ -656,7 +656,7 @@ namespace monarch3
 
         if( tDims[ 0 ] != fNChannels || tDims[ 1 ] != fNChannels )
         {
-            M3ERROR( mlog, "Channel coherence dataset dimensions (" << tDims[ 0 ] << ", " << tDims[ 1 ] << ") do not match number of channels, " << fNChannels );
+            ERROR( mlog, "Channel coherence dataset dimensions (" << tDims[ 0 ] << ", " << tDims[ 1 ] << ") do not match number of channels, " << fNChannels );
             return;
         }
 

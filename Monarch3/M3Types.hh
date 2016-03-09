@@ -19,6 +19,9 @@ namespace monarch3
 {
     typedef uint8_t byte_type;
 
+    typedef uint64_t AcquisitionIdType;
+    typedef uint64_t RecordIdType;
+    typedef uint64_t TimeType;
 
     template<typename T, typename U>
     struct is_same

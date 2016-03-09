@@ -2,16 +2,13 @@
 #define M2EXCEPTION_HH_
 
 #include <exception>
-using std::exception;
-
 #include <sstream>
-using std::stringstream;
 
 namespace monarch2
 {
 
     class M2Exception :
-            public exception
+            public std::exception
             {
                 public:
             M2Exception();
@@ -29,7 +26,7 @@ namespace monarch2
             }
 
                 private:
-            stringstream fStream;
+            std::stringstream fStream;
             };
 
 }

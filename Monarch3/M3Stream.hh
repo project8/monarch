@@ -36,7 +36,9 @@ namespace monarch3
     When a stream object is created, most of the information needed to define the stream characteristics is extracted from the
     stream header object that is passed to the constructor.  Most users won't need to worry about this, as it's already taken
     care of by the Monarch3 object.
-    */    class M3_API M3Stream
+    */
+
+    class M3_API M3Stream
     {
         public:
             enum Mode
@@ -46,8 +48,8 @@ namespace monarch3
             };
 
         private:
-            typedef void (M3Stream::*DoReadRecordFunc)() const;
-            typedef void (M3Stream::*DoWriteRecordFunc)();
+            typedef void (M3Stream::*DoReadRecordFunc)( bool ) const;
+            typedef void (M3Stream::*DoWriteRecordFunc)( bool );
 
         public:
             M3Stream( const M3StreamHeader& aHeader, H5::CommonFG* aH5StreamParentLoc, uint32_t aAccessFormat = sSeparate );
@@ -96,7 +98,7 @@ namespace monarch3
             /// Write the record contents to the file
             bool WriteRecord( bool aIsNewAcquisition );
 
-            /// Close the file
+            /// Close the stream
             void Close();
 
 
@@ -123,12 +125,12 @@ namespace monarch3
             uint32_t GetAccessFormat() const { return fAccessFormat; }
 
         private:
-            void ReadRecordInterleavedToSeparate() const;
-            void ReadRecordAsIs() const;
+            void ReadRecordInterleavedToSeparate( bool aIsNewAcquisition ) const;
+            void ReadRecordAsIs( bool aIsNewAcquisition ) const;
             mutable DoReadRecordFunc fDoReadRecord;
 
-            void WriteRecordSeparateToInterleaved();
-            void WriteRecordAsIs();
+            void WriteRecordSeparateToInterleaved( bool aIsNewAcquisition );
+            void WriteRecordAsIs( bool aIsNewAcquisition );
             mutable DoWriteRecordFunc fDoWriteRecord;
 
             mutable bool fIsInitialized;
@@ -142,6 +144,7 @@ namespace monarch3
 
             mutable unsigned fChanRecNBytes;
             mutable unsigned fChanRecSize;
+            mutable uint64_t fChanRecLength; // ns
 
             mutable M3Record fStreamRecord;
 
@@ -153,6 +156,10 @@ namespace monarch3
 
             mutable unsigned fRecordCountInAcq;
             mutable unsigned fNRecordsInAcq;
+            mutable TimeType fAcqFirstRecTime; // used when reading with the stream record
+            mutable RecordIdType fAcqFirstRecId; // used when reading with the stream record
+            mutable TimeType* fAcqFirstRecTimes; // used when reading with the channel records
+            mutable RecordIdType* fAcqFirstRecIds; // used when reading with the channel records
 
             mutable bool fDataInterleaved;
             mutable uint32_t fAccessFormat;

@@ -6,15 +6,16 @@ cmake_minimum_required (VERSION 3.0)
 #########
 
 cmake_policy( SET CMP0048 NEW ) # version in project()
-project( Monarch VERSION 3.2.3 )
+project( Monarch VERSION 3.2.4 )
 
-list( APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake)
+list( APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/Scarab/cmake)
 
-include( PackageBuilder)
+include( PackageBuilder )
 pbuilder_prepare_project()
 
 # Egg file version
-set( Egg_VERSION "3.1.0" )
+set( Egg_VERSION "3.2.0" )
+add_definitions( -DEgg_VERSION=${Egg_VERSION} )
 
 set( Monarch_BUILD_MONARCH2 FALSE CACHE BOOL "Build Monarch2 library (requires Protobuf)" )
 set( Monarch_BUILD_MONARCH3 TRUE CACHE BOOL "Build Monarch3 library (requires HDF5)" )
@@ -25,12 +26,16 @@ set( Monarch_ENABLE_DOC_BUILD FALSE CACHE BOOL "Enable the options to build the 
 # monarch dependencies #
 ########################
 
-# if git is used, get the commit SHA1
-find_package( Git )
-if( GIT_FOUND )
-    execute_process( COMMAND ${GIT_EXECUTABLE} rev-parse -q HEAD  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR} OUTPUT_VARIABLE Monarch_GIT_COMMIT  OUTPUT_STRIP_TRAILING_WHITESPACE )
-    execute_process( COMMAND ${GIT_EXECUTABLE} describe --tags --long  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR} OUTPUT_VARIABLE Monarch_GIT_DESCRIBE  OUTPUT_STRIP_TRAILING_WHITESPACE )
-endif( GIT_FOUND )
+########
+# Scarab
+########
+
+pbuilder_add_submodule( Scarab Scarab/library )
+
+
+######
+# HDF5
+######
 
 if( Monarch_BUILD_MONARCH3 )
     find_package( HDF5 REQUIRED COMPONENTS C CXX )
@@ -41,6 +46,11 @@ if( Monarch_BUILD_MONARCH3 )
     pbuilder_add_ext_libraries( ${HDF5_C_LIBRARY} )
     pbuilder_add_ext_libraries( ${HDF5_CXX_LIBRARY} )
 endif( Monarch_BUILD_MONARCH3 )
+
+
+##########
+# Protobuf
+##########
 
 if( Monarch_BUILD_MONARCH2 )
     find_package( Protobuf REQUIRED )

@@ -1,17 +1,17 @@
 #include "M2Monarch.hh"
-#include "M2Logger.hh"
+#include "logger.hh"
 
 #include <cstring>
 
 using namespace monarch2;
 
-M2LOGGER( mlog, "Monarch2Info" );
+LOGGER( mlog, "Monarch2Info" );
 
 int main( const int argc, const char** argv )
 {
     if( argc < 2 )
     {
-        M2INFO( mlog, "usage:\n"
+        INFO( mlog, "usage:\n"
             << "  Monarch2Info [-h] <input egg file>\n"
             << "      -h: (optional) header only; does not check number of records" );
         return -1;
@@ -23,7 +23,7 @@ int main( const int argc, const char** argv )
     {
         if( argc < 3 )
         {
-            M2ERROR( mlog, "no filename provided" );
+            ERROR( mlog, "no filename provided" );
             return -1;
         }
         ++tFileArg;
@@ -34,7 +34,7 @@ int main( const int argc, const char** argv )
     tReadTest->ReadHeader();
 
     const M2Header* tReadHeader = tReadTest->GetHeader();
-    M2INFO( mlog, *tReadHeader );
+    INFO( mlog, *tReadHeader );
 
     if( ! tCheckRecords )
     {
@@ -60,7 +60,7 @@ int main( const int argc, const char** argv )
     }
     else
     {
-        M2ERROR( mlog, "Unable to read a header with acquisition mode <" << tReadHeader->GetAcquisitionMode() << "> and format mode <" << tReadHeader->GetFormatMode() << ">" );
+        ERROR( mlog, "Unable to read a header with acquisition mode <" << tReadHeader->GetAcquisitionMode() << "> and format mode <" << tReadHeader->GetFormatMode() << ">" );
         return -1;
     }
     try
@@ -77,10 +77,10 @@ int main( const int argc, const char** argv )
     }
     catch (M2Exception& e)
     {
-        M2WARN( mlog, "Something went wrong during the reading of records!" << "\n\t" << e.what() );
+        WARN( mlog, "Something went wrong during the reading of records!" << "\n\t" << e.what() );
     }
-    M2INFO( mlog, "record count <" << tRecordCount << ">" );
-    M2INFO( mlog, "acquisition count <" << tAcquisiontCount << ">" );
+    INFO( mlog, "record count <" << tRecordCount << ">" );
+    INFO( mlog, "acquisition count <" << tAcquisiontCount << ">" );
 
     tReadTest->Close();
     delete tReadTest;

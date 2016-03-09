@@ -4,11 +4,8 @@
 #include "M2Types.hh"
 
 #include <string>
-using std::string;
 
 #include <iostream>
-using std::cout;
-using std::endl;
 
 #include <cstdio>
 
@@ -25,7 +22,7 @@ namespace monarch2
             ~M2IO();
 
             // Open the file in whatever mode was given the constructor
-            bool Open( const string& aFilename );
+            bool Open( const std::string& aFilename );
 
             // Write nbytes of data from the byte array wbuf to the
             // current position of the file pointer.
