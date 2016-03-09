@@ -49,6 +49,7 @@ namespace monarch3
             fStrRecSize( aHeader.GetNChannels() * aHeader.GetRecordSize() ),
             fChanRecNBytes( aHeader.GetRecordSize() * aHeader.GetSampleSize() * aHeader.GetDataTypeSize() ),
             fChanRecSize( aHeader.GetRecordSize() ),
+            fChanRecLength( (double)aHeader.GetRecordSize() / ((double)aHeader.GetAcquisitionRate() * 1.e-3) ),
             fStreamRecord(),
             fNChannels( aHeader.GetNChannels() ),
             fChannelRecords( new M3Record[ aHeader.GetNChannels() ] ),
@@ -56,6 +57,10 @@ namespace monarch3
             fAcquisitionId( 0 ),
             fRecordCountInAcq( 0 ),
             fNRecordsInAcq( 0 ),
+            fAcqFirstRecTime( 0 ),
+            fAcqFirstRecId( 0 ),
+            fAcqFirstRecTimes( NULL ),
+            fAcqFirstRecIds( NULL ),
             fDataInterleaved( aHeader.GetChannelFormat() == sInterleaved ),
             fAccessFormat( aAccessFormat ),
             fRecordIndex(),
@@ -211,12 +216,12 @@ namespace monarch3
         if( fAccessFormat == sSeparate && fDataInterleaved && fNChannels != 1 )
         {
             // no memory is allocated for the stream record
-            fStreamRecord.SetData();
+            fStreamRecord.Initialize();
 
             // allocate memory for each channel record
             for( unsigned iChan = 0; iChan < fNChannels; ++iChan )
             {
-                fChannelRecords[ iChan ].SetData( fChanRecNBytes );
+                fChannelRecords[ iChan ].Initialize( fChanRecNBytes );
             }
 
             // set the read/write functions to the special versions
@@ -250,13 +255,13 @@ namespace monarch3
         }
 
         // allocate stream record memory
-        fStreamRecord.SetData( fStrRecNBytes );
+        fStreamRecord.Initialize( fStrRecNBytes );
 
         // channel records point to portions of the stream record and do not own their own data
         byte_type* tChanDataPtr = fStreamRecord.GetData();
         for( unsigned iChan = 0; iChan < fNChannels; ++iChan )
         {
-            fChannelRecords[ iChan ].SetData( tChanDataPtr + fChanRecNBytes*iChan );
+            fChannelRecords[ iChan ].Initialize( fStreamRecord.GetRecordIdPtr(), fStreamRecord.GetTimePtr(), tChanDataPtr + fChanRecNBytes*iChan );
         }
 
         // set the read/write functions to the general versions
@@ -322,21 +327,31 @@ namespace monarch3
         fRecordCountInAcq = fRecordIndex.at( fRecordCountInFile ).second;
         DEBUG( mlog, "Going to record " << fRecordCountInFile << " -- " << nextAcq << " -- " << fRecordCountInAcq );
 
-        if( nextAcq != fAcquisitionId || ! fRecordsAccessed )
+        try
         {
-            // go to a new acquisition
-            fRecordsAccessed = true;
-            fAcquisitionId = nextAcq;
-            delete fH5CurrentAcqDataSet;
-            u32toa( fAcquisitionId, fAcqNameBuffer );
-            fH5CurrentAcqDataSet = new H5::DataSet( fH5AcqLoc->openDataSet( fAcqNameBuffer ) );
-            H5::Attribute tAttr( fH5CurrentAcqDataSet->openAttribute( "n_records" ) );
-            tAttr.read( tAttr.getDataType(), &fNRecordsInAcq );
+            bool tIsNewAcq = false;
+            if( nextAcq != fAcquisitionId || ! fRecordsAccessed )
+            {
+                // go to a new acquisition
+                tIsNewAcq = true;
+                fRecordsAccessed = true;
+                fAcquisitionId = nextAcq;
+                delete fH5CurrentAcqDataSet;
+                u32toa( fAcquisitionId, fAcqNameBuffer );
+                fH5CurrentAcqDataSet = new H5::DataSet( fH5AcqLoc->openDataSet( fAcqNameBuffer ) );
+                H5::Attribute tAttrNRIA( fH5CurrentAcqDataSet->openAttribute( "n_records" ) );
+                tAttrNRIA.read( tAttrNRIA.getDataType(), &fNRecordsInAcq );
+            }
+
+            fDataOffset[ 0 ] = fRecordCountInAcq;
+
+            (this->*fDoReadRecord)( tIsNewAcq );
         }
-
-        fDataOffset[ 0 ] = fRecordCountInAcq;
-
-        (this->*fDoReadRecord)();
+        catch( H5::Exception& e )
+        {
+            ERROR( mlog, "HDF5 error while reading a record:\n\t" << e.getCDetailMsg() << " (function: " << e.getFuncName() << ")" );
+            return false;
+        }
 
         return true;
     }
@@ -403,7 +418,7 @@ namespace monarch3
 
             fDataOffset[ 0 ] = fRecordCountInAcq;
 
-            (this->*fDoWriteRecord)();
+            (this->*fDoWriteRecord)( aIsNewAcquisition );
 
             ++fRecordCountInAcq;
             ++fRecordCountInFile;
@@ -441,27 +456,85 @@ namespace monarch3
         return;
     }
 
-    void M3Stream::ReadRecordInterleavedToSeparate() const
+    void M3Stream::ReadRecordInterleavedToSeparate( bool aIsNewAcquisition ) const
     {
+        if( aIsNewAcquisition )
+        {
+            try
+            {
+                delete [] fAcqFirstRecTimes;
+                fAcqFirstRecTimes = new TimeType[ fNChannels ];
+                H5::Attribute tAttrAFRT( fH5CurrentAcqDataSet->openAttribute( "first_record_time" ) );
+                tAttrAFRT.read( tAttrAFRT.getDataType(), fAcqFirstRecTimes );
+
+                delete [] fAcqFirstRecIds;
+                fAcqFirstRecIds = new RecordIdType[ fNChannels ];
+                H5::Attribute tAttrAFRI( fH5CurrentAcqDataSet->openAttribute( "first_record_id" ) );
+                tAttrAFRI.read( tAttrAFRI.getDataType(), fAcqFirstRecIds );
+            }
+            catch( H5::Exception& )
+            {
+                // Backwards compatibility with older files that don't have first_record_time and first_record_id
+                // Times increment by the record length starting at 0, but ID increments starting at 0
+                for( unsigned iChan = 0; iChan < fNChannels; ++iChan )
+                {
+                    fAcqFirstRecTimes[ iChan ] = 0;
+                    fAcqFirstRecIds[ iChan ] = 0;
+                }
+            }
+        }
+
         H5::DataSpace tDataSpaceInFile = fH5CurrentAcqDataSet->getSpace();
         for( unsigned iChan = 0; iChan < fNChannels; ++iChan )
         {
             fDataOffset[ 1 ] = iChan;
             tDataSpaceInFile.selectHyperslab( H5S_SELECT_SET, fDataDims1Rec, fDataOffset, fDataStride, fDataBlock );
             fH5CurrentAcqDataSet->read( fChannelRecords[ iChan ].GetData(), fDataTypeUser, *fH5DataSpaceUser, tDataSpaceInFile );
+            fChannelRecords[ iChan ].SetTime( fAcqFirstRecTimes[ iChan ] + fRecordCountInAcq * fChanRecLength );
+            fChannelRecords[ iChan ].SetRecordId( fAcqFirstRecIds[ iChan ] + fRecordCountInAcq );
         }
         return;
     }
 
-    void M3Stream::ReadRecordAsIs() const
+    void M3Stream::ReadRecordAsIs( bool aIsNewAcquisition ) const
     {
+        if( aIsNewAcquisition )
+        {
+            try
+            {
+                H5::Attribute tAttrAFRT( fH5CurrentAcqDataSet->openAttribute( "first_record_time" ) );
+                tAttrAFRT.read( tAttrAFRT.getDataType(), &fAcqFirstRecTime );
+                H5::Attribute tAttrAFRI( fH5CurrentAcqDataSet->openAttribute( "first_record_id" ) );
+                tAttrAFRI.read( tAttrAFRI.getDataType(), &fAcqFirstRecId );
+            }
+            catch( H5::Exception& )
+            {
+                // Backwards compatibility with older files that don't have first_record_time and first_record_id
+                // Times increment by the record length starting at 0, but ID increments starting at 0
+                fAcqFirstRecTime = 0;
+                fAcqFirstRecId = 0;
+                for( unsigned iChan = 0; iChan < fNChannels; ++iChan )
+                {
+                    fAcqFirstRecTimes[ iChan ] = 0;
+                    fAcqFirstRecIds[ iChan ] = 0;
+                }
+            }
+        }
+
         H5::DataSpace tDataSpaceInFile = fH5CurrentAcqDataSet->getSpace();
         tDataSpaceInFile.selectHyperslab( H5S_SELECT_SET, fDataDims1Rec, fDataOffset );
         fH5CurrentAcqDataSet->read( fStreamRecord.GetData(), fDataTypeUser, *fH5DataSpaceUser, tDataSpaceInFile );
+        fStreamRecord.SetTime( fAcqFirstRecTime + fRecordCountInAcq * fChanRecLength );
+        fStreamRecord.SetRecordId( fAcqFirstRecId + fRecordCountInAcq );
+        for( unsigned iChan = 0; iChan < fNChannels; ++iChan )
+        {
+            fChannelRecords[ iChan ].SetTime( fStreamRecord.GetTime() );
+            fChannelRecords[ iChan ].SetRecordId( fStreamRecord.GetRecordId() );
+        }
         return;
     }
 
-    void M3Stream::WriteRecordSeparateToInterleaved()
+    void M3Stream::WriteRecordSeparateToInterleaved( bool aIsNewAcquisition )
     {
         H5::DataSpace tDataSpaceInFile = fH5CurrentAcqDataSet->getSpace();
         for( unsigned iChan = 0; iChan < fNChannels; ++iChan )
@@ -471,14 +544,35 @@ namespace monarch3
             //std::cout << "about to write separate to interleaved  " << fDataTypeUser.fromClass() << std::endl;
             fH5CurrentAcqDataSet->write( fChannelRecords[ iChan ].GetData(), fDataTypeUser, *fH5DataSpaceUser, tDataSpaceInFile );
         }
+        if( aIsNewAcquisition )
+        {
+            TimeType* tTimes = new TimeType[ fNChannels ];
+            RecordIdType* tIds = new RecordIdType[ fNChannels ];
+            for( unsigned iChan = 0; iChan < fNChannels; ++iChan )
+            {
+                tTimes[ iChan ] = fChannelRecords[ iChan ].GetTime();
+                tIds[ iChan ] = fChannelRecords[ iChan ].GetRecordId();
+            }
+            fH5CurrentAcqDataSet->createAttribute( "first_record_time", MH5Type< TimeType >::H5(), H5::DataSpace( H5S_SCALAR ) ).write( MH5Type< TimeType >::Native(), tTimes );
+            fH5CurrentAcqDataSet->createAttribute( "first_record_id", MH5Type< RecordIdType >::H5(), H5::DataSpace( H5S_SCALAR ) ).write( MH5Type< RecordIdType >::Native(), tIds );
+            delete [] tTimes;
+            delete [] tIds;
+        }
         return;
     }
 
-    void M3Stream::WriteRecordAsIs()
+    void M3Stream::WriteRecordAsIs( bool aIsNewAcquisition )
     {
         H5::DataSpace tDataSpaceInFile = fH5CurrentAcqDataSet->getSpace();
         tDataSpaceInFile.selectHyperslab( H5S_SELECT_SET, fDataDims1Rec, fDataOffset );
         fH5CurrentAcqDataSet->write( fStreamRecord.GetData(), fDataTypeUser, *fH5DataSpaceUser, tDataSpaceInFile );
+        if( aIsNewAcquisition )
+        {
+            TimeType tTime = fStreamRecord.GetTime();
+            RecordIdType tId = fStreamRecord.GetRecordId();
+            fH5CurrentAcqDataSet->createAttribute( "first_record_time", MH5Type< TimeType >::H5(), H5::DataSpace( H5S_SCALAR ) ).write( MH5Type< TimeType >::Native(), &tTime );
+            fH5CurrentAcqDataSet->createAttribute( "first_record_id", MH5Type< RecordIdType >::H5(), H5::DataSpace( H5S_SCALAR ) ).write( MH5Type< RecordIdType >::Native(), &tId );
+        }
         return;
     }
 

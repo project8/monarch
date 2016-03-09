@@ -14,7 +14,7 @@ include( PackageBuilder )
 pbuilder_prepare_project()
 
 # Egg file version
-set( Egg_VERSION "3.1.0" )
+set( Egg_VERSION "3.2.0" )
 add_definitions( -DEgg_VERSION=${Egg_VERSION} )
 
 set( Monarch_BUILD_MONARCH2 FALSE CACHE BOOL "Build Monarch2 library (requires Protobuf)" )
