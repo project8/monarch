@@ -216,12 +216,12 @@ namespace monarch3
         if( fAccessFormat == sSeparate && fDataInterleaved && fNChannels != 1 )
         {
             // no memory is allocated for the stream record
-            fStreamRecord.SetData();
+            fStreamRecord.Initialize();
 
             // allocate memory for each channel record
             for( unsigned iChan = 0; iChan < fNChannels; ++iChan )
             {
-                fChannelRecords[ iChan ].SetData( fChanRecNBytes );
+                fChannelRecords[ iChan ].Initialize( fChanRecNBytes );
             }
 
             // set the read/write functions to the special versions
@@ -255,13 +255,13 @@ namespace monarch3
         }
 
         // allocate stream record memory
-        fStreamRecord.SetData( fStrRecNBytes );
+        fStreamRecord.Initialize( fStrRecNBytes );
 
         // channel records point to portions of the stream record and do not own their own data
         byte_type* tChanDataPtr = fStreamRecord.GetData();
         for( unsigned iChan = 0; iChan < fNChannels; ++iChan )
         {
-            fChannelRecords[ iChan ].SetData( tChanDataPtr + fChanRecNBytes*iChan );
+            fChannelRecords[ iChan ].Initialize( fStreamRecord.GetRecordIdPtr(), fStreamRecord.GetTimePtr(), tChanDataPtr + fChanRecNBytes*iChan );
         }
 
         // set the read/write functions to the general versions

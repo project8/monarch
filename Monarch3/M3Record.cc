@@ -11,25 +11,23 @@
 namespace monarch3
 {
     M3Record::M3Record( unsigned aNBytes ) :
-            fRecordId( 0 ),
-            fTime( 0 ),
-            fOwnsData( true )
+            fOwnsData( true ),
+            fRecordId( NULL ),
+            fTime( NULL ),
+            fData( NULL )
     {
-        if( aNBytes == 0 )
+        if( aNBytes != 0 )
         {
-            fData = NULL;
-            fOwnsData = false;
-        }
-        else
-        {
+            fRecordId = new RecordIdType();
+            fTime = new TimeType();
             fData = new byte_type[ aNBytes ];
         }
     }
 
-    M3Record::M3Record( byte_type* aDataPtr ) :
-            fRecordId( 0 ),
-            fTime( 0 ),
+    M3Record::M3Record( RecordIdType* aRecPtr, TimeType* aTimePtr, byte_type* aDataPtr ) :
             fOwnsData( false ),
+            fRecordId( aRecPtr ),
+            fTime( aTimePtr ),
             fData( aDataPtr )
     {
     }
@@ -39,33 +37,45 @@ namespace monarch3
         ClearData();
     }
 
-    void M3Record::SetData()
+    void M3Record::Initialize()
     {
         ClearData();
-        fOwnsData = true;
         return;
     }
 
-    void M3Record::SetData( unsigned aNBytes )
+    void M3Record::Initialize( unsigned aNBytes )
     {
         ClearData();
-        fOwnsData = true;
+        fRecordId = new RecordIdType();
+        fTime = new TimeType();
+        SetRecordId( 0 );
+        SetTime( 0 );
         fData = new byte_type[ aNBytes ];
         return;
     }
 
-    void M3Record::SetData( byte_type* aDataPtr )
+    void M3Record::Initialize( RecordIdType* aRecPtr, TimeType* aTimePtr, byte_type* aDataPtr )
     {
         ClearData();
         fOwnsData = false;
+        fRecordId = aRecPtr;
+        fTime = aTimePtr;
         fData = aDataPtr;
         return;
     }
 
     void M3Record::ClearData()
     {
-        if( fOwnsData && fData != NULL ) delete [] fData;
+        if( fOwnsData )
+        {
+            delete fRecordId;
+            delete fTime;
+            delete [] fData;
+        }
+        fRecordId = NULL;
+        fTime = NULL;
         fData = NULL;
+        fOwnsData = true;
         return;
     }
 
