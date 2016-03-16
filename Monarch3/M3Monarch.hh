@@ -16,6 +16,7 @@
 #include "H5Cpp.h"
 
 #include <string>
+#include <stdexcept>
 
 namespace monarch3
 {
