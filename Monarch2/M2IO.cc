@@ -17,7 +17,7 @@ namespace monarch2
         }
     }
 
-    bool M2IO::Open( const string& aFilename )
+    bool M2IO::Open( const std::string& aFilename )
     {
         if( fMode == sAccessRead )
         {

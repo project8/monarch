@@ -81,7 +81,7 @@ namespace monarch2
             //this static method opens the file for writing.
             //if the file exists and can be written, this returns a prepared monarch pointer, and memory is allocated for the header.
             //upon successful return monarch is in the eOpen state.
-            static Monarch2* OpenForWriting( const string& filename );
+            static Monarch2* OpenForWriting( const std::string& filename );
 
             //this method marshals the current header to the file.
             //if the header marshalled correctly, this returns true, memory is allocated for the record(s).
