@@ -42,32 +42,32 @@ namespace monarch2
         return fProtobufHeader->ParseFromIstream( aStream );
     }
 
-    void M2Header::SetFilename( const string& aFilename )
+    void M2Header::SetFilename( const std::string& aFilename )
     {
         fProtobufHeader->set_filename( aFilename );
         return;
     }
-    const string& M2Header::GetFilename() const
+    const std::string& M2Header::GetFilename() const
     {
         return fProtobufHeader->filename();
     }
 
-    void M2Header::SetTimestamp( const string& aTimestamp )
+    void M2Header::SetTimestamp( const std::string& aTimestamp )
     {
         fProtobufHeader->set_rundate( aTimestamp );
         return;
     }
-    const string& M2Header::GetTimestamp() const
+    const std::string& M2Header::GetTimestamp() const
     {
         return fProtobufHeader->rundate();
     }
     /*
-const string M2Header::GetDateTime() const
+const std::string M2Header::GetDateTime() const
 {
     // This shouldn't be called very often, so parsing in place shouldn't be much of a problem
     // If this needs to be called a lot, this strategy should be rethought
     stringstream ss(GetTimestamp());
-    string item;
+    std::string item;
     // first token in the timestamp is the date/time string
     std::getline(ss, item, sRecordTimeCalSep);
     return item;
@@ -78,19 +78,19 @@ TimeType M2Header::GetRecordTime0() const
     // This shouldn't be called very often, so parsing in place shouldn't be much of a problem
     // If this needs to be called a lot, this strategy should be rethought
     std::stringstream ss(GetTimestamp());
-    string item;
+    std::string item;
     // second token in the timestamp is the record time_0
     std::getline(ss, item, sRecordTimeCalSep);
     std::getline(ss, item, sRecordTimeCalSep);
     return (long long int)atol(item.c_str());
 }
      */
-    void M2Header::SetDescription( const string& aDescription )
+    void M2Header::SetDescription( const std::string& aDescription )
     {
         fProtobufHeader->set_runinfo( aDescription );
         return;
     }
-    const string& M2Header::GetDescription() const
+    const std::string& M2Header::GetDescription() const
     {
         return fProtobufHeader->runinfo();
     }

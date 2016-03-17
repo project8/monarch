@@ -38,7 +38,7 @@ int main( const int argc, const char** argv )
 
     if( tReadHeader->GetFormatMode() == sFormatSingle )
     {
-        ofstream tOutputOne( (string( argv[ 2 ] ) + string( "_ch1.txt" )).c_str() );
+        ofstream tOutputOne( (std::string( argv[ 2 ] ) + std::string( "_ch1.txt" )).c_str() );
         if( tOutputOne.is_open() == false )
         {
             ERROR( mlog, "could not open channel one output file!" );
@@ -72,8 +72,8 @@ int main( const int argc, const char** argv )
     }
     if( (tReadHeader->GetFormatMode() == sFormatMultiInterleaved) || (tReadHeader->GetFormatMode() == sFormatMultiSeparate) )
     {
-        ofstream tOutputOne( (string( argv[ 2 ] ) + string( "_ch1.txt" )).c_str() );
-        ofstream tOutputTwo( (string( argv[ 2 ] ) + string( "_ch2.txt" )).c_str() );
+        ofstream tOutputOne( (std::string( argv[ 2 ] ) + std::string( "_ch1.txt" )).c_str() );
+        ofstream tOutputTwo( (std::string( argv[ 2 ] ) + std::string( "_ch2.txt" )).c_str() );
         if( tOutputOne.is_open() == false )
         {
             ERROR( mlog, "could not open channel one output file!" );

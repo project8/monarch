@@ -59,7 +59,7 @@ namespace monarch2
         }
     }
 
-    const Monarch2* Monarch2::OpenForReading( const string& aFilename )
+    const Monarch2* Monarch2::OpenForReading( const std::string& aFilename )
     {
         Monarch2* tMonarch = new Monarch2();
 
@@ -79,7 +79,7 @@ namespace monarch2
         return tMonarch;
     }
 
-    Monarch2* Monarch2::OpenForWriting( const string& aFilename )
+    Monarch2* Monarch2::OpenForWriting( const std::string& aFilename )
     {
         Monarch2* tMonarch = new Monarch2();
 
@@ -384,7 +384,7 @@ namespace monarch2
             {
                 if( fIO->Done() != true )
                 {
-                    cout << "could not seek to requested position" << endl;
+                    std::cout << "could not seek to requested position" << std::endl;
                 }
                 return false;
             }
@@ -411,7 +411,7 @@ namespace monarch2
             {
                 if( fIO->Done() != true )
                 {
-                    cout << "could not seek to requested position" << endl;
+                    std::cout << "could not seek to requested position" << std::endl;
                 }
                 return false;
             }
@@ -452,7 +452,7 @@ namespace monarch2
             {
                 if( fIO->Done() != true )
                 {
-                    cout << "could not seek to requested position" << endl;
+                    std::cout << "could not seek to requested position" << std::endl;
                 }
                 return false;
             }
@@ -479,7 +479,7 @@ namespace monarch2
             {
                 if( fIO->Done() != true )
                 {
-                    cout << "could not seek to requested position" << endl;
+                    std::cout << "could not seek to requested position" << std::endl;
                 }
                 return false;
             }
@@ -506,7 +506,7 @@ namespace monarch2
             {
                 if( fIO->Done() != true )
                 {
-                    cout << "could not seek to requested position" << endl;
+                    std::cout << "could not seek to requested position" << std::endl;
                 }
                 return false;
             }
@@ -542,7 +542,7 @@ namespace monarch2
             {
                 if( fIO->Done() != true )
                 {
-                    cout << "could not seek to requested position" << endl;
+                    std::cout << "could not seek to requested position" << std::endl;
                 }
                 return false;
             }
