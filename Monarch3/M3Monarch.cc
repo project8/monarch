@@ -71,7 +71,7 @@ namespace monarch3
             throw M3Exception() << "Could not open <" << aFilename << "> for reading";
             return NULL;
         }
-        DEBUG( mlog, "Opened egg file <" << aFilename << "> for reading" );
+        LDEBUG( mlog, "Opened egg file <" << aFilename << "> for reading" );
 
         tMonarch3->fHeader = new M3Header();
         tMonarch3->fHeader->SetFilename( aFilename );
@@ -105,7 +105,7 @@ namespace monarch3
             throw M3Exception() << "Could not open <" << aFilename << "> for writing";
             return NULL;
         }
-        DEBUG( mlog, "Opened egg file <" << aFilename << "> for writing" );
+        LDEBUG( mlog, "Opened egg file <" << aFilename << "> for writing" );
 
         tMonarch3->fHeader = new M3Header();
         tMonarch3->fHeader->SetFilename( aFilename );
@@ -211,7 +211,7 @@ namespace monarch3
 
     void Monarch3::FinishReading() const
     {
-        DEBUG( mlog, "Finishing reading" );
+        LDEBUG( mlog, "Finishing reading" );
         try
         {
             if( fHeader != NULL )
@@ -242,7 +242,7 @@ namespace monarch3
 
     void Monarch3::FinishWriting()
     {
-        DEBUG( mlog, "Finishing writing" );
+        LDEBUG( mlog, "Finishing writing" );
         try
         {
             if( fHeader != NULL )

@@ -11,7 +11,7 @@ int main( const int argc, const char** argv )
 {
     if( argc < 2 )
     {
-        INFO( mlog, "usage:\n"
+        LINFO( mlog, "usage:\n"
             << "  Monarch2Info [-h] <input egg file>\n"
             << "      -h: (optional) header only; does not check number of records" );
         return -1;
@@ -23,7 +23,7 @@ int main( const int argc, const char** argv )
     {
         if( argc < 3 )
         {
-            ERROR( mlog, "no filename provided" );
+            LERROR( mlog, "no filename provided" );
             return -1;
         }
         ++tFileArg;
@@ -34,7 +34,7 @@ int main( const int argc, const char** argv )
     tReadTest->ReadHeader();
 
     const M2Header* tReadHeader = tReadTest->GetHeader();
-    INFO( mlog, *tReadHeader );
+    LINFO( mlog, *tReadHeader );
 
     if( ! tCheckRecords )
     {
@@ -60,7 +60,7 @@ int main( const int argc, const char** argv )
     }
     else
     {
-        ERROR( mlog, "Unable to read a header with acquisition mode <" << tReadHeader->GetAcquisitionMode() << "> and format mode <" << tReadHeader->GetFormatMode() << ">" );
+        LERROR( mlog, "Unable to read a header with acquisition mode <" << tReadHeader->GetAcquisitionMode() << "> and format mode <" << tReadHeader->GetFormatMode() << ">" );
         return -1;
     }
     try
@@ -77,10 +77,10 @@ int main( const int argc, const char** argv )
     }
     catch (M2Exception& e)
     {
-        WARN( mlog, "Something went wrong during the reading of records!" << "\n\t" << e.what() );
+        LWARN( mlog, "Something went wrong during the reading of records!" << "\n\t" << e.what() );
     }
-    INFO( mlog, "record count <" << tRecordCount << ">" );
-    INFO( mlog, "acquisition count <" << tAcquisiontCount << ">" );
+    LINFO( mlog, "record count <" << tRecordCount << ">" );
+    LINFO( mlog, "acquisition count <" << tAcquisiontCount << ">" );
 
     tReadTest->Close();
     delete tReadTest;
