@@ -14,7 +14,7 @@ int main( const int argc, const char** argv )
 {
     if( argc < 3 )
     {
-        MINFO( mlog, "usage:\n"
+        MLINFO( mlog, "usage:\n"
             << "  MonarchDump <input egg file> <output text file> <# of records per channel [optional]>\n"
             << "# of records is optional; the default is 1; use 0 to dump the whole file" );
         return -1;
@@ -31,7 +31,7 @@ int main( const int argc, const char** argv )
     tReadTest->SetInterface( sInterfaceSeparate );
 
     const MonarchHeader* tReadHeader = tReadTest->GetHeader();
-    MINFO( mlog, *tReadHeader );
+    MLINFO( mlog, *tReadHeader );
 
     unsigned int tRecordCount = 0;
     unsigned int tAcquisitionCount = 0;
@@ -118,8 +118,8 @@ int main( const int argc, const char** argv )
         tOutputTwo.close();
     }
 
-    MINFO( mlog, "record count <" << tRecordCount << ">" );
-    MINFO( mlog, "acquisition count <" << tAcquisitionCount << ">" );
+    MLINFO( mlog, "record count <" << tRecordCount << ">" );
+    MLINFO( mlog, "acquisition count <" << tAcquisitionCount << ">" );
 
     tReadTest->Close();
     delete tReadTest;

@@ -41,10 +41,20 @@ if( Monarch_BUILD_MONARCH3 )
     find_package( HDF5 REQUIRED COMPONENTS C CXX )
     include_directories( BEFORE ${PROJECT_SOURCE_DIR}/Monarch3 ${PROJECT_BINARY_DIR} )
     include_directories( BEFORE ${HDF5_INCLUDE_DIR} )
+    if( WIN32 )
+        # In testing on 3/24/16 I found that the .dlls were being found, not the .libs.  I don't understand why, but this fixes the problem if it occurs.
+        # HDF5_CXX_LIBRARIES was blank in testing, so I commented out the first line.
+        #string( REPLACE ".dll" ".lib" HDF5_CXX_LIBRARIES ${HDF5_CXX_LIBRARIES} )
+        string( REPLACE ".dll" ".lib" HDF5_C_LIBRARY ${HDF5_C_LIBRARY} )
+        string( REPLACE ".dll" ".lib" HDF5_CXX_LIBRARY ${HDF5_CXX_LIBRARY} )
+    endif( WIN32 )
     # It seems that all 3 of the following lines are needed to make Monarch compile on both Mac/Linux and Windows
     pbuilder_add_ext_libraries( ${HDF5_CXX_LIBRARIES} )
     pbuilder_add_ext_libraries( ${HDF5_C_LIBRARY} )
     pbuilder_add_ext_libraries( ${HDF5_CXX_LIBRARY} )
+    message( STATUS "HDF5_CXX_LIBRARIES: ${HDF5_CXX_LIBRARIES}" )
+    message( STATUS "HDF5_C_LIBRARY: ${HDF5_C_LIBRARY}" )
+    message( STATUS "HDF5_CXX_LIBRARY: ${HDF5_CXX_LIBRARY}" )
 endif( Monarch_BUILD_MONARCH3 )
 
 

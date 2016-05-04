@@ -14,7 +14,7 @@ int main( const int argc, const char** argv )
 {
     if( argc < 3 )
     {
-        INFO( mlog, "usage:\n"
+        LINFO( mlog, "usage:\n"
             << "  Monarch2Dump <input egg file> <output text file> <# of records per channel [optional]>\n"
             << "# of records is optional; the default is 1; use 0 to dump the whole file" );
         return -1;
@@ -31,7 +31,7 @@ int main( const int argc, const char** argv )
     tReadTest->SetInterface( sInterfaceSeparate );
 
     const M2Header* tReadHeader = tReadTest->GetHeader();
-    INFO( mlog, *tReadHeader );
+    LINFO( mlog, *tReadHeader );
 
     unsigned int tRecordCount = 0;
     unsigned int tAcquisitionCount = 0;
@@ -41,7 +41,7 @@ int main( const int argc, const char** argv )
         ofstream tOutputOne( (std::string( argv[ 2 ] ) + std::string( "_ch1.txt" )).c_str() );
         if( tOutputOne.is_open() == false )
         {
-            ERROR( mlog, "could not open channel one output file!" );
+            LERROR( mlog, "could not open channel one output file!" );
             tReadTest->Close();
             delete tReadTest;
             return -1;
@@ -76,14 +76,14 @@ int main( const int argc, const char** argv )
         ofstream tOutputTwo( (std::string( argv[ 2 ] ) + std::string( "_ch2.txt" )).c_str() );
         if( tOutputOne.is_open() == false )
         {
-            ERROR( mlog, "could not open channel one output file!" );
+            LERROR( mlog, "could not open channel one output file!" );
             tReadTest->Close();
             delete tReadTest;
             return -1;
         }
         if( tOutputTwo.is_open() == false )
         {
-            ERROR( mlog, "could not open channel two output file!" );
+            LERROR( mlog, "could not open channel two output file!" );
             tReadTest->Close();
             delete tReadTest;
             return -1;
@@ -118,8 +118,8 @@ int main( const int argc, const char** argv )
         tOutputTwo.close();
     }
 
-    INFO( mlog, "record count <" << tRecordCount << ">" );
-    INFO( mlog, "acquisition count <" << tAcquisitionCount << ">" );
+    LINFO( mlog, "record count <" << tRecordCount << ">" );
+    LINFO( mlog, "acquisition count <" << tAcquisitionCount << ">" );
 
     tReadTest->Close();
     delete tReadTest;
