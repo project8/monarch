@@ -64,11 +64,9 @@ endif( Monarch_BUILD_MONARCH3 )
 
 if( Monarch_BUILD_MONARCH2 )
     find_package( Protobuf REQUIRED )
-    include_directories( BEFORE ${PROJECT_SOURCE_DIR}/Monarch2 ${PROJECT_BINARY_DIR} )
+    include_directories( BEFORE ${PROJECT_SOURCE_DIR}/Monarch2 ${PROJECT_BINARY_DIR}/Monarch2 ${PROJECT_BINARY_DIR} )
     include_directories( ${PROTOBUF_INCLUDE_DIR} )
     pbuilder_add_ext_libraries( ${PROTOBUF_LIBRARIES} )
-    include_directories( BEFORE ${CMAKE_CURRENT_BINARY_DIR}/Protobuf )
-    add_subdirectory( Protobuf )
 endif( Monarch_BUILD_MONARCH2 )
 
 

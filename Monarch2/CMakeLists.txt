@@ -1,8 +1,21 @@
+
+###########################
+# protobuf c++ generation #
+###########################
+
+set( PROTO_FILES
+    Protobuf/MonarchHeader.proto
+)
+
+protobuf_generate_cpp( Monarch_Protobuf_Sources Monarch_Protobuf_Headers ${PROTO_FILES} )
+
+
 ####################
 # monarch2 library #
 ####################
 
 set( MONARCH2_HEADERFILES
+    ${Monarch_Protobuf_Sources}
     M2Exception.hh
     M2Header.hh
     M2IO.hh
@@ -13,6 +26,7 @@ set( MONARCH2_HEADERFILES
 )
 
 set( MONARCH2_SOURCEFILES
+    ${Monarch_Protobuf_Sources}
     M2Exception.cc
     M2Header.cc
     M2IO.cc
