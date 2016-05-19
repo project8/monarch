@@ -19,7 +19,7 @@ int main( const int argc, const char** argv )
 {
     if( argc < 3 )
     {
-        MINFO( mlog, "usage:\n"
+        MLINFO( mlog, "usage:\n"
             << "  MonarchTimeCheck <input egg file> <output text file>" );
         return -1;
     }
@@ -35,7 +35,7 @@ int main( const int argc, const char** argv )
     tReadTest->ReadHeader();
 
     const MonarchHeader* tReadHeader = tReadTest->GetHeader();
-    MINFO( mlog, *tReadHeader );
+    MLINFO( mlog, *tReadHeader );
 
     TimeType tRecordSize = (TimeType)tReadHeader->GetRecordSize();
     TimeType tBinWidthNS = (TimeType)(1000. / tReadHeader->GetAcquisitionRate()); // in ns
@@ -102,8 +102,8 @@ int main( const int argc, const char** argv )
 
         //cout << "  record " << tRecordCount << ": time offset: " << tReadRecord->fTime << " ns" << endl;
     }
-    MINFO( mlog, "record count <" << tRecordCount << ">" );
-    MINFO( mlog, "acquisition count <" << tAcquisitionCount << ">" );
+    MLINFO( mlog, "record count <" << tRecordCount << ">" );
+    MLINFO( mlog, "acquisition count <" << tAcquisitionCount << ">" );
 
     tReadTest->Close();
     delete tReadTest;
