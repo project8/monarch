@@ -40,7 +40,8 @@ pbuilder_add_submodule( Scarab Scarab/library )
 if( Monarch_BUILD_MONARCH3 )
     find_package( HDF5 REQUIRED COMPONENTS C CXX )
     include_directories( BEFORE ${PROJECT_SOURCE_DIR}/Monarch3 ${PROJECT_BINARY_DIR} )
-    include_directories( BEFORE ${HDF5_INCLUDE_DIR} )
+    # HDF5_INCLUDE_DIR is deprecated, but is placed here to ensure the directory is picked up if an older version of cmake is used
+    include_directories( BEFORE ${HDF5_INCLUDE_DIRS} ${HDF5_INCLUDE_DIR} )
     if( WIN32 )
         # In testing on 3/24/16 I found that the .dlls were being found, not the .libs.  I don't understand why, but this fixes the problem if it occurs.
         # HDF5_CXX_LIBRARIES was blank in testing, so I commented out the first line.
@@ -55,6 +56,7 @@ if( Monarch_BUILD_MONARCH3 )
     message( STATUS "HDF5_CXX_LIBRARIES: ${HDF5_CXX_LIBRARIES}" )
     message( STATUS "HDF5_C_LIBRARY: ${HDF5_C_LIBRARY}" )
     message( STATUS "HDF5_CXX_LIBRARY: ${HDF5_CXX_LIBRARY}" )
+    message( STATUS "HDF5_INCLUDE_DIR: ${HDF5_INCLUDE_DIRS}" )
 endif( Monarch_BUILD_MONARCH3 )
 
 
