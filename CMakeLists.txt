@@ -38,7 +38,8 @@ pbuilder_add_submodule( Scarab Scarab/library )
 ######
 
 if( Monarch_BUILD_MONARCH3 )
-    find_package( HDF5 REQUIRED COMPONENTS C CXX )
+    # Removed C component from find_package on 9/9/16, as it was causing problems on linux builds, and the C interface isn't used
+    find_package( HDF5 REQUIRED COMPONENTS CXX )
     include_directories( BEFORE ${PROJECT_SOURCE_DIR}/Monarch3 ${PROJECT_BINARY_DIR} )
     # HDF5_INCLUDE_DIR is deprecated, but is placed here to ensure the directory is picked up if an older version of cmake is used
     include_directories( BEFORE ${HDF5_INCLUDE_DIRS} ${HDF5_INCLUDE_DIR} )
