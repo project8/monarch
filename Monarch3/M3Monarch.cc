@@ -17,9 +17,9 @@ namespace monarch3
     LOGGER( mlog, "MMonarch3" );
 
     Monarch3::Monarch3() :
-                fState( eClosed ),
-                fFile( NULL ),
-                fHeader( NULL )
+            fState( eClosed ),
+            fFile( NULL ),
+            fHeader( NULL )
     {
     }
 
@@ -57,11 +57,13 @@ namespace monarch3
         }
         catch( H5::Exception& e )
         {
+            delete tMonarch3;
             throw M3Exception() << "Could not open <" << aFilename << "> for reading; an H5::Exception was thrown: " << e.getCDetailMsg();
             return NULL;
         }
         catch( std::exception& e )
         {
+            delete tMonarch3;
             throw M3Exception() << "Could not open <" << aFilename << "> for reading; a std::exception was thrown: " << e.what();
             return NULL;
         }
@@ -91,11 +93,13 @@ namespace monarch3
         }
         catch( H5::Exception& e )
         {
+            delete tMonarch3;
             throw M3Exception() << "Could not open <" << aFilename << "> for writing; an H5::Exception was thrown: " << e.getCDetailMsg();
             return NULL;
         }
         catch( std::exception& e )
         {
+            delete tMonarch3;
             throw M3Exception() << "Could not open <" << aFilename << "> for writing; a std::exception was thrown: " << e.what();
             return NULL;
         }
