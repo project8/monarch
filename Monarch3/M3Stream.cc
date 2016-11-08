@@ -414,7 +414,7 @@ namespace monarch3
                 fH5CurrentAcqDataSet->extend( fStrDataDims );
             }
 
-            LDEBUG( mlog, "Writing acq. " << fAcquisitionId << ", record " << fRecordCountInAcq );
+            LTRACE( mlog, "Writing acq. " << fAcquisitionId << ", record " << fRecordCountInAcq );
 
             fDataOffset[ 0 ] = fRecordCountInAcq;
 
