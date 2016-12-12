@@ -591,7 +591,7 @@ namespace monarch3
             {
                 fRecordIndex.at( iRecInFile ).first = iAcq;
                 fRecordIndex.at( iRecInFile ).second = iRecInAcq;
-                LDEBUG( mlog, "Record index: " << iRecInFile << " -- " << iAcq << " -- " << iRecInAcq );
+                LTRACE( mlog, "Record index: " << iRecInFile << " -- " << iAcq << " -- " << iRecInAcq );
                 ++iRecInFile;
             }
         }
