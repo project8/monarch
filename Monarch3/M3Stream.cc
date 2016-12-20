@@ -414,7 +414,7 @@ namespace monarch3
                 fH5CurrentAcqDataSet->extend( fStrDataDims );
             }
 
-            LDEBUG( mlog, "Writing acq. " << fAcquisitionId << ", record " << fRecordCountInAcq );
+            LTRACE( mlog, "Writing acq. " << fAcquisitionId << ", record " << fRecordCountInAcq );
 
             fDataOffset[ 0 ] = fRecordCountInAcq;
 
@@ -591,7 +591,7 @@ namespace monarch3
             {
                 fRecordIndex.at( iRecInFile ).first = iAcq;
                 fRecordIndex.at( iRecInFile ).second = iRecInAcq;
-                LDEBUG( mlog, "Record index: " << iRecInFile << " -- " << iAcq << " -- " << iRecInAcq );
+                LTRACE( mlog, "Record index: " << iRecInFile << " -- " << iAcq << " -- " << iRecInAcq );
                 ++iRecInFile;
             }
         }

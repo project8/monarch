@@ -6,7 +6,7 @@ cmake_minimum_required (VERSION 3.1)
 #########
 
 cmake_policy( SET CMP0048 NEW ) # version in project()
-project( Monarch VERSION 3.2.7 )
+project( Monarch VERSION 3.2.8 )
 
 list( APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/Scarab/cmake)
 
