@@ -21,11 +21,10 @@ can also be built.
 Requirements
 ------------
 
-- CMake 3.0 or higher
-- HDF5 1.8.12* or higher (Monarch3 only)
+- CMake 3.1 or higher
+- HDF5 1.8.12 or higher (Monarch3 only)
 - Google Protocol Buffers (Monarch2 only)
 
-\* 1.8.11 is known to be too old. The exact minimum version is not known.
 
 Installation
 ------------
