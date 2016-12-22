@@ -124,6 +124,9 @@ namespace monarch3
             // the streams
             mutable std::vector< M3Stream* > fStreams;
 
+            // stream read/write mutex
+            mutable mutex_ptr fMutexPtr;
+
     };
 
     inline const M3Header* Monarch3::GetHeader() const
@@ -143,7 +146,7 @@ namespace monarch3
         }
         catch( std::out_of_range& e )
         {
-            return NULL;
+            return nullptr;
         }
     }
     inline M3Stream* Monarch3::GetStream( unsigned iStream )
@@ -154,7 +157,7 @@ namespace monarch3
         }
         catch( std::out_of_range& e )
         {
-            return NULL;
+            return nullptr;
         }
     }
 

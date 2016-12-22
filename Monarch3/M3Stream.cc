@@ -69,7 +69,8 @@ namespace monarch3
             fH5StreamParentLoc( new H5::Group( aH5StreamsLoc->openGroup( aHeader.GetLabel() ) ) ),
             fH5AcqLoc( NULL ),
             fH5CurrentAcqDataSet( NULL ),
-            fH5DataSpaceUser( NULL )
+            fH5DataSpaceUser( NULL ),
+            fMutexPtr( new std::mutex() )
     {
         LDEBUG( mlog, "Creating stream for <" << aHeader.GetLabel() << ">" );
 
@@ -313,6 +314,8 @@ namespace monarch3
     {
         if( ! fIsInitialized ) Initialize();
 
+        std::unique_lock( &fMutexPtr.get() );
+
         anOffset += fRecordsAccessed;
         if( ( anOffset < 0 && (unsigned)abs( anOffset ) > fRecordCountInFile ) ||
             ( anOffset > 0 && fRecordCountInFile + anOffset >= fNRecordsInFile ) ||
@@ -389,6 +392,8 @@ namespace monarch3
         //       fNRecordsInAcq is only valid for the last completed acquisition.
 
         if( ! fIsInitialized ) Initialize();
+
+        std::unique_lock( &fMutexPtr.get() );
 
         try
         {

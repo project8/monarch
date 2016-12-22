@@ -13,6 +13,8 @@
 #include "H5Cpp.h"
 
 #include <inttypes.h>
+#include <memory>
+#include <mutex>
 #include <string>
 
 namespace monarch3
@@ -22,6 +24,8 @@ namespace monarch3
     typedef uint64_t AcquisitionIdType;
     typedef uint64_t RecordIdType;
     typedef uint64_t TimeType;
+
+    typedef std::shared_ptr< std::mutex > mutex_ptr;
 
     template<typename T, typename U>
     struct is_same
