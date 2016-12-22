@@ -18,8 +18,9 @@ namespace monarch3
 
     Monarch3::Monarch3() :
             fState( eClosed ),
-            fFile( NULL ),
-            fHeader( NULL )
+            fFile( nullptr ),
+            fHeader( nullptr ),
+            fMutexPtr( new std::mutex() )
     {
     }
 
@@ -28,10 +29,10 @@ namespace monarch3
         if( fState == eOpenToRead || fState == eReadyToRead) FinishReading();
         if( fState == eOpenToWrite || fState == eReadyToWrite) FinishWriting();
 
-        if( fHeader != NULL )
+        if( fHeader != nullptr )
         {
             delete fHeader;
-            fHeader = NULL;
+            fHeader = nullptr;
         }
 
         while( ! fStreams.empty() )
@@ -40,10 +41,10 @@ namespace monarch3
             fStreams.pop_back();
         }
 
-        if( fFile != NULL )
+        if( fFile != nullptr )
         {
             delete fFile;
-            fFile = NULL;
+            fFile = nullptr;
         }
     }
 
@@ -59,19 +60,19 @@ namespace monarch3
         {
             delete tMonarch3;
             throw M3Exception() << "Could not open <" << aFilename << "> for reading; an H5::Exception was thrown: " << e.getCDetailMsg();
-            return NULL;
+            return nullptr;
         }
         catch( std::exception& e )
         {
             delete tMonarch3;
             throw M3Exception() << "Could not open <" << aFilename << "> for reading; a std::exception was thrown: " << e.what();
-            return NULL;
+            return nullptr;
         }
-        if( tMonarch3->fFile == NULL )
+        if( tMonarch3->fFile == nullptr )
         {
             delete tMonarch3;
             throw M3Exception() << "Could not open <" << aFilename << "> for reading";
-            return NULL;
+            return nullptr;
         }
         LDEBUG( mlog, "Opened egg file <" << aFilename << "> for reading" );
 
@@ -95,19 +96,19 @@ namespace monarch3
         {
             delete tMonarch3;
             throw M3Exception() << "Could not open <" << aFilename << "> for writing; an H5::Exception was thrown: " << e.getCDetailMsg();
-            return NULL;
+            return nullptr;
         }
         catch( std::exception& e )
         {
             delete tMonarch3;
             throw M3Exception() << "Could not open <" << aFilename << "> for writing; a std::exception was thrown: " << e.what();
-            return NULL;
+            return nullptr;
         }
-        if( tMonarch3->fFile == NULL )
+        if( tMonarch3->fFile == nullptr )
         {
             delete tMonarch3;
             throw M3Exception() << "Could not open <" << aFilename << "> for writing";
-            return NULL;
+            return nullptr;
         }
         LDEBUG( mlog, "Opened egg file <" << aFilename << "> for writing" );
 
@@ -151,6 +152,7 @@ namespace monarch3
                     ++streamIt )
             {
                 fStreams.push_back( new M3Stream( *streamIt, tStreamsGroup ) );
+                fStreams.back()->SetMutex( fMutexPtr );
             }
         }
         catch( H5::Exception& e )
@@ -198,6 +200,7 @@ namespace monarch3
                     ++streamIt )
             {
                 fStreams.push_back( new M3Stream( *streamIt, tStreamsGroup ) );
+                fStreams.back()->SetMutex( fMutexPtr );
             }
         }
         catch( H5::Exception& e )
@@ -218,22 +221,22 @@ namespace monarch3
         LDEBUG( mlog, "Finishing reading" );
         try
         {
-            if( fHeader != NULL )
+            if( fHeader != nullptr )
             {
                 delete fHeader;
-                fHeader = NULL;
+                fHeader = nullptr;
             }
             for( std::vector< M3Stream* >::iterator streamIt = fStreams.begin(); streamIt != fStreams.end(); ++streamIt )
             {
                 const_cast< const M3Stream* >(*streamIt)->Close();
                 delete *streamIt;
-                *streamIt = NULL;
+                *streamIt = nullptr;
             }
-            if( fFile != NULL )
+            if( fFile != nullptr )
             {
                 fFile->close();
                 delete fFile;
-                fFile = NULL;
+                fFile = nullptr;
             }
         }
         catch( H5::Exception& e )
@@ -249,24 +252,24 @@ namespace monarch3
         LDEBUG( mlog, "Finishing writing" );
         try
         {
-            if( fHeader != NULL )
+            if( fHeader != nullptr )
             {
                 delete fHeader;
-                fHeader = NULL;
+                fHeader = nullptr;
             }
             for( std::vector< M3Stream* >::iterator streamIt = fStreams.begin(); streamIt != fStreams.end(); ++streamIt )
             {
                 (*streamIt)->Close();
                 delete *streamIt;
-                *streamIt = NULL;
+                *streamIt = nullptr;
             }
-            if( fFile != NULL )
+            if( fFile != nullptr )
             {
                 fFile->close();
                 delete fFile;
-                fFile = NULL;
+                fFile = nullptr;
             }
-            fFile = NULL;
+            fFile = nullptr;
         }
         catch( H5::Exception& e )
         {

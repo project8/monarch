@@ -69,7 +69,8 @@ namespace monarch3
             fH5StreamParentLoc( new H5::Group( aH5StreamsLoc->openGroup( aHeader.GetLabel() ) ) ),
             fH5AcqLoc( NULL ),
             fH5CurrentAcqDataSet( NULL ),
-            fH5DataSpaceUser( NULL )
+            fH5DataSpaceUser( NULL ),
+            fMutexPtr( new std::mutex() )
     {
         LDEBUG( mlog, "Creating stream for <" << aHeader.GetLabel() << ">" );
 
@@ -313,6 +314,8 @@ namespace monarch3
     {
         if( ! fIsInitialized ) Initialize();
 
+        std::unique_lock< std::mutex >( *fMutexPtr.get() );
+
         anOffset += fRecordsAccessed;
         if( ( anOffset < 0 && (unsigned)abs( anOffset ) > fRecordCountInFile ) ||
             ( anOffset > 0 && fRecordCountInFile + anOffset >= fNRecordsInFile ) ||
@@ -392,6 +395,8 @@ namespace monarch3
 
         try
         {
+            std::unique_lock< std::mutex >( *fMutexPtr.get() );
+
             if( aIsNewAcquisition )
             {
                 FinalizeCurrentAcq();
@@ -428,7 +433,7 @@ namespace monarch3
         {
             LERROR( mlog, "HDF5 error while writing a record:\n\t" << e.getCDetailMsg() << " (function: " << e.getFuncName() << ")" );
         }
-        catch( M3Exception& e )
+        catch( std::exception& e )
         {
             LERROR( mlog, e.what() );
         }

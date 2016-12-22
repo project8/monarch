@@ -62,6 +62,7 @@ if( Monarch_ENABLE_TESTING )
     )
     
     set( programs
+        Monarch3MultithreadingTest
         Monarch3ReadTest
         Monarch3WriteTest
         Monarch3WriteSpeedTest

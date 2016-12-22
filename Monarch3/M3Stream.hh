@@ -60,6 +60,8 @@ namespace monarch3
             /// Setup to read/write data (called in constructor; only call this if read/write parameters change during file reading)
             void Initialize() const;
 
+            void SetMutex( const mutex_ptr& aMutexPtr );
+
             //********************************
             // methods for reading (all const)
             //********************************
@@ -194,7 +196,14 @@ namespace monarch3
             mutable hsize_t fDataStride[ N_DATA_DIMS ];
             mutable hsize_t fDataBlock[ N_DATA_DIMS ];
 
+            mutable mutex_ptr fMutexPtr;
     };
+
+    inline void M3Stream::SetMutex( const mutex_ptr& aMutexPtr )
+    {
+        fMutexPtr = aMutexPtr;
+        return;
+    }
 
 } /* namespace monarch */
 
