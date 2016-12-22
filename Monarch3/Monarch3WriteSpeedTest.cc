@@ -2,7 +2,20 @@
  * Monarch3WriteSpeedTest.cc
  *
  *  Created on: Dec 21, 2016
- *      Author: obla999
+ *      Author: N. Oblath
+ *
+ *  Description: Measures the speed of writing a specified amount of data to disk.
+ *
+ *  Single- or multi-threaded operation; in single-threaded operation all streams are written sequentially for each record.
+ *
+ *  Use: Monarch3WriteSpeedTest [options]
+ *
+ *  Options:
+ *      multithreaded=(true | false) -- default: false
+ *      n-records=[unsigned int] -- default: 10000
+ *      n-streams=[unsigned int] -- default: 1
+ *      array-size=[unsigned int] -- default: 1024
+ *      data-type-size=[unsigned int] -- default: 1
  */
 
 #include "M3DataInterface.hh"
@@ -37,14 +50,14 @@ int main( int argc, char** argv )
         tDefaultConfig.add( "array-size", new scarab::param_value( 1024U ) );
         tDefaultConfig.add( "data-type-size", new scarab::param_value( 1U ) );
 
-        scarab::configurator t_configurator( argc, argv, &tDefaultConfig );
+        scarab::configurator tConfigurator( argc, argv, &tDefaultConfig );
 
-        bool tMultithreaded = t_configurator.get< bool >( "multithreaded" );
-        unsigned tNRecords = t_configurator.get< unsigned >( "n-records" );
-        unsigned tNStreams = t_configurator.get< unsigned >( "n-streams" );
-        unsigned tArraySize = t_configurator.get< unsigned >( "array-size" );
+        bool tMultithreaded = tConfigurator.get< bool >( "multithreaded" );
+        unsigned tNRecords = tConfigurator.get< unsigned >( "n-records" );
+        unsigned tNStreams = tConfigurator.get< unsigned >( "n-streams" );
+        unsigned tArraySize = tConfigurator.get< unsigned >( "array-size" );
         unsigned tSampleSize = 1; // currently not configurable
-        unsigned tDataTypeSize = t_configurator.get< unsigned >( "data-type-size" );
+        unsigned tDataTypeSize = tConfigurator.get< unsigned >( "data-type-size" );
 
         double tMBToWrite = (double)(tNRecords * tNStreams * tArraySize * tSampleSize * tDataTypeSize) * 10.e-6;
 
