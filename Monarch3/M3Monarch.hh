@@ -46,6 +46,8 @@ namespace monarch3
         private:
             //private to force use of static constructor methods
             Monarch3();
+            Monarch3( const Monarch3& ) = delete;
+            Monarch3( Monarch3&& ) = delete;
 
             //current state of monarch
             typedef enum
