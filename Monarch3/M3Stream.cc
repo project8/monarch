@@ -314,7 +314,7 @@ namespace monarch3
     {
         if( ! fIsInitialized ) Initialize();
 
-        std::unique_lock( &fMutexPtr.get() );
+        std::unique_lock< std::mutex >( *fMutexPtr.get() );
 
         anOffset += fRecordsAccessed;
         if( ( anOffset < 0 && (unsigned)abs( anOffset ) > fRecordCountInFile ) ||
@@ -393,10 +393,10 @@ namespace monarch3
 
         if( ! fIsInitialized ) Initialize();
 
-        std::unique_lock( &fMutexPtr.get() );
-
         try
         {
+            std::unique_lock< std::mutex >( *fMutexPtr.get() );
+
             if( aIsNewAcquisition )
             {
                 FinalizeCurrentAcq();
@@ -433,7 +433,7 @@ namespace monarch3
         {
             LERROR( mlog, "HDF5 error while writing a record:\n\t" << e.getCDetailMsg() << " (function: " << e.getFuncName() << ")" );
         }
-        catch( M3Exception& e )
+        catch( std::exception& e )
         {
             LERROR( mlog, e.what() );
         }
