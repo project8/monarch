@@ -15,8 +15,12 @@
 #include <boost/filesystem.hpp>
 
 #include <chrono>
+#include <condition_variable>
+#include <mutex>
 #include <stdlib.h>
 #include <string>
+#include <thread>
+#include <vector>
 
 using namespace monarch3;
 
@@ -27,6 +31,7 @@ int main( int argc, char** argv )
     try
     {
         scarab::param_node tDefaultConfig;
+        tDefaultConfig.add( "multithreaded", new scarab::param_value( false ) );
         tDefaultConfig.add( "n-records", new scarab::param_value( 10000U ) );
         tDefaultConfig.add( "n-streams", new scarab::param_value( 1U ) );
         tDefaultConfig.add( "array-size", new scarab::param_value( 1024U ) );
@@ -34,6 +39,7 @@ int main( int argc, char** argv )
 
         scarab::configurator t_configurator( argc, argv, &tDefaultConfig );
 
+        bool tMultithreaded = t_configurator.get< bool >( "multithreaded" );
         unsigned tNRecords = t_configurator.get< unsigned >( "n-records" );
         unsigned tNStreams = t_configurator.get< unsigned >( "n-streams" );
         unsigned tArraySize = t_configurator.get< unsigned >( "array-size" );
@@ -42,10 +48,9 @@ int main( int argc, char** argv )
 
         double tMBToWrite = (double)(tNRecords * tNStreams * tArraySize * tSampleSize * tDataTypeSize) * 10.e-6;
 
-        // For now only allow 1 stream because Monarch is not threadsafe
-        if( tNStreams != 1 )
+        if( tNStreams == 0 )
         {
-            LERROR( mlog, "Unable to run with <" << tNStreams << "> streams" );
+            LERROR( mlog, "Please specify a number of streams > 0" );
             return -1;
         }
 
@@ -101,37 +106,100 @@ int main( int argc, char** argv )
 
         LINFO( mlog, "Writing data" );
 
-        bool tIsNewAcq = true;
-
         using std::chrono::steady_clock;
         using std::chrono::duration;
         using std::chrono::duration_cast;
 
-        steady_clock::time_point tStartTime = steady_clock::now();
-
-        for( unsigned iRecord = 0; iRecord < tNRecords; ++iRecord )
+        if( tMultithreaded )
         {
+
+            std::mutex tRunMutex;
+            std::condition_variable tRunRelease;
+
+            std::vector< std::thread > tThreads;
+            std::atomic< unsigned > tNThreadsReady( 0 );
+
             for( unsigned iStream = 0; iStream < tNStreams; ++iStream )
             {
-                ::memcpy( tStreamData[ iStream ], tDataMaster, tNBytes );
-                if( ! tStreams[ iStream ]->WriteRecord( tIsNewAcq ) )
+                tThreads.push_back( std::thread( [&, iStream]{
+                    //LDEBUG( mlog, "Starting thread " << iStream << "; waiting for start signal" );
+                    bool tIsNewAcq = true;
+                    std::unique_lock< std::mutex > tRunLock( tRunMutex );
+                    tNThreadsReady++;
+                    tRunRelease.wait( tRunLock );
+                    for( unsigned iRecord = 0; iRecord < tNRecords; ++iRecord )
+                    {
+                        ::memcpy( tStreamData[ iStream ], tDataMaster, tNBytes );
+                        if( ! tStreams[ iStream ]->WriteRecord( tIsNewAcq ) )
+                        {
+                            LERROR( mlog, "Unable to write record <" << iRecord << "> for stream <" << iStream << ">" );
+                            return;
+                        }
+                        tIsNewAcq = false;
+                    }
+                    //LDEBUG( mlog, "Thread " << iStream << " is finished" );
+                } ) );
+            }
+
+            // Synchronize threads
+            LINFO( mlog, "Waiting for threads to be ready" );
+            while( tNThreadsReady.load() != tNStreams )
+            {
+                std::this_thread::sleep_for( std::chrono::milliseconds( 100 ) );
+            }
+            std::this_thread::sleep_for( std::chrono::milliseconds( 100 ) );
+
+            LINFO( mlog, "Releasing threads" );
+            tRunRelease.notify_all();
+
+            steady_clock::time_point tStartTime = steady_clock::now();
+
+            for( unsigned iStream = 0; iStream < tNStreams; ++iStream )
+            {
+                tThreads[ iStream ].join();
+            }
+
+            steady_clock::time_point tEndTime = steady_clock::now();
+
+            duration< double > tDuration = duration_cast< duration< double > >( tEndTime - tStartTime );
+
+            LINFO( mlog, "Processing time: " << tDuration.count() << " sec" );
+            LINFO( mlog, "Size of data written: " << tMBToWrite << " MB" );
+            LINFO( mlog, "Write speed: " << tMBToWrite / tDuration.count() << " MB/s" );
+
+        }
+        else
+        {
+
+            bool tIsNewAcq = true;
+
+            steady_clock::time_point tStartTime = steady_clock::now();
+
+            for( unsigned iRecord = 0; iRecord < tNRecords; ++iRecord )
+            {
+                for( unsigned iStream = 0; iStream < tNStreams; ++iStream )
                 {
-                    LERROR( mlog, "Unable to write record <" << iRecord << "> for stream <" << iStream << ">" );
-                    delete tWriteTest;
-                    delete [] tDataMaster;
-                    return -1;
+                    ::memcpy( tStreamData[ iStream ], tDataMaster, tNBytes );
+                    if( ! tStreams[ iStream ]->WriteRecord( tIsNewAcq ) )
+                    {
+                        LERROR( mlog, "Unable to write record <" << iRecord << "> for stream <" << iStream << ">" );
+                        delete tWriteTest;
+                        delete [] tDataMaster;
+                        return -1;
+                    }
                 }
                 tIsNewAcq = false;
             }
+
+            steady_clock::time_point tEndTime = steady_clock::now();
+
+            duration< double > tDuration = duration_cast< duration< double > >( tEndTime - tStartTime );
+
+            LINFO( mlog, "Processing time: " << tDuration.count() << " sec" );
+            LINFO( mlog, "Size of data written: " << tMBToWrite << " MB" );
+            LINFO( mlog, "Write speed: " << tMBToWrite / tDuration.count() << " MB/s" );
+
         }
-
-        steady_clock::time_point tEndTime = steady_clock::now();
-
-        duration< double > tDuration = duration_cast< duration< double > >( tEndTime - tStartTime );
-
-        LINFO( mlog, "Processing time: " << tDuration.count() << " sec" );
-        LINFO( mlog, "Size of data written: " << tMBToWrite << " MB" );
-        LINFO( mlog, "Write speed: " << tMBToWrite / tDuration.count() << " MB/s" );
 
         LINFO( mlog, "Closing file" );
 
@@ -139,6 +207,8 @@ int main( int argc, char** argv )
 
         delete tWriteTest;
         boost::filesystem::remove( tFilePath );
+
+        delete [] tDataMaster;
 
         LINFO( mlog, "Test finished" );
 
