@@ -316,7 +316,7 @@ namespace monarch3
 
         std::unique_lock< std::mutex >( *fMutexPtr.get() );
 
-        anOffset += fRecordsAccessed;
+        anOffset += (int)fRecordsAccessed;
         if( ( anOffset < 0 && (unsigned)abs( anOffset ) > fRecordCountInFile ) ||
             ( anOffset > 0 && fRecordCountInFile + anOffset >= fNRecordsInFile ) ||
             ( anOffset == 0 && fNRecordsInFile == 0 ))
@@ -372,11 +372,6 @@ namespace monarch3
     }
 
 
-    M3Record* M3Stream::GetStreamRecord()
-    {
-        return &fStreamRecord;
-    }
-
     M3Record* M3Stream::GetChannelRecord( unsigned aChannel )
     {
         if( aChannel < fNChannels )
@@ -392,6 +387,7 @@ namespace monarch3
         //       fNRecordsInAcq is only valid for the last completed acquisition.
 
         if( ! fIsInitialized ) Initialize();
+        if( ! fRecordsAccessed ) aIsNewAcquisition = true;
 
         try
         {

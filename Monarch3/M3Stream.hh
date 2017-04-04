@@ -205,6 +205,11 @@ namespace monarch3
         return;
     }
 
+    inline M3Record* M3Stream::GetStreamRecord()
+    {
+        return &fStreamRecord;
+    }
+
 } /* namespace monarch */
 
 #endif /* MSTREAM_HH_ */

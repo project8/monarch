@@ -159,6 +159,8 @@ namespace monarch3
             M3Header();
             ~M3Header();
 
+            void CopyBasicInfo( const M3Header& aOrig );
+
             M3MEMBERVARIABLEREF( std::string, EggVersion );
 
             M3MEMBERVARIABLEREF( std::string, Filename );

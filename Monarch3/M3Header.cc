@@ -376,6 +376,16 @@ namespace monarch3
         delete fChannelsGroup;
     }
 
+    void M3Header::CopyBasicInfo( const M3Header& aOrig )
+    {
+        fEggVersion = aOrig.fEggVersion;
+        fFilename = aOrig.fFilename;
+        fRunDuration = aOrig.fRunDuration;
+        fTimestamp = aOrig.fTimestamp;
+        fDescription = aOrig.fDescription;
+        return;
+    }
+
     void M3Header::SetCoherence( unsigned aChanA, unsigned aChanB, bool aCoherence )
     {
         if( aChanA >= fNChannels || aChanB >= fNChannels )
