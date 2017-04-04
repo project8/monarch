@@ -392,6 +392,7 @@ namespace monarch3
         //       fNRecordsInAcq is only valid for the last completed acquisition.
 
         if( ! fIsInitialized ) Initialize();
+        if( ! fRecordsAccessed ) aIsNewAcquisition = true;
 
         try
         {
