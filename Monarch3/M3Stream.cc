@@ -291,7 +291,6 @@ namespace monarch3
         delete fH5DataSpaceUser;
         fH5DataSpaceUser = new H5::DataSpace( N_DATA_DIMS, fDataDims1Rec, NULL );
 
-
         fIsInitialized = true;
         return;
     }
@@ -310,13 +309,16 @@ namespace monarch3
         throw M3Exception() << "Channel <" << aChannel << "> requested; only " << fNChannels << " in this stream.";
     }
 
-    bool M3Stream::ReadRecord( int anOffset ) const
+    bool M3Stream::ReadRecord( int anOffset, bool aIfNewAcqStartAtFirstRec ) const
     {
         if( ! fIsInitialized ) Initialize();
 
         std::unique_lock< std::mutex >( *fMutexPtr.get() );
 
+        // anOffset should not move us forward if this is the very first record read in the file (fRecordsAccessed == false)
+        // Otherwise anOffset should be incremented to 1 to move us forward appropriately (fRecordsAccessed == true)
         anOffset += (int)fRecordsAccessed;
+
         if( ( anOffset < 0 && (unsigned)abs( anOffset ) > fRecordCountInFile ) ||
             ( anOffset > 0 && fRecordCountInFile + anOffset >= fNRecordsInFile ) ||
             ( anOffset == 0 && fNRecordsInFile == 0 ))
@@ -328,14 +330,26 @@ namespace monarch3
         fRecordCountInFile = fRecordCountInFile + anOffset;
         unsigned nextAcq = fRecordIndex.at( fRecordCountInFile ).first;
         fRecordCountInAcq = fRecordIndex.at( fRecordCountInFile ).second;
-        LDEBUG( mlog, "Going to record " << fRecordCountInFile << " -- " << nextAcq << " -- " << fRecordCountInAcq );
 
         try
         {
             bool tIsNewAcq = false;
             if( nextAcq != fAcquisitionId || ! fRecordsAccessed )
             {
-                // go to a new acquisition
+                // we are going to a new acquisition
+
+                // check if we need to correct our position in the new acquisition back to the beginning of the acquisition
+                if( aIfNewAcqStartAtFirstRec && fRecordCountInAcq != 0 )
+                {
+                    fRecordCountInFile -= fRecordCountInAcq;
+                    // make sure the record correction ended up in the same new acquisition
+                    if( fRecordIndex.at( fRecordCountInFile ).first != nextAcq )
+                    {
+                        throw M3Exception() << "Tried to start at the beginning of the new acquisition, but ended up in a different acquisition: " << fRecordIndex.at( fRecordCountInFile ).first << " != " << nextAcq;
+                    }
+                    fRecordCountInAcq = 0;
+                }
+
                 tIsNewAcq = true;
                 fRecordsAccessed = true;
                 fAcquisitionId = nextAcq;
@@ -346,14 +360,22 @@ namespace monarch3
                 tAttrNRIA.read( tAttrNRIA.getDataType(), &fNRecordsInAcq );
             }
 
+            LDEBUG( mlog, "Going to record: record in file: " << fRecordCountInFile << " -- acquisition: " << nextAcq << " -- record in acquisition: " << fRecordCountInAcq );
+
             fDataOffset[ 0 ] = fRecordCountInAcq;
 
             (this->*fDoReadRecord)( tIsNewAcq );
+
+            // fix fRecordCountInFile; e.g. if a file doesn't start at record 0, we need to fix the record count value after reading the record
+            if( tIsNewAcq )
+            {
+                fRecordCountInFile = fAcqFirstRecId;
+                LDEBUG( mlog, "Updated record in file: " << fRecordCountInFile );
+            }
         }
         catch( H5::Exception& e )
         {
-            LERROR( mlog, "HDF5 error while reading a record:\n\t" << e.getCDetailMsg() << " (function: " << e.getFuncName() << ")" );
-            return false;
+            throw M3Exception() << "HDF5 error while reading a record:\n\t" << e.getCDetailMsg() << " (function: " << e.getFuncName() << ")";
         }
 
         return true;
@@ -427,11 +449,11 @@ namespace monarch3
         }
         catch( H5::Exception& e )
         {
-            LERROR( mlog, "HDF5 error while writing a record:\n\t" << e.getCDetailMsg() << " (function: " << e.getFuncName() << ")" );
+            throw M3Exception() << "HDF5 error while writing a record:\n\t" << e.getCDetailMsg() << " (function: " << e.getFuncName() << ")";
         }
         catch( std::exception& e )
         {
-            LERROR( mlog, e.what() );
+            throw M3Exception() << e.what();
         }
 
         return false;
@@ -483,6 +505,8 @@ namespace monarch3
                     fAcqFirstRecIds[ iChan ] = 0;
                 }
             }
+            fAcqFirstRecTime = fAcqFirstRecTimes[0];
+            fAcqFirstRecId = fAcqFirstRecIds[0];
         }
 
         H5::DataSpace tDataSpaceInFile = fH5CurrentAcqDataSet->getSpace();

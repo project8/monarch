@@ -80,8 +80,12 @@ namespace monarch3
              *  - if offset == -1, the current record will be reread;
              *  - offsets < -1 will go backwards in the file;
              *  - offsets > 0 will skip forward in the file.
+             * The flag aIfNewAcqStartAtFirstRec determines the behavior if the read operation moves to a new acquisition.
+             * If true, the record read will be the first in the acquisition.
+             * If false, the record read will be whatever was stepped to given the offset.
+             * Starting at the first record in a new acquisition is behavior that was added (and deemed more useful, and therefore is the default), and this flag provides backwards compatibility.
             **/
-            bool ReadRecord( int anOffset = 0 ) const;
+            bool ReadRecord( int anOffset = 0, bool aIfNewAcqStartAtFirstRec = true ) const;
 
             /// Close the file
             void Close() const;
@@ -166,7 +170,7 @@ namespace monarch3
             mutable bool fDataInterleaved;
             mutable uint32_t fAccessFormat;
 
-            mutable std::vector< std::pair< unsigned, unsigned > > fRecordIndex;
+            mutable std::vector< std::pair< unsigned, unsigned > > fRecordIndex;  // has an entry for every record: (acquisition ID, record ID)
             mutable unsigned fRecordCountInFile;
             mutable unsigned fNRecordsInFile;
 
