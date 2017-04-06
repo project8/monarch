@@ -329,7 +329,6 @@ namespace monarch3
         {
             // either requested to go back before the beginning of the file, or past the end
             LDEBUG( mlog, "Requested offset would move is out of range for the file" );
-            LWARN( mlog, "anOffset: " << anOffset << "  fRecordCountInFile: " << fRecordCountInFile << "  fNRecordsInFile: " << fNRecordsInFile << "  fFirstRecordInFile: " << fFirstRecordInFile << "  tRecordOffsetInFile: " << tRecordOffsetInFile );
             return false;
         }
 
