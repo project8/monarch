@@ -275,7 +275,7 @@ namespace monarch3
 
     inline void M3Header::WriteScalarToHDF5( H5::H5Location* aLoc, const std::string& aName, const std::string& aValue )
     {
-        LDEBUG( mlog_mheader, "Writing string to new scalar metadata <" << aName << ">: " << aValue << "; size = " << aValue.size() );
+        LTRACE( mlog_mheader, "Writing string to new scalar metadata <" << aName << ">: " << aValue << "; size = " << aValue.size() );
 		// aName.c_str() and aValue.c_str() are used because while using the std::string itself, the value was getting mangled
 		H5::DataType tType = MH5Type< std::string >::H5( aValue );
         aLoc->createAttribute( aName.c_str(), tType, H5::DataSpace( H5S_SCALAR ) ).write( tType, aValue.c_str() );
@@ -285,7 +285,7 @@ namespace monarch3
     template< typename XType >
     void M3Header::WriteScalarToHDF5( H5::H5Location* aLoc, const std::string& aName, XType aValue )
     {
-        LDEBUG( mlog_mheader, "Writing value to new scalar metadata <" << aName << ">: " << aValue );
+        LTRACE( mlog_mheader, "Writing value to new scalar metadata <" << aName << ">: " << aValue );
         // aName.c_str() is used because while using the std::string itself, the value was getting mangled
 		aLoc->createAttribute( aName.c_str(), MH5Type< XType >::H5(), H5::DataSpace( H5S_SCALAR ) ).write( MH5Type< XType >::Native(), &aValue );
         return;
@@ -327,7 +327,7 @@ namespace monarch3
 		tAttr->read( tAttr->getDataType(), tBuffer );
         delete tAttr;
 		std::string tValue( tBuffer );
-        LDEBUG( mlog_mheader, "Reading string <" << aName << ">: " << tValue << "; size = " << tValue.size() );
+        LTRACE( mlog_mheader, "Reading string <" << aName << ">: " << tValue << "; size = " << tValue.size() );
         return tValue;
     }
 
@@ -339,7 +339,7 @@ namespace monarch3
         H5::Attribute* tAttr = new H5::Attribute( aLoc->openAttribute( aName.c_str() ) );
         tAttr->read( tAttr->getDataType(), &tValue );
         delete tAttr;
-        LDEBUG( mlog_mheader, "Reading value <" << aName << ">: " << tValue );
+        LTRACE( mlog_mheader, "Reading value <" << aName << ">: " << tValue );
         return tValue;
     }
 
@@ -358,7 +358,7 @@ namespace monarch3
         tAttr->read( tAttr->getDataType(), tBuffer );
         delete tAttr;
         std::string tValue( tBuffer );
-        LDEBUG( mlog_mheader, "Reading string <" << aName << ">: " << tValue << "; size = " << tValue.size() );
+        LTRACE( mlog_mheader, "Reading string <" << aName << ">: " << tValue << "; size = " << tValue.size() );
         return tValue;
     }
 
@@ -371,7 +371,7 @@ namespace monarch3
         H5::Attribute* tAttr = new H5::Attribute( aLoc->openAttribute( aName.c_str() ) );
         tAttr->read( tAttr->getDataType(), &tValue );
         delete tAttr;
-        LDEBUG( mlog_mheader, "Reading value <" << aName << ">: " << tValue );
+        LTRACE( mlog_mheader, "Reading value <" << aName << ">: " << tValue );
         return tValue;
     }
 /*
