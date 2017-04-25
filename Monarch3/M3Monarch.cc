@@ -249,7 +249,7 @@ namespace monarch3
 
     void Monarch3::FinishWriting()
     {
-        LDEBUG( mlog, "Finishing writing <" << fHeader->GetFilename() << ">" );
+        LINFO( mlog, "Finishing writing <" << fHeader->GetFilename() << ">" );
         try
         {
             if( fHeader != nullptr )
