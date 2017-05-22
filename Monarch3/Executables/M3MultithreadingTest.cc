@@ -29,7 +29,7 @@
 
 using namespace monarch3;
 
-LOGGER( mlog, "Monarch3MultithreadingTest" );
+LOGGER( mlog, "M3MultithreadingTest" );
 
 int main( int argc, char** argv )
 {

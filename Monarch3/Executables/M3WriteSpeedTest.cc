@@ -37,7 +37,7 @@
 
 using namespace monarch3;
 
-LOGGER( mlog, "Monarch3WriteSpeedTest" );
+LOGGER( mlog, "M3WriteSpeedTest" );
 
 int main( int argc, char** argv )
 {
