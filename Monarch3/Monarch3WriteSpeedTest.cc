@@ -74,10 +74,10 @@ int main( int argc, char** argv )
 
         LINFO( mlog, "Preparing header" );
         M3Header* tHeader = tWriteTest->GetHeader();
-        tHeader->SetFilename( "tempfile" );
+        tHeader->Filename() = "tempfile";
         tHeader->SetRunDuration( 8675309 );
-        tHeader->SetTimestamp( "Stardate 33515" );
-        tHeader->SetDescription( "Bigger on the inside" );
+        tHeader->Timestamp( ) ="Stardate 33515";
+        tHeader->Description() = "Bigger on the inside";
 
         LINFO( mlog, "Adding stream(s)" );
 

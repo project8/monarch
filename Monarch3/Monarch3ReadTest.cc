@@ -74,7 +74,7 @@ int main( const int argc, const char** argv )
         unsigned tNAcquisitions0 = tStream0->GetNAcquisitions();
         unsigned tNRecords0 = tStream0->GetNRecordsInFile();
         LINFO( mlog, "Stream 0 has " << tNAcquisitions0 << " acquisitions and " << tNRecords0 << " records" );
-        const M3StreamHeader& tStrHeader0 = tReadHeader->GetStreamHeaders().at( 0 );
+        const M3StreamHeader& tStrHeader0 = tReadHeader->StreamHeaders().at( 0 );
         unsigned tNChannels0 = tStrHeader0.GetNChannels();
         //unsigned tRecSize0 = tStrHeader0.GetRecordSize();
         LINFO( mlog, "Stream 0 has " << tNChannels0 << " channel(s) stored in format mode " << tStrHeader0.GetChannelFormat() );
@@ -109,7 +109,7 @@ int main( const int argc, const char** argv )
         unsigned tNAcquisitions1 = tStream1->GetNAcquisitions();
         unsigned tNRecords1 = tStream1->GetNRecordsInFile();
         LINFO( mlog, "Stream 1 has " << tNAcquisitions1 << " acquisitions and " << tNRecords1 << " records" );
-        const M3StreamHeader& tStrHeader1 = tReadHeader->GetStreamHeaders().at( 1 );
+        const M3StreamHeader& tStrHeader1 = tReadHeader->StreamHeaders().at( 1 );
         unsigned tNChannels1 = tStrHeader1.GetNChannels();
         //unsigned tRecSize1 = tStrHeader1.GetRecordSize();
         LINFO( mlog, "Stream 1 has " << tNChannels1 << " channel(s) stored in format mode " << tStrHeader1.GetChannelFormat() );
@@ -188,7 +188,7 @@ int main( const int argc, const char** argv )
         unsigned tNAcquisitions2 = tStream2->GetNAcquisitions();
         unsigned tNRecords2 = tStream2->GetNRecordsInFile();
         LINFO( mlog, "Stream 2 has " << tNAcquisitions2 << " acquisitions and " << tNRecords2 << " records" );
-        const M3StreamHeader& tStrHeader2 = tReadHeader->GetStreamHeaders().at( 2 );
+        const M3StreamHeader& tStrHeader2 = tReadHeader->StreamHeaders().at( 2 );
         unsigned tNChannels2 = tStrHeader2.GetNChannels();
         //unsigned tRecSize2 = tStrHeader2.GetRecordSize();
         LINFO( mlog, "Stream 2 has " << tNChannels2 << " channel(s) stored in format mode " << tStrHeader2.GetChannelFormat() );
@@ -226,7 +226,7 @@ int main( const int argc, const char** argv )
         unsigned tNAcquisitions3 = tStream3->GetNAcquisitions();
         unsigned tNRecords3 = tStream3->GetNRecordsInFile();
         LINFO( mlog, "Stream 3 has " << tNAcquisitions3 << " acquisitions and " << tNRecords3 << " records" );
-        const M3StreamHeader& tStrHeader3 = tReadHeader->GetStreamHeaders().at( 3 );
+        const M3StreamHeader& tStrHeader3 = tReadHeader->StreamHeaders().at( 3 );
         unsigned tNChannels3 = tStrHeader3.GetNChannels();
         //unsigned tRecSize3 = tStrHeader3.GetRecordSize();
         LINFO( mlog, "Stream 3 has " << tNChannels3 << " channel(s) stored in format mode " << tStrHeader3.GetChannelFormat() );

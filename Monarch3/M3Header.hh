@@ -41,16 +41,16 @@ namespace monarch3
             M3StreamHeader( const M3StreamHeader& orig );
             ~M3StreamHeader();
 
-            M3MEMBERVARIABLE( char*, Label );
+            M3MEMBERVARIABLE_PTR( char, Label );
 
             M3MEMBERVARIABLE_NOSET( uint32_t, Number );
             void SetNumber( uint32_t aNumber ) const; /// In addition to setting the number, sets the label to "stream[aNumber]"
 
-            M3MEMBERVARIABLE( std::string, Source );
+            M3MEMBERVARIABLE_REF( std::string, Source );
 
             M3MEMBERVARIABLE( uint32_t, NChannels );
 
-            M3MEMBERVARIABLEREF_NOSET( std::vector< uint32_t >, Channels );
+            M3MEMBERVARIABLE_REF_CONST( std::vector< uint32_t >, Channels );
 
             M3MEMBERVARIABLE( uint32_t, ChannelFormat );
 
@@ -100,12 +100,12 @@ namespace monarch3
             M3ChannelHeader( const M3ChannelHeader& orig );
             ~M3ChannelHeader();
 
-            M3MEMBERVARIABLE( char*, Label );
+            M3MEMBERVARIABLE_PTR( char, Label );
 
             M3MEMBERVARIABLE_NOSET( uint32_t, Number );
             void SetNumber( uint32_t aNumber ) const; /// In addition to setting the number, sets the label to "channel[aNumber]"
 
-            M3MEMBERVARIABLE( std::string, Source );
+            M3MEMBERVARIABLE_REF( std::string, Source );
 
             M3MEMBERVARIABLE( uint32_t, AcquisitionRate );
 
@@ -161,29 +161,29 @@ namespace monarch3
 
             void CopyBasicInfo( const M3Header& aOrig );
 
-            M3MEMBERVARIABLEREF( std::string, EggVersion );
+            M3MEMBERVARIABLE_REF( std::string, EggVersion );
 
-            M3MEMBERVARIABLEREF( std::string, Filename );
+            M3MEMBERVARIABLE_REF( std::string, Filename );
 
             M3MEMBERVARIABLE( uint32_t, RunDuration );
 
-            M3MEMBERVARIABLEREF( std::string, Timestamp );
+            M3MEMBERVARIABLE_REF( std::string, Timestamp );
 
-            M3MEMBERVARIABLEREF( std::string, Description );
+            M3MEMBERVARIABLE_REF( std::string, Description );
 
             M3MEMBERVARIABLE( uint32_t, NChannels );
 
             M3MEMBERVARIABLE( uint32_t, NStreams );
 
-            M3MEMBERVARIABLEREF_NOSET( std::vector< uint32_t >, ChannelStreams );
+            M3MEMBERVARIABLE_REF_CONST( std::vector< uint32_t >, ChannelStreams );
 
-            M3MEMBERVARIABLEREF_NOSET( std::vector< std::vector< bool > >, ChannelCoherence );
+            M3MEMBERVARIABLE_REF_CONST( std::vector< std::vector< bool > >, ChannelCoherence );
             void SetCoherence( unsigned aChanA, unsigned aChanB, bool aCoherence );
 
-            M3MEMBERVARIABLEREF_NOSET( std::vector< M3ChannelHeader >, ChannelHeaders );
+            M3MEMBERVARIABLE_REF_CONST( std::vector< M3ChannelHeader >, ChannelHeaders );
             std::vector< M3ChannelHeader >& GetChannelHeaders();
 
-            M3MEMBERVARIABLEREF_NOSET( std::vector< M3StreamHeader >, StreamHeaders );
+            M3MEMBERVARIABLE_REF_CONST( std::vector< M3StreamHeader >, StreamHeaders );
             std::vector< M3StreamHeader >& GetStreamHeaders();
 
         public:

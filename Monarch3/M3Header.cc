@@ -145,7 +145,7 @@ namespace monarch3
         H5::Group tThisStreamGroup = aParent->openGroup( aLabel.c_str() );
 
         SetNumber( M3Header::ReadScalarFromHDF5< uint32_t >( &tThisStreamGroup, "number" ) );
-        SetSource( M3Header::ReadScalarFromHDF5< string >( &tThisStreamGroup, "source" ) );
+        Source() = M3Header::ReadScalarFromHDF5< string >( &tThisStreamGroup, "source" );
         SetNChannels( M3Header::ReadScalarFromHDF5< uint32_t >( &tThisStreamGroup, "n_channels" ) );
         SetChannelFormat( M3Header::ReadScalarFromHDF5< uint32_t >( &tThisStreamGroup, "channel_format" ) );
         SetAcquisitionRate( M3Header::ReadScalarFromHDF5< uint32_t >( &tThisStreamGroup, "acquisition_rate" ) );
@@ -332,7 +332,7 @@ namespace monarch3
         H5::Group tThisChannelGroup = aParent->openGroup( aLabel.c_str() );
 
         SetNumber( M3Header::ReadScalarFromHDF5< uint32_t >( &tThisChannelGroup, "number" ) );
-        SetSource( M3Header::ReadScalarFromHDF5< string >( &tThisChannelGroup, "source" ) );
+        Source() = M3Header::ReadScalarFromHDF5< string >( &tThisChannelGroup, "source" );
         SetAcquisitionRate( M3Header::ReadScalarFromHDF5< uint32_t >( &tThisChannelGroup, "acquisition_rate" ) );
         SetRecordSize( M3Header::ReadScalarFromHDF5< uint32_t >( &tThisChannelGroup, "record_size" ) );
         SetSampleSize( M3Header::ReadScalarFromHDF5< uint32_t >( &tThisChannelGroup, "sample_size" ) );
@@ -503,13 +503,13 @@ namespace monarch3
         {
             LDEBUG( mlog, "Reading run header" );
             fFile = const_cast< H5::H5File* >( aFile );
-            SetEggVersion( ReadScalarFromHDF5< string >( fFile, string("egg_version") ) );
-            SetFilename( ReadScalarFromHDF5< string >( fFile, "filename" ) );
+            EggVersion() = ReadScalarFromHDF5< string >( fFile, string("egg_version") );
+            Filename() = ReadScalarFromHDF5< string >( fFile, "filename" );
             SetNChannels( ReadScalarFromHDF5< uint32_t >( fFile, "n_channels" ) );
             SetNStreams( ReadScalarFromHDF5< uint32_t >( fFile, "n_streams" ) );
             SetRunDuration( ReadScalarFromHDF5< uint32_t >( fFile, "run_duration" ) );
-            SetTimestamp( ReadScalarFromHDF5< string >( fFile, "timestamp" ) );
-            SetDescription( ReadScalarFromHDF5< string >( fFile, "description" ) );
+            Timestamp() = ReadScalarFromHDF5< string >( fFile, "timestamp" );
+            Description() = ReadScalarFromHDF5< string >( fFile, "description" );
 
             //fChannelStreams.clear();
             //Read1DFromHDF5< std::vector< uint32_t > >( fFile, "channel_streams", fChannelStreams );
@@ -696,7 +696,7 @@ M3_API std::ostream& operator<<( std::ostream& out, const monarch3::M3StreamHead
 {
     out << "Stream Header Content:\n";
     out << "\tStream Number: " << hdr.GetNumber() << '\n';
-    out << "\tSource: " << hdr.GetSource() << '\n';
+    out << "\tSource: " << hdr.Source() << '\n';
     out << "\tNumber of Channels: " << hdr.GetNChannels() << '\n';
     out << "\tChannel Format: " << hdr.GetChannelFormat() << '\n';
     out << "\tAcquisition Rate: " << hdr.GetAcquisitionRate() << " MHz\n";
@@ -715,7 +715,7 @@ M3_API std::ostream& operator<<( std::ostream& out, const monarch3::M3ChannelHea
 {
     out << "Channel Header Content:\n";
     out << "\tChannel Number: " << hdr.GetNumber() << '\n';
-    out << "\tSource: " << hdr.GetSource() << '\n';
+    out << "\tSource: " << hdr.Source() << '\n';
     out << "\tAcquisition Rate: " << hdr.GetAcquisitionRate() << " MHz\n";
     out << "\tRecord Size: " << hdr.GetRecordSize() << " samples\n";
     out << "\tSample Size: " << hdr.GetSampleSize() << " elements\n";
@@ -733,27 +733,27 @@ M3_API std::ostream& operator<<( std::ostream& out, const monarch3::M3ChannelHea
 M3_API std::ostream& operator<<( std::ostream& out, const monarch3::M3Header& hdr )
 {
     out << "Monarch Header Content:\n";
-    out << "\tEgg Version: " << hdr.GetEggVersion() << "\n";
-    out << "\tFilename: " << hdr.GetFilename() << "\n";
+    out << "\tEgg Version: " << hdr.EggVersion() << "\n";
+    out << "\tFilename: " << hdr.Filename() << "\n";
     out << "\tRun Duration: " << hdr.GetRunDuration() << " ms\n";
-    out << "\tTimestamp: " << hdr.GetTimestamp() << "\n";
-    out << "\tDescription: " << hdr.GetDescription() << "\n";
+    out << "\tTimestamp: " << hdr.Timestamp() << "\n";
+    out << "\tDescription: " << hdr.Description() << "\n";
     out << "\tNumber of Channels: " << hdr.GetNChannels() << "\n";
     out << "\tNumber of Streams: " << hdr.GetNStreams() << "\n";
     out << "\tChannel-to-stream mapping:\n";
-    for( uint32_t iChan = 0; iChan < hdr.GetChannelStreams().size(); ++iChan )
+    for( uint32_t iChan = 0; iChan < hdr.ChannelStreams().size(); ++iChan )
     {
-        out << "\t\tChannel " << iChan << " --> Stream " << hdr.GetChannelStreams()[ iChan ] << "\n";
+        out << "\t\tChannel " << iChan << " --> Stream " << hdr.ChannelStreams()[ iChan ] << "\n";
     }
     out << "\tStream headers:\n";
-    for( uint32_t iStream = 0; iStream < hdr.GetStreamHeaders().size(); ++iStream )
+    for( uint32_t iStream = 0; iStream < hdr.StreamHeaders().size(); ++iStream )
     {
-        out << hdr.GetStreamHeaders()[ iStream ];
+        out << hdr.StreamHeaders()[ iStream ];
     }
     out << "\tChannel headers:\n";
-    for( uint32_t iChan = 0; iChan < hdr.GetChannelHeaders().size(); ++iChan )
+    for( uint32_t iChan = 0; iChan < hdr.ChannelHeaders().size(); ++iChan )
     {
-        out << hdr.GetChannelHeaders()[ iChan ];
+        out << hdr.ChannelHeaders()[ iChan ];
     }
     return out;
 }
