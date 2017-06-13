@@ -35,40 +35,4 @@ pbuilder_library( Monarch3 MONARCH3_SOURCEFILES "" )
 
 pbuilder_install_headers( ${MONARCH3_HEADERFILES} )
 
-
-########################
-# monarch3 executables #
-########################
-
-if( Monarch_ENABLE_EXECUTABLES )
-
-    set( lib_dependencies 
-        Monarch3
-    )
-    
-    set( programs
-        Monarch3Info
-        #Monarch3Dump
-    )
-    
-    pbuilder_executables( programs lib_dependencies )
-
-endif( Monarch_ENABLE_EXECUTABLES )
-
-if( Monarch_ENABLE_TESTING )
-
-    set( lib_dependencies 
-        Monarch3
-    )
-    
-    set( programs
-        Monarch3MultithreadingTest
-        Monarch3ReadTest
-        Monarch3WriteTest
-        Monarch3WriteSpeedTest
-        #Monarch3TimeCheck
-    )
-    
-    pbuilder_executables( programs lib_dependencies )
-    
-endif( Monarch_ENABLE_TESTING )
+add_subdirectory( Executables )
