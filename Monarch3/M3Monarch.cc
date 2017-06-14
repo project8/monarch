@@ -218,7 +218,7 @@ namespace monarch3
 
     void Monarch3::FinishReading() const
     {
-        LDEBUG( mlog, "Finishing reading" );
+        LDEBUG( mlog, "Finishing reading <" << fHeader->GetFilename() << ">" );
         try
         {
             if( fHeader != nullptr )
@@ -249,7 +249,7 @@ namespace monarch3
 
     void Monarch3::FinishWriting()
     {
-        LDEBUG( mlog, "Finishing writing" );
+        LINFO( mlog, "Finishing writing <" << fHeader->GetFilename() << ">" );
         try
         {
             if( fHeader != nullptr )

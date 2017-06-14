@@ -14,7 +14,7 @@
 using namespace monarch3;
 using std::stringstream;
 
-LOGGER( mlog, "Monarch3ReadTest" );
+LOGGER( mlog, "M3ReadTest" );
 
 bool ReadRecordCheck( const M3Stream* aStream, int aOffset, unsigned aDataFormat );
 bool PrintChannelsUInt( const M3Stream* aStream );
@@ -27,7 +27,7 @@ int main( const int argc, const char** argv )
     if( argc < 2 || strcmp( argv[1], "-h" ) == 0 )
     {
         LINFO( mlog, "usage:\n"
-            << "  Monarch3ReadTest [-Hh] <input egg file>\n"
+            << "  M3ReadTest [-Hh] <input egg file>\n"
             << "      -h: print this usage information\n"
             << "      -H: (optional) header only; does not check records" );
         return -1;
