@@ -66,6 +66,7 @@ if( Monarch_BUILD_MONARCH3 )
     include( CheckCXXSourceCompiles )
     set( CMAKE_REQUIRED_QUIET FALSE )
     set( CMAKE_REQUIRED_LIBRARIES ${HDF5_CXX_LIBRARIES} )
+    set( CMAKE_REQUIRED_INCLUDES ${HDF5_INCLUDE_DIRS} )
     check_cxx_source_compiles("
         #include <H5Cpp.h>
         int main()
