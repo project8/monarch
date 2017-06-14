@@ -52,7 +52,7 @@ namespace monarch3
             typedef void (M3Stream::*DoWriteRecordFunc)( bool );
 
         public:
-            M3Stream( const M3StreamHeader& aHeader, H5::CommonFG* aH5StreamParentLoc, uint32_t aAccessFormat = sSeparate );
+            M3Stream( const M3StreamHeader& aHeader, HAS_GRP_IFC* aH5StreamParentLoc, uint32_t aAccessFormat = sSeparate );
             virtual ~M3Stream();
 
             M3MEMBERVARIABLE( Mode, Mode );
