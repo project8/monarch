@@ -465,6 +465,11 @@ namespace monarch3
         }
         catch( H5::Exception& e )
         {
+            LWARN( mlog, "DIAGNOSTIC: id of fH5CurrentAcqDataSet: " << fH5CurrentAcqDataSet->getId() );
+            LWARN( mlog, "DIAGNOSTIC: class name: " << fH5CurrentAcqDataSet->fromClass() );
+            H5D_space_status_t t_status;
+            fH5CurrentAcqDataSet->getSpaceStatus( t_status );
+            LWARN( mlog, "DIAGNOSTIC: offset: " << fH5CurrentAcqDataSet->getOffset() << "  space status: " << t_status << "  storage size: " << fH5CurrentAcqDataSet->getStorageSize() << "  in mem data size: " << fH5CurrentAcqDataSet->getInMemDataSize() );
             throw M3Exception() << "HDF5 error while writing a record:\n\t" << e.getCDetailMsg() << " (function: " << e.getFuncName() << ")";
         }
         catch( std::exception& e )
