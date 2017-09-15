@@ -89,6 +89,8 @@ File Attributes
 These attributes constitute the header for the file, and describe its contents. 
 They consist of information that apply to the all streams and channels.
 
+String attributes have a maximum length of 65536 characters (64 kB).
+
 - egg_version (string) -- Egg file version
 - filename (string) -- Filename
 - run_duration (uint32) -- Length of the run in ms
@@ -105,6 +107,8 @@ Stream Attributes
 
 Each stream group has a set of attributes needed to fully describe the stream.  
 Information there is common to all of the channels included in that stream.
+
+String attributes have a maximum length of 65536 characters (64 kB).
 
 - number (uint32) -- Sequential integer used to uniquely identify each stream in the file; the stream's group will be named "stream[Number]".
 - source (string) -- Device used to produce the stream
@@ -145,6 +149,8 @@ Some information is duplicated between channel and stream headers.
 This is for convenience, since when writing files the user cares 
 about how the data is divided into streams, and when reading files most 
 users will care about how the data is divided into channels.
+
+String attributes have a maximum length of 65536 characters (64 kB).
 
 - number (uint32) -- Sequential integer used to uniquely identify each channel in the file; the channel's group will be named "channel[Number]".
 - source (string) -- Device used to produce the channel
