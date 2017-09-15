@@ -321,7 +321,7 @@ namespace monarch3
     inline std::string M3Header::ReadScalarFromHDF5( const HAS_ATTR_IFC* aLoc, const std::string& aName )
     {
         //std::string tValue;
-		char tBuffer[ 256 ];
+		char tBuffer[ 65536 ]; // this array size matches the maximum standard attribute size according to the HDF5 documentation
         H5::Attribute* tAttr = new H5::Attribute( aLoc->openAttribute( aName.c_str() ) );
         //tAttr->read( tAttr->getDataType(), tValue );
 		tAttr->read( tAttr->getDataType(), tBuffer );
@@ -352,7 +352,7 @@ namespace monarch3
     {
         if( ! aLoc->attrExists( aName.c_str() ) ) return aDefaultValue;
         //std::string tValue;
-        char tBuffer[ 256 ];
+        char tBuffer[ 65536 ]; // this array size matches the maximum standard attribute size according to the HDF5 documentation
         H5::Attribute* tAttr = new H5::Attribute( aLoc->openAttribute( aName.c_str() ) );
         //tAttr->read( tAttr->getDataType(), tValue );
         tAttr->read( tAttr->getDataType(), tBuffer );
