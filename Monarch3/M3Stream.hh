@@ -173,6 +173,7 @@ namespace monarch3
 
             mutable std::vector< std::pair< unsigned, unsigned > > fRecordIndex;  // has an entry for every record: (acquisition ID, record ID)
             mutable unsigned fRecordCountInFile;
+            mutable unsigned fRecordIdInFile;
             mutable unsigned fNRecordsInFile;
             mutable unsigned fFirstRecordInFile;
 
