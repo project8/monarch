@@ -124,7 +124,6 @@ namespace monarch3
             unsigned GetNRecordsInAcquisition() const  { return fNRecordsInAcq;   }
             unsigned GetRecordCountInFile() const      { return fRecordCountInFile; }
             unsigned GetNRecordsInFile() const         { return fNRecordsInFile;  }
-            unsigned GetFirstRecordInFile() const      { return fFirstRecordInFile; }
             bool GetIsInterleaved() const              { return fDataInterleaved; }
 
             /// Access format can be changed during read or write; must call Initialize() after this
@@ -174,7 +173,6 @@ namespace monarch3
             mutable std::vector< std::pair< unsigned, unsigned > > fRecordIndex;  // has an entry for every record: (acquisition ID, record ID)
             mutable unsigned fRecordCountInFile;
             mutable unsigned fNRecordsInFile;
-            mutable unsigned fFirstRecordInFile;
 
         private:
             void BuildIndex() const; // for reading

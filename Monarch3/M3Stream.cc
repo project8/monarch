@@ -66,7 +66,6 @@ namespace monarch3
             fRecordIndex(),
             fRecordCountInFile( 0 ),
             fNRecordsInFile( 0 ),
-            fFirstRecordInFile( 0 ),
             fH5StreamParentLoc( new H5::Group( aH5StreamsLoc->openGroup( aHeader.GetLabel() ) ) ),
             fH5AcqLoc( NULL ),
             fH5CurrentAcqDataSet( NULL ),
@@ -320,11 +319,10 @@ namespace monarch3
         // Otherwise anOffset should be incremented to 1 to move us forward appropriately (fRecordsAccessed == true)
         anOffset += (int)fRecordsAccessed;
 
-        unsigned tRecordOffsetInFile = fRecordCountInFile - fFirstRecordInFile;
-        LDEBUG( mlog, "Record offset before moving = " << tRecordOffsetInFile << " (fRecordCountInFile = " << fRecordCountInFile << ", fFirstRecordInFile = " << fFirstRecordInFile << ")" );
+        LDEBUG( mlog, "Before moving: Record count in file = " << fRecordCountInFile << "; Record ID (in acquisition) = " << fRecordCountInAcq );
 
-        if( ( anOffset < 0 && (unsigned)abs( anOffset ) > tRecordOffsetInFile ) ||
-            ( anOffset > 0 && tRecordOffsetInFile + anOffset >= fNRecordsInFile ) ||
+        if( ( anOffset < 0 && (unsigned)abs( anOffset ) > fRecordCountInFile ) ||
+            ( anOffset > 0 && fRecordCountInFile + anOffset >= fNRecordsInFile ) ||
             ( anOffset == 0 && fNRecordsInFile == 0 ))
         {
             // either requested to go back before the beginning of the file, or past the end
@@ -333,10 +331,9 @@ namespace monarch3
         }
 
         fRecordCountInFile = fRecordCountInFile + anOffset;
-        tRecordOffsetInFile = fRecordCountInFile - fFirstRecordInFile;
-        LDEBUG( mlog, "Record offset after moving = " << tRecordOffsetInFile << " (fRecordCountInFile = " << fRecordCountInFile << ", fFirstRecordInFile = " << fFirstRecordInFile << ")" );
-        unsigned nextAcq = fRecordIndex.at( tRecordOffsetInFile ).first;
-        fRecordCountInAcq = fRecordIndex.at( tRecordOffsetInFile ).second;
+        unsigned nextAcq = fRecordIndex.at( fRecordCountInFile ).first;
+        fRecordCountInAcq = fRecordIndex.at( fRecordCountInFile ).second;
+        LDEBUG( mlog, "After offset calculation: Record count in file = " << fRecordCountInFile << "; Record ID (in acquisition) = " << fRecordCountInAcq );
 
         try
         {
@@ -355,8 +352,7 @@ namespace monarch3
                         throw M3Exception() << "Tried to start at the beginning of the new acquisition, but ended up in a different acquisition: " << fRecordIndex.at( fRecordCountInFile ).first << " != " << nextAcq;
                     }
                     fRecordCountInAcq = 0;
-                    tRecordOffsetInFile = fRecordCountInFile - fFirstRecordInFile;
-                    LDEBUG( mlog, "Record offset after moving + correction = " << tRecordOffsetInFile << " (fRecordCountInFile = " << fRecordCountInFile << ", fFirstRecordInFile = " << fFirstRecordInFile << ")" );
+                    LDEBUG( mlog, "After offset calc + new acq correction: Record count in file = " << fRecordCountInFile << "; Record ID (in acquisition) = " << fRecordCountInAcq );
                 }
 
                 tIsNewAcq = true;
@@ -368,9 +364,9 @@ namespace monarch3
                 tAttrNRIA.read( tAttrNRIA.getDataType(), &fNRecordsInAcq );
             }
 
-            LDEBUG( mlog, "Going to record: record in file: " << fRecordCountInFile << " (record offset in file: " << tRecordOffsetInFile << ") -- acquisition: " << nextAcq << " -- record in acquisition: " << fRecordCountInAcq );
+            LDEBUG( mlog, "Going to record: record count in file: " << fRecordCountInFile << " -- acquisition: " << nextAcq << " -- record in acquisition: " << fRecordCountInAcq );
 
-            fDataOffset[ 0 ] = tRecordOffsetInFile;
+            fDataOffset[ 0 ] = fRecordCountInAcq;
 
             (this->*fDoReadRecord)( tIsNewAcq );
 
@@ -378,15 +374,6 @@ namespace monarch3
             if( ! fRecordsAccessed )
             {
                 fRecordsAccessed = true;
-                fFirstRecordInFile = fAcqFirstRecId;
-                LDEBUG( mlog, "First record in file: " << fFirstRecordInFile );
-            }
-
-            // fix fRecordCountInFile; e.g. if a file doesn't start at record 0, we need to fix the record count value after reading the record
-            if( tIsNewAcq )
-            {
-                fRecordCountInFile = fAcqFirstRecId;
-                LDEBUG( mlog, "Updated record in file: " << fRecordCountInFile );
             }
         }
         catch( H5::Exception& e )
