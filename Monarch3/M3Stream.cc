@@ -65,7 +65,7 @@ namespace monarch3
             fAccessFormat( aAccessFormat ),
             fRecordIndex(),
             fRecordCountInFile( 0 ),
-            fRecordIdInFile ( 0 ),
+            fRecordIdInFile( 0 ),
             fNRecordsInFile( 0 ),
             fFirstRecordInFile( 0 ),
             fH5StreamParentLoc( new H5::Group( aH5StreamsLoc->openGroup( aHeader.GetLabel() ) ) ),
@@ -338,7 +338,7 @@ namespace monarch3
         LDEBUG( mlog, "Record offset after moving = " << tRecordOffsetInFile << " (fRecordCountInFile = " << fRecordCountInFile << ", fFirstRecordInFile = " << fFirstRecordInFile << ")" );
         unsigned nextAcq = fRecordIndex.at( tRecordOffsetInFile ).first;
         fRecordCountInAcq = fRecordIndex.at( tRecordOffsetInFile ).second;
-        LDEBUG( mlog, "next Acq "<<nextAcq<<" RecordCountInAcq "<<fRecordCountInAcq);
+        LDEBUG( mlog, "next Acq " << nextAcq <<" RecordCountInAcq " << fRecordCountInAcq );
 
         try
         {
