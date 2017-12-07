@@ -66,6 +66,7 @@ namespace monarch3
             fRecordIndex(),
             fRecordCountInFile( 0 ),
             fNRecordsInFile( 0 ),
+            fFirstRecordInFile( 0 ),
             fH5StreamParentLoc( new H5::Group( aH5StreamsLoc->openGroup( aHeader.GetLabel() ) ) ),
             fH5AcqLoc( NULL ),
             fH5CurrentAcqDataSet( NULL ),
@@ -374,6 +375,8 @@ namespace monarch3
             if( ! fRecordsAccessed )
             {
                 fRecordsAccessed = true;
+                fFirstRecordInFile = fAcqFirstRecId;
+                LDEBUG( mlog, "First record in file: " << fFirstRecordInFile );
             }
         }
         catch( H5::Exception& e )
