@@ -19,6 +19,7 @@
 
 #include <boost/filesystem.hpp>
 
+#include <atomic>
 #include <chrono>
 #include <condition_variable>
 #include <mutex>
