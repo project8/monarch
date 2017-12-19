@@ -30,6 +30,7 @@ namespace monarch3
      If the M3Record( unsigned ) constructor or SetData( unsigned ) function is used, the record will allocate its own data.
      If the M3Record( byte_type* ) constructor or SetData( byte_type* ) function is used, the record will point to data elsewhere that it does not own.
 
+     If the record does not own the data, then the data pointer can be updatd with UpdateDataPtr().
     */
     class M3_API M3Record
     {
@@ -58,6 +59,8 @@ namespace monarch3
 
             const byte_type* GetData() const;
             byte_type* GetData();
+
+            void UpdateDataPtr( byte_type* aDataPtr );
 
             M3MEMBERVARIABLE_NOSET( bool, OwnsData );
 

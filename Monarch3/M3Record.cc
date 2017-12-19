@@ -79,4 +79,14 @@ namespace monarch3
         return;
     }
 
+    void M3Record::UpdateDataPtr( byte_type* aDataPtr )
+    {
+        if( fOwnsData )
+        {
+            throw M3Exception() << "Cannot update data pointer when the record owns the data";
+        }
+        fData = aDataPtr;
+        return;
+    }
+
 }
