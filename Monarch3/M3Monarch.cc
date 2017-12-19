@@ -48,6 +48,11 @@ namespace monarch3
         }
     }
 
+    Monarch3::State Monarch3::GetState() const
+    {
+        return fState;
+    }
+
     const Monarch3* Monarch3::OpenForReading( const string& aFilename )
     {
         Monarch3* tMonarch3 = new Monarch3();
