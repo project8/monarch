@@ -79,6 +79,12 @@ namespace monarch3
         return;
     }
 
+    void M3Record::UpdateDataPtr( const byte_type* aDataPtr ) const
+    {
+        UpdateDataPtr( const_cast< byte_type* >( aDataPtr ) );
+        return;
+    }
+
     void M3Record::UpdateDataPtr( byte_type* aDataPtr )
     {
         if( fOwnsData )

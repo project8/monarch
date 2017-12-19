@@ -60,6 +60,7 @@ namespace monarch3
             const byte_type* GetData() const;
             byte_type* GetData();
 
+            void UpdateDataPtr( const byte_type* aDataPtr ) const;
             void UpdateDataPtr( byte_type* aDataPtr );
 
             M3MEMBERVARIABLE_NOSET( bool, OwnsData );
@@ -68,7 +69,7 @@ namespace monarch3
             RecordIdType* fRecordId;
             TimeType* fTime;
 
-            byte_type* fData;
+            mutable byte_type* fData;
 
     };
 
