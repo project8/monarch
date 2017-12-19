@@ -50,6 +50,7 @@ namespace monarch3
             Monarch3( Monarch3&& ) = delete;
 
             //current state of monarch
+        public:
             typedef enum
             {
                 eOpenToRead, // state when monarch has a file open but hasn't read the header
@@ -58,6 +59,8 @@ namespace monarch3
                 eReadyToWrite, // state when monarch has dealt with the header and is writing records
                 eClosed // state when monarch has no file
             } State;
+            State GetState() const;
+        private:
             mutable State fState;
 
         public:
