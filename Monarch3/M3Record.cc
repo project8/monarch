@@ -81,7 +81,7 @@ namespace monarch3
 
     void M3Record::UpdateDataPtr( const byte_type* aDataPtr ) const
     {
-        UpdateDataPtr( const_cast< byte_type* >( aDataPtr ) );
+        const_cast< M3Record* >(this)->UpdateDataPtr( const_cast< byte_type* >( aDataPtr ) );
         return;
     }
 
