@@ -30,7 +30,7 @@ except:
     pass
 
 # doxygen
-call(['doxygen', './Documentation/Doxyfile'])
+call(['doxygen', 'Doxyfile'])
 
 # make source
 call(['python', './Documentation/make_source.py', './Monarch3/', './'])
