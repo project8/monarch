@@ -78,27 +78,12 @@ def generateRSTs(inDir, outDir, isRoot=False):
         generateRSTs(curInDir, curOutDir, False)
 
 '''
-Alphabet
-========
+Full Doxygen Reference
+======================
 
-.. doxygenfile:: alphabet.hpp
-   :project: myproject
-
-.. doxygenfile:: alphabet_container.hpp
-   :project: myproject
-
-.. doxygenfile:: compound_alphabet.hpp
-   :project: myproject
-
-.. toctree::
-   :caption: Modules:
-   :titlesonly:
-   :maxdepth: 1
-   :hidden:
-
-   alphabet/aminoacid
-   alphabet/gaps
-   alphabet/nucleotide
+.. _from_doxygen:
+.. doxygenindex::
+    :project: Monarch
 '''
 
 
