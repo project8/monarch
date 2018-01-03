@@ -59,7 +59,7 @@ def generateRSTs(inDir, outDir, isRoot=False):
             listModules.append(fileName)  
         else :
             fileExt = fileName.split(".")[-1]
-            if fileExt == "hpp" or fileExt == "cpp" :
+            if fileExt == "hh" or fileExt == "cc" :
                 listFiles.append(fileName)
     
     listModules = sorted(listModules)
