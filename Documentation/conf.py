@@ -30,10 +30,10 @@ except:
     pass
 
 # doxygen
-call(['doxygen', 'Documentation/Doxyfile'])
+call(['doxygen', './Documentation/Doxyfile'])
 
 # make source
-call(['python', 'Documentation/make_source.py', './Monarch3/', './'])
+call(['python', './Documentation/make_source.py', './Monarch3/', './'])
 
 breathe_projects = { "myproject" : "./user_doxygen_out/xml/" }
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
