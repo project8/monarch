@@ -9,8 +9,7 @@ just for fun
 
    Monarch_versions
    UsageMonarch3
-   Monarch3_M3Exception.cc
-   doxy_emb
 
 .. end of toc
 .. (you must not remove or modify the above comment line, it is required by the API Doc generation)
+`Full Doxygen API Reference <_static/index.html>`_
