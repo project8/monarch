@@ -31,6 +31,7 @@ except:
 
 # doxygen
 call(['doxygen', 'Doxyfile'])
+call(['mv', './user_doxygen_out/html', './_static'])
 
 # make source
 call(['python', 'make_source.py', '..', '.'])
