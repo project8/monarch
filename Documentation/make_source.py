@@ -61,7 +61,7 @@ def mkAPISubdir(dirname, title, caption=True):
     api_toc_file.close()
 
     # add the subdir's index to the parent's ToC
-    addTOCEntry(os.path.join(dirname, '../index.rst'), '{}/index'.format(os.path.relpath(dirname).lstrip('./')[-1]), caption=caption)
+    addTOCEntry(os.path.join(dirname, '../index.rst'), '{}/index'.format(os.path.relpath(dirname).split('/')[-1]), caption=caption)
 
 def generateFileRST(outDir, moduleName, fileName) :
     print('[make_source] Generating File RST: {} {} {}'.format(outDir, moduleName, fileName))
@@ -70,11 +70,13 @@ def generateFileRST(outDir, moduleName, fileName) :
     out_file_path = os.path.join(outDir,fileName.split('../',1)[-1]) + ".rst"
     outFile = open(out_file_path, "w")
     title = '/'.join([moduleName, fileName])
+    title = title.lstrip('/.')
+    print('title is: {}'.format(title))
     outFile.write(title + "\n")
     outFile.write("=" * len(title) + "\n\n")
 
     # doxgenfile
-    outFile.write(".. doxygenfile:: %s/%s\n" % (outDir[2:], fileName))
+    outFile.write(".. doxygenfile:: {}\n".format(fileName))
     outFile.write("   :project: myproject\n\n")
 
     outFile.close()
