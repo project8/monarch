@@ -56,12 +56,9 @@ def generateRST(outDir, moduleName, listModules, listFiles) :
     outFile.write("=" * len(moduleName) + "\n\n")
 
     # doxygenfile
-    for fileName in listFiles :
-        curInDir = inDir + "/" + fileName
-        curOutDir = outDir + "/" + fileName
-        generateFileRST(curInDir, curOutDir, )
-        outFile.write(".. doxygenfile:: %s/%s\n" % (outDir[3:], fileName))
-        outFile.write("   :project: myproject\n\n")
+    #for fileName in listFiles :
+    #    outFile.write(".. doxygenfile:: %s/%s\n" % (outDir[3:], fileName))
+    #    outFile.write("   :project: myproject\n\n")
 
     # toctree
     outFile.write(".. toctree::\n")
@@ -92,7 +89,7 @@ def generateRSTs(inDir, outDir, isRoot=False):
 
     if isRoot == False :
         moduleName = outDir.split("/")[-1]
-        #generateRST(outDir, moduleName, listModules, listFiles)
+        generateRST(outDir, moduleName, listModules, listFiles)
         for filename in listFiles :
             generateFileRST(outDir, moduleName, fileName)
 
