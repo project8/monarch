@@ -17,6 +17,7 @@ def generateIndex(inDir, outDir):
             print '[make_source] Found module', fileName
             listModules.append(fileName)  
     listModules = sorted(listModules)
+    print("[make_source] list of modules is: {}".format(listModules))
 
     # generate index.rst
     inFile = open(INDEX_TEMP, "r")
