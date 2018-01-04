@@ -31,13 +31,9 @@ except:
 
 # doxygen
 call(['doxygen', 'Doxyfile'])
-call(['echo', '... doxygen_out ...'])
-call(['ls', './user_doxygen_out/'])
 call(['mv', './user_doxygen_out/html', './_static'])
-call(['echo', '... ./_static ...'])
-call(['ls', './_static'])
-call(['echo', '... doxygen_out/xml/* ...'])
-call(['ls', './user_doxygen_out/xml/*'])
+call(['echo', '... doxygen_out/xml ...'])
+call(['ls', './user_doxygen_out/xml'])
 
 # make source
 call(['python', 'make_source.py', '..', '.'])
