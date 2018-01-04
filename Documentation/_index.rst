@@ -9,6 +9,6 @@ just for fun
 
    Monarch_versions
    UsageMonarch3
-   Monarch3_M3Version.hh
+   Monarch3_M3Exception.cc
    doxy_emb
 
