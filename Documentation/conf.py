@@ -31,15 +31,8 @@ except:
 
 # doxygen
 call(['doxygen', 'Doxyfile'])
-print('.... pwd and doxygen output:')
-call(['pwd'])
-call(['ls'])
-for path, dirs, files in os.walk("Documentation"):
-    print(path)
-    for f in files:
-      print('  {}'.format(f))
+call(['ls', '.user_doxygen_out/'])
 call(['mv', './user_doxygen_out/html', './_static'])
-print('static....')
 call(['ls', './_static'])
 
 # make source
