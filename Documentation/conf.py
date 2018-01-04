@@ -41,6 +41,8 @@ call(['echo', '====== make source complete ====='])
 call(['cat', 'index.rst'])
 call(['echo', "===== files ====="])
 call(['ls'])
+call(['echo', 'Api index ==='])
+call(['cat', 'API_Ref/index.rst'])
 
 
 breathe_projects = { "myproject" : "./user_doxygen_out/xml/" }
