@@ -76,7 +76,7 @@ def generateFileRST(outDir, moduleName, fileName) :
     outFile.write("=" * len(title) + "\n\n")
 
     # doxgenfile
-    outFile.write(".. doxygenfile:: {}\n".format(fileName))
+    outFile.write(".. doxygenfile:: {}\n".format(fileName.lstrip('./'))
     outFile.write("   :project: myproject\n\n")
 
     outFile.close()
