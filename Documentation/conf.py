@@ -39,6 +39,8 @@ call(['ls', './user_doxygen_out/xml'])
 call(['python', 'make_source.py', '..', '.'])
 call(['echo', '====== make source complete ====='])
 call(['cat', 'index.rst'])
+call(['echo', "===== files ====="])
+call(['ls'])
 
 
 breathe_projects = { "myproject" : "./user_doxygen_out/xml/" }
