@@ -29,6 +29,22 @@ def generateIndex(inDir, outDir):
         outFile.write("   %s\n" % (moduleName))
     outFile.close()
 
+def generateFileRST(outDir, moduleName, fileName) :
+    print '[make_source] Generating File RST:', outDir, moduleName, fileName
+
+    # title
+    outFile = open(outDir + "_" + fileName + ".rst", "w")
+    title = moduleName + "/" + fileName
+    outFile.write(title + "\n")
+    outfile.write("=" * len(title) + "\n\n")
+
+    # doxgenfile
+    outFile.write(".. doxygenfile:: %s/%s\n" & (outDir[3:], fileName))
+    outFile.write("   :project: myproject\n\n")
+
+    outFile.close()
+
+
 def generateRST(outDir, moduleName, listModules, listFiles) :
     print '[make_source] Generating RST:', outDir, moduleName, listModules, listFiles
     if len(listModules) > 0 and os.path.isdir(outDir) == False:
@@ -41,6 +57,9 @@ def generateRST(outDir, moduleName, listModules, listFiles) :
 
     # doxygenfile
     for fileName in listFiles :
+        curInDir = inDir + "/" + fileName
+        curOutDir = outDir + "/" + fileName
+        generateFileRST(curInDir, curOutDir, )
         outFile.write(".. doxygenfile:: %s/%s\n" % (outDir[3:], fileName))
         outFile.write("   :project: myproject\n\n")
 
@@ -73,7 +92,9 @@ def generateRSTs(inDir, outDir, isRoot=False):
 
     if isRoot == False :
         moduleName = outDir.split("/")[-1]
-        generateRST(outDir, moduleName, listModules, listFiles)
+        #generateRST(outDir, moduleName, listModules, listFiles)
+        for filename in listFiles :
+            generateFileRST(outDir, moduleName, fileName)
 
 
     for moduleName in listModules :

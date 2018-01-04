@@ -33,7 +33,7 @@ except:
 call(['doxygen', 'Doxyfile'])
 
 # make source
-call(['python', 'make_source.py', '../', './'])
+call(['python', 'make_source.py', '..', '.'])
 
 call(['ls', './user_doxygen_out/xml/*'])
 
