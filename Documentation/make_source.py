@@ -36,7 +36,7 @@ def generateFileRST(outDir, moduleName, fileName) :
     outFile = open(outDir + "_" + fileName + ".rst", "w")
     title = moduleName + "/" + fileName
     outFile.write(title + "\n")
-    outfile.write("=" * len(title) + "\n\n")
+    outFile.write("=" * len(title) + "\n\n")
 
     # doxgenfile
     outFile.write(".. doxygenfile:: %s/%s\n" & (outDir[3:], fileName))
