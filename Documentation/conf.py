@@ -35,6 +35,8 @@ call(['doxygen', 'Doxyfile'])
 # make source
 call(['python', 'make_source.py', '../Monarch3/', './'])
 
+call(['ls', './user_doxygen_out/xml/*'])
+
 breathe_projects = { "myproject" : "./user_doxygen_out/xml/" }
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 if on_rtd:
