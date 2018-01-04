@@ -31,6 +31,11 @@ except:
 
 # doxygen
 call(['doxygen', 'Doxyfile'])
+print('.... doxygen output:')
+for path, dirs, files in os.walk("Documentation"):
+    print(path)
+    for f in files:
+      print('  {}'.format(f))
 call(['mv', './user_doxygen_out/html', './_static'])
 print('static....')
 call(['ls', './_static'])
