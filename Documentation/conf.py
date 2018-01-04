@@ -31,7 +31,9 @@ except:
 
 # doxygen
 call(['doxygen', 'Doxyfile'])
-print('.... doxygen output:')
+print('.... pwd and doxygen output:')
+call(['pwd'])
+call(['ls'])
 for path, dirs, files in os.walk("Documentation"):
     print(path)
     for f in files:
