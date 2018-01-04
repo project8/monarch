@@ -31,7 +31,7 @@ except:
 
 # doxygen
 call(['doxygen', 'Doxyfile'])
-call(['ls', '.user_doxygen_out/'])
+call(['ls', './user_doxygen_out/'])
 call(['mv', './user_doxygen_out/html', './_static'])
 call(['ls', './_static'])
 
