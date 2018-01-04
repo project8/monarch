@@ -12,3 +12,5 @@ just for fun
    Monarch3_M3Exception.cc
    doxy_emb
 
+.. end of toc
+.. (you must not remove or modify the above comment line, it is required by the API Doc generation)
