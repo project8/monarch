@@ -39,7 +39,7 @@ def generateFileRST(outDir, moduleName, fileName) :
     outFile.write("=" * len(title) + "\n\n")
 
     # doxgenfile
-    outFile.write(".. doxygenfile:: %s/%s\n" & (outDir[3:], fileName))
+    outFile.write(".. doxygenfile:: %s/%s\n" % (outDir[2:], fileName))
     outFile.write("   :project: myproject\n\n")
 
     outFile.close()
