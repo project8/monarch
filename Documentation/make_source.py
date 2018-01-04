@@ -10,9 +10,11 @@ CAT_NAME = "Modules"
 INDEX_TEMP = "./_index.rst"
 
 def generateIndex(inDir, outDir):
+    print '[make_source] Generating index'
     listModules = []
     for fileName in os.listdir(inDir) :
-        if os.path.isdir(inDir + fileName) == True:
+        if os.path.isdir(inDir + fileName) == True and fileName.startswith('Monarch'):
+            print '[make_source] Found module', fileName
             listModules.append(fileName)  
     listModules = sorted(listModules)
 
@@ -28,6 +30,7 @@ def generateIndex(inDir, outDir):
     outFile.close()
 
 def generateRST(outDir, moduleName, listModules, listFiles) :
+    print '[make_source] Generating RST:', outDir, moduleName, listModules, listFiles
     if len(listModules) > 0 and os.path.isdir(outDir) == False:
         os.mkdir(outDir)
 
@@ -52,6 +55,7 @@ def generateRST(outDir, moduleName, listModules, listFiles) :
     outFile.close()
 
 def generateRSTs(inDir, outDir, isRoot=False):
+    print '[make_source] Generating RSTs:', inDir, outDir, isRoot
     listModules = []
     listFiles = []
     for fileName in os.listdir(inDir) :
@@ -65,7 +69,7 @@ def generateRSTs(inDir, outDir, isRoot=False):
     listModules = sorted(listModules)
     listFiles = sorted(listFiles)
 
-    print isRoot, inDir, outDir, listModules, listFiles
+    print '[make_source] ', isRoot, inDir, outDir, listModules, listFiles
 
     if isRoot == False :
         moduleName = outDir.split("/")[-1]
