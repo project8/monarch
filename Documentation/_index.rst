@@ -2,6 +2,7 @@ Monarch Use and API Documentation
 =================================
 
 Contents:
+just for fun
 
 .. toctree::
    :maxdepth: 2
