@@ -61,7 +61,7 @@ def mkAPISubdir(dirname, title, caption=True):
     api_toc_file.close()
 
     # add the subdir's index to the parent's ToC
-    addTOCEntry(os.path.join(dirname, '../index.rst'), '{}/index'.format(os.path.relpath(dirname).split('/')[-1]), caption=caption)
+    addTOCEntry(os.path.join(dirname, '../index.rst'), '{}/index'.format(os.path.relpath(dirname).lstrip('./')[-1]), caption=caption)
 
 def generateFileRST(outDir, moduleName, fileName) :
     print('[make_source] Generating File RST: {} {} {}'.format(outDir, moduleName, fileName))
