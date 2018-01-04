@@ -49,7 +49,7 @@ def generateRST(outDir, moduleName, listModules, listFiles) :
     outFile.write("   :caption: %s:\n" % CAT_NAME)
     outFile.write("   :titlesonly:\n")
     outFile.write("   :maxdepth: 1\n")
-    outFile.write("   :hidden:\n\n")
+    #outFile.write("   :hidden:\n\n")
     for childModuleName in listModules :
        outFile.write("   %s/%s\n" % (moduleName, childModuleName) )
     outFile.close()
@@ -80,19 +80,6 @@ def generateRSTs(inDir, outDir, isRoot=False):
         curInDir = inDir + "/" + moduleName
         curOutDir = outDir + "/" + moduleName
         generateRSTs(curInDir, curOutDir, False)
-
-'''
-Full Doxygen Reference
-======================
-
-.. _from_doxygen:
-.. doxygenindex::
-    :project: myproject
-'''
-
-
-#    print listModules
-#    print listFiles
 
 
 ###################
