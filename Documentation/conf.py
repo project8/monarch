@@ -36,7 +36,7 @@ call(['echo', '... doxygen_out/xml ...'])
 call(['ls', './user_doxygen_out/xml'])
 
 # make source
-call(['python', 'make_source.py', '.', '../Monarch?'])
+call(['python', 'make_source.py', '.', '../Monarch2', '../Monarch3'])
 call(['echo', '====== make source complete ====='])
 call(['cat', 'index.rst'])
 call(['echo', "===== files ====="])
