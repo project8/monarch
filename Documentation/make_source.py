@@ -13,13 +13,6 @@ TOC_END = ".. end of toc\n"
 
 def generateIndex(outDir):
     print('[make_source] Generating index')
-    #listModules = []
-    #for fileName in os.listdir(inDir) :
-    #    if os.path.isdir(inDir + fileName) == True and fileName.startswith('Monarch'):
-    #        print '[make_source] Found module', fileName
-    #        listModules.append(fileName)  
-    #listModules = sorted(listModules)
-    #print("[make_source] list of modules is: {}".format(listModules))
 
     # generate index.rst
     inFile = open(INDEX_TEMP, "r")
@@ -34,6 +27,8 @@ def generateIndex(outDir):
     mkAPISubdir(api_path, API_DIR)
 
 def addTOCEntry(toc_path, new_item, caption=None):
+    if not caption:
+        caption = None
     the_lines = open(toc_path).readlines()
     end_of_tree = len(the_lines)
     try:
@@ -48,29 +43,28 @@ def addTOCEntry(toc_path, new_item, caption=None):
     f.close()
 
 def mkAPISubdir(dirname, title, caption=True):
-    print("Making subdir: {}".format(dirname))
-    if caption == True:
+    if caption is True:
         caption = title
-        print('>> caption will be: {}'.format(caption))
+
     # make the directory
     if not os.path.isdir(dirname):
         os.mkdir(dirname)
+
     # make the index file in the directory
     api_toc_file = open(os.path.join(dirname, "index.rst"), 'w')
     api_toc_file.write("{}\n{}\n\n".format(title, '='*len(title)))
     api_toc_file.write(".. toctree::\n   :maxdepth: 2\n\n")
     api_toc_file.write(TOC_END)
     api_toc_file.close()
+
     # add the subdir's index to the parent's ToC
-    print("adding {} as {}".format(dirname, os.path.relpath(dirname)))
     addTOCEntry(os.path.join(dirname, '../index.rst'), '{}/index'.format(os.path.relpath(dirname).split('/')[-1]), caption=caption)
 
 def generateFileRST(outDir, moduleName, fileName) :
-    print('[make_source] Generating File RST:', outDir, moduleName, fileName)
+    print('[make_source] Generating File RST: {} {} {}'.format(outDir, moduleName, fileName))
 
     # title
     out_file_path = os.path.join(outDir,fileName.split('../',1)[-1]) + ".rst"
-    print('writing to: {}'.format(out_file_path))
     outFile = open(out_file_path, "w")
     title = '/'.join([moduleName, fileName])
     outFile.write(title + "\n")
@@ -82,37 +76,13 @@ def generateFileRST(outDir, moduleName, fileName) :
 
     outFile.close()
 
-def generateRST(outDir, moduleName, listModules, listFiles) :
-    return
-    #print('WARNING [make_source] Generating RST: {} {} {} {}'.format(outDir, moduleName, listModules, listFiles))
-    #if len(listModules) > 0 and os.path.isdir(outDir) == False:
-    #    os.mkdir(outDir)
-
-    ## title
-    #outFile = open(outDir + ".rst","w")
-    #outFile.write(moduleName[0].upper() + moduleName[1:] + "\n")
-    #outFile.write("=" * len(moduleName) + "\n\n")
-
-    ## doxygenfile
-    ##for fileName in listFiles :
-    ##    outFile.write(".. doxygenfile:: %s/%s\n" % (outDir[3:], fileName))
-    ##    outFile.write("   :project: myproject\n\n")
-
-    ## toctree
-    #outFile.write(".. toctree::\n")
-    #outFile.write("   :caption: %s:\n" % CAT_NAME)
-    #outFile.write("   :titlesonly:\n")
-    #outFile.write("   :maxdepth: 1\n")
-    ##outFile.write("   :hidden:\n\n")
-    #for childModuleName in listModules :
-    #   outFile.write("   %s/%s\n" % (moduleName, childModuleName) )
-    #outFile.close()
+    # add to ToC
+    addTOCEntry(os.path.join(os.path.dirname(out_file_path), 'index.rst'), os.path.basename(out_file_path).rsplit('.rst')[0], caption=False)
 
 def generateRSTs(in_names, outDir):
     print('[make_source] Generating RSTs: {} {}'.format(in_names, outDir))
     listModules = []
     listFiles = []
-    #print("[make_source] generate for:\n{}".format(os.listdir(inDir)))
     for fileName in in_names:
         if os.path.isdir(fileName):
             listModules.append(fileName)
@@ -131,16 +101,10 @@ def generateRSTs(in_names, outDir):
         generateFileRST(api_dir, moduleName, fileName)
 
     for a_module in listModules:
-        print('submodule: {}'.format(a_module))
-        #print('submodule split: {}'.format(a_module.split('../',1)[-1]))
         a_name = a_module.split('../', 1)[-1]
         mkAPISubdir(os.path.join(api_dir, a_name), a_name)
         generateRSTs([os.path.join(a_module, f) for f in os.listdir(a_module)], outDir)
 
-    #for moduleName in listModules :
-    #    curInDir = inDir + "/" + moduleName
-    #    curOutDir = outDir + "/" + moduleName
-    #    generateRSTs(curInDir, curOutDir, False)
 
 
 ###################
