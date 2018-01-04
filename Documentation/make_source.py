@@ -27,8 +27,11 @@ def generateIndex(outDir):
     mkAPISubdir(api_path, API_DIR)
 
 def addTOCEntry(toc_path, new_item, caption=None):
-    if not caption:
-        caption = None
+    #print("## adding {}".format(new_item.replace("/", " > ")))
+    #if not caption:
+    #    caption = None
+    caption = None
+    ## todo captions?
     the_lines = open(toc_path).readlines()
     end_of_tree = len(the_lines)
     try:
@@ -38,7 +41,7 @@ def addTOCEntry(toc_path, new_item, caption=None):
     the_lines.insert(end_of_tree, "   {}\n".format(new_item))
     if caption is not None:
         the_lines.insert(end_of_tree, "   :caption: {}\n".format(caption))
-    f= open(toc_path, "w")
+    f = open(toc_path, "w")
     f.writelines(the_lines)
     f.close()
 
@@ -96,11 +99,13 @@ def generateRSTs(in_names, outDir):
 
     api_dir = os.path.join(outDir, API_DIR)
     moduleName = ''
-    for filename in listFiles :
-        print('[make_source] (api_dir, module, file) -> ({}, {}, {})'.format(api_dir, moduleName, fileName))
-        generateFileRST(api_dir, moduleName, fileName)
+    for a_file in listFiles :
+        #print('> fn: {}'.format(a_file))
+        print('[make_source] (api_dir, module, file) -> ({}, {}, {})'.format(api_dir, moduleName, a_file))
+        generateFileRST(api_dir, moduleName, a_file)
 
     for a_module in listModules:
+        #print("module: {} {}".format(a_module, '-'*30))
         a_name = a_module.split('../', 1)[-1]
         mkAPISubdir(os.path.join(api_dir, a_name), a_name)
         generateRSTs([os.path.join(a_module, f) for f in os.listdir(a_module)], outDir)
