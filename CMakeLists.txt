@@ -20,7 +20,6 @@ add_definitions( -DEgg_VERSION=${Egg_VERSION} )
 set( Monarch_BUILD_MONARCH2 FALSE CACHE BOOL "Build Monarch2 library (requires Protobuf)" )
 set( Monarch_BUILD_MONARCH3 TRUE CACHE BOOL "Build Monarch3 library (requires HDF5)" )
 
-set( Monarch_ENABLE_DOC_BUILD FALSE CACHE BOOL "Enable the options to build the documentation (requires Doxygen and Sphynx)" )
 
 ########################
 # monarch dependencies #
@@ -121,13 +120,3 @@ endif( Monarch_BUILD_MONARCH3 )
 pbuilder_install_config_files()
 
 pbuilder_variables_for_parent()
-
-#################
-# documentation #
-#################
-
-if( Monarch_ENABLE_DOC_BUILD )
-    # Doxygen documentation can be built with "make doc" (it's not included with the "all" make target)
-    # By default it builds in the source tree.
-    add_subdirectory (Documentation)
-endif( Monarch_ENABLE_DOC_BUILD )
