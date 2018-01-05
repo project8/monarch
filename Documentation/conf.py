@@ -82,7 +82,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Monarch'
-copyright = u'2015, Project 8 Collaboration'
+copyright = u'2018, Monarch Authors'
 author = u'Project 8 Collaboration'
 
 # The version info for the project you're documenting, acts as replacement for
