@@ -24,6 +24,9 @@ Install/
 Install/*
 install/
 install/*
+Documentation/index.rst
+Documentation/user_doxygen_out/*
+Documentation/API_Ref
 
 # Eclipse
 .project
