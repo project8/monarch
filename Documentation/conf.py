@@ -12,6 +12,12 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
+# Customize the following:
+#  * the location of make_source.py
+#  * the targets for make_source.py
+#  * the project, copyright, and author variables
+#  * the arguments used to assign variables htmlhelp_basename, latex_documents, man_pages, and texinfo_documents
+
 import sys
 import os
 import shlex
