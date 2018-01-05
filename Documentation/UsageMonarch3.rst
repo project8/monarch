@@ -30,6 +30,12 @@ Reading Egg3 Files
    * ``offset < -1`` will go backwards in the file;
    * ``offset > 0`` will skip forward in the file.
    
+   The outcomes from the call are:
+   
+   * returns true if the move was successful;
+   * returns false if the move was unsuccessful because it goes past the end (or beginning) of the file;
+   * throws an M3Exception if there was an error.
+   
 7. When you're finished reading, use ``Monarch3::FinishReading()`` to close the file.
 
 
@@ -51,5 +57,12 @@ Writing Egg3 Files
    * If you want to access the data as an array of other integer or floating-point data types, you can pass the data pointer from ``M3Record::GetData()`` to an ``M3DataWriter`` object, along with the data type size and data format flag. The type of the values that are passed to the writer is specified as a template argument for ``M3DataWriter``; it doesn't have to match the data type in the data array exactly, but it should be no larger than the data elements, and if the data elements are integer, it should be an integer, and if the data elements are floating-point, it should be floating-point.
    * If you want to access the data as an array of complex floating-point data types, you can pass the data pointer from ``M3Record::GetData()`` to an ``M3ComplexDataWriter`` object, along with the data type size and data format flag (you can also specify the element size, but for complex data it should be the default, 2).  The type of the values that are returned is specified as a template argument for ``M3ComplexDataWriter``; it should either be ``f4_complex`` or ``f8_complex``, or the equivalent.
    
-7. For each record, copy the data to the stream data memory using the access method you chose above, and then write to disk with ``M3Stream::WriteRecord( [is new acquisition?] )``.  When a record is from a different acquisition than the previous record, the flag passed to ``WriteRecord`` should be ``true``; otherwise it should be ``false``.
+7. For each record, copy the data to the stream data memory using the access method you chose above, and then write to disk with ``M3Stream::WriteRecord( [is new acquisition?] )``.  
+   When a record is from a different acquisition than the previous record, the flag passed to ``WriteRecord`` should be ``true``; otherwise it should be ``false``.
+   The outcomes from the call are:
+   
+   * returns true if the write was successful;
+   * throws an M3Exception if there was an error;
+   * (should never return false).
+
 8. When you're finished writing, use ``Monarch3::FinishWriting()`` to close the file.
