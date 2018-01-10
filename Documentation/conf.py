@@ -13,8 +13,9 @@
 # serve to show the default.
 
 # Customize the following:
-#  * the location of make_source.py
-#  * the targets for make_source.py
+#  * the location of scarab's documentation directory (sys.path.append(...); uncomment if it's commented out)
+#  * the targets for ms.build (arguments 2)
+#  * the exclusions for ms.build (argument 3)
 #  * the project, copyright, and author variables
 #  * the arguments used to assign variables htmlhelp_basename, latex_documents, man_pages, and texinfo_documents
 
@@ -22,6 +23,10 @@ import sys
 import os
 import shlex
 from subprocess import call, check_output
+
+# replace the contents of sys.path.append() with the path to make_source.py, which is probably in the documentation directory of scarab
+sys.path.append("../Scarab/documentation")
+import make_source
 
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
@@ -41,9 +46,15 @@ call(['mv', './user_doxygen_out/html', './_static'])
 call(['echo', '... doxygen_out/xml ...'])
 call(['ls', './user_doxygen_out/xml'])
 
-# make source
-call(['python', '../Scarab/documentation/make_source.py', '.', '../Monarch2', '../Monarch3'])
+ms = make_source.site_builder()
+# build source
+# arguments:
+#   1: directory in which to make the documentation (recommendation: leave as '.')
+#   2: list of directories in which to look for source files
+#   3: list of directories to exclude from the search for source files
+ms.build('.', ['../Monarch2', '../Monarch3'], [])
 call(['echo', '====== make source complete ====='])
+
 call(['cat', 'index.rst'])
 call(['echo', "===== files ====="])
 call(['ls'])
@@ -300,8 +311,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  (master_doc, 'Monarch', u'Monarch Documentation',
-   author, 'Monarch', 'One line description of project.',
+  (master_doc, 'Monarch', 'Monarch Documentation',
+   author, 'Monarch', 'Data file library for Project 8',
    'Miscellaneous'),
 ]
 
