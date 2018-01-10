@@ -311,7 +311,7 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  (master_doc, 'Monarch', Monarch Documentation',
+  (master_doc, 'Monarch', 'Monarch Documentation',
    author, 'Monarch', 'Data file library for Project 8',
    'Miscellaneous'),
 ]
