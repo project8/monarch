@@ -29,16 +29,30 @@ from subprocess import call, check_output
 #sys.path.insert(0, os.path.abspath('.'))
 
 # version
-this_version = 'none'
+this_version = 'v?.?.?'
 try:
     this_version = check_output(['git', 'describe', '--abbrev=0', '--tags'])
 except:
     pass
-os.environ['PROJECT_NUMBER'] = this_version
 
-# doxygen
+# environment variables used by Doxygen
+os.environ['PROJECT_NAME'] = 'Monarch'
+os.environ['PROJECT_NUMBER'] = this_version
+os.environ['PROJECT_BRIEF_DESC'] = 'Project 8 Data File Format Library'
+# located in your documentation directory, or give the relative path from the documentation directory
+os.environ['PROJECT_LOGO'] = ''
+
+# directories in which doxygen should look for source files; if you have a `doxfiles` directory in your documentation, that should go here; string with space-separated directories
+os.environ['DOXYGEN_INPUT'] = 'DoxFiles ../Monarch3  ../Monarch2'
+# directories within DOXYGEN_INPUT that you want to exclude from doxygen (e.g. if there's  a submodule included that you don't want to index); string with space-separated directories
+os.environ['DOXYGEN_EXCLUDE'] = ''
+# directories outside of DOXYGEN_INPUT that you want the C preprocessor to look in for macro definitions (e.g. if there's a submodule not included that has relevant macros); string with space-separated directories
+os.environ['PREPROC_INCLUDE_PATH'] = '../Scarab/library/utility ../Scarab/library/logger'
+
+# Doxygen
 call(['doxygen', 'Doxyfile'])
 call(['mv', './user_doxygen_out/html', './_static'])
+
 
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 if on_rtd:
