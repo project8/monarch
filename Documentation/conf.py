@@ -39,6 +39,7 @@ try:
     this_version = check_output(['git', 'describe', '--abbrev=0', '--tags'])
 except:
     pass
+os.environ['PROJECT_NUMBER'] = this_version
 
 # doxygen
 call(['doxygen', 'Doxyfile'])
