@@ -50,7 +50,7 @@ os.environ['DOXYGEN_EXCLUDE'] = ''
 os.environ['PREPROC_INCLUDE_PATH'] = '../Scarab/library/utility ../Scarab/library/logger'
 
 # Doxygen
-call(['doxygen', 'Doxyfile'])
+call(['doxygen', '../Scarab/documentation/cpp/Doxyfile'])
 call(['mv', './user_doxygen_out/html', './_static'])
 
 
