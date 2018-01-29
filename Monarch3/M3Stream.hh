@@ -122,6 +122,10 @@ namespace monarch3
             AcquisitionIdType GetAcquisitionId() const { return fAcquisitionId;   }
             unsigned GetRecordCountInAcq() const       { return fRecordCountInAcq; }
             unsigned GetNRecordsInAcquisition() const  { return fNRecordsInAcq;   }
+            TimeType GetAcqFirstRecordTime() const     { return fAcqFirstRecTime; }
+            RecordIdType GetAcqFirstRecordId() const   { return fAcqFirstRecId;   }
+            TimeType* GetAcqFirstRecTimes() const      { return fAcqFirstRecTimes; }
+            RecordIdType* GetAcqFirstRecordIds() const { return fAcqFirstRecIds;  }
             unsigned GetRecordCountInFile() const      { return fRecordCountInFile; }
             unsigned GetNRecordsInFile() const         { return fNRecordsInFile;  }
             unsigned GetFirstRecordInFile() const      { return fFirstRecordInFile; }
