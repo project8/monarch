@@ -23,10 +23,10 @@ int main( const int argc, const char** argv )
         Monarch3* tWriteTest = Monarch3::OpenForWriting( argv[1] );
 
         M3Header* tHeader = tWriteTest->GetHeader();
-        tHeader->SetFilename( argv[1] );
+        tHeader->Filename() = argv[1];
         tHeader->SetRunDuration( 8675309 );
-        tHeader->SetTimestamp( "Stardate 33515" );
-        tHeader->SetDescription( "Bigger on the inside" );
+        tHeader->Timestamp() = "Stardate 33515";
+        tHeader->Description() = "Bigger on the inside";
 
         // number of samples in each stream
         unsigned tSSSamples = 10;
