@@ -22,6 +22,9 @@ namespace monarch2
             M2Header();
             ~M2Header();
 
+            M2Header( const M2Header& ) = delete;
+            M2Header& operator=( const M2Header& ) = delete;
+
             //size of monarch header in bytes (fixed by .proto definition)
             int ByteSize() const;
 

@@ -39,6 +39,9 @@ namespace monarch3
             M3Record( RecordIdType* aRecPtr, TimeType* aTimePtr, byte_type* aDataPtr );
             ~M3Record();
 
+            M3Record( const M3Record& ) = delete;
+            M3Record& operator=( const M3Record& ) = delete;
+
             /// Allocate no memory for the record; data pointer is to NULL
             void Initialize();
             /// Allocate aNBytes of memory for the record
