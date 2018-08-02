@@ -82,7 +82,7 @@ namespace monarch3
         LDEBUG( mlog, "Opened egg file <" << aFilename << "> for reading" );
 
         tMonarch3->fHeader = new M3Header();
-        tMonarch3->fHeader->SetFilename( aFilename );
+        tMonarch3->fHeader->Filename() = aFilename;
 
         tMonarch3->fState = eOpenToRead;
 
@@ -118,7 +118,7 @@ namespace monarch3
         LDEBUG( mlog, "Opened egg file <" << aFilename << "> for writing" );
 
         tMonarch3->fHeader = new M3Header();
-        tMonarch3->fHeader->SetFilename( aFilename );
+        tMonarch3->fHeader->Filename() = aFilename;
 
         tMonarch3->fState = eOpenToWrite;
 
@@ -152,8 +152,8 @@ namespace monarch3
         try
         {
             // Create the stream objects based on the configuration from the header
-            for( M3Header::M3StreamHeaders::const_iterator streamIt = fHeader->GetStreamHeaders().begin();
-                    streamIt != fHeader->GetStreamHeaders().end();
+            for( M3Header::M3StreamHeaders::const_iterator streamIt = fHeader->StreamHeaders().begin();
+                    streamIt != fHeader->StreamHeaders().end();
                     ++streamIt )
             {
                 fStreams.push_back( new M3Stream( *streamIt, tStreamsGroup ) );
@@ -200,8 +200,8 @@ namespace monarch3
         try
         {
             // Create the stream objects based on the configuration from the header
-            for( M3Header::M3StreamHeaders::const_iterator streamIt = fHeader->GetStreamHeaders().begin();
-                    streamIt != fHeader->GetStreamHeaders().end();
+            for( M3Header::M3StreamHeaders::const_iterator streamIt = fHeader->StreamHeaders().begin();
+                    streamIt != fHeader->StreamHeaders().end();
                     ++streamIt )
             {
                 fStreams.push_back( new M3Stream( *streamIt, tStreamsGroup ) );
@@ -223,7 +223,7 @@ namespace monarch3
 
     void Monarch3::FinishReading() const
     {
-        LDEBUG( mlog, "Finishing reading <" << fHeader->GetFilename() << ">" );
+        LDEBUG( mlog, "Finishing reading <" << fHeader->Filename() << ">" );
         try
         {
             if( fHeader != nullptr )
@@ -254,7 +254,7 @@ namespace monarch3
 
     void Monarch3::FinishWriting()
     {
-        LINFO( mlog, "Finishing writing <" << fHeader->GetFilename() << ">" );
+        LINFO( mlog, "Finishing writing <" << fHeader->Filename() << ">" );
         try
         {
             if( fHeader != nullptr )

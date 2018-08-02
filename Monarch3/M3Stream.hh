@@ -57,6 +57,7 @@ namespace monarch3
 
             M3MEMBERVARIABLE( Mode, Mode );
 
+        public:
             /// Setup to read/write data (called in constructor; only call this if read/write parameters change during file reading)
             void Initialize() const;
 

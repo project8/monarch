@@ -69,7 +69,7 @@ int main( const int argc, const char** argv )
         unsigned tNStreams = tReadHeader->GetNStreams();
         for( unsigned iStream = 0; iStream < tNStreams; ++iStream )
         {
-            const M3StreamHeader& tStrHeader = tReadHeader->GetStreamHeaders().at( iStream );
+            const M3StreamHeader& tStrHeader = tReadHeader->StreamHeaders().at( iStream );
             unsigned tNChannels = tStrHeader.GetNChannels();
             //unsigned tRecSize = tStrHeader.GetRecordSize();
             LINFO( mlog, "Stream " << iStream << " has " << tNChannels << " channel(s) stored in format mode " << tStrHeader.GetChannelFormat() );
