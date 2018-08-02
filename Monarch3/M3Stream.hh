@@ -55,6 +55,9 @@ namespace monarch3
             M3Stream( const M3StreamHeader& aHeader, HAS_GRP_IFC* aH5StreamParentLoc, uint32_t aAccessFormat = sSeparate );
             virtual ~M3Stream();
 
+            M3Stream( const M3Stream& ) = delete;
+            M3Stream& operator=( const M3Stream& ) = delete;
+
             M3MEMBERVARIABLE( Mode, Mode );
 
         public:
