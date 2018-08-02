@@ -4,22 +4,22 @@ namespace monarch2
 {
 
     M2Exception::M2Exception() :
-                exception(),
-                fStream( "" )
+            exception(),
+            fMessage( "" )
     {
     }
     M2Exception::M2Exception( const M2Exception& aCopy ) :
                 exception( aCopy ),
-                fStream( aCopy.fStream.str() )
+                fMessage( aCopy.fMessage )
     {
     }
     M2Exception::~M2Exception() throw ()
-        {
-        }
+    {
+    }
 
     const char* M2Exception::what() const throw ()
-        {
-        return fStream.str().c_str();
-        }
+    {
+        return fMessage.c_str();
+    }
 
 }

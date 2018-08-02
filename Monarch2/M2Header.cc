@@ -111,7 +111,6 @@ TimeType M2Header::GetRecordTime0() const
                 return;
             default:
                 throw M2Exception() << "got unknown content mode";
-                return;
         }
     }
     RunType M2Header::GetRunType() const
@@ -126,7 +125,6 @@ TimeType M2Header::GetRecordTime0() const
                 return sRunTypeOther;
             default:
                 throw M2Exception() << "has unknown run type";
-                return 1000;
         }
     }
 
@@ -142,7 +140,6 @@ TimeType M2Header::GetRecordTime0() const
                 return;
             default:
                 throw M2Exception() << "got unknown source mode";
-                return;
         }
     }
     RunSourceType M2Header::GetRunSource() const
@@ -155,7 +152,6 @@ TimeType M2Header::GetRecordTime0() const
                 return sSourceSimulation;
             default:
                 throw M2Exception() << "has unknown source mode";
-                return 1000;
         }
     }
 
@@ -174,7 +170,6 @@ TimeType M2Header::GetRecordTime0() const
                 return;
             default:
                 throw M2Exception() << "got unknown format mode";
-                return;
         }
     }
     FormatModeType M2Header::GetFormatMode() const
@@ -189,7 +184,6 @@ TimeType M2Header::GetRecordTime0() const
                 return sFormatMultiInterleaved;
             default:
                 throw M2Exception() << "has unknown format mode";
-                return -1;
         }
     }
 
