@@ -6,7 +6,7 @@ cmake_minimum_required (VERSION 3.1)
 #########
 
 cmake_policy( SET CMP0048 NEW ) # version in project()
-project( Monarch VERSION 3.4.1 )
+project( Monarch VERSION 3.5.4 )
 
 list( APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/Scarab/cmake)
 
@@ -20,7 +20,6 @@ add_definitions( -DEgg_VERSION=${Egg_VERSION} )
 set( Monarch_BUILD_MONARCH2 FALSE CACHE BOOL "Build Monarch2 library (requires Protobuf)" )
 set( Monarch_BUILD_MONARCH3 TRUE CACHE BOOL "Build Monarch3 library (requires HDF5)" )
 
-set( Monarch_ENABLE_DOC_BUILD FALSE CACHE BOOL "Enable the options to build the documentation (requires Doxygen and Sphynx)" )
 
 ########################
 # monarch dependencies #
@@ -58,6 +57,34 @@ if( Monarch_BUILD_MONARCH3 )
     message( STATUS "HDF5_C_LIBRARY: ${HDF5_C_LIBRARY}" )
     message( STATUS "HDF5_CXX_LIBRARY: ${HDF5_CXX_LIBRARY}" )
     message( STATUS "HDF5_INCLUDE_DIR: ${HDF5_INCLUDE_DIRS}" )
+    
+    # The following is a work-around to provide compatibility with the HDF5 1.8 API and the HDF5 1.10 API
+    # It should be removed in favor of the 1.10 API once we're able to make 1.10 a requirement
+    # If you upgrade your version of HDF5, you'll need to clear your CMake cache before rebuilding
+    # First, test for the version of HDF5 in use
+    include( CheckCXXSourceCompiles )
+    set( CMAKE_REQUIRED_QUIET FALSE )
+    set( CMAKE_REQUIRED_LIBRARIES ${HDF5_CXX_LIBRARIES} )
+    set( CMAKE_REQUIRED_INCLUDES ${HDF5_INCLUDE_DIRS} )
+    check_cxx_source_compiles("
+        #include <H5Cpp.h>
+        int main()
+        {
+            H5::CommonFG* tester = new H5::H5File(\"new_file.h5\", H5F_ACC_TRUNC);
+            tester->openGroup(\"my_group\");
+            return 0;
+        }
+        " HAVE_OLD_HDF5 )
+    
+    # Then set preprocessor macros accordingly
+    if( ${HAVE_OLD_HDF5} )
+        message( STATUS "HDF5 is version 1.10.0 or older" )
+        add_definitions( -DHAS_ATTR_IFC=H5::H5Location -DHAS_GRP_IFC=H5::CommonFG )
+    else( ${HAVE_OLD_HDF5} )
+        message( STATUS "HDF5 is version 1.10.1 or newer" )
+        add_definitions( -DHAS_ATTR_IFC=H5::H5Object -DHAS_GRP_IFC=H5::H5Object )
+    endif( ${HAVE_OLD_HDF5} )
+
 endif( Monarch_BUILD_MONARCH3 )
 
 
@@ -93,13 +120,3 @@ endif( Monarch_BUILD_MONARCH3 )
 pbuilder_install_config_files()
 
 pbuilder_variables_for_parent()
-
-#################
-# documentation #
-#################
-
-if( Monarch_ENABLE_DOC_BUILD )
-    # Doxygen documentation can be built with "make doc" (it's not included with the "all" make target)
-    # By default it builds in the source tree.
-    add_subdirectory (Documentation)
-endif( Monarch_ENABLE_DOC_BUILD )

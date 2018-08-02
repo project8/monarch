@@ -19,6 +19,7 @@
 
 #include <boost/filesystem.hpp>
 
+#include <atomic>
 #include <chrono>
 #include <condition_variable>
 #include <mutex>
@@ -29,7 +30,7 @@
 
 using namespace monarch3;
 
-LOGGER( mlog, "Monarch3MultithreadingTest" );
+LOGGER( mlog, "M3MultithreadingTest" );
 
 int main( int argc, char** argv )
 {
@@ -38,9 +39,9 @@ int main( int argc, char** argv )
         scarab::param_node tDefaultConfig;
         tDefaultConfig.add( "filename", new scarab::param_value( "multithreading_test.egg" ) );
 
-        scarab::configurator tConfigurator( argc, argv, &tDefaultConfig );
+        scarab::configurator tConfigurator( argc, argv, tDefaultConfig );
 
-        std::string tFilename = tConfigurator.get< std::string >( "filename" );
+        std::string tFilename = tConfigurator.config()[ "filename" ]().as_string();
 
         unsigned tNRecords = 5;
         unsigned tNStreams = 10;

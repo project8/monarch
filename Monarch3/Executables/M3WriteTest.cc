@@ -6,14 +6,14 @@
 
 using namespace monarch3;
 
-LOGGER( mlog, "Monarch3WriteTest" );
+LOGGER( mlog, "M3WriteTest" );
 
 int main( const int argc, const char** argv )
 {
     if( argc < 2 || strcmp( argv[1], "-h" ) == 0 )
     {
         LINFO( mlog, "usage:\n"
-            << "  Monarch3WriteTest [-h] <output egg file>\n"
+            << "  M3WriteTest [-h] <output egg file>\n"
             << "      -h: print this usage information" );
         return -1;
     }

@@ -115,7 +115,7 @@ namespace monarch3
         return;
     }
 
-    void M3StreamHeader::WriteToHDF5( H5::CommonFG* aParent )
+    void M3StreamHeader::WriteToHDF5( HAS_GRP_IFC* aParent )
     {
         LDEBUG( mlog, "Writing stream <" << fLabel << ">" );
         H5::Group tThisStreamGroup = aParent->createGroup( fLabel );
@@ -139,7 +139,7 @@ namespace monarch3
         return;
     }
 
-    void M3StreamHeader::ReadFromHDF5( const H5::CommonFG* aParent, const std::string& aLabel ) const
+    void M3StreamHeader::ReadFromHDF5( const HAS_GRP_IFC* aParent, const std::string& aLabel ) const
     {
         LDEBUG( mlog, "Reading stream <" << aLabel << ">" );
         H5::Group tThisStreamGroup = aParent->openGroup( aLabel.c_str() );
@@ -163,7 +163,7 @@ namespace monarch3
         return;
     }
 
-    void M3StreamHeader::WriteChannels( H5::H5Location* aLoc )
+    void M3StreamHeader::WriteChannels( HAS_ATTR_IFC* aLoc )
     {
         const unsigned tNDims = 1;
         hsize_t tDims[ tNDims ] = { fNChannels };
@@ -186,7 +186,7 @@ namespace monarch3
         return;
     }
 
-    void M3StreamHeader::ReadChannels( const H5::H5Location* aLoc ) const
+    void M3StreamHeader::ReadChannels( const HAS_ATTR_IFC* aLoc ) const
     {
         const unsigned tNDims = 1;
         hsize_t tDims[ tNDims ];
@@ -303,7 +303,7 @@ namespace monarch3
         return;
     }
 
-    void M3ChannelHeader::WriteToHDF5( H5::CommonFG* aParent )
+    void M3ChannelHeader::WriteToHDF5( HAS_GRP_IFC* aParent )
     {
         LDEBUG( mlog, "Writing channel <" << fLabel << ">" );
         H5::Group tThisChannelGroup = aParent->createGroup( fLabel );
@@ -326,7 +326,7 @@ namespace monarch3
         return;
     }
 
-    void M3ChannelHeader::ReadFromHDF5( const H5::CommonFG* aParent, const std::string& aLabel ) const
+    void M3ChannelHeader::ReadFromHDF5( const HAS_GRP_IFC* aParent, const std::string& aLabel ) const
     {
         LDEBUG( mlog, "Reading channel <" << aLabel << ">" );
         H5::Group tThisChannelGroup = aParent->openGroup( aLabel.c_str() );
@@ -571,7 +571,7 @@ namespace monarch3
 		return;
     }
 
-    void M3Header::WriteChannelStreams( H5::H5Location* aLoc )
+    void M3Header::WriteChannelStreams( HAS_ATTR_IFC* aLoc )
     {
         const unsigned tNDims = 1;
         hsize_t tDims[ tNDims ] = { fNChannels };
@@ -594,7 +594,7 @@ namespace monarch3
         return;
     }
 
-    void M3Header::ReadChannelStreams( const H5::H5Location* aLoc ) const
+    void M3Header::ReadChannelStreams( const HAS_ATTR_IFC* aLoc ) const
     {
         const unsigned tNDims = 1;
         hsize_t tDims[ tNDims ];
@@ -627,7 +627,7 @@ namespace monarch3
         return;
     }
 
-    void M3Header::WriteChannelCoherence( H5::H5Location* aLoc )
+    void M3Header::WriteChannelCoherence( HAS_ATTR_IFC* aLoc )
     {
         const unsigned tNDims = 2;
         hsize_t tDims[ tNDims ] = { fNChannels, fNChannels };
@@ -653,7 +653,7 @@ namespace monarch3
         return;
     }
 
-    void M3Header::ReadChannelCoherence( const H5::H5Location* aLoc ) const
+    void M3Header::ReadChannelCoherence( const HAS_ATTR_IFC* aLoc ) const
     {
         const unsigned tNDims = 2;
         hsize_t tDims[ tNDims ];

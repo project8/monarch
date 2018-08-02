@@ -73,12 +73,12 @@ namespace monarch3
             M3MEMBERVARIABLE( uint32_t, NRecords );
 
         public:
-            void WriteToHDF5( H5::CommonFG* aParent );
-            void ReadFromHDF5( const H5::CommonFG* aParent, const std::string& aLabel ) const;
+            void WriteToHDF5( HAS_GRP_IFC* aParent );
+            void ReadFromHDF5( const HAS_GRP_IFC* aParent, const std::string& aLabel ) const;
 
         private:
-            void WriteChannels( H5::H5Location* aLoc );
-            void ReadChannels( const H5::H5Location* aLoc ) const;
+            void WriteChannels( HAS_ATTR_IFC* aLoc );
+            void ReadChannels( const HAS_ATTR_IFC* aLoc ) const;
    };
 
     /*!
@@ -132,8 +132,8 @@ namespace monarch3
             M3MEMBERVARIABLE( double, FrequencyRange );
 
         public:
-            void WriteToHDF5( H5::CommonFG* aParent );
-            void ReadFromHDF5( const H5::CommonFG* aParent, const std::string& aLabel ) const;
+            void WriteToHDF5( HAS_GRP_IFC* aParent );
+            void ReadFromHDF5( const HAS_GRP_IFC* aParent, const std::string& aLabel ) const;
 
     };
 
@@ -213,32 +213,32 @@ namespace monarch3
             H5::Group* GetChannelsGroup();
 
         private:
-            void WriteChannelStreams( H5::H5Location* aLoc );
-            void ReadChannelStreams( const H5::H5Location* aLoc ) const;
+            void WriteChannelStreams( HAS_ATTR_IFC* aLoc );
+            void ReadChannelStreams( const HAS_ATTR_IFC* aLoc ) const;
 
-            void WriteChannelCoherence( H5::H5Location* aLoc );
-            void ReadChannelCoherence( const H5::H5Location* aLoc ) const;
+            void WriteChannelCoherence( HAS_ATTR_IFC* aLoc );
+            void ReadChannelCoherence( const HAS_ATTR_IFC* aLoc ) const;
 
             mutable H5::H5File* fFile;
             mutable H5::Group* fStreamsGroup;
             mutable H5::Group* fChannelsGroup;
 
         public:
-            static void WriteScalarToHDF5( H5::H5Location* aLoc, const std::string& aName, const std::string& aValue );
+            static void WriteScalarToHDF5( HAS_ATTR_IFC* aLoc, const std::string& aName, const std::string& aValue );
             template< typename XType >
-            static void WriteScalarToHDF5( H5::H5Location* aLoc, const std::string& aName, XType aValue );
+            static void WriteScalarToHDF5( HAS_ATTR_IFC* aLoc, const std::string& aName, XType aValue );
 
             //template< typename XArrayType >
-            //static void Write1DToHDF5( H5::CommonFG* aLoc, const std::string& aName, const XArrayType& anArray );
+            //static void Write1DToHDF5( HAS_GRP_IFC* aLoc, const std::string& aName, const XArrayType& anArray );
 
             template< typename XType >
-            static XType ReadScalarFromHDF5( const H5::H5Location* aLoc, const std::string& aName );
+            static XType ReadScalarFromHDF5( const HAS_ATTR_IFC* aLoc, const std::string& aName );
 
             template< typename XType >
-            static XType ReadScalarFromHDF5( const H5::H5Location* aLoc, const std::string& aName, const XType& aDefault );
+            static XType ReadScalarFromHDF5( const HAS_ATTR_IFC* aLoc, const std::string& aName, const XType& aDefault );
 
             //template< typename XArrayType >
-            //static void Read1DFromHDF5( const H5::H5Location* aLoc, const std::string& aName, XArrayType& anArray );
+            //static void Read1DFromHDF5( const HAS_ATTR_IFC* aLoc, const std::string& aName, XArrayType& anArray );
 
     };
 
@@ -273,7 +273,7 @@ namespace monarch3
     }
 
 
-    inline void M3Header::WriteScalarToHDF5( H5::H5Location* aLoc, const std::string& aName, const std::string& aValue )
+    inline void M3Header::WriteScalarToHDF5( HAS_ATTR_IFC* aLoc, const std::string& aName, const std::string& aValue )
     {
         LTRACE( mlog_mheader, "Writing string to new scalar metadata <" << aName << ">: " << aValue << "; size = " << aValue.size() );
 		// aName.c_str() and aValue.c_str() are used because while using the std::string itself, the value was getting mangled
@@ -283,7 +283,7 @@ namespace monarch3
     }
 
     template< typename XType >
-    void M3Header::WriteScalarToHDF5( H5::H5Location* aLoc, const std::string& aName, XType aValue )
+    void M3Header::WriteScalarToHDF5( HAS_ATTR_IFC* aLoc, const std::string& aName, XType aValue )
     {
         LTRACE( mlog_mheader, "Writing value to new scalar metadata <" << aName << ">: " << aValue );
         // aName.c_str() is used because while using the std::string itself, the value was getting mangled
@@ -292,7 +292,7 @@ namespace monarch3
     }
 /*
     template< typename XArrayType >
-    void M3Header::Write1DToHDF5( H5::CommonFG* aLoc, const std::string& aName, const XArrayType& anArray )
+    void M3Header::Write1DToHDF5( HAS_GRP_IFC* aLoc, const std::string& aName, const XArrayType& anArray )
     {
         typedef typename XArrayType::value_type XValueType;
         LDEBUG( mlog_mheader, "Writing vector to new 1-D metadata <" << aName << ">; size = " << anArray.size() );
@@ -318,10 +318,10 @@ namespace monarch3
 
     // read specialization for strings
     template<>
-    inline std::string M3Header::ReadScalarFromHDF5( const H5::H5Location* aLoc, const std::string& aName )
+    inline std::string M3Header::ReadScalarFromHDF5( const HAS_ATTR_IFC* aLoc, const std::string& aName )
     {
         //std::string tValue;
-		char tBuffer[ 256 ];
+		char tBuffer[ 65536 ]; // this array size matches the maximum standard attribute size according to the HDF5 documentation
         H5::Attribute* tAttr = new H5::Attribute( aLoc->openAttribute( aName.c_str() ) );
         //tAttr->read( tAttr->getDataType(), tValue );
 		tAttr->read( tAttr->getDataType(), tBuffer );
@@ -333,7 +333,7 @@ namespace monarch3
 
     // templated read function
     template< typename XType >
-    XType M3Header::ReadScalarFromHDF5( const H5::H5Location* aLoc, const std::string& aName )
+    XType M3Header::ReadScalarFromHDF5( const HAS_ATTR_IFC* aLoc, const std::string& aName )
     {
         XType tValue;
         H5::Attribute* tAttr = new H5::Attribute( aLoc->openAttribute( aName.c_str() ) );
@@ -348,11 +348,11 @@ namespace monarch3
 
     // read specialization for strings
     template<>
-    inline std::string M3Header::ReadScalarFromHDF5( const H5::H5Location* aLoc, const std::string& aName, const std::string& aDefaultValue )
+    inline std::string M3Header::ReadScalarFromHDF5( const HAS_ATTR_IFC* aLoc, const std::string& aName, const std::string& aDefaultValue )
     {
         if( ! aLoc->attrExists( aName.c_str() ) ) return aDefaultValue;
         //std::string tValue;
-        char tBuffer[ 256 ];
+        char tBuffer[ 65536 ]; // this array size matches the maximum standard attribute size according to the HDF5 documentation
         H5::Attribute* tAttr = new H5::Attribute( aLoc->openAttribute( aName.c_str() ) );
         //tAttr->read( tAttr->getDataType(), tValue );
         tAttr->read( tAttr->getDataType(), tBuffer );
@@ -364,7 +364,7 @@ namespace monarch3
 
     // templated read function
     template< typename XType >
-    XType M3Header::ReadScalarFromHDF5( const H5::H5Location* aLoc, const std::string& aName, const XType& aDefaultValue )
+    XType M3Header::ReadScalarFromHDF5( const HAS_ATTR_IFC* aLoc, const std::string& aName, const XType& aDefaultValue )
     {
         if( ! aLoc->attrExists( aName.c_str() ) ) return aDefaultValue;
         XType tValue;
@@ -376,7 +376,7 @@ namespace monarch3
     }
 /*
     template< typename XArrayType >
-    void M3Header::Read1DFromHDF5( const H5::H5Location* aLoc, const std::string& aName, XArrayType& anArray )
+    void M3Header::Read1DFromHDF5( const HAS_ATTR_IFC* aLoc, const std::string& aName, XArrayType& anArray )
     {
         typedef typename XArrayType::value_type XValueType;
         H5::Attribute tAttr( aLoc->openAttribute( aName ) );

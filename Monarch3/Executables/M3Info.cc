@@ -4,8 +4,9 @@
 
 #include "M3DataInterface.hh"
 #include "M3Monarch.hh"
-#include "logger.hh"
 #include "M3Record.hh"
+
+#include "logger.hh"
 
 #include <algorithm>
 #include <cstring> // for strcmp
@@ -14,7 +15,7 @@
 using namespace monarch3;
 using std::stringstream;
 
-LOGGER( mlog, "Monarch3Info" );
+LOGGER( mlog, "M3Info" );
 
 bool PrintChannelsUInt( const M3Stream* aStream );
 bool PrintChannelsInt( const M3Stream* aStream );
@@ -26,7 +27,7 @@ int main( const int argc, const char** argv )
     if( argc < 2 || strcmp( argv[1], "-h" ) == 0 )
     {
         LINFO( mlog, "usage:\n"
-            << "  Monarch3Info [-Hh] <input egg file>\n"
+            << "  M3Info [-Hh] <input egg file>\n"
             << "      -h: print this usage information\n"
             << "      -H: (optional) header only; does not check number of records" );
         return -1;

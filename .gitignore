@@ -24,6 +24,7 @@ Install/
 Install/*
 install/
 install/*
+Documentation/user_doxygen_out/*
 
 # Eclipse
 .project
