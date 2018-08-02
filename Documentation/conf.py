@@ -17,7 +17,7 @@
 #  * the project, copyright, and author variables
 #  * the arguments used to assign variables htmlhelp_basename, latex_documents, man_pages, and texinfo_documents
 
-import sys
+#import sys
 import os
 from subprocess import call, check_output
 
