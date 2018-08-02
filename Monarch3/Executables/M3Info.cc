@@ -17,20 +17,21 @@ using std::stringstream;
 
 LOGGER( mlog, "M3Info" );
 
-bool PrintChannelsUInt( const M3Stream* aStream );
-bool PrintChannelsInt( const M3Stream* aStream );
-bool PrintChannelsFloat( const M3Stream* aStream );
-bool PrintChannelsFloatComplex( const M3Stream* aStream );
+template< typename XDataType >
+bool PrintChannelsReal( const M3Stream* aStream, uint32_t aDataFormat );
+
+template< typename XDataType >
+bool PrintChannelsComplex( const M3Stream* aStream, uint32_t aDataFormat );
 
 int main( const int argc, const char** argv )
 {
     if( argc < 2 || strcmp( argv[1], "-h" ) == 0 )
     {
-        LINFO( mlog, "usage:\n"
+        LPROG( mlog, "usage:\n"
             << "  M3Info [-Hh] <input egg file>\n"
             << "      -h: print this usage information\n"
             << "      -H: (optional) header only; does not check number of records" );
-        return -1;
+        return 0;
     }
 
     unsigned tFileArg = 1;
@@ -40,7 +41,7 @@ int main( const int argc, const char** argv )
         if( argc < 3 )
         {
             LERROR( mlog, "no filename provided" );
-            return -1;
+            return 1;
         }
         ++tFileArg;
         tCheckRecords = false;
@@ -48,14 +49,14 @@ int main( const int argc, const char** argv )
 
     try
     {
-        LINFO( mlog, "Opening file <" << argv[tFileArg] << ">" );
+        LPROG( mlog, "Opening file <" << argv[tFileArg] << ">" );
         const Monarch3* tReadTest = Monarch3::OpenForReading( argv[tFileArg] );
 
-        LINFO( mlog, "Reading header" );
+        LPROG( mlog, "Reading header" );
         tReadTest->ReadHeader();
 
         const M3Header* tReadHeader = tReadTest->GetHeader();
-        LINFO( mlog, *tReadHeader );
+        LPROG( mlog, *tReadHeader );
 
         if( ! tCheckRecords )
         {
@@ -64,7 +65,7 @@ int main( const int argc, const char** argv )
             return 0;
         }
 
-        LINFO( mlog, "Reading data" );
+        LPROG( mlog, "Reading data" );
 
         unsigned tNStreams = tReadHeader->GetNStreams();
         for( unsigned iStream = 0; iStream < tNStreams; ++iStream )
@@ -72,13 +73,13 @@ int main( const int argc, const char** argv )
             const M3StreamHeader& tStrHeader = tReadHeader->StreamHeaders().at( iStream );
             unsigned tNChannels = tStrHeader.GetNChannels();
             //unsigned tRecSize = tStrHeader.GetRecordSize();
-            LINFO( mlog, "Stream " << iStream << " has " << tNChannels << " channel(s) stored in format mode " << tStrHeader.GetChannelFormat() );
+            LPROG( mlog, "Stream " << iStream << " has " << tNChannels << " channel(s) stored in format mode " << tStrHeader.GetChannelFormat() );
 
             const M3Stream* tStream = tReadTest->GetStream( iStream );
 
             if( tStream->GetNAcquisitions() == 0 )
             {
-                LINFO( mlog, "\tThis stream has no acquisitions" );
+                LPROG( mlog, "\tThis stream has no acquisitions" );
                 continue;
             }
 
@@ -87,47 +88,56 @@ int main( const int argc, const char** argv )
             {
                 if( ! tStream->ReadRecord() )
                 {
-                    LERROR( mlog, "There was a problem reading a record from this stream" );
-                    break;
+                    throw M3Exception() << "There was a problem reading a record from this stream";
                 }
                 switch( tStrHeader.GetDataFormat() )
                 {
                     case sDigitizedUS:
-                        if( ! PrintChannelsUInt( tStream ) )
+                        if( ! PrintChannelsReal< uint64_t >( tStream, sDigitizedUS ) )
                         {
-                            LERROR( mlog, "Problem printing channels (int)" );
-                            return 0;
+                            throw M3Exception() << "Problem printing channels (int)";
                         }
                         break;
                     case sDigitizedS:
-                        if( ! PrintChannelsInt( tStream ) )
+                        if( ! PrintChannelsReal< int64_t >( tStream, sDigitizedS ) )
                         {
-                            LERROR( mlog, "Problem printing channels (int)" );
-                            return 0;
+                            throw M3Exception() << "Problem printing channels (int)";
                         }
                         break;
                     case sAnalog:
                         switch( tStream->GetSampleSize() )
                         {
                             case 1:
-                                if( ! PrintChannelsFloat( tStream ) )
+                                if( ! PrintChannelsReal< double >( tStream, sAnalog ) )
                                 {
-                                    LERROR( mlog, "Problem printing channels (float)" );
-                                    return 0;
+                                    throw M3Exception() << "Problem printing channels (float)" ;
+                                }
+                                break;
+                            case 2:
+                                switch( tStream->GetDataTypeSize() )
+                                {
+                                    case 4:
+                                        if( ! PrintChannelsComplex< f4_complex >( tStream, sAnalog ) )
+                                        {
+                                            throw M3Exception() << "Problem printing channels (float-complex)" ;
+                                        }
+                                        break;
+                                    case 8:
+                                        if( ! PrintChannelsComplex< f8_complex >( tStream, sAnalog ) )
+                                        {
+                                            throw M3Exception() << "Problem printing channels (float-complex)";
+                                        }
+                                        break;
+                                    default:
+                                        throw M3Exception() << "Invalid data type size: " << tStream->GetDataTypeSize();
                                 }
                                 break;
                             default:
-                                if( ! PrintChannelsFloatComplex( tStream ) )
-                                {
-                                    LERROR( mlog, "Problem printing channels (float-complex)" );
-                                    return 0;
-                                }
-                                break;
+                                throw M3Exception() << "Invalid sample size: " << tStream->GetSampleSize();
                         }
                         break;
                     default:
-                        LERROR( mlog, "Invalid data format: "<<tStrHeader.GetDataFormat() );
-                        break;
+                        throw M3Exception() << "Invalid data format: "<<tStrHeader.GetDataFormat();
                 }
             }
 
@@ -139,19 +149,21 @@ int main( const int argc, const char** argv )
     catch( M3Exception& e )
     {
         LERROR( mlog, "Exception thrown during file reading:\n" << e.what() );
+        return 1;
     }
 
     return 0;
 }
 
-bool PrintChannelsUInt( const M3Stream* aStream )
+template< typename XDataType >
+bool PrintChannelsReal( const M3Stream* aStream, uint32_t aDataFormat )
 {
     const unsigned tMaxSamples = 30;
     unsigned tRecSize = aStream->GetChannelRecordSize();
     for( unsigned iChan = 0; iChan < aStream->GetNChannels(); ++iChan )
     {
-        const M3DataReader< uint64_t > tDataInterface( aStream->GetChannelRecord( iChan )->GetData(),
-                aStream->GetDataTypeSize(), sDigitizedUS );
+        const M3DataReader< XDataType > tDataInterface( aStream->GetChannelRecord( iChan )->GetData(),
+                aStream->GetDataTypeSize(), aDataFormat );
         stringstream tDataOut;
         for( unsigned iSample = 0; iSample < std::min( tMaxSamples, tRecSize ); ++iSample )
         {
@@ -159,19 +171,20 @@ bool PrintChannelsUInt( const M3Stream* aStream )
             if( iSample != tRecSize - 1 ) tDataOut << ", ";
         }
         if( tRecSize > tMaxSamples ) tDataOut << " . . .";
-        LINFO( mlog, "\tChannel " << iChan << ": " << tDataOut.str() );
+        LPROG( mlog, "\tChannel " << iChan << ": " << tDataOut.str() );
     }
     return true;
 }
 
-bool PrintChannelsInt( const M3Stream* aStream )
+template< typename XDataType >
+bool PrintChannelsComplex( const M3Stream* aStream, uint32_t aDataFormat )
 {
     const unsigned tMaxSamples = 30;
     unsigned tRecSize = aStream->GetChannelRecordSize();
     for( unsigned iChan = 0; iChan < aStream->GetNChannels(); ++iChan )
     {
-        const M3DataReader< int64_t > tDataInterface( aStream->GetChannelRecord( iChan )->GetData(),
-                aStream->GetDataTypeSize(), sDigitizedS );
+        const M3ComplexDataReader< XDataType > tDataInterface( aStream->GetChannelRecord( iChan )->GetData(),
+                aStream->GetDataTypeSize(), aDataFormat, aStream->GetSampleSize() );
         stringstream tDataOut;
         for( unsigned iSample = 0; iSample < std::min( tMaxSamples, tRecSize ); ++iSample )
         {
@@ -179,73 +192,7 @@ bool PrintChannelsInt( const M3Stream* aStream )
             if( iSample != tRecSize - 1 ) tDataOut << ", ";
         }
         if( tRecSize > tMaxSamples ) tDataOut << " . . .";
-        LINFO( mlog, "\tChannel " << iChan << ": " << tDataOut.str() );
+        LPROG( mlog, "\tChannel " << iChan << ": " << tDataOut.str() );
     }
     return true;
 }
-
-bool PrintChannelsFloat( const M3Stream* aStream )
-{
-    const unsigned tMaxSamples = 30;
-    unsigned tRecSize = aStream->GetChannelRecordSize();
-    for( unsigned iChan = 0; iChan < aStream->GetNChannels(); ++iChan )
-    {
-        const M3DataReader< double > tDataInterface( aStream->GetChannelRecord( iChan )->GetData(),
-                aStream->GetDataTypeSize(), sAnalog );
-        stringstream tDataOut;
-        for( unsigned iSample = 0; iSample < std::min( tMaxSamples, tRecSize ); ++iSample )
-        {
-            tDataOut << tDataInterface.at( iSample );
-            if( iSample != tRecSize - 1 ) tDataOut << ", ";
-        }
-        if( tRecSize > tMaxSamples ) tDataOut << " . . .";
-        LINFO( mlog, "\tChannel " << iChan << ": " << tDataOut.str() );
-    }
-    return true;
-}
-
-bool PrintChannelsFloatComplex( const M3Stream* aStream )
-{
-    // NOTE: this implementation is specific to f4_complex and f8_complex, and therefore assumes only 2 elements in each sample
-    const unsigned tMaxSamples = 30;
-    unsigned tRecSize = aStream->GetChannelRecordSize();
-    switch( aStream->GetDataTypeSize() )
-    {
-        case 4:
-            for( unsigned iChan = 0; iChan < aStream->GetNChannels(); ++iChan )
-            {
-                const M3ComplexDataReader< f4_complex > tDataInterface( aStream->GetChannelRecord( iChan )->GetData(),
-                        aStream->GetDataTypeSize(), sAnalog, aStream->GetSampleSize() );
-                stringstream tDataOut;
-                for( unsigned iSample = 0; iSample < std::min( tMaxSamples, tRecSize ); ++iSample )
-                {
-                    tDataOut << "(" << tDataInterface.at( iSample )[ 0 ] << ", " << tDataInterface.at( iSample )[ 1 ] << ")";
-                    if( iSample != tRecSize - 1 ) tDataOut << ", ";
-                }
-                if( tRecSize > tMaxSamples ) tDataOut << " . . .";
-                LINFO( mlog, "\tChannel " << iChan << ": " << tDataOut.str() );
-            }
-            break;
-        case 8:
-            for( unsigned iChan = 0; iChan < aStream->GetNChannels(); ++iChan )
-            {
-                const M3ComplexDataReader< f8_complex > tDataInterface( aStream->GetChannelRecord( iChan )->GetData(),
-                        aStream->GetDataTypeSize(), sAnalog, aStream->GetSampleSize() );
-                stringstream tDataOut;
-                for( unsigned iSample = 0; iSample < std::min( tMaxSamples, tRecSize ); ++iSample )
-                {
-                    tDataOut << "(" << tDataInterface.at( iSample )[ 0 ] << ", " << tDataInterface.at( iSample )[ 1 ] << ")";
-                    if( iSample != tRecSize - 1 ) tDataOut << ", ";
-                }
-                if( tRecSize > tMaxSamples ) tDataOut << " . . .";
-                LINFO( mlog, "\tChannel " << iChan << ": " << tDataOut.str() );
-            }
-            break;
-        default:
-            LERROR( mlog, "Cannot print channels for complex floating-point data with type size " << aStream->GetDataTypeSize() );
-            return false;
-            break;
-    }
-    return true;
-}
-
