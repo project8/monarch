@@ -1,6 +1,9 @@
 Monarch
 =======
 
+[![Documentation Status](https://readthedocs.org/projects/monarch/badge/?version=stable)](https://monarch.readthedocs.io/en/stable/?badge=stable)
+[![DOI](https://zenodo.org/badge/2208206.svg)](https://zenodo.org/badge/latestdoi/2208206)
+
 Monarch is the library for file I/O used by the Project 8 collaboration.
 
 
@@ -9,6 +12,8 @@ Monarch3
 
 The newest version of the Monarch library, Monarch3, produces egg v3 files, 
 which is an HDF5-based file format.
+
+Further Monarch3 documentation can be found on https://monarch.readthedocs.io.
 
 
 Monarch2
