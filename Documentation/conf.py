@@ -13,9 +13,7 @@
 # serve to show the default.
 
 # Customize the following:
-#  * the location of scarab's documentation directory (sys.path.append(...); uncomment if it's commented out)
-#  * the targets for ms.build (arguments 2)
-#  * the exclusions for ms.build (argument 3)
+#  * the doxygen-related environment variables
 #  * the project, copyright, and author variables
 #  * the arguments used to assign variables htmlhelp_basename, latex_documents, man_pages, and texinfo_documents
 
