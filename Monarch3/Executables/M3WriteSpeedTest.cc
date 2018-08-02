@@ -51,14 +51,14 @@ int main( int argc, char** argv )
         tDefaultConfig.add( "array-size", new scarab::param_value( 1024U ) );
         tDefaultConfig.add( "data-type-size", new scarab::param_value( 1U ) );
 
-        scarab::configurator tConfigurator( argc, argv, &tDefaultConfig );
+        scarab::configurator tConfigurator( argc, argv, tDefaultConfig );
 
-        bool tMultithreaded = tConfigurator.get< bool >( "multithreaded" );
-        unsigned tNRecords = tConfigurator.get< unsigned >( "n-records" );
-        unsigned tNStreams = tConfigurator.get< unsigned >( "n-streams" );
-        unsigned tArraySize = tConfigurator.get< unsigned >( "array-size" );
+        bool tMultithreaded = tConfigurator.config()[ "multithreaded" ]().as_bool();
+        unsigned tNRecords = tConfigurator.config()[ "n-records" ]().as_uint();
+        unsigned tNStreams = tConfigurator.config()[ "n-streams" ]().as_uint();
+        unsigned tArraySize = tConfigurator.config()[ "array-size" ]().as_uint();
         unsigned tSampleSize = 1; // currently not configurable
-        unsigned tDataTypeSize = tConfigurator.get< unsigned >( "data-type-size" );
+        unsigned tDataTypeSize = tConfigurator.config()[ "data-type-size" ]().as_uint();
 
         double tMBToWrite = (double)(tNRecords * tNStreams * tArraySize * tSampleSize * tDataTypeSize) * 10.e-6;
 
