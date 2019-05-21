@@ -59,36 +59,31 @@
  *
  */
 
-#define set_prefix Set
-#define get_prefix Get
-#define var_prefix f
-#define static_prefix s
+#include "_camel_case_member_variables.hh"
 
-#include "_member_variables.hh"
+#define M3MEMBERVARIABLE                         camel_case_mv_accessible_mutable
+#define M3MEMBERVARIABLE_NOSET                   camel_case_mv_accessible_mutable_noset
+#define M3MEMBERVARIABLE_STATIC                  camel_case_mv_accessible_static
+#define M3MEMBERVARIABLE_STATIC_NOSET            camel_case_mv_accessible_static_noset
 
-#define M3MEMBERVARIABLE                         mv_accessible_mutable
-#define M3MEMBERVARIABLE_NOSET                   mv_accessible_mutable_noset
-#define M3MEMBERVARIABLE_STATIC                  mv_accessible_static
-#define M3MEMBERVARIABLE_STATIC_NOSET            mv_accessible_static_noset
+#define M3MEMBERVARIABLE_REF                     camel_case_mv_referrable_mutable
+#define M3MEMBERVARIABLE_REF_CONST               camel_case_mv_referrable_mutable
+#define M3MEMBERVARIABLE_REF_STATIC              camel_case_mv_referrable_static
+#define M3MEMBERVARIABLE_REF_STATIC_CONST        camel_case_mv_referrable_static_const
 
-#define M3MEMBERVARIABLE_REF                     mv_referrable_mutable
-#define M3MEMBERVARIABLE_REF_CONST               mv_referrable_mutable
-#define M3MEMBERVARIABLE_REF_STATIC              mv_referrable_static
-#define M3MEMBERVARIABLE_REF_STATIC_CONST        mv_referrable_static_const
+#define M3MEMBERVARIABLE_PTR                     camel_case_mv_assignable_mutable
+#define M3MEMBERVARIABLE_PTR_NOSET               camel_case_mv_assignable_mutable_noset
+#define M3MEMBERVARIABLE_PTR_STATIC              camel_case_mv_assignable_static
+#define M3MEMBERVARIABLE_PTR_STATIC_NOSET        camel_case_mv_assignable_static_noset
 
-#define M3MEMBERVARIABLE_PTR                     mv_assignable_mutable
-#define M3MEMBERVARIABLE_PTR_NOSET               mv_assignable_mutable_noset
-#define M3MEMBERVARIABLE_PTR_STATIC              mv_assignable_static
-#define M3MEMBERVARIABLE_PTR_STATIC_NOSET        mv_assignable_static_noset
+#define M3MEMBERVARIABLE_SHARED_PTR              camel_case_mv_shared_ptr_mutable
+#define M3MEMBERVARIABLE_SHARED_PTR_NOSET        camel_case_mv_shared_ptr_mutable
+#define M3MEMBERVARIABLE_SHARED_PTR_STATIC       camel_case_mv_shared_ptr_static
+#define M3MEMBERVARIABLE_SHARED_PTR_STATIC_NOSET camel_case_mv_shared_ptr_static
 
-#define M3MEMBERVARIABLE_SHARED_PTR              mv_shared_ptr_mutable
-#define M3MEMBERVARIABLE_SHARED_PTR_NOSET        mv_shared_ptr_mutable
-#define M3MEMBERVARIABLE_SHARED_PTR_STATIC       mv_shared_ptr_static
-#define M3MEMBERVARIABLE_SHARED_PTR_STATIC_NOSET mv_shared_ptr_static
-
-#define M3MEMBERVARIABLE_ATOMIC                  mv_atomic_mutable
-#define M3MEMBERVARIABLE_ATOMIC_NOSET            mv_atomic_mutable_noset
-#define M3MEMBERVARIABLE_ATOMIC_STATIC           mv_atomic_static
-#define M3MEMBERVARIABLE_ATOMIC_STATIC_NOSET     mv_atomic_static_noset
+#define M3MEMBERVARIABLE_ATOMIC                  camel_case_mv_atomic_mutable
+#define M3MEMBERVARIABLE_ATOMIC_NOSET            camel_case_mv_atomic_mutable_noset
+#define M3MEMBERVARIABLE_ATOMIC_STATIC           camel_case_mv_atomic_static
+#define M3MEMBERVARIABLE_ATOMIC_STATIC_NOSET     camel_case_mv_atomic_static_noset
 
 #endif /* M3MEMBERVARIABLE_HH_ */
