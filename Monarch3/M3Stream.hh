@@ -140,6 +140,8 @@ namespace monarch3
             uint32_t GetAccessFormat() const { return fAccessFormat; }
 
         private:
+            // private functions do not lock the global HDF5 lock
+
             void ReadRecordInterleavedToSeparate( bool aIsNewAcquisition ) const;
             void ReadRecordAsIs( bool aIsNewAcquisition ) const;
             mutable DoReadRecordFunc fDoReadRecord;
@@ -185,6 +187,8 @@ namespace monarch3
             mutable unsigned fFirstRecordInFile;
 
         private:
+            // private functions do not lock the global HDF5 lock
+
             void BuildIndex() const; // for reading
 
             void FinalizeCurrentAcq(); // for writing

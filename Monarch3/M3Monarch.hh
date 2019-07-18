@@ -63,6 +63,9 @@ namespace monarch3
         private:
             mutable State fState;
 
+            // global hdf5 mutex
+            mutable mutex_ptr fMutexPtr;
+
         public:
             ~Monarch3();
 
@@ -126,9 +129,6 @@ namespace monarch3
 
             // the streams
             mutable std::vector< M3Stream* > fStreams;
-
-            // stream read/write mutex
-            mutable mutex_ptr fMutexPtr;
 
     };
 

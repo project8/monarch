@@ -25,7 +25,8 @@ namespace monarch3
     typedef uint64_t RecordIdType;
     typedef uint64_t TimeType;
 
-    typedef std::shared_ptr< std::mutex > mutex_ptr;
+    typedef std::shared_ptr< std::recursive_mutex > mutex_ptr;
+    typedef std::unique_lock< std::recursive_mutex > mutex_lock;
 
     template<typename T, typename U>
     struct is_same

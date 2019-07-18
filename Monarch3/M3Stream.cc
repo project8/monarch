@@ -9,7 +9,9 @@
 
 #include "M3Stream.hh"
 
+#include "M3HDF5Mutex.hh"
 #include "M3IToA.hh"
+
 #include "logger.hh"
 
 #include <cstdlib> // for abs
@@ -39,8 +41,8 @@ namespace monarch3
 
     M3Stream::M3Stream( const M3StreamHeader& aHeader, HAS_GRP_IFC* aH5StreamsLoc, uint32_t aAccessFormat ) :
             fMode( kRead ),
-            fDoReadRecord( NULL ),
-            fDoWriteRecord( NULL ),
+            fDoReadRecord( nullptr ),
+            fDoWriteRecord( nullptr ),
             fIsInitialized( false ),
             fRecordsAccessed( false ),
             fDataTypeSize( aHeader.GetDataTypeSize() ),
@@ -59,19 +61,19 @@ namespace monarch3
             fNRecordsInAcq( 0 ),
             fAcqFirstRecTime( 0 ),
             fAcqFirstRecId( 0 ),
-            fAcqFirstRecTimes( NULL ),
-            fAcqFirstRecIds( NULL ),
+            fAcqFirstRecTimes( nullptr ),
+            fAcqFirstRecIds( nullptr ),
             fDataInterleaved( aHeader.GetChannelFormat() == sInterleaved ),
             fAccessFormat( aAccessFormat ),
             fRecordIndex(),
             fRecordCountInFile( 0 ),
             fNRecordsInFile( 0 ),
             fFirstRecordInFile( 0 ),
-            fH5StreamParentLoc( new H5::Group( aH5StreamsLoc->openGroup( aHeader.GetLabel() ) ) ),
-            fH5AcqLoc( NULL ),
-            fH5CurrentAcqDataSet( NULL ),
-            fH5DataSpaceUser( NULL ),
-            fMutexPtr( new std::mutex() )
+            fH5StreamParentLoc( nullptr ),
+            fH5AcqLoc( nullptr ),
+            fH5CurrentAcqDataSet( nullptr ),
+            fH5DataSpaceUser( nullptr ),
+            fMutexPtr( HDF5Mutex::get_instance()->Mutex() )
     {
         LDEBUG( mlog, "Creating stream for <" << aHeader.GetLabel() << ">" );
 
@@ -140,6 +142,18 @@ namespace monarch3
             }
         }
 
+        // global mutex lock
+        mutex_lock tLock( *fMutexPtr );
+
+        try
+        {
+            fH5StreamParentLoc = new H5::Group( aH5StreamsLoc->openGroup( aHeader.GetLabel() ) );
+        }
+        catch( H5::Exception& e )
+        {
+            throw M3Exception() << "Unable to get the stream parent location:\n\t" << e.getCDetailMsg() << " (function: " << e.getFuncName() << ")";
+        }
+
         // variables to store the HDF5 error printing state
         H5E_auto2_t tAutoPrintFunc;
         void* tClientData;
@@ -153,6 +167,9 @@ namespace monarch3
             H5::Exception::getAutoPrint( tAutoPrintFunc, &tClientData );
             H5::Exception::dontPrint();
 
+            // This is the key line that determines if we're in read or write mode.
+            // If it throws H5::Exception, then we're in write mode; otherwise we're in read mode.
+            // This needs to stay outside of the inner try block.
             fH5AcqLoc = new H5::Group( fH5StreamParentLoc->openGroup( "acquisitions" ) );
             LDEBUG( mlog, "Opened acquisition group in <read> mode" );
 
@@ -167,9 +184,9 @@ namespace monarch3
                 tAttrNRec.read( tAttrNRec.getDataType(), &fNRecordsInFile );
                 BuildIndex();
             }
-            catch( H5::Exception& )
+            catch( H5::Exception& e )
             {
-                throw M3Exception() << "Acquisitions group is not properly setup for reading\n";
+                throw M3Exception() << "Acquisitions group is not properly setup for reading:\n\t" << e.getCDetailMsg() << " (function: " << e.getFuncName() << ")";
             }
 
             LDEBUG( mlog, "Number of acquisitions found: " << fNAcquisitions << "; Number of records found: " << fNRecordsInFile );
@@ -188,9 +205,9 @@ namespace monarch3
                 LDEBUG( mlog, "Opened acquisition group in <write> mode" );
                 fMode = kWrite;
             }
-            catch( H5::Exception& )
+            catch( H5::Exception& e )
             {
-                throw M3Exception() << "Unable to open new acquisitions group for writing\n";
+                throw M3Exception() << "Unable to open new acquisitions group for writing:\n\t" << e.getCDetailMsg() << " (function: " << e.getFuncName() << ")";
             }
         }
 
@@ -199,10 +216,10 @@ namespace monarch3
 
     M3Stream::~M3Stream()
     {
-        delete fH5DataSpaceUser; fH5DataSpaceUser = NULL;
-        delete fH5CurrentAcqDataSet; fH5CurrentAcqDataSet = NULL;
-        delete fH5AcqLoc; fH5AcqLoc = NULL;
-        delete fH5StreamParentLoc; fH5StreamParentLoc = NULL;
+        delete fH5DataSpaceUser; fH5DataSpaceUser = nullptr;
+        delete fH5CurrentAcqDataSet; fH5CurrentAcqDataSet = nullptr;
+        delete fH5AcqLoc; fH5AcqLoc = nullptr;
+        delete fH5StreamParentLoc; fH5StreamParentLoc = nullptr;
 
         delete [] fChannelRecords;
     }
@@ -250,7 +267,15 @@ namespace monarch3
 
             // HDF5 object initialization
             delete fH5DataSpaceUser;
-            fH5DataSpaceUser = new H5::DataSpace( N_DATA_DIMS, fDataDims1Rec, NULL );
+            try
+            {
+                mutex_lock tLock( *fMutexPtr );
+                fH5DataSpaceUser = new H5::DataSpace( N_DATA_DIMS, fDataDims1Rec, nullptr );
+            }
+            catch( H5::Exception& e )
+            {
+                throw M3Exception() << "Unable to create dataspace for stream (separate, multi-channel, interleaved):\n\t" << e.getCDetailMsg() << " (function: " << e.getFuncName() << ")";
+            }
 
             fIsInitialized = true;
             return;
@@ -290,7 +315,15 @@ namespace monarch3
 
         // HDF5 object initialization
         delete fH5DataSpaceUser;
-        fH5DataSpaceUser = new H5::DataSpace( N_DATA_DIMS, fDataDims1Rec, NULL );
+        try
+        {
+            mutex_lock tLock( *fMutexPtr );
+            fH5DataSpaceUser = new H5::DataSpace( N_DATA_DIMS, fDataDims1Rec, nullptr );
+        }
+        catch( H5::Exception& e )
+        {
+            throw M3Exception() << "Unable to create dataspace for stream:\n\t" << e.getCDetailMsg() << " (function: " << e.getFuncName() << ")";
+        }
 
         fIsInitialized = true;
         return;
@@ -314,8 +347,6 @@ namespace monarch3
     {
         if( ! fIsInitialized ) Initialize();
 
-        std::unique_lock< std::mutex >( *fMutexPtr.get() );
-
         // anOffset should not move us forward if this is the very first record read in the file (fRecordsAccessed == false)
         // Otherwise anOffset should be incremented to 1 to move us forward appropriately (fRecordsAccessed == true)
         anOffset += (int)fRecordsAccessed;
@@ -338,6 +369,8 @@ namespace monarch3
 
         try
         {
+            mutex_lock tLock( *fMutexPtr.get() );
+
             bool tIsNewAcq = false;
             if( nextAcq != fAcquisitionId || ! fRecordsAccessed )
             {
@@ -389,12 +422,13 @@ namespace monarch3
 
     void M3Stream::Close() const
     {
+        mutex_lock tLock( *fMutexPtr.get() );
         //LDEBUG( mlog, "const M3Stream::Close()" );
 
-        delete fH5DataSpaceUser; fH5DataSpaceUser = NULL;
-        delete fH5CurrentAcqDataSet; fH5CurrentAcqDataSet = NULL;
-        delete fH5AcqLoc; fH5AcqLoc = NULL;
-        delete fH5StreamParentLoc; fH5StreamParentLoc = NULL;
+        delete fH5DataSpaceUser; fH5DataSpaceUser = nullptr;
+        delete fH5CurrentAcqDataSet; fH5CurrentAcqDataSet = nullptr;
+        delete fH5AcqLoc; fH5AcqLoc = nullptr;
+        delete fH5StreamParentLoc; fH5StreamParentLoc = nullptr;
 
         return;
     }
@@ -419,7 +453,7 @@ namespace monarch3
 
         try
         {
-            std::unique_lock< std::mutex >( *fMutexPtr.get() );
+            mutex_lock tLock( *fMutexPtr.get() );
 
             if( aIsNewAcquisition )
             {
@@ -472,13 +506,15 @@ namespace monarch3
 
     void M3Stream::Close()
     {
+        mutex_lock tLock( *fMutexPtr.get() );
+
         //LDEBUG( mlog, "non-const M3Stream::Close()" );
         FinalizeStream();
 
-        delete fH5DataSpaceUser; fH5DataSpaceUser = NULL;
-        delete fH5CurrentAcqDataSet; fH5CurrentAcqDataSet = NULL;
-        delete fH5AcqLoc; fH5AcqLoc = NULL;
-        delete fH5StreamParentLoc; fH5StreamParentLoc = NULL;
+        delete fH5DataSpaceUser; fH5DataSpaceUser = nullptr;
+        delete fH5CurrentAcqDataSet; fH5CurrentAcqDataSet = nullptr;
+        delete fH5AcqLoc; fH5AcqLoc = nullptr;
+        delete fH5StreamParentLoc; fH5StreamParentLoc = nullptr;
 
         return;
     }
@@ -492,6 +528,8 @@ namespace monarch3
 
     void M3Stream::ReadRecordInterleavedToSeparate( bool aIsNewAcquisition ) const
     {
+        // private functions do not lock the global HDF5 lock
+
         if( aIsNewAcquisition )
         {
             try
@@ -534,6 +572,8 @@ namespace monarch3
 
     void M3Stream::ReadRecordAsIs( bool aIsNewAcquisition ) const
     {
+        // private functions do not lock the global HDF5 lock
+
         if( aIsNewAcquisition )
         {
             try
@@ -572,6 +612,8 @@ namespace monarch3
 
     void M3Stream::WriteRecordSeparateToInterleaved( bool aIsNewAcquisition )
     {
+        // private functions do not lock the global HDF5 lock
+
         H5::DataSpace tDataSpaceInFile = fH5CurrentAcqDataSet->getSpace();
         for( unsigned iChan = 0; iChan < fNChannels; ++iChan )
         {
@@ -599,6 +641,8 @@ namespace monarch3
 
     void M3Stream::WriteRecordAsIs( bool aIsNewAcquisition )
     {
+        // private functions do not lock the global HDF5 lock
+
         H5::DataSpace tDataSpaceInFile = fH5CurrentAcqDataSet->getSpace();
         tDataSpaceInFile.selectHyperslab( H5S_SELECT_SET, fDataDims1Rec, fDataOffset );
         fH5CurrentAcqDataSet->write( fStreamRecord.GetData(), fDataTypeUser, *fH5DataSpaceUser, tDataSpaceInFile );
@@ -614,6 +658,8 @@ namespace monarch3
 
     void M3Stream::BuildIndex() const
     {
+        // private functions do not lock the global HDF5 lock
+
         fRecordIndex.resize( fNRecordsInFile );
         unsigned tNRecInAcq;
         unsigned iRecInFile = 0;
@@ -636,7 +682,9 @@ namespace monarch3
 
     void M3Stream::FinalizeCurrentAcq()
     {
-        if( fH5CurrentAcqDataSet == NULL ) return;
+        // private functions do not lock the global HDF5 lock
+
+        if( fH5CurrentAcqDataSet == nullptr ) return;
 
         fNRecordsInAcq = fRecordCountInAcq;
 
@@ -645,16 +693,18 @@ namespace monarch3
 
         fRecordCountInAcq = 0;
         delete fH5CurrentAcqDataSet;
-        fH5CurrentAcqDataSet = NULL;
+        fH5CurrentAcqDataSet = nullptr;
 
         return;
     }
 
     void M3Stream::FinalizeStream()
     {
+        // private functions do not lock the global HDF5 lock
+
         FinalizeCurrentAcq();
 
-        if( fH5AcqLoc == NULL ) return;
+        if( fH5AcqLoc == nullptr ) return;
 
         fNAcquisitions = ( fAcquisitionId + 1 ) * (unsigned)fRecordsAccessed;
         fH5StreamParentLoc->openAttribute( "n_acquisitions" ).write( MH5Type< unsigned >::Native(), &fNAcquisitions );

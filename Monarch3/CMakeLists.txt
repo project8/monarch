@@ -6,6 +6,7 @@ set( MONARCH3_HEADERFILES
     M3Constants.hh
     M3DataInterface.hh
     M3Exception.hh
+    M3HDF5Mutex.hh
     M3Header.hh
     M3IToA.hh
     M3MemberVariable.hh
@@ -18,6 +19,7 @@ set( MONARCH3_HEADERFILES
 
 set( MONARCH3_SOURCEFILES
     M3Exception.cc
+    M3HDF5Mutex.cc
     M3Header.cc
     M3IToA.cc
     M3Monarch.cc

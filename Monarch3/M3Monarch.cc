@@ -8,6 +8,8 @@
 
 #include "M3Monarch.hh"
 
+#include "M3HDF5Mutex.hh"
+
 #include "logger.hh"
 
 using std::string;
@@ -18,9 +20,9 @@ namespace monarch3
 
     Monarch3::Monarch3() :
             fState( eClosed ),
+            fMutexPtr( HDF5Mutex::get_instance()->Mutex() ),
             fFile( nullptr ),
-            fHeader( nullptr ),
-            fMutexPtr( new std::mutex() )
+            fHeader( nullptr )
     {
     }
 
@@ -59,6 +61,7 @@ namespace monarch3
 
         try
         {
+            std::unique_lock< std::mutex > tLock( *HDF5Mutex::get_instance()->Mutex() );
             tMonarch3->fFile = new H5::H5File( aFilename.c_str(), H5F_ACC_RDONLY );
         }
         catch( H5::Exception& e )
@@ -95,6 +98,7 @@ namespace monarch3
 
         try
         {
+            std::unique_lock< std::mutex > tLock( *HDF5Mutex::get_instance()->Mutex() );
             tMonarch3->fFile = new H5::H5File( aFilename.c_str(), H5F_ACC_TRUNC );
         }
         catch( H5::Exception& e )
@@ -146,7 +150,6 @@ namespace monarch3
             throw;
         }
 
-
         H5::Group* tStreamsGroup = fHeader->GetStreamsGroup();
 
         try
@@ -157,7 +160,6 @@ namespace monarch3
                     ++streamIt )
             {
                 fStreams.push_back( new M3Stream( *streamIt, tStreamsGroup ) );
-                fStreams.back()->SetMutex( fMutexPtr );
             }
         }
         catch( H5::Exception& e )
@@ -205,7 +207,6 @@ namespace monarch3
                     ++streamIt )
             {
                 fStreams.push_back( new M3Stream( *streamIt, tStreamsGroup ) );
-                fStreams.back()->SetMutex( fMutexPtr );
             }
         }
         catch( H5::Exception& e )
