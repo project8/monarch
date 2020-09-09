@@ -19,8 +19,6 @@ if( Monarch_ENABLE_EXECUTABLES )
         SOURCES ${sources}
         TARGETS_VAR Monarch3_PROGRAMS
         PROJECT_LIBRARIES ${lib_dependencies}
-        #PUBLIC_EXTERNAL_LIBRARIES ${PUBLIC_EXT_LIBS}
-        #PRIVATE_EXTERNAL_LIBRARIES ${PRIVATE_EXT_LIBS}
     )
 
 endif( Monarch_ENABLE_EXECUTABLES )
@@ -43,8 +41,6 @@ if( Monarch_ENABLE_TESTING )
         SOURCES ${sources}
         TARGETS_VAR Monarch3_PROGRAMS
         PROJECT_LIBRARIES ${lib_dependencies}
-        #PUBLIC_EXTERNAL_LIBRARIES ${PUBLIC_EXT_LIBS}
-        #PRIVATE_EXTERNAL_LIBRARIES ${PRIVATE_EXT_LIBS}
     )
 
 endif( Monarch_ENABLE_TESTING )

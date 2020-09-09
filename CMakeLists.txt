@@ -1,5 +1,5 @@
-# Minimum cmake verison 3.1 required for the variable CMAKE_CXX_STANDARD
-cmake_minimum_required (VERSION 3.1)
+# Minimum cmake verison 3.9 for the protobuf imported targets
+cmake_minimum_required (VERSION 3.9)
 
 #########
 # setup #
@@ -21,18 +21,13 @@ add_definitions( -DEgg_VERSION=${Egg_VERSION} )
 set( Monarch_BUILD_MONARCH2 FALSE CACHE BOOL "Build Monarch2 library (requires Protobuf)" )
 set( Monarch_BUILD_MONARCH3 TRUE CACHE BOOL "Build Monarch3 library (requires HDF5)" )
 
-# Control executable build
-if( PBUILDER_STANDALONE )
-    set( Scarab_ENABLE_EXECUTABLES ${Monarch_ENABLE_EXECUTABLES} )
-endif()
-
 
 ########################
 # monarch dependencies #
 ########################
 
-set( PUBLIC_EXT_LIBS )
-set( PRIVATE_EXT_LIBS )
+set( PUBLIC_EXT_LIBS_M2 )
+set( PUBLIC_EXT_LIBS_M3 )
 
 
 ########
@@ -51,10 +46,13 @@ pbuilder_use_sm_library( Scarab Scarab )
 if( Monarch_BUILD_MONARCH3 )
     # Removed C component from find_package on 9/9/16, as it was causing problems on linux builds, and the C interface isn't used
     find_package( HDF5 REQUIRED COMPONENTS CXX )
-    include_directories( BEFORE ${PROJECT_SOURCE_DIR}/Monarch3 ${PROJECT_BINARY_DIR} )
-    # HDF5_INCLUDE_DIR is deprecated, but is placed here to ensure the directory is picked up if an older version of cmake is used
-    include_directories( BEFORE ${HDF5_INCLUDE_DIRS} ${HDF5_INCLUDE_DIR} )
+    include_directories( BEFORE ${PROJECT_SOURCE_DIR}/Monarch3 )
 
+    # HDF5 doesn't currently define imported targets.  Therefore we have to do it ourselves.
+
+    # Library variables returned by the FindHDF5 module are paths to the actual libraries.
+    # We'll store all libraries, regardless of platform, in a single list.
+    set( ALL_HDF5_LIBRARIES )
     if( WIN32 )
 
         # In testing on 3/24/16 I found that the .dlls were being found, not the .libs.  I don't understand why, but this fixes the problem if it occurs.
@@ -63,19 +61,42 @@ if( Monarch_BUILD_MONARCH3 )
         string( REPLACE ".dll" ".lib" HDF5_C_LIBRARY ${HDF5_C_LIBRARY} )
         string( REPLACE ".dll" ".lib" HDF5_CXX_LIBRARY ${HDF5_CXX_LIBRARY} )
 
-        list( APPEND PUBLIC_EXT_LIBS ${HDF5_C_LIBRARY} ${HDF5_CXX_LIBRARY} )
+        list( APPEND ALL_HDF5_LIBRARIES ${HDF5_C_LIBRARY} ${HDF5_CXX_LIBRARY} )
 
         message( STATUS "HDF5_C_LIBRARY: ${HDF5_C_LIBRARY}" )
         message( STATUS "HDF5_CXX_LIBRARY: ${HDF5_CXX_LIBRARY}" )
 
     else()
 
-        list( APPEND PUBLIC_EXT_LIBS ${HDF5_CXX_LIBRARIES} )
+        list( APPEND ALL_HDF5_LIBRARIES ${HDF5_CXX_LIBRARIES} )
         message( STATUS "HDF5_CXX_LIBRARIES: ${HDF5_CXX_LIBRARIES}" )
 
     endif()
 
-    message( STATUS "HDF5_INCLUDE_DIR: ${HDF5_INCLUDE_DIRS}" )
+    # Now we create an imported library for the C++ library, and assign all other libraries as dependencies
+    add_library( HDF5CXXLib SHARED IMPORTED )
+    foreach( LIBRARY_PATH IN LISTS ALL_HDF5_LIBRARIES )
+        get_filename_component( LIBRARY ${LIBRARY_PATH} NAME_WE )
+        string(TOLOWER ${LIBRARY} LIBRARY_LOWER ) # avoid any potential case variation
+        if( LIBRARY_LOWER STREQUAL "libhdf5_cpp" )
+            # this is the C++ library
+            set_target_properties( HDF5CXXLib PROPERTIES IMPORTED_LOCATION ${LIBRARY_PATH} )
+
+            # We want the relevant include directories to be propagated as part of the HDF5 library properties
+            # HDF5_INCLUDE_DIR is deprecated, but is placed here to ensure the directory is picked up if an older version of cmake is used
+            target_include_directories( HDF5CXXLib INTERFACE ${HDF5_INCLUDE_DIRS} ${HDF5_INCLUDE_DIR} )
+        else()
+            # this is a dependency library
+            add_library( ${LIBRARY} SHARED IMPORTED )
+            set_target_properties(  ${LIBRARY} PROPERTIES IMPORTED_LOCATION ${LIBRARY_PATH} )
+
+            # We want the dependency libraries to be propagated as part of the HDF5 library properties
+            target_link_libraries( HDF5CXXLib INTERFACE ${LIBRARY} )
+        endif()
+    endforeach()
+
+    # Add the imported library to the set of external libraries
+    list( APPEND PUBLIC_EXT_LIBS_M3 HDF5CXXLib )
     
     # The following is a work-around to provide compatibility with the HDF5 1.8 API and the HDF5 1.10 API
     # It should be removed in favor of the 1.10 API once we're able to make 1.10 a requirement
@@ -114,8 +135,12 @@ endif( Monarch_BUILD_MONARCH3 )
 if( Monarch_BUILD_MONARCH2 )
     find_package( Protobuf REQUIRED )
     include_directories( BEFORE ${PROJECT_SOURCE_DIR}/Monarch2 ${PROJECT_BINARY_DIR}/Monarch2 ${PROJECT_BINARY_DIR} )
-    include_directories( ${PROTOBUF_INCLUDE_DIR} )
-    pbuilder_add_ext_libraries( ${PROTOBUF_LIBRARIES} )
+
+    list( APPEND PUBLIC_EXT_LIBS_M2 
+        protobuf::libprotobuf 
+        protobuf::libprotobuf-lite 
+        protobuf::libprotoc
+    )
 endif( Monarch_BUILD_MONARCH2 )
 
 

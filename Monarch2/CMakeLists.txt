@@ -43,8 +43,7 @@ set( MONARCH2_SOURCEFILES
 pbuilder_library(
     TARGET Monarch2
     SOURCES ${MONARCH2_SOURCEFILES}
-    #PUBLIC_EXTERNAL_LIBRARIES ${PUBLIC_EXT_LIBS}
-    #PRIVATE_EXTERNAL_LIBRARIES ${PRIVATE_EXT_LIBS}
+    PUBLIC_EXTERNAL_LIBRARIES ${PUBLIC_EXT_LIBS_M2}
 )
 
 pbuilder_component_install_and_export( 
@@ -76,8 +75,6 @@ if( Monarch_ENABLE_EXECUTABLES )
         SOURCES ${sources}
         TARGETS_VAR Monarch2_PROGRAMS
         PROJECT_LIBRARIES ${lib_dependencies}
-        #PUBLIC_EXTERNAL_LIBRARIES ${PUBLIC_EXT_LIBS}
-        #PRIVATE_EXTERNAL_LIBRARIES ${PRIVATE_EXT_LIBS}
     )
 
 endif( Monarch_ENABLE_EXECUTABLES )
@@ -96,8 +93,6 @@ if( Monarch_ENABLE_TESTING )
         SOURCES ${sources}
         TARGETS_VAR Monarch2_PROGRAMS
         PROJECT_LIBRARIES ${lib_dependencies}
-        #PUBLIC_EXTERNAL_LIBRARIES ${PUBLIC_EXT_LIBS}
-        #PRIVATE_EXTERNAL_LIBRARIES ${PRIVATE_EXT_LIBS}
     )
     
 endif( Monarch_ENABLE_TESTING )
