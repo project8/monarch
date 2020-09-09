@@ -31,8 +31,21 @@ set( MONARCH3_SOURCEFILES
     ${CMAKE_CURRENT_BINARY_DIR}/M3Version.cc
 )
 
-pbuilder_library( Monarch3 MONARCH3_SOURCEFILES "" )
+
+pbuilder_library(
+    TARGET Monarch3
+    SOURCES ${MONARCH3_SOURCEFILES}
+    PUBLIC_EXTERNAL_LIBRARIES ${PUBLIC_EXT_LIBS}
+    #PRIVATE_EXTERNAL_LIBRARIES ${PRIVATE_EXT_LIBS}
+    COMPILE_DEFINITIONS ${HDF5_DEFINITIONS}
+)
+
+pbuilder_component_install_and_export( 
+    COMPONENT M3Library
+    LIBTARGETS Monarch3
+)
 
 pbuilder_install_headers( ${MONARCH3_HEADERFILES} )
 
+# Executables
 add_subdirectory( Executables )

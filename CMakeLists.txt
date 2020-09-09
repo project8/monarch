@@ -9,28 +9,40 @@ cmake_policy( SET CMP0048 NEW ) # version in project()
 project( Monarch VERSION 3.5.8 )
 
 list( APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/Scarab/cmake)
-
 include( PackageBuilder )
+
 pbuilder_prepare_project()
 
 # Egg file version
 set( Egg_VERSION "3.2.0" )
 add_definitions( -DEgg_VERSION=${Egg_VERSION} )
 
+# Monarch library options
 set( Monarch_BUILD_MONARCH2 FALSE CACHE BOOL "Build Monarch2 library (requires Protobuf)" )
 set( Monarch_BUILD_MONARCH3 TRUE CACHE BOOL "Build Monarch3 library (requires HDF5)" )
+
+# Control executable build
+if( PBUILDER_STANDALONE )
+    set( Scarab_ENABLE_EXECUTABLES ${Monarch_ENABLE_EXECUTABLES} )
+endif()
 
 
 ########################
 # monarch dependencies #
 ########################
 
+set( PUBLIC_EXT_LIBS )
+set( PRIVATE_EXT_LIBS )
+
+
 ########
 # Scarab
 ########
 
-pbuilder_add_submodule( Scarab Scarab/library )
+pbuilder_add_submodule( Scarab Scarab )
 
+# All parts of Monarch use scarab
+pbuilder_use_sm_library( Scarab Scarab )
 
 ######
 # HDF5
@@ -42,20 +54,27 @@ if( Monarch_BUILD_MONARCH3 )
     include_directories( BEFORE ${PROJECT_SOURCE_DIR}/Monarch3 ${PROJECT_BINARY_DIR} )
     # HDF5_INCLUDE_DIR is deprecated, but is placed here to ensure the directory is picked up if an older version of cmake is used
     include_directories( BEFORE ${HDF5_INCLUDE_DIRS} ${HDF5_INCLUDE_DIR} )
+
     if( WIN32 )
+
         # In testing on 3/24/16 I found that the .dlls were being found, not the .libs.  I don't understand why, but this fixes the problem if it occurs.
         # HDF5_CXX_LIBRARIES was blank in testing, so I commented out the first line.
         #string( REPLACE ".dll" ".lib" HDF5_CXX_LIBRARIES ${HDF5_CXX_LIBRARIES} )
         string( REPLACE ".dll" ".lib" HDF5_C_LIBRARY ${HDF5_C_LIBRARY} )
         string( REPLACE ".dll" ".lib" HDF5_CXX_LIBRARY ${HDF5_CXX_LIBRARY} )
-    endif( WIN32 )
-    # It seems that all 3 of the following lines are needed to make Monarch compile on both Mac/Linux and Windows
-    pbuilder_add_ext_libraries( ${HDF5_CXX_LIBRARIES} )
-    pbuilder_add_ext_libraries( ${HDF5_C_LIBRARY} )
-    pbuilder_add_ext_libraries( ${HDF5_CXX_LIBRARY} )
-    message( STATUS "HDF5_CXX_LIBRARIES: ${HDF5_CXX_LIBRARIES}" )
-    message( STATUS "HDF5_C_LIBRARY: ${HDF5_C_LIBRARY}" )
-    message( STATUS "HDF5_CXX_LIBRARY: ${HDF5_CXX_LIBRARY}" )
+
+        list( APPEND PUBLIC_EXT_LIBS ${HDF5_C_LIBRARY} ${HDF5_CXX_LIBRARY} )
+
+        message( STATUS "HDF5_C_LIBRARY: ${HDF5_C_LIBRARY}" )
+        message( STATUS "HDF5_CXX_LIBRARY: ${HDF5_CXX_LIBRARY}" )
+
+    else()
+
+        list( APPEND PUBLIC_EXT_LIBS ${HDF5_CXX_LIBRARIES} )
+        message( STATUS "HDF5_CXX_LIBRARIES: ${HDF5_CXX_LIBRARIES}" )
+
+    endif()
+
     message( STATUS "HDF5_INCLUDE_DIR: ${HDF5_INCLUDE_DIRS}" )
     
     # The following is a work-around to provide compatibility with the HDF5 1.8 API and the HDF5 1.10 API
@@ -79,10 +98,10 @@ if( Monarch_BUILD_MONARCH3 )
     # Then set preprocessor macros accordingly
     if( ${HAVE_OLD_HDF5} )
         message( STATUS "HDF5 is version 1.10.0 or older" )
-        add_definitions( -DHAS_ATTR_IFC=H5::H5Location -DHAS_GRP_IFC=H5::CommonFG )
+        set( HDF5_DEFINITIONS -DHAS_ATTR_IFC=H5::H5Location -DHAS_GRP_IFC=H5::CommonFG)
     else( ${HAVE_OLD_HDF5} )
         message( STATUS "HDF5 is version 1.10.1 or newer" )
-        add_definitions( -DHAS_ATTR_IFC=H5::H5Object -DHAS_GRP_IFC=H5::H5Object )
+        set( HDF5_DEFINITIONS -DHAS_ATTR_IFC=H5::H5Object -DHAS_GRP_IFC=H5::H5Object )
     endif( ${HAVE_OLD_HDF5} )
 
 endif( Monarch_BUILD_MONARCH3 )
@@ -113,10 +132,11 @@ if( Monarch_BUILD_MONARCH3 )
     add_subdirectory( Monarch3 )
 endif( Monarch_BUILD_MONARCH3 )
 
-#######################
-# installation config #
-#######################
 
-pbuilder_install_config_files()
+##################
+# package config #
+##################
 
-pbuilder_variables_for_parent()
+configure_file( ${PROJECT_SOURCE_DIR}/MonarchConfig.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/MonarchConfig.cmake @ONLY )
+
+pbuilder_do_package_config()

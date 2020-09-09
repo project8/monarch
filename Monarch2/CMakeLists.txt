@@ -39,7 +39,18 @@ set( MONARCH2_SOURCEFILES
     ${CMAKE_CURRENT_BINARY_DIR}/M2Version.cc
 )
 
-pbuilder_library( Monarch2 MONARCH2_SOURCEFILES "" )
+
+pbuilder_library(
+    TARGET Monarch2
+    SOURCES ${MONARCH2_SOURCEFILES}
+    #PUBLIC_EXTERNAL_LIBRARIES ${PUBLIC_EXT_LIBS}
+    #PRIVATE_EXTERNAL_LIBRARIES ${PRIVATE_EXT_LIBS}
+)
+
+pbuilder_component_install_and_export( 
+    COMPONENT M2Library
+    LIBTARGETS Monarch2
+)
 
 pbuilder_install_headers( ${MONARCH2_HEADERFILES} )
 
@@ -48,18 +59,26 @@ pbuilder_install_headers( ${MONARCH2_HEADERFILES} )
 # monarch2 executables #
 ########################
 
+set( Monarch2_PROGRAMS )
+
 if( Monarch_ENABLE_EXECUTABLES )
 
     set( lib_dependencies 
         Monarch2
     )
     
-    set( programs
-        Monarch2Info
-        Monarch2Dump
+    set( sources
+        Monarch2Info.cc
+        Monarch2Dump.cc
     )
     
-    pbuilder_executables( programs lib_dependencies )
+    pbuilder_executables( 
+        SOURCES ${sources}
+        TARGETS_VAR Monarch2_PROGRAMS
+        PROJECT_LIBRARIES ${lib_dependencies}
+        #PUBLIC_EXTERNAL_LIBRARIES ${PUBLIC_EXT_LIBS}
+        #PRIVATE_EXTERNAL_LIBRARIES ${PRIVATE_EXT_LIBS}
+    )
 
 endif( Monarch_ENABLE_EXECUTABLES )
 
@@ -69,10 +88,23 @@ if( Monarch_ENABLE_TESTING )
         Monarch2
     )
     
-    set( programs
-        Monarch2TimeCheck
+    set( sources
+        Monarch2TimeCheck.cc
     )
     
-    pbuilder_executables( programs lib_dependencies )
+    pbuilder_executables( 
+        SOURCES ${sources}
+        TARGETS_VAR Monarch2_PROGRAMS
+        PROJECT_LIBRARIES ${lib_dependencies}
+        #PUBLIC_EXTERNAL_LIBRARIES ${PUBLIC_EXT_LIBS}
+        #PRIVATE_EXTERNAL_LIBRARIES ${PRIVATE_EXT_LIBS}
+    )
     
 endif( Monarch_ENABLE_TESTING )
+
+if( Monarch2_PROGRAMS )
+    pbuilder_component_install_and_export( 
+        COMPONENT M2Executables
+        EXETARGETS ${Monarch2_PROGRAMS}
+    )
+endif()
