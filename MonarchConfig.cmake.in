@@ -1,22 +1,30 @@
 # MonarchConfig.cmake
 
-if (@PROJECT_NAME@_FOUND)
-    return()
-endif (@PROJECT_NAME@_FOUND)
-set (@PROJECT_NAME@_FOUND TRUE)
+get_filename_component( Monarch_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH )
 
-# Make customizations below
+include( CMakeFindDependencyMacro )
+find_dependency( Scarab REQUIRED PATHS ${Monarch_CMAKE_DIR}/Scarab )
 
-set (@PROJECT_NAME@_DEPENDS_LIBRARIES @EXTERNAL_LIBRARIES@)
+# Monarch3
+if( @Monarch_BUILD_MONARCH3@ )
+    find_dependency( HDF5 REQUIRED COMPONENTS CXX )
+    if( NOT TARGET Monarch::@Monarch3_FULL_TARGET_NAME@ )
+        if( TARGET @Monarch3_FULL_TARGET_NAME@ )
+            add_library( Monarch::@Monarch3_FULL_TARGET_NAME@ ALIAS @Monarch3_FULL_TARGET_NAME@ )
+        else()
+            include("${Monarch_CMAKE_DIR}/Monarch_M3Library_Targets.cmake")
+        endif()
+    endif()
+endif()
 
-set (@PROJECT_NAME@_VERSION_MAJOR @@PROJECT_NAME@_VERSION_MAJOR@)
-set (@PROJECT_NAME@_VERSION_MINOR @@PROJECT_NAME@_VERSION_MINOR@)
-set (@PROJECT_NAME@_REVISION @@PROJECT_NAME@_REVISION@)
-set (@PROJECT_NAME@_VERSION @@PROJECT_NAME@_VERSION@)
-set (@PROJECT_NAME@_FULL_VERSION @@PROJECT_NAME@_FULL_VERSION@)
-set (@PROJECT_NAME@_PACKAGE_NAME @@PROJECT_NAME@_PACKAGE_NAME@)
-set (@PROJECT_NAME@_PACKAGE_STRING @@PROJECT_NAME@_PACKAGE_STRING@)
-
-list (APPEND @PROJECT_NAME@_INCLUDE_DIRS @INCLUDE_INSTALL_DIR@)
-list (APPEND @PROJECT_NAME@_LIBRARY_DIRS @LIB_INSTALL_DIR@)
-list (APPEND @PROJECT_NAME@_LIBRARIES @@PROJECT_NAME@_LIBRARIES@)
+# Monarch2
+if( @Monarch_BUILD_MONARCH2@ )
+    find_dependency( Protobuf REQUIRED )
+    if( NOT TARGET Monarch::@Monarch2_FULL_TARGET_NAME@ )
+        if( TARGET @Monarch2_FULL_TARGET_NAME@ )
+            add_library( Monarch::@Monarch2_FULL_TARGET_NAME@ ALIAS @Monarch2_FULL_TARGET_NAME@ )
+        else()
+            include("${Monarch_CMAKE_DIR}/Monarch_M2Library_Targets.cmake")
+        endif()
+    endif()
+endif()
