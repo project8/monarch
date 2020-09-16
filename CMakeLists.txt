@@ -1,5 +1,5 @@
-# Minimum cmake verison 3.1 required for the variable CMAKE_CXX_STANDARD
-cmake_minimum_required (VERSION 3.1)
+# Minimum cmake verison 3.9 for the protobuf imported targets
+cmake_minimum_required (VERSION 3.9)
 
 #########
 # setup #
@@ -9,14 +9,15 @@ cmake_policy( SET CMP0048 NEW ) # version in project()
 project( Monarch VERSION 3.5.8 )
 
 list( APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/Scarab/cmake)
-
 include( PackageBuilder )
+
 pbuilder_prepare_project()
 
 # Egg file version
 set( Egg_VERSION "3.2.0" )
 add_definitions( -DEgg_VERSION=${Egg_VERSION} )
 
+# Monarch library options
 set( Monarch_BUILD_MONARCH2 FALSE CACHE BOOL "Build Monarch2 library (requires Protobuf)" )
 set( Monarch_BUILD_MONARCH3 TRUE CACHE BOOL "Build Monarch3 library (requires HDF5)" )
 
@@ -25,12 +26,18 @@ set( Monarch_BUILD_MONARCH3 TRUE CACHE BOOL "Build Monarch3 library (requires HD
 # monarch dependencies #
 ########################
 
+set( PUBLIC_EXT_LIBS_M2 )
+set( PUBLIC_EXT_LIBS_M3 )
+
+
 ########
 # Scarab
 ########
 
-pbuilder_add_submodule( Scarab Scarab/library )
+pbuilder_add_submodule( Scarab Scarab )
 
+# All parts of Monarch use scarab
+pbuilder_use_sm_library( Scarab Scarab )
 
 ######
 # HDF5
@@ -39,24 +46,57 @@ pbuilder_add_submodule( Scarab Scarab/library )
 if( Monarch_BUILD_MONARCH3 )
     # Removed C component from find_package on 9/9/16, as it was causing problems on linux builds, and the C interface isn't used
     find_package( HDF5 REQUIRED COMPONENTS CXX )
-    include_directories( BEFORE ${PROJECT_SOURCE_DIR}/Monarch3 ${PROJECT_BINARY_DIR} )
-    # HDF5_INCLUDE_DIR is deprecated, but is placed here to ensure the directory is picked up if an older version of cmake is used
-    include_directories( BEFORE ${HDF5_INCLUDE_DIRS} ${HDF5_INCLUDE_DIR} )
+    include_directories( BEFORE ${PROJECT_SOURCE_DIR}/Monarch3 )
+
+    # HDF5 doesn't currently define imported targets.  Therefore we have to do it ourselves.
+
+    # Library variables returned by the FindHDF5 module are paths to the actual libraries.
+    # We'll store all libraries, regardless of platform, in a single list.
+    set( ALL_HDF5_LIBRARIES )
     if( WIN32 )
+
         # In testing on 3/24/16 I found that the .dlls were being found, not the .libs.  I don't understand why, but this fixes the problem if it occurs.
         # HDF5_CXX_LIBRARIES was blank in testing, so I commented out the first line.
         #string( REPLACE ".dll" ".lib" HDF5_CXX_LIBRARIES ${HDF5_CXX_LIBRARIES} )
         string( REPLACE ".dll" ".lib" HDF5_C_LIBRARY ${HDF5_C_LIBRARY} )
         string( REPLACE ".dll" ".lib" HDF5_CXX_LIBRARY ${HDF5_CXX_LIBRARY} )
-    endif( WIN32 )
-    # It seems that all 3 of the following lines are needed to make Monarch compile on both Mac/Linux and Windows
-    pbuilder_add_ext_libraries( ${HDF5_CXX_LIBRARIES} )
-    pbuilder_add_ext_libraries( ${HDF5_C_LIBRARY} )
-    pbuilder_add_ext_libraries( ${HDF5_CXX_LIBRARY} )
-    message( STATUS "HDF5_CXX_LIBRARIES: ${HDF5_CXX_LIBRARIES}" )
-    message( STATUS "HDF5_C_LIBRARY: ${HDF5_C_LIBRARY}" )
-    message( STATUS "HDF5_CXX_LIBRARY: ${HDF5_CXX_LIBRARY}" )
-    message( STATUS "HDF5_INCLUDE_DIR: ${HDF5_INCLUDE_DIRS}" )
+
+        list( APPEND ALL_HDF5_LIBRARIES ${HDF5_C_LIBRARY} ${HDF5_CXX_LIBRARY} )
+
+        message( STATUS "HDF5_C_LIBRARY: ${HDF5_C_LIBRARY}" )
+        message( STATUS "HDF5_CXX_LIBRARY: ${HDF5_CXX_LIBRARY}" )
+
+    else()
+
+        list( APPEND ALL_HDF5_LIBRARIES ${HDF5_CXX_LIBRARIES} )
+        message( STATUS "HDF5_CXX_LIBRARIES: ${HDF5_CXX_LIBRARIES}" )
+
+    endif()
+
+    # Now we create an imported library for the C++ library, and assign all other libraries as dependencies
+    add_library( HDF5CXXLib SHARED IMPORTED )
+    foreach( LIBRARY_PATH IN LISTS ALL_HDF5_LIBRARIES )
+        get_filename_component( LIBRARY ${LIBRARY_PATH} NAME_WE )
+        string(TOLOWER ${LIBRARY} LIBRARY_LOWER ) # avoid any potential case variation
+        if( LIBRARY_LOWER STREQUAL "libhdf5_cpp" )
+            # this is the C++ library
+            set_target_properties( HDF5CXXLib PROPERTIES IMPORTED_LOCATION ${LIBRARY_PATH} )
+
+            # We want the relevant include directories to be propagated as part of the HDF5 library properties
+            # HDF5_INCLUDE_DIR is deprecated, but is placed here to ensure the directory is picked up if an older version of cmake is used
+            target_include_directories( HDF5CXXLib INTERFACE ${HDF5_INCLUDE_DIRS} ${HDF5_INCLUDE_DIR} )
+        else()
+            # this is a dependency library
+            add_library( ${LIBRARY} SHARED IMPORTED )
+            set_target_properties(  ${LIBRARY} PROPERTIES IMPORTED_LOCATION ${LIBRARY_PATH} )
+
+            # We want the dependency libraries to be propagated as part of the HDF5 library properties
+            target_link_libraries( HDF5CXXLib INTERFACE ${LIBRARY} )
+        endif()
+    endforeach()
+
+    # Add the imported library to the set of external libraries
+    list( APPEND PUBLIC_EXT_LIBS_M3 HDF5CXXLib )
     
     # The following is a work-around to provide compatibility with the HDF5 1.8 API and the HDF5 1.10 API
     # It should be removed in favor of the 1.10 API once we're able to make 1.10 a requirement
@@ -79,10 +119,10 @@ if( Monarch_BUILD_MONARCH3 )
     # Then set preprocessor macros accordingly
     if( ${HAVE_OLD_HDF5} )
         message( STATUS "HDF5 is version 1.10.0 or older" )
-        add_definitions( -DHAS_ATTR_IFC=H5::H5Location -DHAS_GRP_IFC=H5::CommonFG )
+        set( HDF5_DEFINITIONS -DHAS_ATTR_IFC=H5::H5Location -DHAS_GRP_IFC=H5::CommonFG)
     else( ${HAVE_OLD_HDF5} )
         message( STATUS "HDF5 is version 1.10.1 or newer" )
-        add_definitions( -DHAS_ATTR_IFC=H5::H5Object -DHAS_GRP_IFC=H5::H5Object )
+        set( HDF5_DEFINITIONS -DHAS_ATTR_IFC=H5::H5Object -DHAS_GRP_IFC=H5::H5Object )
     endif( ${HAVE_OLD_HDF5} )
 
 endif( Monarch_BUILD_MONARCH3 )
@@ -95,8 +135,12 @@ endif( Monarch_BUILD_MONARCH3 )
 if( Monarch_BUILD_MONARCH2 )
     find_package( Protobuf REQUIRED )
     include_directories( BEFORE ${PROJECT_SOURCE_DIR}/Monarch2 ${PROJECT_BINARY_DIR}/Monarch2 ${PROJECT_BINARY_DIR} )
-    include_directories( ${PROTOBUF_INCLUDE_DIR} )
-    pbuilder_add_ext_libraries( ${PROTOBUF_LIBRARIES} )
+
+    list( APPEND PUBLIC_EXT_LIBS_M2 
+        protobuf::libprotobuf 
+        protobuf::libprotobuf-lite 
+        protobuf::libprotoc
+    )
 endif( Monarch_BUILD_MONARCH2 )
 
 
@@ -113,10 +157,11 @@ if( Monarch_BUILD_MONARCH3 )
     add_subdirectory( Monarch3 )
 endif( Monarch_BUILD_MONARCH3 )
 
-#######################
-# installation config #
-#######################
 
-pbuilder_install_config_files()
+##################
+# package config #
+##################
 
-pbuilder_variables_for_parent()
+configure_file( ${PROJECT_SOURCE_DIR}/MonarchConfig.cmake.in ${CMAKE_CURRENT_BINARY_DIR}/MonarchConfig.cmake @ONLY )
+
+pbuilder_do_package_config()
