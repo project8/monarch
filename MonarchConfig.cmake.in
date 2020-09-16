@@ -3,11 +3,11 @@
 get_filename_component( Monarch_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH )
 
 include( CMakeFindDependencyMacro )
-find_dependency( HDF5 REQUIRED COMPONENTS CXX )
 find_dependency( Scarab REQUIRED PATHS ${Monarch_CMAKE_DIR}/Scarab )
 
 # Monarch3
 if( @Monarch_BUILD_MONARCH3@ )
+    find_dependency( HDF5 REQUIRED COMPONENTS CXX )
     if( NOT TARGET Monarch::@Monarch3_FULL_TARGET_NAME@ )
         if( TARGET @Monarch3_FULL_TARGET_NAME@ )
             add_library( Monarch::@Monarch3_FULL_TARGET_NAME@ ALIAS @Monarch3_FULL_TARGET_NAME@ )
@@ -19,6 +19,7 @@ endif()
 
 # Monarch2
 if( @Monarch_BUILD_MONARCH2@ )
+    find_dependency( Protobuf REQUIRED )
     if( NOT TARGET Monarch::@Monarch2_FULL_TARGET_NAME@ )
         if( TARGET @Monarch2_FULL_TARGET_NAME@ )
             add_library( Monarch::@Monarch2_FULL_TARGET_NAME@ ALIAS @Monarch2_FULL_TARGET_NAME@ )
