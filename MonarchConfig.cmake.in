@@ -3,7 +3,7 @@
 get_filename_component( Monarch_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH )
 
 include( CMakeFindDependencyMacro )
-find_dependency( Scarab REQUIRED PATHS ${Monarch_CMAKE_DIR}/Scarab )
+find_dependency( Scarab REQUIRED PATHS ${Monarch_CMAKE_DIR}/Scarab @Scarab_BINARY_LOCATION@ )
 
 # Monarch3
 if( @Monarch_BUILD_MONARCH3@ )
