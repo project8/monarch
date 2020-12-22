@@ -73,12 +73,12 @@ int main( int argc, char** argv )
         if( tNStreams == 0 )
         {
             LERROR( mlog, "Please specify a number of streams > 0" );
-            return -1;
+            return RETURN_ERROR;
         }
 
 
         boost::filesystem::path tFilePath = boost::filesystem::temp_directory_path() / boost::filesystem::unique_path();
-        Monarch3* tWriteTest = Monarch3::OpenForWriting( tFilePath.native() );
+        std::shared_ptr< Monarch3 > tWriteTest( Monarch3::OpenForWriting( tFilePath.native() ) );
         LINFO( mlog, "Temp file is " << tFilePath );
 
         LINFO( mlog, "Preparing header" );
@@ -107,9 +107,9 @@ int main( int argc, char** argv )
         LINFO( mlog, "Creating fake data array" );
 
         unsigned tNBytes = tArraySize * tDataTypeSize * tSampleSize;
-        byte_type* tDataMaster = new byte_type[tNBytes];
+        std::vector< byte_type > tDataMaster( tNBytes );
 
-        M3DataWriter< uint8_t > tDMWriter( tDataMaster, tDataTypeSize, sDigitizedUS );
+        M3DataWriter< uint8_t > tDMWriter( tDataMaster.data(), tDataTypeSize, sDigitizedUS );
         for( unsigned iBin = 0; iBin < tArraySize; ++iBin )
         {
             tDMWriter.set_at( 42, iBin );
@@ -151,7 +151,7 @@ int main( int argc, char** argv )
                     tRunRelease.wait( tRunLock );
                     for( unsigned iRecord = 0; iRecord < tNRecords; ++iRecord )
                     {
-                        ::memcpy( tStreamData[ iStream ], tDataMaster, tNBytes );
+                        ::memcpy( tStreamData[ iStream ], tDataMaster.data(), tNBytes );
                         if( ! tStreams[ iStream ]->WriteRecord( tIsNewAcq ) )
                         {
                             LERROR( mlog, "Unable to write record <" << iRecord << "> for stream <" << iStream << ">" );
@@ -201,13 +201,11 @@ int main( int argc, char** argv )
             {
                 for( unsigned iStream = 0; iStream < tNStreams; ++iStream )
                 {
-                    ::memcpy( tStreamData[ iStream ], tDataMaster, tNBytes );
+                    ::memcpy( tStreamData[ iStream ], tDataMaster.data(), tNBytes );
                     if( ! tStreams[ iStream ]->WriteRecord( tIsNewAcq ) )
                     {
                         LERROR( mlog, "Unable to write record <" << iRecord << "> for stream <" << iStream << ">" );
-                        delete tWriteTest;
-                        delete [] tDataMaster;
-                        return -1;
+                        return RETURN_ERROR;
                     }
                 }
                 tIsNewAcq = false;
@@ -227,10 +225,7 @@ int main( int argc, char** argv )
 
         tWriteTest->FinishWriting();
 
-        delete tWriteTest;
         boost::filesystem::remove( tFilePath );
-
-        delete [] tDataMaster;
 
         LINFO( mlog, "Test finished" );
 
@@ -238,7 +233,8 @@ int main( int argc, char** argv )
     catch( std::exception& e )
     {
         LERROR( mlog, "Exception thrown during write-speed test:\n" << e.what() );
+        return RETURN_ERROR;
     }
 
-    return 0;
+    return RETURN_SUCCESS;
 }

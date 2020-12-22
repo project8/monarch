@@ -39,7 +39,7 @@ int main( const int argc, const char** argv )
     try
     {
         LPROG( mlog, "Opening file <" << tFilename << ">" );
-        const Monarch3* tReadTest = Monarch3::OpenForReading( tFilename );
+        std::shared_ptr< const Monarch3 > tReadTest( Monarch3::OpenForReading( tFilename ) );
 
         LPROG( mlog, "Reading header" );
         tReadTest->ReadHeader();
@@ -50,7 +50,6 @@ int main( const int argc, const char** argv )
         if( tHeaderOnly )
         {
             tReadTest->FinishReading();
-            delete tReadTest;
             return RETURN_SUCCESS;
         }
 
@@ -133,7 +132,6 @@ int main( const int argc, const char** argv )
         }
 
         tReadTest->FinishReading();
-        delete tReadTest;
     }
     catch( M3Exception& e )
     {

@@ -21,7 +21,7 @@ int main( const int argc, const char** argv )
 
     try
     {
-        Monarch3* tWriteTest = Monarch3::OpenForWriting( tFilename );
+        std::shared_ptr< Monarch3 > tWriteTest( Monarch3::OpenForWriting( tFilename ) );
 
         M3Header* tHeader = tWriteTest->GetHeader();
         tHeader->Filename() = tFilename;
@@ -60,7 +60,6 @@ int main( const int argc, const char** argv )
         if( ! tSingleStream->WriteRecord( true ) )
         {
             LERROR( mlog, "Unable to write the record!" );
-            delete tWriteTest;
             return RETURN_ERROR;
         }
 
@@ -71,7 +70,6 @@ int main( const int argc, const char** argv )
         if( ! tSingleStream->WriteRecord( false ) )
         {
             LERROR( mlog, "Unable to write the record!" );
-            delete tWriteTest;
             return RETURN_ERROR;
         }
 
@@ -88,7 +86,6 @@ int main( const int argc, const char** argv )
         if( ! tDoubleStream->WriteRecord( true ) )
         {
             LERROR( mlog, "Unable to write the record!" );
-            delete tWriteTest;
             return RETURN_ERROR;
         }
 
@@ -100,7 +97,6 @@ int main( const int argc, const char** argv )
         if( ! tDoubleStream->WriteRecord( true ) )
         {
             LERROR( mlog, "Unable to write the record!" );
-            delete tWriteTest;
             return RETURN_ERROR;
         }
 
@@ -112,7 +108,6 @@ int main( const int argc, const char** argv )
         if( ! tDoubleStream->WriteRecord( false ) )
         {
             LERROR( mlog, "Unable to write the record!" );
-            delete tWriteTest;
             return RETURN_ERROR;
         }
 
@@ -131,7 +126,6 @@ int main( const int argc, const char** argv )
         if( ! tTripleStream->WriteRecord( true ) )
         {
             LERROR( mlog, "Unable to write the record!" );
-            delete tWriteTest;
             return RETURN_ERROR;
         }
 
@@ -144,7 +138,6 @@ int main( const int argc, const char** argv )
         if( ! tTripleStream->WriteRecord( false ) )
         {
             LERROR( mlog, "Unable to write the record!" );
-            delete tWriteTest;
             return RETURN_ERROR;
         }
 
@@ -160,7 +153,6 @@ int main( const int argc, const char** argv )
         if( ! tFloatStream->WriteRecord( true ) )
         {
             LERROR( mlog, "Unable to write the record!" );
-            delete tWriteTest;
             return RETURN_ERROR;
         }
 
@@ -171,7 +163,6 @@ int main( const int argc, const char** argv )
         if( ! tFloatStream->WriteRecord( true ) )
         {
             LERROR( mlog, "Unable to write the record!" );
-            delete tWriteTest;
             return RETURN_ERROR;
         }
 
@@ -203,7 +194,6 @@ int main( const int argc, const char** argv )
         if( ! tFlCompStream->WriteRecord( true ) )
         {
             LERROR( mlog, "Unable to write the record!" );
-            delete tWriteTest;
             return RETURN_ERROR;
         }
 
@@ -223,21 +213,17 @@ int main( const int argc, const char** argv )
         if( ! tFlCompStream->WriteRecord( false ) )
         {
             LERROR( mlog, "Unable to write the record!" );
-            delete tWriteTest;
             return RETURN_ERROR;
         }
         */
 
-
         tWriteTest->FinishWriting();
         LINFO( mlog, "File closed" );
-
-        delete tWriteTest;
-
     }
     catch( M3Exception& e )
     {
         LERROR( mlog, "Exception thrown during write test:\n" << e.what() );
+        return RETURN_ERROR;
     }
 
     return RETURN_SUCCESS;
