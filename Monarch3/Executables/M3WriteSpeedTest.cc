@@ -21,7 +21,7 @@
 #include "M3DataInterface.hh"
 #include "M3Monarch.hh"
 
-#include "configurator.hh"
+#include "application.hh"
 #include "logger.hh"
 #include "param.hh"
 
@@ -42,23 +42,31 @@ LOGGER( mlog, "M3WriteSpeedTest" );
 
 int main( int argc, char** argv )
 {
+    scarab::main_app theMain;
+
+    theMain.default_config().add( "multithreaded", new scarab::param_value( false ) );
+    theMain.default_config().add( "n-records", new scarab::param_value( 10000U ) );
+    theMain.default_config().add( "n-streams", new scarab::param_value( 1U ) );
+    theMain.default_config().add( "array-size", new scarab::param_value( 1024U ) );
+    theMain.default_config().add( "data-type-size", new scarab::param_value( 1U ) );
+
+    theMain.add_config_option< std::string >( "Filename", "filename", "Test output filename" );
+    theMain.add_config_flag< bool >( "-m,--multithreaded", "multithreaded", "Use multithreaded write" );
+    theMain.add_config_option< unsigned >( "-n,--n-records", "n-records", "Number of records to write" );
+    theMain.add_config_option< unsigned >( "-N,--n-streams", "n-streams", "Number of streams to write" );
+    theMain.add_config_option< unsigned >( "-a,--array-size", "array-size", "Array size" );
+    theMain.add_config_option< unsigned >( "-d,--data-type-size", "data-type-size", "Data-type size" );
+
+    CLI11_PARSE( theMain, argc, argv );
+
     try
     {
-        scarab::param_node tDefaultConfig;
-        tDefaultConfig.add( "multithreaded", new scarab::param_value( false ) );
-        tDefaultConfig.add( "n-records", new scarab::param_value( 10000U ) );
-        tDefaultConfig.add( "n-streams", new scarab::param_value( 1U ) );
-        tDefaultConfig.add( "array-size", new scarab::param_value( 1024U ) );
-        tDefaultConfig.add( "data-type-size", new scarab::param_value( 1U ) );
-
-        scarab::configurator tConfigurator( argc, argv, tDefaultConfig );
-
-        bool tMultithreaded = tConfigurator.config()[ "multithreaded" ]().as_bool();
-        unsigned tNRecords = tConfigurator.config()[ "n-records" ]().as_uint();
-        unsigned tNStreams = tConfigurator.config()[ "n-streams" ]().as_uint();
-        unsigned tArraySize = tConfigurator.config()[ "array-size" ]().as_uint();
+        bool tMultithreaded = theMain.primary_config()[ "multithreaded" ]().as_bool();
+        unsigned tNRecords = theMain.primary_config()[ "n-records" ]().as_uint();
+        unsigned tNStreams = theMain.primary_config()[ "n-streams" ]().as_uint();
+        unsigned tArraySize = theMain.primary_config()[ "array-size" ]().as_uint();
         unsigned tSampleSize = 1; // currently not configurable
-        unsigned tDataTypeSize = tConfigurator.config()[ "data-type-size" ]().as_uint();
+        unsigned tDataTypeSize = theMain.primary_config()[ "data-type-size" ]().as_uint();
 
         double tMBToWrite = (double)(tNRecords * tNStreams * tArraySize * tSampleSize * tDataTypeSize) * 10.e-6;
 

@@ -23,7 +23,7 @@ bool PrintChannelsReal( const M3Stream* aStream, uint32_t aDataFormat );
 
 template< typename XDataType >
 bool PrintChannelsComplex( const M3Stream* aStream, uint32_t aDataFormat );
-
+  
 int main( const int argc, const char** argv )
 {
     scarab::main_app theMain( true );
@@ -32,7 +32,7 @@ int main( const int argc, const char** argv )
     std::string tFilename;
 
     theMain.add_flag( "-H,--header-only", tHeaderOnly, "Only look at header information; does not check number of records" );
-    theMain.add_option( "file", tFilename, "File to open" )->required();
+    theMain.add_option( "Filename", tFilename, "File to read" )->required();
 
     CLI11_PARSE( theMain, argc, argv );
 

@@ -13,7 +13,7 @@
 #include "M3DataInterface.hh"
 #include "M3Monarch.hh"
 
-#include "configurator.hh"
+#include "application.hh"
 #include "logger.hh"
 #include "param.hh"
 
@@ -36,12 +36,15 @@ int main( int argc, char** argv )
 {
     try
     {
-        scarab::param_node tDefaultConfig;
-        tDefaultConfig.add( "filename", new scarab::param_value( "multithreading_test.egg" ) );
+        scarab::main_app theMain;
 
-        scarab::configurator tConfigurator( argc, argv, tDefaultConfig );
+        theMain.default_config().add( "filename", "multithreading_test.egg" );
 
-        std::string tFilename = tConfigurator.config()[ "filename" ]().as_string();
+        theMain.add_config_option< std::string >( "Filename", "filename", "Test output filename" );
+
+        CLI11_PARSE( theMain, argc, argv );
+
+        std::string tFilename = theMain.primary_config()[ "filename" ]().as_string();
 
         unsigned tNRecords = 5;
         unsigned tNStreams = 10;
