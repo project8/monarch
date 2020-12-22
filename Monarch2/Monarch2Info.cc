@@ -1,7 +1,10 @@
 #include "M2Monarch.hh"
+
+#include "application.hh"
 #include "logger.hh"
 
 #include <cstring>
+#include <memory>
 
 using namespace monarch2;
 
@@ -9,38 +12,26 @@ LOGGER( mlog, "Monarch2Info" );
 
 int main( const int argc, const char** argv )
 {
-    if( argc < 2 )
-    {
-        LINFO( mlog, "usage:\n"
-            << "  Monarch2Info [-h] <input egg file>\n"
-            << "      -h: (optional) header only; does not check number of records" );
-        return -1;
-    }
+    scarab::main_app theMain( true );
 
-    unsigned tFileArg = 1;
-    bool tCheckRecords = true;
-    if( strcmp( argv[1], "-h" ) == 0 )
-    {
-        if( argc < 3 )
-        {
-            LERROR( mlog, "no filename provided" );
-            return -1;
-        }
-        ++tFileArg;
-        tCheckRecords = false;
-    }
+    bool tHeaderOnly;
+    std::string tFilename;
 
-    const Monarch2* tReadTest = Monarch2::OpenForReading( argv[tFileArg] );
+    theMain.add_flag( "-H,--header-only", tHeaderOnly, "Only look at header information; does not check number of records" );
+    theMain.add_option( "Filename", tFilename, "Input egg file" )->required();
+
+    CLI11_PARSE( theMain, argc, argv );
+
+    std::shared_ptr< const Monarch2 > tReadTest( Monarch2::OpenForReading( tFilename ) );
     tReadTest->ReadHeader();
 
     const M2Header* tReadHeader = tReadTest->GetHeader();
     LINFO( mlog, *tReadHeader );
 
-    if( ! tCheckRecords )
+    if( tHeaderOnly )
     {
         tReadTest->Close();
-        delete tReadTest;
-        return 0;
+        return RETURN_SUCCESS;
     }
 
     unsigned int tRecordCount = 0;
@@ -61,7 +52,7 @@ int main( const int argc, const char** argv )
     else
     {
         LERROR( mlog, "Unable to read a header with acquisition mode <" << tReadHeader->GetAcquisitionMode() << "> and format mode <" << tReadHeader->GetFormatMode() << ">" );
-        return -1;
+        return RETURN_ERROR;
     }
     try
     {
@@ -78,12 +69,12 @@ int main( const int argc, const char** argv )
     catch (M2Exception& e)
     {
         LWARN( mlog, "Something went wrong during the reading of records!" << "\n\t" << e.what() );
+        return RETURN_ERROR;
     }
     LINFO( mlog, "record count <" << tRecordCount << ">" );
     LINFO( mlog, "acquisition count <" << tAcquisiontCount << ">" );
 
     tReadTest->Close();
-    delete tReadTest;
 
-    return 0;
+    return RETURN_SUCCESS;
 }
