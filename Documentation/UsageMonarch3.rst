@@ -1,7 +1,10 @@
 How to use Monarch3
 ===================
 
-Thread safety: Reading and writing records (via M3Stream::ReadRecord() and M3Stream::WriteRecord(), respectively) are thread-safe.  All other operations are not thread-safe.
+Thread safety: Reading and writing records (via M3Stream::ReadRecord() and M3Stream::WriteRecord(), respectively) are thread-safe 
+except that the HDF5 C library (on which the C++ library is built) is inherently non-thread-safe.  Though multi-threaded writing may 
+work even most of the time, it is inherently unstable.  
+All other operations in Monarch (besides writing and reading records) are are explicitly not thread-safe.
 
 Reading Egg3 Files
 ------------------
