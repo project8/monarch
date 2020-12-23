@@ -14,7 +14,7 @@ LOGGER( mlog, "Monarch2Dump" );
 
 int main( const int argc, const char** argv )
 {
-    scarab::main_app theMain( true );
+    scarab::main_app theMain( false );
 
     unsigned tNRecords;
     std::string tInputFilename, tOutputFilebase;

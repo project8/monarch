@@ -19,7 +19,7 @@ LOGGER( mlog, "Monarch2TimeCheck" );
 
 int main( const int argc, const char** argv )
 {
-    scarab::main_app theMain( true );
+    scarab::main_app theMain( false );
 
     std::string tInputFilename, tOutputFilename;
 

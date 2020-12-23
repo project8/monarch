@@ -25,7 +25,7 @@ bool PrintChannelsFloatComplex( const M3Stream* aStream );
 
 int main( const int argc, const char** argv )
 {
-    scarab::main_app theMain( true );
+    scarab::main_app theMain( false );
 
     bool tHeaderOnly;
     std::string tFilename;
