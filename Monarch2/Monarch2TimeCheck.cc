@@ -6,6 +6,8 @@
  */
 
 #include "M2Monarch.hh"
+
+#include "application.hh"
 #include "logger.hh"
 
 #include <fstream>
@@ -17,21 +19,23 @@ LOGGER( mlog, "Monarch2TimeCheck" );
 
 int main( const int argc, const char** argv )
 {
-    if( argc < 3 )
-    {
-        LINFO( mlog, "usage:\n"
-            << "  Monarch2TimeCheck <input egg file> <output text file>" );
-        return -1;
-    }
+    scarab::main_app theMain( false );
 
-    ofstream tOutput( argv[ 2 ] );
+    std::string tInputFilename, tOutputFilename;
+
+    theMain.add_option( "InputFilename", tInputFilename, "Input egg file" )->required();
+    theMain.add_option( "OutputFilename", tOutputFilename, "Output text file" )->required();
+
+    CLI11_PARSE( theMain, argc, argv );
+
+    ofstream tOutput( tOutputFilename );
     if( tOutput.is_open() == false )
     {
         LERROR( mlog, "could not open output file!" );
-        return -1;
+        return RETURN_ERROR;
     }
 
-    const Monarch2* tReadTest = Monarch2::OpenForReading( argv[1] );
+    std::shared_ptr< const Monarch2 > tReadTest( Monarch2::OpenForReading( tInputFilename ) );
     tReadTest->ReadHeader();
 
     const M2Header* tReadHeader = tReadTest->GetHeader();
@@ -70,7 +74,7 @@ int main( const int argc, const char** argv )
     if (! tReadTest->ReadRecord())
     {
         LERROR( mlog, "No records in the file" );
-        return -1;
+        return RETURN_ERROR;
     }
     tRecordCount = 1;
     tAcquisitionCount = 1;
@@ -105,11 +109,10 @@ int main( const int argc, const char** argv )
     LINFO( mlog, "acquisition count <" << tAcquisitionCount << ">" );
 
     tReadTest->Close();
-    delete tReadTest;
 
     tOutput.close();
 
-    return 0;
+    return RETURN_SUCCESS;
 }
 
 

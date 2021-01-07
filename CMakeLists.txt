@@ -1,17 +1,15 @@
-# Minimum cmake verison 3.9 for the protobuf imported targets
-cmake_minimum_required (VERSION 3.9)
+# Minimum cmake verison 3.12 for Scarab
+cmake_minimum_required (VERSION 3.12)
 
 #########
 # setup #
 #########
 
 cmake_policy( SET CMP0048 NEW ) # version in project()
-project( Monarch VERSION 3.7.0 )
+project( Monarch VERSION 3.8.0 )
 
 list( APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/Scarab/cmake)
 include( PackageBuilder )
-
-pbuilder_prepare_project()
 
 # Egg file version
 set( Egg_VERSION "3.2.0" )
@@ -28,16 +26,6 @@ set( Monarch_BUILD_MONARCH3 TRUE CACHE BOOL "Build Monarch3 library (requires HD
 
 set( PUBLIC_EXT_LIBS_M2 )
 set( PUBLIC_EXT_LIBS_M3 )
-
-
-########
-# Scarab
-########
-
-pbuilder_add_submodule( Scarab Scarab )
-
-# All parts of Monarch use scarab
-pbuilder_use_sm_library( Scarab Scarab )
 
 ######
 # HDF5
@@ -143,6 +131,22 @@ if( Monarch_BUILD_MONARCH2 )
     )
 endif( Monarch_BUILD_MONARCH2 )
 
+
+#####################
+# Prepare for Build #
+#####################
+
+pbuilder_prepare_project()
+
+
+########
+# Scarab
+########
+
+pbuilder_add_submodule( Scarab Scarab )
+
+# All parts of Monarch use scarab
+pbuilder_use_sm_library( Scarab Scarab )
 
 
 #############################

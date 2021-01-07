@@ -1,4 +1,6 @@
 #include "M2Monarch.hh"
+
+#include "application.hh"
 #include "logger.hh"
 
 #include <cstdlib>
@@ -12,21 +14,18 @@ LOGGER( mlog, "Monarch2Dump" );
 
 int main( const int argc, const char** argv )
 {
-    if( argc < 3 )
-    {
-        LINFO( mlog, "usage:\n"
-            << "  Monarch2Dump <input egg file> <output text file> <# of records per channel [optional]>\n"
-            << "# of records is optional; the default is 1; use 0 to dump the whole file" );
-        return -1;
-    }
+    scarab::main_app theMain( false );
 
-    unsigned int nRecords = 1;
-    if( argc >= 4 )
-    {
-        nRecords = atoi( argv[3] );
-    }
+    unsigned tNRecords;
+    std::string tInputFilename, tOutputFilebase;
 
-    const Monarch2* tReadTest = Monarch2::OpenForReading( argv[ 1 ] );
+    theMain.add_option( "-n,--n-records", tNRecords, "Number of records to dump; use 0 to dump the whole file" )->default_val(0);
+    theMain.add_option( "InputFilename", tInputFilename, "Input egg file" )->required();
+    theMain.add_option( "OutputFilename", tOutputFilebase, "Filename base for output files (will have ch[#].txt appended)" )->required();
+
+    CLI11_PARSE( theMain, argc, argv );
+
+    std::shared_ptr< const Monarch2 > tReadTest( Monarch2::OpenForReading( tInputFilename ) );
     tReadTest->ReadHeader();
     tReadTest->SetInterface( sInterfaceSeparate );
 
@@ -38,13 +37,12 @@ int main( const int argc, const char** argv )
 
     if( tReadHeader->GetFormatMode() == sFormatSingle )
     {
-        ofstream tOutputOne( (std::string( argv[ 2 ] ) + std::string( "_ch1.txt" )).c_str() );
+        ofstream tOutputOne( (tOutputFilebase + std::string( "_ch1.txt" )).c_str() );
         if( tOutputOne.is_open() == false )
         {
             LERROR( mlog, "could not open channel one output file!" );
             tReadTest->Close();
-            delete tReadTest;
-            return -1;
+            return RETURN_ERROR;
         }
 
         const unsigned tDataTypeSize = tReadHeader->GetDataTypeSize();
@@ -53,8 +51,8 @@ int main( const int argc, const char** argv )
         unsigned int tRecordsPerChannel = 0;
         while( tReadTest->ReadRecord() != false )
         {
-            tRecordCount++;
-            tRecordsPerChannel++;
+            ++tRecordCount;
+            ++tRecordsPerChannel;
             if( tReadRecord->fAcquisitionId == tAcquisitionCount )
             {
                 tAcquisitionCount = tAcquisitionCount + 1;
@@ -64,29 +62,26 @@ int main( const int argc, const char** argv )
             {
                 tOutputOne << tIndex << " " << tData.at( tIndex ) << "\n";
             }
-            if (nRecords != 0 && tRecordsPerChannel >= nRecords)
-                break;
+            if (tNRecords != 0 && tRecordsPerChannel >= tNRecords) break;
         }
 
         tOutputOne.close();
     }
     if( (tReadHeader->GetFormatMode() == sFormatMultiInterleaved) || (tReadHeader->GetFormatMode() == sFormatMultiSeparate) )
     {
-        ofstream tOutputOne( (std::string( argv[ 2 ] ) + std::string( "_ch1.txt" )).c_str() );
-        ofstream tOutputTwo( (std::string( argv[ 2 ] ) + std::string( "_ch2.txt" )).c_str() );
+        ofstream tOutputOne( (tOutputFilebase + std::string( "_ch1.txt" )).c_str() );
+        ofstream tOutputTwo( (tOutputFilebase + std::string( "_ch2.txt" )).c_str() );
         if( tOutputOne.is_open() == false )
         {
             LERROR( mlog, "could not open channel one output file!" );
             tReadTest->Close();
-            delete tReadTest;
-            return -1;
+            return RETURN_ERROR;
         }
         if( tOutputTwo.is_open() == false )
         {
             LERROR( mlog, "could not open channel two output file!" );
             tReadTest->Close();
-            delete tReadTest;
-            return -1;
+            return RETURN_ERROR;
         }
 
         const unsigned tDataTypeSize = tReadHeader->GetDataTypeSize();
@@ -98,20 +93,19 @@ int main( const int argc, const char** argv )
         while( tReadTest->ReadRecord() != false )
         {
             tRecordCount = tRecordCount + 1;
-            tRecordsPerChannel++;
+            ++tRecordsPerChannel;
             if( tReadRecordOne->fAcquisitionId == tAcquisitionCount )
             {
                 tAcquisitionCount = tAcquisitionCount + 1;
                 tOutputOne << "\n\n";
                 tOutputTwo << "\n\n";
             }
-            for( unsigned int tIndex = 0; tIndex < tReadHeader->GetRecordSize(); tIndex++ )
+            for( unsigned int tIndex = 0; tIndex < tReadHeader->GetRecordSize(); ++tIndex )
             {
                 tOutputOne << tIndex << " " << tDataOne.at( tIndex ) << "\n";
                 tOutputTwo << tIndex << " " << tDataTwo.at( tIndex ) << "\n";
             }
-            if (nRecords != 0 && tRecordsPerChannel >= nRecords)
-                break;
+            if (tNRecords != 0 && tRecordsPerChannel >= tNRecords) break;
         }
 
         tOutputOne.close();
@@ -122,8 +116,7 @@ int main( const int argc, const char** argv )
     LINFO( mlog, "acquisition count <" << tAcquisitionCount << ">" );
 
     tReadTest->Close();
-    delete tReadTest;
 
-    return 0;
+    return RETURN_SUCCESS;
 }
 

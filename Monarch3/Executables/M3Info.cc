@@ -6,6 +6,7 @@
 #include "M3Monarch.hh"
 #include "M3Record.hh"
 
+#include "application.hh"
 #include "logger.hh"
 
 #include <algorithm>
@@ -22,35 +23,23 @@ bool PrintChannelsReal( const M3Stream* aStream, uint32_t aDataFormat );
 
 template< typename XDataType >
 bool PrintChannelsComplex( const M3Stream* aStream, uint32_t aDataFormat );
-
+  
 int main( const int argc, const char** argv )
 {
-    if( argc < 2 || strcmp( argv[1], "-h" ) == 0 )
-    {
-        LPROG( mlog, "usage:\n"
-            << "  M3Info [-Hh] <input egg file>\n"
-            << "      -h: print this usage information\n"
-            << "      -H: (optional) header only; does not check number of records" );
-        return 0;
-    }
+    scarab::main_app theMain( false );
 
-    unsigned tFileArg = 1;
-    bool tCheckRecords = true;
-    if( strcmp( argv[1], "-H" ) == 0 )
-    {
-        if( argc < 3 )
-        {
-            LERROR( mlog, "no filename provided" );
-            return 1;
-        }
-        ++tFileArg;
-        tCheckRecords = false;
-    }
+    bool tHeaderOnly;
+    std::string tFilename;
+
+    theMain.add_flag( "-H,--header-only", tHeaderOnly, "Only look at header information; does not check number of records" );
+    theMain.add_option( "Filename", tFilename, "File to read" )->required();
+
+    CLI11_PARSE( theMain, argc, argv );
 
     try
     {
-        LPROG( mlog, "Opening file <" << argv[tFileArg] << ">" );
-        const Monarch3* tReadTest = Monarch3::OpenForReading( argv[tFileArg] );
+        LPROG( mlog, "Opening file <" << tFilename << ">" );
+        std::shared_ptr< const Monarch3 > tReadTest( Monarch3::OpenForReading( tFilename ) );
 
         LPROG( mlog, "Reading header" );
         tReadTest->ReadHeader();
@@ -58,11 +47,10 @@ int main( const int argc, const char** argv )
         const M3Header* tReadHeader = tReadTest->GetHeader();
         LPROG( mlog, *tReadHeader );
 
-        if( ! tCheckRecords )
+        if( tHeaderOnly )
         {
             tReadTest->FinishReading();
-            delete tReadTest;
-            return 0;
+            return RETURN_SUCCESS;
         }
 
         LPROG( mlog, "Reading data" );
@@ -144,15 +132,14 @@ int main( const int argc, const char** argv )
         }
 
         tReadTest->FinishReading();
-        delete tReadTest;
     }
     catch( M3Exception& e )
     {
         LERROR( mlog, "Exception thrown during file reading:\n" << e.what() );
-        return 1;
+        return RETURN_ERROR;
     }
 
-    return 0;
+    return RETURN_SUCCESS;
 }
 
 template< typename XDataType >

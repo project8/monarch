@@ -21,7 +21,7 @@
 #include "M3DataInterface.hh"
 #include "M3Monarch.hh"
 
-#include "configurator.hh"
+#include "application.hh"
 #include "logger.hh"
 #include "param.hh"
 
@@ -42,35 +42,43 @@ LOGGER( mlog, "M3WriteSpeedTest" );
 
 int main( int argc, char** argv )
 {
+    scarab::main_app theMain;
+
+    theMain.default_config().add( "multithreaded", new scarab::param_value( false ) );
+    theMain.default_config().add( "n-records", new scarab::param_value( 10000U ) );
+    theMain.default_config().add( "n-streams", new scarab::param_value( 1U ) );
+    theMain.default_config().add( "array-size", new scarab::param_value( 1024U ) );
+    theMain.default_config().add( "data-type-size", new scarab::param_value( 1U ) );
+
+    theMain.add_config_option< std::string >( "Filename", "filename", "Test output filename" );
+    theMain.add_config_flag< bool >( "-m,--multithreaded", "multithreaded", "Use multithreaded write" );
+    theMain.add_config_option< unsigned >( "-n,--n-records", "n-records", "Number of records to write" );
+    theMain.add_config_option< unsigned >( "-N,--n-streams", "n-streams", "Number of streams to write" );
+    theMain.add_config_option< unsigned >( "-a,--array-size", "array-size", "Array size" );
+    theMain.add_config_option< unsigned >( "-d,--data-type-size", "data-type-size", "Data-type size" );
+
+    CLI11_PARSE( theMain, argc, argv );
+
     try
     {
-        scarab::param_node tDefaultConfig;
-        tDefaultConfig.add( "multithreaded", new scarab::param_value( false ) );
-        tDefaultConfig.add( "n-records", new scarab::param_value( 10000U ) );
-        tDefaultConfig.add( "n-streams", new scarab::param_value( 1U ) );
-        tDefaultConfig.add( "array-size", new scarab::param_value( 1024U ) );
-        tDefaultConfig.add( "data-type-size", new scarab::param_value( 1U ) );
-
-        scarab::configurator tConfigurator( argc, argv, tDefaultConfig );
-
-        bool tMultithreaded = tConfigurator.config()[ "multithreaded" ]().as_bool();
-        unsigned tNRecords = tConfigurator.config()[ "n-records" ]().as_uint();
-        unsigned tNStreams = tConfigurator.config()[ "n-streams" ]().as_uint();
-        unsigned tArraySize = tConfigurator.config()[ "array-size" ]().as_uint();
+        bool tMultithreaded = theMain.primary_config()[ "multithreaded" ]().as_bool();
+        unsigned tNRecords = theMain.primary_config()[ "n-records" ]().as_uint();
+        unsigned tNStreams = theMain.primary_config()[ "n-streams" ]().as_uint();
+        unsigned tArraySize = theMain.primary_config()[ "array-size" ]().as_uint();
         unsigned tSampleSize = 1; // currently not configurable
-        unsigned tDataTypeSize = tConfigurator.config()[ "data-type-size" ]().as_uint();
+        unsigned tDataTypeSize = theMain.primary_config()[ "data-type-size" ]().as_uint();
 
         double tMBToWrite = (double)(tNRecords * tNStreams * tArraySize * tSampleSize * tDataTypeSize) * 10.e-6;
 
         if( tNStreams == 0 )
         {
             LERROR( mlog, "Please specify a number of streams > 0" );
-            return -1;
+            return RETURN_ERROR;
         }
 
 
         boost::filesystem::path tFilePath = boost::filesystem::temp_directory_path() / boost::filesystem::unique_path();
-        Monarch3* tWriteTest = Monarch3::OpenForWriting( tFilePath.native() );
+        std::shared_ptr< Monarch3 > tWriteTest( Monarch3::OpenForWriting( tFilePath.native() ) );
         LINFO( mlog, "Temp file is " << tFilePath );
 
         LINFO( mlog, "Preparing header" );
@@ -99,9 +107,9 @@ int main( int argc, char** argv )
         LINFO( mlog, "Creating fake data array" );
 
         unsigned tNBytes = tArraySize * tDataTypeSize * tSampleSize;
-        byte_type* tDataMaster = new byte_type[tNBytes];
+        std::vector< byte_type > tDataMaster( tNBytes );
 
-        M3DataWriter< uint8_t > tDMWriter( tDataMaster, tDataTypeSize, sDigitizedUS );
+        M3DataWriter< uint8_t > tDMWriter( tDataMaster.data(), tDataTypeSize, sDigitizedUS );
         for( unsigned iBin = 0; iBin < tArraySize; ++iBin )
         {
             tDMWriter.set_at( 42, iBin );
@@ -143,7 +151,7 @@ int main( int argc, char** argv )
                     tRunRelease.wait( tRunLock );
                     for( unsigned iRecord = 0; iRecord < tNRecords; ++iRecord )
                     {
-                        ::memcpy( tStreamData[ iStream ], tDataMaster, tNBytes );
+                        ::memcpy( tStreamData[ iStream ], tDataMaster.data(), tNBytes );
                         if( ! tStreams[ iStream ]->WriteRecord( tIsNewAcq ) )
                         {
                             LERROR( mlog, "Unable to write record <" << iRecord << "> for stream <" << iStream << ">" );
@@ -193,13 +201,11 @@ int main( int argc, char** argv )
             {
                 for( unsigned iStream = 0; iStream < tNStreams; ++iStream )
                 {
-                    ::memcpy( tStreamData[ iStream ], tDataMaster, tNBytes );
+                    ::memcpy( tStreamData[ iStream ], tDataMaster.data(), tNBytes );
                     if( ! tStreams[ iStream ]->WriteRecord( tIsNewAcq ) )
                     {
                         LERROR( mlog, "Unable to write record <" << iRecord << "> for stream <" << iStream << ">" );
-                        delete tWriteTest;
-                        delete [] tDataMaster;
-                        return -1;
+                        return RETURN_ERROR;
                     }
                 }
                 tIsNewAcq = false;
@@ -219,10 +225,7 @@ int main( int argc, char** argv )
 
         tWriteTest->FinishWriting();
 
-        delete tWriteTest;
         boost::filesystem::remove( tFilePath );
-
-        delete [] tDataMaster;
 
         LINFO( mlog, "Test finished" );
 
@@ -230,7 +233,8 @@ int main( int argc, char** argv )
     catch( std::exception& e )
     {
         LERROR( mlog, "Exception thrown during write-speed test:\n" << e.what() );
+        return RETURN_ERROR;
     }
 
-    return 0;
+    return RETURN_SUCCESS;
 }
