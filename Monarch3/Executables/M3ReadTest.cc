@@ -4,6 +4,7 @@
 
 #include "M3DataInterface.hh"
 #include "M3Monarch.hh"
+#include "application.hh"
 #include "logger.hh"
 #include "M3Record.hh"
 
@@ -24,32 +25,19 @@ bool PrintChannelsFloatComplex( const M3Stream* aStream );
 
 int main( const int argc, const char** argv )
 {
-    if( argc < 2 || strcmp( argv[1], "-h" ) == 0 )
-    {
-        LINFO( mlog, "usage:\n"
-            << "  M3ReadTest [-Hh] <input egg file>\n"
-            << "      -h: print this usage information\n"
-            << "      -H: (optional) header only; does not check records" );
-        return -1;
-    }
+    scarab::main_app theMain( false );
 
-    unsigned tFileArg = 1;
-    bool tCheckRecords = true;
-    if( strcmp( argv[1], "-H" ) == 0 )
-    {
-        if( argc < 3 )
-        {
-            LERROR( mlog, "no filename provided" );
-            return -1;
-        }
-        ++tFileArg;
-        tCheckRecords = false;
-    }
+    bool tHeaderOnly;
+    std::string tFilename;
+    theMain.add_flag( "-H,--header-only", tHeaderOnly, "Only look at header information; does not check number of records" );
+    theMain.add_option( "Filename", tFilename, "File to read" )->required();
+
+    CLI11_PARSE( theMain, argc, argv );
 
     try
     {
-        LINFO( mlog, "Opening file <" << argv[tFileArg] );
-        const Monarch3* tReadTest = Monarch3::OpenForReading( argv[tFileArg] );
+        LINFO( mlog, "Opening file <" << tFilename );
+        std::shared_ptr< const Monarch3 > tReadTest( Monarch3::OpenForReading( tFilename ) );
 
         LINFO( mlog, "Reading header" );
         tReadTest->ReadHeader();
@@ -57,11 +45,10 @@ int main( const int argc, const char** argv )
         const M3Header* tReadHeader = tReadTest->GetHeader();
         LINFO( mlog, *tReadHeader );
 
-        if( ! tCheckRecords )
+        if( tHeaderOnly )
         {
             tReadTest->FinishReading();
-            delete tReadTest;
-            return 0;
+            return RETURN_SUCCESS;
         }
 
         LINFO( mlog, "Reading data" );
@@ -81,8 +68,7 @@ int main( const int argc, const char** argv )
         if( tNAcquisitions0 != 1 || tNChannels0 != 1 || tNRecords0 != 2 )
         {
             LERROR( mlog, "Invalid number of acquisitions (1 expected), channels (1 expected), or records (2 expected)" );
-            delete tReadTest;
-            return 0;
+            return RETURN_ERROR;
         }
 
         for( unsigned iRec = 0; iRec < tNRecords0; ++iRec )
@@ -91,8 +77,7 @@ int main( const int argc, const char** argv )
             if( ! ReadRecordCheck( tStream0, 0, tStrHeader0.GetDataFormat() ) )
             {
                 LERROR( mlog, "Failed read record check" );
-                delete tReadTest;
-                return 0;
+                return RETURN_ERROR;
             }
         }
 
@@ -116,64 +101,56 @@ int main( const int argc, const char** argv )
         if( tNAcquisitions1 != 2 || tNChannels1 != 2 || tNRecords1 != 3 )
         {
             LERROR( mlog, "Invalid number of acquisitions (2 expected), channels (2 expected), or records (3 expected)" );
-            delete tReadTest;
-            return 0;
+            return RETURN_ERROR;
         }
 
         LINFO( mlog, "Read the first record (record 0)" );
         if( ! ReadRecordCheck( tStream1, 0, tStrHeader1.GetDataFormat() ) )
         {
             LERROR( mlog, "Failed read record check" );
-            delete tReadTest;
-            return 0;
+            return RETURN_ERROR;
         }
 
         LINFO( mlog, "Skip to the third record, crossing to the next acquisition (record 2; acquisition 1)" );
         if( ! ReadRecordCheck( tStream1, 1, tStrHeader1.GetDataFormat() ) )
         {
             LERROR( mlog, "Failed read record check" );
-            delete tReadTest;
-            return 0;
+            return RETURN_ERROR;
         }
 
         LINFO( mlog, "Reread the third record (record 2; acquisition 1)" );
         if( ! ReadRecordCheck( tStream1, -1, tStrHeader1.GetDataFormat() ) )
         {
             LERROR( mlog, "Failed read record check" );
-            delete tReadTest;
-            return 0;
+            return RETURN_ERROR;
         }
 
         LINFO( mlog, "Go backwards to the second record (record 1; acquisition 1)" );
         if( ! ReadRecordCheck( tStream1, -2, tStrHeader1.GetDataFormat() ) )
         {
             LERROR( mlog, "Failed read record check" );
-            delete tReadTest;
-            return 0;
+            return RETURN_ERROR;
         }
 
         LINFO( mlog, "Go backwards to the first record (record 1; acquisition 0)" );
         if( ! ReadRecordCheck( tStream1, -2, tStrHeader1.GetDataFormat() ) )
         {
             LERROR( mlog, "Failed read record check" );
-            delete tReadTest;
-            return 0;
+            return RETURN_ERROR;
         }
 
         LINFO( mlog, "Reread the first record (record 1; acquisition 0)" );
         if( ! ReadRecordCheck( tStream1, -1, tStrHeader1.GetDataFormat() ) )
         {
             LERROR( mlog, "Failed read record check" );
-            delete tReadTest;
-            return 0;
+            return RETURN_ERROR;
         }
 
         LINFO( mlog, "Request record beyond the end of the file" );
         if( tStream1->ReadRecord( 5 ) )
         {
             LERROR( mlog, "Record read did not fail" );
-            delete tReadTest;
-            return 0;
+            return RETURN_ERROR;
         }
 
         LINFO( mlog, "Test 2 complete\n" );
@@ -195,24 +172,21 @@ int main( const int argc, const char** argv )
         if( tNAcquisitions2 != 1 || tNChannels2 != 3 || tNRecords2 != 2 )
         {
             LERROR( mlog, "Invalid number of acquisitions (1 expected), channels (3 expected), or records (2 expected)" );
-            delete tReadTest;
-            return 0;
+            return RETURN_ERROR;
         }
 
         LINFO( mlog, "Skipping immediately to the second record (record 1)" );
         if( ! ReadRecordCheck( tStream2, 1, tStrHeader2.GetDataFormat() ) )
         {
             LERROR( mlog, "Failed read record check" );
-            delete tReadTest;
-            return 0;
+            return RETURN_ERROR;
         }
 
         LINFO( mlog, "Request record before the beginning of the file" );
         if( tStream2->ReadRecord( -3 ) )
         {
             LERROR( mlog, "Record read did not fail" );
-            delete tReadTest;
-            return 0;
+            return RETURN_ERROR;
         }
 
         LINFO( mlog, "Test 3 complete\n" );
@@ -233,8 +207,7 @@ int main( const int argc, const char** argv )
         if( tNAcquisitions3 != 2 || tNChannels3 != 1 || tNRecords3 != 2 )
         {
             LERROR( mlog, "Invalid number of acquisitions (2 expected), channels (1 expected), or records (2 expected)" );
-            delete tReadTest;
-            return 0;
+            return RETURN_ERROR;
         }
 
         for( unsigned iRec = 0; iRec < tNRecords3; ++iRec )
@@ -243,8 +216,7 @@ int main( const int argc, const char** argv )
             if( ! ReadRecordCheck( tStream3, 0, tStrHeader3.GetDataFormat() ) )
             {
                 LERROR( mlog, "Failed read record check" );
-                delete tReadTest;
-                return 0;
+                return RETURN_ERROR;
             }
         }
 
@@ -269,8 +241,7 @@ int main( const int argc, const char** argv )
         if( tNAcquisitions4 != 1 || tNChannels4 != 5 || tNRecords4 != 2 )
         {
             LERROR( mlog, "Invalid number of acquisitions (1 expected), channels (5 expected), or records (2 expected)" );
-            delete tReadTest;
-            return 0;
+            return RETURN_ERROR;
         }
 
         for( unsigned iRec = 0; iRec < tNRecords4; ++iRec )
@@ -279,8 +250,7 @@ int main( const int argc, const char** argv )
             if( ! ReadRecordCheck( tStream4, 0, tStrHeader4.GetDataFormat() ) )
             {
                 LERROR( mlog, "Failed read record check" );
-                delete tReadTest;
-                return 0;
+                return RETURN_ERROR;
             }
         }
 
@@ -290,14 +260,14 @@ int main( const int argc, const char** argv )
 
 
         tReadTest->FinishReading();
-        delete tReadTest;
     }
     catch( M3Exception& e )
     {
         LERROR( mlog, "Exception thrown during file reading:\n" << e.what() );
+        return RETURN_ERROR;
     }
 
-    return 0;
+    return RETURN_SUCCESS;
 }
 
 bool ReadRecordCheck( const M3Stream* aStream, int aOffset, unsigned aDataFormat )

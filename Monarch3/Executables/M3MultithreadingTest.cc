@@ -13,7 +13,7 @@
 #include "M3DataInterface.hh"
 #include "M3Monarch.hh"
 
-#include "configurator.hh"
+#include "application.hh"
 #include "logger.hh"
 #include "param.hh"
 
@@ -36,12 +36,15 @@ int main( int argc, char** argv )
 {
     try
     {
-        scarab::param_node tDefaultConfig;
-        tDefaultConfig.add( "filename", new scarab::param_value( "multithreading_test.egg" ) );
+        scarab::main_app theMain;
 
-        scarab::configurator tConfigurator( argc, argv, tDefaultConfig );
+        theMain.default_config().add( "filename", "multithreading_test.egg" );
 
-        std::string tFilename = tConfigurator.config()[ "filename" ]().as_string();
+        theMain.add_config_option< std::string >( "Filename", "filename", "Test output filename" );
+
+        CLI11_PARSE( theMain, argc, argv );
+
+        std::string tFilename = theMain.primary_config()[ "filename" ]().as_string();
 
         unsigned tNRecords = 5;
         unsigned tNStreams = 10;
@@ -49,7 +52,7 @@ int main( int argc, char** argv )
         unsigned tSampleSize = 1;
         unsigned tDataTypeSize = 1;
 
-        Monarch3* tWriteTest = Monarch3::OpenForWriting( tFilename );
+        std::shared_ptr< Monarch3 > tWriteTest( Monarch3::OpenForWriting( tFilename ) );
 
         LINFO( mlog, "Preparing header" );
         M3Header* tHeader = tWriteTest->GetHeader();
@@ -77,9 +80,9 @@ int main( int argc, char** argv )
         LINFO( mlog, "Creating fake data array" );
 
         unsigned tNBytes = tArraySize * tDataTypeSize * tSampleSize;
-        byte_type* tDataMaster = new byte_type[tNBytes];
+        std::vector< byte_type > tDataMaster( tNBytes );
 
-        M3DataWriter< uint8_t > tDMWriter( tDataMaster, tDataTypeSize, sDigitizedUS );
+        M3DataWriter< uint8_t > tDMWriter( tDataMaster.data(), tDataTypeSize, sDigitizedUS );
         for( unsigned iBin = 0; iBin < tArraySize; ++iBin )
         {
             tDMWriter.set_at( 42, iBin );
@@ -115,7 +118,7 @@ int main( int argc, char** argv )
                 tRunRelease.wait( tRunLock );
                 for( unsigned iRecord = 0; iRecord < tNRecords; ++iRecord )
                 {
-                    ::memcpy( tStreamData[ iStream ], tDataMaster, tNBytes );
+                    ::memcpy( tStreamData[ iStream ], tDataMaster.data(), tNBytes );
                     if( ! tStreams[ iStream ]->WriteRecord( tIsNewAcq ) )
                     {
                         LERROR( mlog, "Unable to write record <" << iRecord << "> for stream <" << iStream << ">" );
@@ -147,17 +150,14 @@ int main( int argc, char** argv )
 
         tWriteTest->FinishWriting();
 
-        delete tWriteTest;
-
-        delete [] tDataMaster;
-
         LINFO( mlog, "Test finished" );
 
     }
     catch( std::exception& e )
     {
         LERROR( mlog, "Exception thrown during write-speed test:\n" << e.what() );
+        return RETURN_ERROR;
     }
 
-    return 0;
+    return RETURN_SUCCESS;
 }

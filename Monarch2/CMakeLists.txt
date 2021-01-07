@@ -91,9 +91,11 @@ if( Monarch_ENABLE_TESTING )
     
     pbuilder_executables( 
         SOURCES ${sources}
-        TARGETS_VAR Monarch2_PROGRAMS
+        TARGETS_VAR Monarch2_TEST_PROGRAMS
         PROJECT_LIBRARIES ${lib_dependencies}
     )
+
+    list( APPEND Monarch2_PROGRAMS ${Monarch2_TEST_PROGRAMS} )
     
 endif( Monarch_ENABLE_TESTING )
 
