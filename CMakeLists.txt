@@ -12,12 +12,13 @@ list( APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/Scarab/cmake)
 include( PackageBuilder )
 
 # Egg file version
-set( Egg_VERSION "3.2.0" )
+set( Egg_VERSION "4.0.0" )
 add_definitions( -DEgg_VERSION=${Egg_VERSION} )
 
 # Monarch library options
 set( Monarch_BUILD_MONARCH2 FALSE CACHE BOOL "Build Monarch2 library (requires Protobuf)" )
 set( Monarch_BUILD_MONARCH3 TRUE CACHE BOOL "Build Monarch3 library (requires HDF5)" )
+set( Monarch_BUILD_MONARCH4 TRUE CACHE BOOL "Build Monarch4 library (requires Zarr)" )
 
 
 ########################
@@ -26,6 +27,21 @@ set( Monarch_BUILD_MONARCH3 TRUE CACHE BOOL "Build Monarch3 library (requires HD
 
 set( PUBLIC_EXT_LIBS_M2 )
 set( PUBLIC_EXT_LIBS_M3 )
+set( PUBLIC_EXT_LIBS_M4 )
+
+
+######
+# Zarr
+######
+
+if( Monarch_BUILD_MONARCH4 )
+    set( Monarch_BUILD_MONARCH3 TRUE CACHE BOOL "Build Monarch3 library (requires HDF5)" )
+
+    include_directories( BEFORE ${PROJECT_SOURCE_DIR}/Monarch4 )
+
+
+endif( Monarch_BUILD_MONARCH4 )
+
 
 ######
 # HDF5
@@ -115,6 +131,7 @@ if( Monarch_BUILD_MONARCH3 )
 
 endif( Monarch_BUILD_MONARCH3 )
 
+list( APPEND PUBLIC_EXT_LIBS_M4 ${PUBLIC_EXT_LIBS_M3} )
 
 ##########
 # Protobuf
@@ -160,6 +177,10 @@ endif( Monarch_BUILD_MONARCH2 )
 if( Monarch_BUILD_MONARCH3 )
     add_subdirectory( Monarch3 )
 endif( Monarch_BUILD_MONARCH3 )
+
+if( Monarch_BUILD_MONARCH4 )
+    add_subdirectory( Monarch4 )
+endif( Monarch_BUILD_MONARCH4 )
 
 
 ##################
