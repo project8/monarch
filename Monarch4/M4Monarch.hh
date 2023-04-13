@@ -13,7 +13,7 @@
 #include "logger.hh"
 #include "M4Stream.hh"
 
-#include "H5Cpp.h"
+#include " z5/handle.hxx"
 
 #include <string>
 #include <stdexcept>
@@ -119,7 +119,7 @@ namespace monarch4
 
         private:
             // the HDF5 file
-            mutable H5::H5File* fFile;
+            mutable z5::Handle* fFile;
 
             // the header
             mutable M4Header* fHeader;

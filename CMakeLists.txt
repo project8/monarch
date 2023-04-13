@@ -35,8 +35,9 @@ set( PUBLIC_EXT_LIBS_M4 )
 ######
 
 if( Monarch_BUILD_MONARCH4 )
-    set( Monarch_BUILD_MONARCH3 TRUE CACHE BOOL "Build Monarch3 library (requires HDF5)" )
+#    set( Monarch_BUILD_MONARCH3 TRUE CACHE BOOL "Build Monarch3 library (requires HDF5)" )
 
+    find_package( z5 REQUIRED )
     include_directories( BEFORE ${PROJECT_SOURCE_DIR}/Monarch4 )
 
 

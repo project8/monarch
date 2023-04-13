@@ -10,6 +10,8 @@
 
 #include "logger.hh"
 
+#include "z5/factory.hxx"
+
 using std::string;
 
 namespace monarch4
@@ -29,11 +31,8 @@ namespace monarch4
         if( fState == eOpenToRead || fState == eReadyToRead) FinishReading();
         if( fState == eOpenToWrite || fState == eReadyToWrite) FinishWriting();
 
-        if( fHeader != nullptr )
-        {
-            delete fHeader;
-            fHeader = nullptr;
-        }
+        delete fHeader;
+        fHeader = nullptr;
 
         while( ! fStreams.empty() )
         {
@@ -41,11 +40,8 @@ namespace monarch4
             fStreams.pop_back();
         }
 
-        if( fFile != nullptr )
-        {
-            delete fFile;
-            fFile = nullptr;
-        }
+        delete fFile;
+        fFile = nullptr;
     }
 
     Monarch4::State Monarch4::GetState() const
@@ -59,18 +55,12 @@ namespace monarch4
 
         try
         {
-            tMonarch4->fFile = new H5::H5File( aFilename.c_str(), H5F_ACC_RDONLY );
-        }
-        catch( H5::Exception& e )
-        {
-            delete tMonarch4;
-            throw M4Exception() << "Could not open <" << aFilename << "> for reading; an H5::Exception was thrown: " << e.getCDetailMsg();
-            return nullptr;
+            tMonarch4->fFile = new z5::filesystem::handle::File( aFilename, z5::FileMode::r );
         }
         catch( std::exception& e )
         {
             delete tMonarch4;
-            throw M4Exception() << "Could not open <" << aFilename << "> for reading; a std::exception was thrown: " << e.what();
+            throw M4Exception() << "Could not open <" << aFilename << "> for reading; a std::exception was thrown:\n" << e.what();
             return nullptr;
         }
         if( tMonarch4->fFile == nullptr )
@@ -95,18 +85,13 @@ namespace monarch4
 
         try
         {
-            tMonarch4->fFile = new H5::H5File( aFilename.c_str(), H5F_ACC_TRUNC );
-        }
-        catch( H5::Exception& e )
-        {
-            delete tMonarch4;
-            throw M4Exception() << "Could not open <" << aFilename << "> for writing; an H5::Exception was thrown: " << e.getCDetailMsg();
-            return nullptr;
+            tMonarch4->fFile = new z5::filesystem::handle::File( aFilename, z5::FileMode::w );
+            z5::createFile( *(tMonarch4->fFile), true );
         }
         catch( std::exception& e )
         {
             delete tMonarch4;
-            throw M4Exception() << "Could not open <" << aFilename << "> for writing; a std::exception was thrown: " << e.what();
+            throw M4Exception() << "Could not open <" << aFilename << "> for writing; a std::exception was thrown:\n" << e.what();
             return nullptr;
         }
         if( tMonarch4->fFile == nullptr )
@@ -133,20 +118,9 @@ namespace monarch4
         }
 
         // Read the header information from the file (run header, plus all stream and channel headers)
-        try
-        {
-            fHeader->ReadFromHDF5( fFile );
-        }
-        catch( H5::Exception& e )
-        {
-            throw M4Exception() << "HDF5 error while reading the header:\n\t" << e.getCDetailMsg() << " (function: " << e.getFuncName() << ")";
-        }
-        catch( M4Exception& e )
-        {
-            throw;
-        }
+        fHeader->ReadFromFile( fFile );
 
-
+        //TODO Z5: Creation of streams
         H5::Group* tStreamsGroup = fHeader->GetStreamsGroup();
 
         try
@@ -182,19 +156,9 @@ namespace monarch4
 
         // Write the header to the file
         // This will create the following groups: run, streams, and channels
-        try
-        {
-            fHeader->WriteToHDF5( fFile );
-        }
-        catch( H5::Exception& e )
-        {
-            throw M4Exception() << "HDF5 error while writing header:\n\t" << e.getDetailMsg() << " (function: " << e.getFuncName() << ")";
-        }
-        catch( M4Exception& e )
-        {
-            throw;
-        }
+        fHeader->WriteToFile( fFile );
 
+        //TODO Z5: Creation of streams
         H5::Group* tStreamsGroup = fHeader->GetStreamsGroup();
 
         try
@@ -223,30 +187,24 @@ namespace monarch4
 
     void Monarch4::FinishReading() const
     {
-        LDEBUG( mlog, "Finishing reading <" << fHeader->Filename() << ">" );
+        std::string filename = fHeader != nullptr ? fHeader->Filename() : std::string();
+        LDEBUG( mlog, "Finishing reading <" << filename << ">" );
         try
         {
-            if( fHeader != nullptr )
-            {
-                delete fHeader;
-                fHeader = nullptr;
-            }
+            delete fHeader;
+            fHeader = nullptr;
             for( std::vector< M4Stream* >::iterator streamIt = fStreams.begin(); streamIt != fStreams.end(); ++streamIt )
             {
                 const_cast< const M4Stream* >(*streamIt)->Close();
                 delete *streamIt;
                 *streamIt = nullptr;
             }
-            if( fFile != nullptr )
-            {
-                fFile->close();
-                delete fFile;
-                fFile = nullptr;
-            }
+            delete fFile;
+            fFile = nullptr;
         }
-        catch( H5::Exception& e )
+        catch( std::exception& e )
         {
-            throw M4Exception() << "Error while closing: " << e.getDetailMsg() << " (function: " << e.getFuncName() << ")";
+            throw M4Exception() << "Error while closing file <" << filename << ">:\n" << e.what();
         }
         fState = eClosed;
         return;
@@ -254,31 +212,24 @@ namespace monarch4
 
     void Monarch4::FinishWriting()
     {
-        LINFO( mlog, "Finishing writing <" << fHeader->Filename() << ">" );
+        std::string filename = fHeader != nullptr ? fHeader->Filename() : std::string();
+        LINFO( mlog, "Finishing writing <" << filename << ">" );
         try
         {
-            if( fHeader != nullptr )
-            {
-                delete fHeader;
-                fHeader = nullptr;
-            }
+            delete fHeader;
+            fHeader = nullptr;
             for( std::vector< M4Stream* >::iterator streamIt = fStreams.begin(); streamIt != fStreams.end(); ++streamIt )
             {
                 (*streamIt)->Close();
                 delete *streamIt;
                 *streamIt = nullptr;
             }
-            if( fFile != nullptr )
-            {
-                fFile->close();
-                delete fFile;
-                fFile = nullptr;
-            }
+            delete fFile;
             fFile = nullptr;
         }
-        catch( H5::Exception& e )
+        catch( std::exception& e )
         {
-            throw M4Exception() << "Error while closing: " << e.getDetailMsg() << " (function: " << e.getFuncName() << ")";
+            throw M4Exception() << "Error while closing file <" << filename << ">:\n" << e.what();
         }
         fState = eClosed;
         return;
