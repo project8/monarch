@@ -14,16 +14,17 @@ namespace monarch4
     M4Exception::M4Exception() :
             exception(),
             fMessage()
-    {
-    }
+    {}
     M4Exception::M4Exception( const M4Exception& aCopy ) :
             exception( aCopy ),
             fMessage( aCopy.fMessage )
-    {
-    }
+    {}
+    M4Exception::M4Exception( const std::exception& aCopy ) :
+            exception( aCopy ),
+            fMessage( aCopy.what() )
+    {}
     M4Exception::~M4Exception() throw ()
-    {
-    }
+    {}
 
     //void M4Exception::SetWhat( const char* aWhat )
     //{

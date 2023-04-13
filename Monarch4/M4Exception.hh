@@ -30,6 +30,7 @@ namespace monarch4
         public:
             M4Exception();
             M4Exception( const M4Exception& aCopy );
+            M4Exception( const std::exception& aCopy );
             virtual ~M4Exception() throw();
 
         public:
