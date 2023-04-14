@@ -20,8 +20,8 @@ namespace monarch4
 
     Monarch4::Monarch4() :
             fState( eClosed ),
-            fFile( nullptr ),
-            fHeader( nullptr ),
+            fFile(),
+            fHeader(),
             fMutexPtr( new std::mutex() )
     {
     }
@@ -31,17 +31,11 @@ namespace monarch4
         if( fState == eOpenToRead || fState == eReadyToRead) FinishReading();
         if( fState == eOpenToWrite || fState == eReadyToWrite) FinishWriting();
 
-        delete fHeader;
-        fHeader = nullptr;
-
         while( ! fStreams.empty() )
         {
             delete fStreams.back();
             fStreams.pop_back();
         }
-
-        delete fFile;
-        fFile = nullptr;
     }
 
     Monarch4::State Monarch4::GetState() const
@@ -55,7 +49,7 @@ namespace monarch4
 
         try
         {
-            tMonarch4->fFile = new z5::filesystem::handle::File( aFilename, z5::FileMode::r );
+            tMonarch4->fFile = std::make_unique< z5::filesystem::handle::File >( aFilename, z5::FileMode::r );
         }
         catch( std::exception& e )
         {
@@ -71,7 +65,7 @@ namespace monarch4
         }
         LDEBUG( mlog, "Opened egg file <" << aFilename << "> for reading" );
 
-        tMonarch4->fHeader = new M4Header();
+        tMonarch4->fHeader = std::make_unique< M4Header >();
         tMonarch4->fHeader->Filename() = aFilename;
 
         tMonarch4->fState = eOpenToRead;
@@ -85,8 +79,8 @@ namespace monarch4
 
         try
         {
-            tMonarch4->fFile = new z5::filesystem::handle::File( aFilename, z5::FileMode::w );
-            z5::createFile( *(tMonarch4->fFile), true );
+            tMonarch4->fFile = std::make_unique< z5::filesystem::handle::File >( aFilename, z5::FileMode::w );
+            z5::createFile( *tMonarch4->fFile, true );
         }
         catch( std::exception& e )
         {
@@ -102,7 +96,7 @@ namespace monarch4
         }
         LDEBUG( mlog, "Opened egg file <" << aFilename << "> for writing" );
 
-        tMonarch4->fHeader = new M4Header();
+        tMonarch4->fHeader = std::make_unique< M4Header >();
         tMonarch4->fHeader->Filename() = aFilename;
 
         tMonarch4->fState = eOpenToWrite;

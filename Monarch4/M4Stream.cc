@@ -39,8 +39,8 @@ namespace monarch4
 
     M4Stream::M4Stream( const M4StreamHeader& aHeader, HAS_GRP_IFC* aH5StreamsLoc, uint32_t aAccessFormat ) :
             fMode( kRead ),
-            fDoReadRecord( NULL ),
-            fDoWriteRecord( NULL ),
+            fDoReadRecord( nullptr ),
+            fDoWriteRecord( nullptr ),
             fIsInitialized( false ),
             fRecordsAccessed( false ),
             fDataTypeSize( aHeader.GetDataTypeSize() ),
@@ -59,17 +59,17 @@ namespace monarch4
             fNRecordsInAcq( 0 ),
             fAcqFirstRecTime( 0 ),
             fAcqFirstRecId( 0 ),
-            fAcqFirstRecTimes( NULL ),
-            fAcqFirstRecIds( NULL ),
+            fAcqFirstRecTimes( nullptr ),
+            fAcqFirstRecIds( nullptr ),
             fDataInterleaved( aHeader.GetChannelFormat() == sInterleaved ),
             fAccessFormat( aAccessFormat ),
             fRecordIndex(),
             fRecordCountInFile( 0 ),
             fNRecordsInFile( 0 ),
             fFirstRecordInFile( 0 ),
-            fH5StreamParentLoc( new H5::Group( aH5StreamsLoc->openGroup( aHeader.GetLabel() ) ) ),
-            fH5AcqLoc( NULL ),
-            fH5CurrentAcqDataSet( NULL ),
+            fZ5StreamParentLoc( new H5::Group( aH5StreamsLoc->openGroup( aHeader.GetLabel() ) ) ),
+            fZ5AcqLoc( nullptr ),
+            fZ5CurrentAcqDataSet( nullptr ),
             fH5DataSpaceUser( NULL ),
             fMutexPtr( new std::mutex() )
     {
@@ -200,9 +200,9 @@ namespace monarch4
     M4Stream::~M4Stream()
     {
         delete fH5DataSpaceUser; fH5DataSpaceUser = NULL;
-        delete fH5CurrentAcqDataSet; fH5CurrentAcqDataSet = NULL;
-        delete fH5AcqLoc; fH5AcqLoc = NULL;
-        delete fH5StreamParentLoc; fH5StreamParentLoc = NULL;
+        delete fZ5CurrentAcqDataSet; fH5CurrentAcqDataSet = nullptr;
+        delete fZ5AcqLoc; fH5AcqLoc = nullptr;
+        delete fZ5StreamParentLoc; fH5StreamParentLoc = nullptr;
 
         delete [] fChannelRecords;
     }

@@ -119,10 +119,10 @@ namespace monarch4
 
         private:
             // the HDF5 file
-            mutable z5::Handle* fFile;
+            mutable std::unique_ptr< z5::filesystem::handle::File > fFile;
 
             // the header
-            mutable M4Header* fHeader;
+            mutable sd::unique_ptr< M4Header > fHeader;
 
             // the streams
             mutable std::vector< M4Stream* > fStreams;

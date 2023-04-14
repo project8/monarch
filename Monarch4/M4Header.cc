@@ -364,9 +364,9 @@ namespace monarch4
             fNStreams( 0 ),
             fChannelStreams(),
             fChannelCoherence(),
-            fFile( NULL ),
-            fStreamsGroup( NULL ),
-            fChannelsGroup( NULL )
+            fFile( nullptr ),
+            fStreamsGroup( nullptr ),
+            fChannelsGroup( nullptr )
     {
     }
 

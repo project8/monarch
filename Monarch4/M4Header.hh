@@ -13,7 +13,7 @@
 #include "M4MemberVariable.hh"
 #include "M4Types.hh"
 
-#include "H5Cpp.h"
+#include " z5/handle.hxx"
 
 #include <string>
 #include <vector>
@@ -42,39 +42,25 @@ namespace monarch4
             ~M4StreamHeader();
 
             M4MEMBERVARIABLE_PTR( char, Label );
-
             M4MEMBERVARIABLE_NOSET( uint32_t, Number );
             void SetNumber( uint32_t aNumber ) const; /// In addition to setting the number, sets the label to "stream[aNumber]"
-
             M4MEMBERVARIABLE_REF( std::string, Source );
-
             M4MEMBERVARIABLE( uint32_t, NChannels );
-
             M4MEMBERVARIABLE_REF_CONST( std::vector< uint32_t >, Channels );
-
             M4MEMBERVARIABLE( uint32_t, ChannelFormat );
-
             M4MEMBERVARIABLE( uint32_t, AcquisitionRate );
-
             M4MEMBERVARIABLE( uint32_t, RecordSize );
-
             M4MEMBERVARIABLE( uint32_t, SampleSize );
-
             M4MEMBERVARIABLE( uint32_t, DataTypeSize );
-
             M4MEMBERVARIABLE( uint32_t, DataFormat );
-
             M4MEMBERVARIABLE( uint32_t, BitDepth );
-
             M4MEMBERVARIABLE( uint32_t, BitAlignment );
-
             M4MEMBERVARIABLE( uint32_t, NAcquisitions );
-
             M4MEMBERVARIABLE( uint32_t, NRecords );
 
         public:
-            void WriteToHDF5( HAS_GRP_IFC* aParent );
-            void ReadFromHDF5( const HAS_GRP_IFC* aParent, const std::string& aLabel ) const;
+            void WriteToFile( HAS_GRP_IFC* aParent );
+            void ReadFromFile( const HAS_GRP_IFC* aParent, const std::string& aLabel ) const;
 
         private:
             void WriteChannels( HAS_ATTR_IFC* aLoc );
@@ -101,39 +87,25 @@ namespace monarch4
             ~M4ChannelHeader();
 
             M4MEMBERVARIABLE_PTR( char, Label );
-
             M4MEMBERVARIABLE_NOSET( uint32_t, Number );
             void SetNumber( uint32_t aNumber ) const; /// In addition to setting the number, sets the label to "channel[aNumber]"
-
             M4MEMBERVARIABLE_REF( std::string, Source );
-
             M4MEMBERVARIABLE( uint32_t, AcquisitionRate );
-
             M4MEMBERVARIABLE( uint32_t, RecordSize );
-
             M4MEMBERVARIABLE( uint32_t, SampleSize );
-
             M4MEMBERVARIABLE( uint32_t, DataTypeSize );
-
             M4MEMBERVARIABLE( uint32_t, DataFormat );
-
             M4MEMBERVARIABLE( uint32_t, BitDepth );
-
             M4MEMBERVARIABLE( uint32_t, BitAlignment );
-
             M4MEMBERVARIABLE( double, VoltageOffset );
-
             M4MEMBERVARIABLE( double, VoltageRange );
-
             M4MEMBERVARIABLE( double, DACGain );
-
             M4MEMBERVARIABLE( double, FrequencyMin );
-
             M4MEMBERVARIABLE( double, FrequencyRange );
 
         public:
-            void WriteToHDF5( HAS_GRP_IFC* aParent );
-            void ReadFromHDF5( const HAS_GRP_IFC* aParent, const std::string& aLabel ) const;
+            void WriteToFile( HAS_GRP_IFC* aParent );
+            void ReadFromFile( const HAS_GRP_IFC* aParent, const std::string& aLabel ) const;
 
     };
 
@@ -162,27 +134,17 @@ namespace monarch4
             void CopyBasicInfo( const M4Header& aOrig );
 
             M4MEMBERVARIABLE_REF( std::string, EggVersion );
-
             M4MEMBERVARIABLE_REF( std::string, Filename );
-
             M4MEMBERVARIABLE( uint32_t, RunDuration );
-
             M4MEMBERVARIABLE_REF( std::string, Timestamp );
-
             M4MEMBERVARIABLE_REF( std::string, Description );
-
             M4MEMBERVARIABLE( uint32_t, NChannels );
-
             M4MEMBERVARIABLE( uint32_t, NStreams );
-
             M4MEMBERVARIABLE_REF_CONST( std::vector< uint32_t >, ChannelStreams );
-
             M4MEMBERVARIABLE_REF_CONST( std::vector< std::vector< bool > >, ChannelCoherence );
             void SetCoherence( unsigned aChanA, unsigned aChanB, bool aCoherence );
-
             M4MEMBERVARIABLE_REF_CONST( std::vector< M4ChannelHeader >, ChannelHeaders );
             std::vector< M4ChannelHeader >& GetChannelHeaders();
-
             M4MEMBERVARIABLE_REF_CONST( std::vector< M4StreamHeader >, StreamHeaders );
             std::vector< M4StreamHeader >& GetStreamHeaders();
 
@@ -203,14 +165,14 @@ namespace monarch4
                                 std::vector< unsigned >* aChanVec = NULL );
 
         public:
-            void WriteToHDF5( H5::H5File* aFile );
-            void ReadFromHDF5( const H5::H5File* aFile ) const;
+            void WriteToFile( z5::handle::File* aFile );
+            void ReadFromFile( const z5::handle::File* aFile ) const;
 
-            const H5::Group* GetStreamsGroup() const;
-            H5::Group* GetStreamsGroup();
+            const z5::filesystem::handle::Group* GetStreamsGroup() const;
+            z5::filesystem::handle::Group* GetStreamsGroup();
 
-            const H5::Group* GetChannelsGroup() const;
-            H5::Group* GetChannelsGroup();
+            const z5::filesystem::handle::Group* GetChannelsGroup() const;
+            z5::filesystem::handle::Group* GetChannelsGroup();
 
         private:
             void WriteChannelStreams( HAS_ATTR_IFC* aLoc );
@@ -219,9 +181,9 @@ namespace monarch4
             void WriteChannelCoherence( HAS_ATTR_IFC* aLoc );
             void ReadChannelCoherence( const HAS_ATTR_IFC* aLoc ) const;
 
-            mutable H5::H5File* fFile;
-            mutable H5::Group* fStreamsGroup;
-            mutable H5::Group* fChannelsGroup;
+            mutable z5::Handle* fFile;
+            mutable z5::filesystem::handle::Group* fStreamsGroup;
+            mutable z5::filesystem::handle::Group* fChannelsGroup;
 
         public:
             static void WriteScalarToHDF5( HAS_ATTR_IFC* aLoc, const std::string& aName, const std::string& aValue );
@@ -242,22 +204,22 @@ namespace monarch4
 
     };
 
-    inline const H5::Group* M4Header::GetStreamsGroup() const
+    inline const z5::filesystem::handle::Group* M4Header::GetStreamsGroup() const
     {
         return fStreamsGroup;
     }
 
-    inline H5::Group* M4Header::GetStreamsGroup()
+    inline z5::filesystem::handle::Group* M4Header::GetStreamsGroup()
     {
         return fStreamsGroup;
     }
 
-    inline const H5::Group* M4Header::GetChannelsGroup() const
+    inline const z5::filesystem::handle::Group* M4Header::GetChannelsGroup() const
     {
         return fChannelsGroup;
     }
 
-    inline H5::Group* M4Header::GetChannelsGroup()
+    inline z5::filesystem::handle::Group* M4Header::GetChannelsGroup()
     {
         return fChannelsGroup;
     }
