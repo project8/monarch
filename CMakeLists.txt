@@ -11,6 +11,8 @@ project( Monarch VERSION 3.8.2 )
 list( APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/Scarab/cmake)
 include( PackageBuilder )
 
+set( CMAKE_CXX_STANDARD 17 )
+
 # Egg file version
 set( Egg_VERSION "4.0.0" )
 add_definitions( -DEgg_VERSION=${Egg_VERSION} )
@@ -28,6 +30,7 @@ set( Monarch_BUILD_MONARCH4 TRUE CACHE BOOL "Build Monarch4 library (requires Za
 set( PUBLIC_EXT_LIBS_M2 )
 set( PUBLIC_EXT_LIBS_M3 )
 set( PUBLIC_EXT_LIBS_M4 )
+set( PRIVATE_EXT_LIBS_M4 )
 
 
 ######
@@ -38,8 +41,16 @@ if( Monarch_BUILD_MONARCH4 )
 #    set( Monarch_BUILD_MONARCH3 TRUE CACHE BOOL "Build Monarch3 library (requires HDF5)" )
 
     find_package( z5 REQUIRED )
-    include_directories( BEFORE ${PROJECT_SOURCE_DIR}/Monarch4 )
-
+    find_package(xtl REQUIRED)
+    find_package( xtensor REQUIRED )
+    include_directories( BEFORE 
+        ${PROJECT_SOURCE_DIR}/Monarch4 
+        ${z5_INCLUDE_DIRS}
+    )
+    list( APPEND PUBLIC_EXT_LIBS_M4 
+        nlohmann_json::nlohmann_json
+        xtensor
+    )
 
 endif( Monarch_BUILD_MONARCH4 )
 
