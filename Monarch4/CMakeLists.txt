@@ -2,6 +2,9 @@
 # monarch4 library #
 ####################
 
+add_subdirectory( Temp )
+return()
+
 set( MONARCH4_HEADERFILES
     M4Constants.hh
     M4DataInterface.hh
