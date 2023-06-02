@@ -68,9 +68,20 @@ int main() {
     z5::createGroup(f, "streams");
     auto streamsHandle = z5::filesystem::handle::Group(f, "streams");
 
+    // constants for data
+    const std::string acqDataName = "data";
+    const int recSize = 16;
+    const int datasetNRec = 100;
+    const int chunkNRec = 10;
+    const int maxRecs = datasetNRec / chunkNRec;
+    std::vector< size_t > datasetShape = { datasetNRec, recSize, 1 };
+    std::vector< size_t > chunkShape = {chunkNRec, recSize, 1 };
+
     const int totalStreams = 3;
     int nStreams = 0;
     std::vector< z5::filesystem::handle::Group > streamHandles;
+    std::vector< std::unique_ptr< z5::Dataset > > acqDatasets;
+    std::vector< const z5::filesystem::handle::Dataset > acqDataHandles;
     for( int iStr = 0; iStr < totalStreams; ++iStr )
     {
         std::stringstream str;
@@ -85,6 +96,11 @@ int main() {
         z5::createGroup( streamHandles.back(), "acquisitions" );
         z5::filesystem::handle::Group acqHandle = z5::filesystem::handle::Group( streamHandles.back(), "acquisitions" );
 
+        // create a new zarr dataset
+        acqDatasets.emplace_back( z5::createDataset( acqHandle, acqDataName, "int16", datasetShape, chunkShape ) );
+        // get handle for the dataset
+        acqDataHandles.push_back( z5::filesystem::handle::Dataset( acqHandle, dsName ) );
+
         ++nStreams;
     }
 
@@ -92,9 +108,18 @@ int main() {
     strGroupAttr["nStreams"] = nStreams;
     z5::writeAttributes(streamsHandle, strGroupAttr);
 
-    // take data
-    const int recSize = 1024;
+    // simulate data taking
+    z5::types::ShapeType writeOffset = { 0, 0, 0 };
+    xt::xarray< int16_t >::shape_type writeShape = { 1, recSize, 1 };
+    xt::xarray< int16_t > arrayPrototype( writeShape, 42.0 );
 
+    for( int iStr = 0; iStr < totalStreams; ++iStr )
+    {
+        for( ; writeOffset[0] < maxRecs; writeOffset[0] += 1 )
+        {
+            z5::multiarray::writeSubarray< int16_t >( acqDatasets[iStr], arrayPrototype, writeOffset.begin() );
+        }
+    }
 
     return 0;
 }
