@@ -74,6 +74,7 @@ int main() {
     const int datasetNRec = 100;
     const int chunkNRec = 10;
     const int maxRecs = datasetNRec / chunkNRec;
+    std::cout << "Will write <" << maxRecs << "> records" << std::endl;
     std::vector< size_t > datasetShape = { datasetNRec, recSize, 1 };
     std::vector< size_t > chunkShape = {chunkNRec, recSize, 1 };
 
@@ -113,9 +114,11 @@ int main() {
     xt::xarray< int16_t >::shape_type writeShape = { 1, recSize, 1 };
     xt::xarray< int16_t > arrayPrototype( writeShape, 42.0 );
 
+    std::cout << "Writing records" << std::endl;
     for( int iStr = 0; iStr < totalStreams; ++iStr )
     {
-        for( ; writeOffset[0] < maxRecs; writeOffset[0] += 1 )
+        std::cout << "Writing records for stream " << iStr << std::endl;
+        for( writeOffset[0] = 0; writeOffset[0] < maxRecs; writeOffset[0] += 1 )
         {
             z5::multiarray::writeSubarray< int16_t >( acqDatasets[iStr], arrayPrototype, writeOffset.begin() );
         }
