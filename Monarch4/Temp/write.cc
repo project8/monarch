@@ -56,10 +56,10 @@ cout << "create json attributes for the dataset\n";
     int nChannels = 0;
     for( int iCh = 0; iCh < totalChannels; ++iCh )
     {
-cout << "Create channel " << iCh << endl;        
         std::stringstream str;
         str << "channel" << iCh;
         std::string name( str.str() );
+cout << "Create channel: " << name << endl;        
         
         z5::createGroup( channelsHandle, name );
         z5::filesystem::handle::Group channelHandle = z5::filesystem::handle::Group( channelsHandle, name );
@@ -73,10 +73,9 @@ cout << "Create channel " << iCh << endl;
     nlohmann::json chGroupAttr;
     chGroupAttr["nChannels"] = nChannels;
     z5::writeAttributes(channelsHandle, chGroupAttr);
-#if 0
 
     // streams
-
+cout << "Create streams group\n";
     z5::createGroup(f, "streams");
     auto streamsHandle = z5::filesystem::handle::Group(f, "streams");
 
@@ -86,6 +85,7 @@ cout << "Create channel " << iCh << endl;
     const int datasetNRec = 100;
     const int chunkNRec = 10;
     const int maxRecs = datasetNRec / chunkNRec;
+    
     std::cout << "Will write <" << maxRecs << "> records" << std::endl;
     std::vector< size_t > datasetShape = { datasetNRec, recSize, 1 };
     std::vector< size_t > chunkShape = {chunkNRec, recSize, 1 };
@@ -94,40 +94,44 @@ cout << "Create channel " << iCh << endl;
     int nStreams = 0;
     std::vector< z5::filesystem::handle::Group > streamHandles;
     std::vector< std::unique_ptr< z5::Dataset > > acqDatasets;
- #if 0  // Ray - remove this section to get to compile, 
-        // acqDataHandles declaration causes template error-cascade
-        // /home/dunn874/Projects/project8/monarch/Monarch4/Temp/write.cc:85:58:   required from here
-        // /usr/include/c++/11/bits/stl_vector.h:401:66: error: static assertion failed: std::vector must have a non-const, non-volatile value_type
 
-    std::vector< const z5::filesystem::handle::Dataset > acqDataHandles;
-   for( int iStr = 0; iStr < totalStreams; ++iStr )
+    // std::vector< const z5::filesystem::handle::Dataset > acqDataHandles;
+    std::vector< z5::filesystem::handle::Dataset > acqDataHandles;
+    for( int iStr = 0; iStr < totalStreams; ++iStr )
     {
         std::stringstream str;
+        
         str << "stream" << iStr;
         std::string name( str.str() );
+cout << "create group: " << name << endl;
         z5::createGroup( streamsHandle, name );
+        
         streamHandles.emplace_back( z5::filesystem::handle::Group( streamsHandle, name ) );
+        
+        // Create stream group attribute: 'name'
         nlohmann::json oneStrGroupAttr;
         oneStrGroupAttr["name"] = name;
         z5::writeAttributes(streamHandles.back(), oneStrGroupAttr);
 
+        // Create stream group attribute: 'acquisitions', and handle
         z5::createGroup( streamHandles.back(), "acquisitions" );
         z5::filesystem::handle::Group acqHandle = z5::filesystem::handle::Group( streamHandles.back(), "acquisitions" );
 
-        // create a new zarr dataset
+        // create a new zarr dataset for the data of this stream
         acqDatasets.emplace_back( z5::createDataset( acqHandle, acqDataName, "int16", datasetShape, chunkShape ) );
-        // get handle for the dataset
+        
+        // get handle for the dataset for this stream
         acqDataHandles.push_back( z5::filesystem::handle::Dataset( acqHandle, dsName ) );
 
         ++nStreams;
     }
-#endif
 
+    // Create streams attribute: 'nStreams'
     nlohmann::json strGroupAttr;
     strGroupAttr["nStreams"] = nStreams;
     z5::writeAttributes(streamsHandle, strGroupAttr);
 
-    // simulate data taking
+    // simulate data taking by storing data in each of the stream's dataset
     z5::types::ShapeType writeOffset = { 0, 0, 0 };
     xt::xarray< int16_t >::shape_type writeShape = { 1, recSize, 1 };
     xt::xarray< int16_t > arrayPrototype( writeShape, 42.0 );
@@ -141,7 +145,6 @@ cout << "Create channel " << iCh << endl;
             z5::multiarray::writeSubarray< int16_t >( acqDatasets[iStr], arrayPrototype, writeOffset.begin() );
         }
     }
-#endif  
 
     return 0;
 }

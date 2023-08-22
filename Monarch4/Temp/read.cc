@@ -32,21 +32,22 @@ cout << "read array from roi (values that were not written before are filled wit
     xt::xarray<float> array2(shape2);
     z5::multiarray::readSubarray<float>(ds, array2, offset2.begin());
 
-    std::cout << "Data:" << std::endl;
+    // Dump the data array
+    std::cout << "\nData:" << std::endl;
     std::cout << array2 << std::endl;
 
 cout << "read the attributes of dataset: /data\n";
     nlohmann::json attributesOut;   // object to receive attributes
     z5::readAttributes(dsHandle, attributesOut);
-    std::cout << "Attributes:" << std::endl;
+    std::cout << "Attributes: ";
     std::cout << attributesOut << std::endl;
 
     // channels
     auto channelsHandle = z5::filesystem::handle::Group( f, "channels" );
     nlohmann::json chGroupAttr;
     z5::readAttributes( channelsHandle, chGroupAttr );
-    std::cout << "Channels" << std::endl;
-    std::cout << "N channels: " << chGroupAttr["nChannels"] << std::endl;
+    std::cout << "\nChannels" << std::endl;
+    std::cout << "N channels: " << chGroupAttr["nChannels"] << endl << endl;
 
     int nChannels = chGroupAttr["nChannels"];
     for( int iCh = 0; iCh < nChannels; ++iCh )
@@ -55,34 +56,38 @@ cout << "read the attributes of dataset: /data\n";
         str << "channel" << iCh;
         std::string name( str.str() );
         
-        std::cout << "Extracting channel <" << name << ">" << std::endl;
+        std::cout << "Extracting channel <" << name << ">" << endl;
         z5::filesystem::handle::Group channelHandle = z5::filesystem::handle::Group( channelsHandle, name );
         
         nlohmann::json oneChGroupAttr;
         z5::readAttributes( channelHandle, oneChGroupAttr );
-        std::cout << "Channel " << iCh << " attributes:\n" << oneChGroupAttr << std::endl;
+        std::cout << "\tChannel " << iCh << " attributes: " << oneChGroupAttr << std::endl;
     }
-#if 0
 
     // streams
     auto streamsHandle = z5::filesystem::handle::Group( f, "streams" );
     nlohmann::json strGroupAttr;
+    
+    // Extract the stream attribute: nStreams to indicate how many streams are stored
     z5::readAttributes( streamsHandle, strGroupAttr );
-    std::cout << "Streams" << std::endl;
-    std::cout << "N streams: " << strGroupAttr["nStreams"] << std::endl;
+    std::cout << "\nStreams" << std::endl;
+    std::cout << "N streams: " << strGroupAttr["nStreams"] << endl << endl;
 
+    // Extract each of the stream attributes
     int nStreams = strGroupAttr["nStreams"];
     for( int iStr = 0; iStr < nStreams; ++iStr )
     {
         std::stringstream str;
         str << "stream" << iStr;
         std::string name( str.str() );
-        std::cout << "Extracting stream <" << name << ">" << std::endl;
+        std::cout << "Extracting stream <" << name << ">" << endl;
+        
         z5::filesystem::handle::Group streamHandle = z5::filesystem::handle::Group( streamsHandle, name );
+        
         nlohmann::json oneStrGroupAttr;
         z5::readAttributes( streamHandle, oneStrGroupAttr );
-        std::cout << "Stream " << iStr << " attributes:\n" << oneStrGroupAttr << std::endl;
+        std::cout << "\tStream " << iStr << " attributes: " << oneStrGroupAttr << std::endl;
     }
-#endif
+
     return 0;
 }
