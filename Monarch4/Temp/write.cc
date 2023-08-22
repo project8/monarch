@@ -10,37 +10,45 @@
 // attribute functionality
 #include "z5/attributes.hxx"
 
+using namespace std;
+
 int main() {
 
-    // get handle to a File on the filesystem
+cout << "get handle to a File on the filesystem: f\n";
     z5::filesystem::handle::File f( "readme2.zr", z5::FileMode::modes::a );
 
-    // create the file in zarr format
+cout << "create the file in zarr format\n";
     const bool createAsZarr = true;
     z5::createFile(f, createAsZarr);
 
-    // create a new zarr dataset
+cout << "create a new zarr dataset: /data<float32>[1000,1000,1000]\n";
     const std::string dsName = "data";
     std::vector<size_t> shape = { 1000, 1000, 1000 };
     std::vector<size_t> chunks = { 100, 100, 100 };
     auto ds = z5::createDataset(f, dsName, "float32", shape, chunks);
-    // get handle for the dataset
+    
+cout << "get handle for the dataset\n";
     const auto dsHandle = z5::filesystem::handle::Dataset(f, dsName);
 
-    // write array to roi
+cout << "write sub-array to roi\n";
+    // initialize sub-array with the 'The Meaning of Life'
     z5::types::ShapeType offset1 = { 50, 100, 150 };
     xt::xarray<float>::shape_type shape1 = { 150, 200, 100 };
     xt::xarray<float> array1(shape1, 42.0);
+
+    // write sub-array to dataset
     z5::multiarray::writeSubarray<float>(ds, array1, offset1.begin());
 
-    // write json attributes
+cout << "create json attributes for the dataset\n";
     nlohmann::json attributesIn;
     attributesIn["bar"] = "foo";
     attributesIn["pi"] = 3.141593;
-    z5::writeAttributes(dsHandle, attributesIn);
 
+    // Write attributes to the dataset
+    z5::writeAttributes(dsHandle, attributesIn);
     // channels
 
+    // Create a group to hold channels
     z5::createGroup(f, "channels");
     auto channelsHandle = z5::filesystem::handle::Group(f, "channels");
 
@@ -48,11 +56,14 @@ int main() {
     int nChannels = 0;
     for( int iCh = 0; iCh < totalChannels; ++iCh )
     {
+cout << "Create channel " << iCh << endl;        
         std::stringstream str;
         str << "channel" << iCh;
         std::string name( str.str() );
+        
         z5::createGroup( channelsHandle, name );
         z5::filesystem::handle::Group channelHandle = z5::filesystem::handle::Group( channelsHandle, name );
+        
         nlohmann::json oneChGroupAttr;
         oneChGroupAttr["name"] = name;
         z5::writeAttributes(channelHandle, oneChGroupAttr);
@@ -62,6 +73,7 @@ int main() {
     nlohmann::json chGroupAttr;
     chGroupAttr["nChannels"] = nChannels;
     z5::writeAttributes(channelsHandle, chGroupAttr);
+#if 0
 
     // streams
 
@@ -82,8 +94,13 @@ int main() {
     int nStreams = 0;
     std::vector< z5::filesystem::handle::Group > streamHandles;
     std::vector< std::unique_ptr< z5::Dataset > > acqDatasets;
+ #if 0  // Ray - remove this section to get to compile, 
+        // acqDataHandles declaration causes template error-cascade
+        // /home/dunn874/Projects/project8/monarch/Monarch4/Temp/write.cc:85:58:   required from here
+        // /usr/include/c++/11/bits/stl_vector.h:401:66: error: static assertion failed: std::vector must have a non-const, non-volatile value_type
+
     std::vector< const z5::filesystem::handle::Dataset > acqDataHandles;
-    for( int iStr = 0; iStr < totalStreams; ++iStr )
+   for( int iStr = 0; iStr < totalStreams; ++iStr )
     {
         std::stringstream str;
         str << "stream" << iStr;
@@ -104,6 +121,7 @@ int main() {
 
         ++nStreams;
     }
+#endif
 
     nlohmann::json strGroupAttr;
     strGroupAttr["nStreams"] = nStreams;
@@ -123,6 +141,7 @@ int main() {
             z5::multiarray::writeSubarray< int16_t >( acqDatasets[iStr], arrayPrototype, writeOffset.begin() );
         }
     }
+#endif  
 
     return 0;
 }

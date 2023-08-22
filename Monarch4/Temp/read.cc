@@ -11,6 +11,8 @@
 // attribute functionality
 #include "z5/attributes.hxx"
 
+using namespace std;
+
 int main() {
 
     // get handle to a File on the filesystem
@@ -18,21 +20,23 @@ int main() {
 
     // readme
 
-    // open the zarr dataset
+cout << "open the zarr dataset from file: /data\n";
     const std::string dsName = "data";
     const auto dsHandle = z5::filesystem::handle::Dataset(f, dsName);
     auto ds = z5::openDataset(f, dsName);
 
-    // read array from roi (values that were not written before are filled with a fill-value)
+cout << "read array from roi (values that were not written before are filled with a fill-value)\n";
     z5::types::ShapeType offset2 = { 100, 100, 100 };
     xt::xarray<float>::shape_type shape2 = { 300, 200, 75 };
+    
     xt::xarray<float> array2(shape2);
     z5::multiarray::readSubarray<float>(ds, array2, offset2.begin());
 
     std::cout << "Data:" << std::endl;
     std::cout << array2 << std::endl;
 
-    nlohmann::json attributesOut;
+cout << "read the attributes of dataset: /data\n";
+    nlohmann::json attributesOut;   // object to receive attributes
     z5::readAttributes(dsHandle, attributesOut);
     std::cout << "Attributes:" << std::endl;
     std::cout << attributesOut << std::endl;
@@ -50,12 +54,15 @@ int main() {
         std::stringstream str;
         str << "channel" << iCh;
         std::string name( str.str() );
+        
         std::cout << "Extracting channel <" << name << ">" << std::endl;
         z5::filesystem::handle::Group channelHandle = z5::filesystem::handle::Group( channelsHandle, name );
+        
         nlohmann::json oneChGroupAttr;
         z5::readAttributes( channelHandle, oneChGroupAttr );
         std::cout << "Channel " << iCh << " attributes:\n" << oneChGroupAttr << std::endl;
     }
+#if 0
 
     // streams
     auto streamsHandle = z5::filesystem::handle::Group( f, "streams" );
@@ -76,6 +83,6 @@ int main() {
         z5::readAttributes( streamHandle, oneStrGroupAttr );
         std::cout << "Stream " << iStr << " attributes:\n" << oneStrGroupAttr << std::endl;
     }
-
+#endif
     return 0;
 }
