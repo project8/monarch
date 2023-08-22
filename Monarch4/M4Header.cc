@@ -31,6 +31,10 @@ namespace monarch4
     // M4StreamHeader
     //*********************
 
+    /*************************************************************************
+    * @brief Construct a new M4StreamHeader::M4StreamHeader object
+    * @note Default CTOR
+    *************************************************************************/
     M4StreamHeader::M4StreamHeader() :
             fLabel( NULL ),
             fNumber( 0 ),
@@ -50,7 +54,36 @@ namespace monarch4
     {
     }
 
-    M4StreamHeader::M4StreamHeader( const std::string& aSource, uint32_t aNumber, uint32_t aNChannels, uint32_t aFirstChannel, uint32_t aFormat,
+   /*************************************************************************
+    * @brief Construct a new M4StreamHeader::M4StreamHeader object from specifications
+    * 
+    * @param aSource Device used to produce the stream
+    * @param aNumber Sequential integer used to uniquely identify each stream 
+    *                in the file
+    * @param aNChannels Number of channels in the stream
+    * @param aFirstChannel 
+    * @param aFormat Whether the samples from multiple channels are interleaved 
+    *                or separate 
+    *                0: interleaved
+    *                1: separate
+    * @param anAcqRate Acquisition rate in MHz
+    * @param aRecSize Number of samples in each channel record 
+    *                 (stream record size = # channels * record size)
+    * @param aSampleSize Number of bytes used to represent each sample
+    * @param aDataTypeSize Whether the data is analog or digitized
+    *                    0: digitized
+    *                    1: analog
+    * @param aDataFormat Whether the data is analog or digitized
+    * @param aBitDepth number of bits with which the data was digitized
+    * @param aBitAlignment Whether the bits within each sample are left-aligned 
+    *                      or right-aligned within the sample data word
+    *                      0: left-aligned
+    *                      1: right-aligned
+    * @return none
+    * @ notes The channel's group will be named "stream[Number]".
+    *************************************************************************/
+    M4StreamHeader::M4StreamHeader( const std::string& aSource, uint32_t aNumber, 
+                    uint32_t aNChannels, uint32_t aFirstChannel, uint32_t aFormat,
                     uint32_t anAcqRate, uint32_t aRecSize, uint32_t aSampleSize,
                     uint32_t aDataTypeSize, uint32_t aDataFormat,
                     uint32_t aBitDepth, uint32_t aBitAlignment ) :
@@ -77,6 +110,12 @@ namespace monarch4
         }
     }
 
+    /*************************************************************************
+    * @brief Construct a new M4StreamHeader::M4StreamHeader object from 
+    *        M4StreamHeader
+    * @param orig M4StreamHeader reference
+    * @return none
+    *************************************************************************/
     M4StreamHeader::M4StreamHeader( const M4StreamHeader& orig ) :
             fLabel( NULL ),
             fNumber( 0 ),
@@ -97,11 +136,22 @@ namespace monarch4
         SetNumber( orig.fNumber );
     }
 
+    /*************************************************************************
+    * @brief Destroy the M4StreamHeader::M4StreamHeader object
+    * @note Default DTOR
+    * @return none
+    *************************************************************************/
     M4StreamHeader::~M4StreamHeader()
     {
         delete [] fLabel;
     }
 
+    /*************************************************************************
+    * @brief Set stream identifier label number
+    * 
+    * @param aNumber stream number
+    * @return none, M4StreamHeader::fLabel updated
+    *************************************************************************/
     void M4StreamHeader::SetNumber( uint32_t aNumber ) const
     {
         fNumber = aNumber;
@@ -115,6 +165,11 @@ namespace monarch4
         return;
     }
 
+    /*************************************************************************
+    * @brief 
+    * 
+    * @param aParent 
+    *************************************************************************/
     void M4StreamHeader::WriteToHDF5( HAS_GRP_IFC* aParent )
     {
         LDEBUG( mlog, "Writing stream <" << fLabel << ">" );
@@ -139,6 +194,12 @@ namespace monarch4
         return;
     }
 
+    /*************************************************************************
+    * @brief 
+    * 
+    * @param aParent 
+    * @param aLabel 
+    *************************************************************************/
     void M4StreamHeader::ReadFromHDF5( const HAS_GRP_IFC* aParent, const std::string& aLabel ) const
     {
         LDEBUG( mlog, "Reading stream <" << aLabel << ">" );
@@ -163,6 +224,12 @@ namespace monarch4
         return;
     }
 
+    /*************************************************************************
+    * @brief Write data channels
+    * 
+    * @param aLoc 
+    * @return none
+    *************************************************************************/
     void M4StreamHeader::WriteChannels( HAS_ATTR_IFC* aLoc )
     {
         const unsigned tNDims = 1;
@@ -172,20 +239,29 @@ namespace monarch4
         //H5::DataSet tDataset = aLoc->createDataSet( "channels", MH5Type< uint32_t >::H5(), tDataspace );
         H5::Attribute tAttr = aLoc->createAttribute( "channels", MH5Type< uint32_t >::H5(), tDataspace );
 
+        // Allocate temporary data buffer for write()
         uint32_t* tCSBuffer = new uint32_t[ fNChannels ];
         for( unsigned i = 0; i < fNChannels; ++i )
-        {
+        { // write channels to data buffer
             tCSBuffer[ i ] = fChannels[ i ];
         }
 
+        // Write data buffer to file
         //tDataset.write( tCSBuffer, MH5Type< uint32_t >::Native(), tDataspace );
         tAttr.write( MH5Type< uint32_t >::Native(), tCSBuffer );
 
+        // Release temporary buffer
         delete [] tCSBuffer;
 
         return;
     }
 
+    /*************************************************************************
+    * @brief Read data channels
+    * 
+    * @param aLoc 
+    * @return none
+    *************************************************************************/
     void M4StreamHeader::ReadChannels( const HAS_ATTR_IFC* aLoc ) const
     {
         const unsigned tNDims = 1;
@@ -203,10 +279,13 @@ namespace monarch4
             return;
         }
 
+        // Allocate temporary data buffer for read()
         uint32_t* tCSBuffer = new uint32_t[ fNChannels ];
+
         //tDataset.read( tCSBuffer, MH5Type< uint32_t >::Native(), tDataspace );
         tAttr.read( MH5Type< uint32_t >::Native(), tCSBuffer );
 
+        // Read data channels
         fChannels.clear();
         fChannels.resize( fNChannels );
         for( unsigned i = 0; i < fNChannels; ++i )
@@ -214,6 +293,7 @@ namespace monarch4
             fChannels[ i ] = tCSBuffer[ i ];
         }
 
+        // Release temporary buffer
         delete [] tCSBuffer;
 
         return;
@@ -223,6 +303,11 @@ namespace monarch4
     // M4ChannelHeader
     //*********************
 
+    /*************************************************************************
+    * @brief Construct a new M4ChannelHeader::M4ChannelHeader object
+    * @return none
+    * @note Default M4ChannelHeader CTOR
+    *************************************************************************/
     M4ChannelHeader::M4ChannelHeader() :
             fLabel( NULL ),
             fNumber( 0 ),
@@ -242,6 +327,28 @@ namespace monarch4
     {
     }
 
+    /*************************************************************************
+    * @brief Construct a new M4ChannelHeader::M4ChannelHeader object from specifications
+    * 
+    * @param aSource Device used to produce the channel
+    * @param aNumber Sequential integer used to uniquely identify each channel in the file
+    * @param anAcqRate Acquisition rate in MHz
+    * @param aRecSize Number of samples in each channel record 
+    *                 (stream record size = # channels * record size)
+    * @param aSampleSize Number of bytes used to represent each sample 
+    * @param aDataTypeSize Whether the data is analog or digitized
+    *                    0: digitized
+    *                    1: analog
+    * @param aDataFormat Whether the data is analog or digitized
+    * @param aBitDepth number of bits with which the data was digitized
+    * @param aBitAlignment Whether the bits within each sample are left-aligned 
+    *                      or right-aligned within the sample data word
+    *                      0: left-aligned
+    *                      1: right-aligned
+    * 
+    * @return none
+    * @ notes The channel's group will be named "channel[Number]".
+    *************************************************************************/
     M4ChannelHeader::M4ChannelHeader( const std::string& aSource, uint32_t aNumber,
                     uint32_t anAcqRate, uint32_t aRecSize, uint32_t aSampleSize,
                     uint32_t aDataTypeSize, uint32_t aDataFormat,
@@ -265,6 +372,11 @@ namespace monarch4
         SetNumber( aNumber );
     }
 
+    /*************************************************************************
+    * @brief Construct a new M4ChannelHeader::M4ChannelHeader object from template
+    * 
+    * @param orig M4ChannelHeader template
+    *************************************************************************/
     M4ChannelHeader::M4ChannelHeader( const M4ChannelHeader& orig ) :
             fLabel( NULL ),
             fNumber( 0 ),
@@ -285,11 +397,21 @@ namespace monarch4
         SetNumber( orig.fNumber );
     }
 
+    /*************************************************************************
+    * @brief Destroy the M4ChannelHeader::M4ChannelHeader object
+    * @return none
+    * @note Default M4ChannelHeader DTOR
+    *************************************************************************/
     M4ChannelHeader::~M4ChannelHeader()
     {
         delete [] fLabel;
     }
 
+    /*************************************************************************
+    * @brief Set M4ChannelHeader identifier label number
+    * 
+    * @param aNumber Channel number
+    *************************************************************************/
     void M4ChannelHeader::SetNumber( uint32_t aNumber ) const
     {
         fNumber = aNumber;
@@ -303,6 +425,11 @@ namespace monarch4
         return;
     }
 
+    /*************************************************************************
+    * @brief 
+    * 
+    * @param aParent 
+    *************************************************************************/
     void M4ChannelHeader::WriteToHDF5( HAS_GRP_IFC* aParent )
     {
         LDEBUG( mlog, "Writing channel <" << fLabel << ">" );
@@ -326,6 +453,12 @@ namespace monarch4
         return;
     }
 
+    /*************************************************************************
+    * @brief 
+    * 
+    * @param aParent 
+    * @param aLabel 
+    *************************************************************************/
     void M4ChannelHeader::ReadFromHDF5( const HAS_GRP_IFC* aParent, const std::string& aLabel ) const
     {
         LDEBUG( mlog, "Reading channel <" << aLabel << ">" );
@@ -386,6 +519,13 @@ namespace monarch4
         return;
     }
 
+    /*************************************************************************
+    * @brief Setup time-coherence relationship between channels
+    * 
+    * @param aChanA 
+    * @param aChanB 
+    * @param aCoherence 
+    *************************************************************************/
     void M4Header::SetCoherence( unsigned aChanA, unsigned aChanB, bool aCoherence )
     {
         if( aChanA >= fNChannels || aChanB >= fNChannels )
@@ -397,6 +537,27 @@ namespace monarch4
         return;
     }
 
+    /*************************************************************************
+    * @brief Add a stream with one channel with aRecSize samples per record
+    * 
+    * @param aSource Device used to produce the stream
+    * @param anAcqRate Acquisition rate in MHz
+    * @param aRecSize Number of samples in each channel record 
+    *                 (stream record size = # channels * record size)
+    * @param aSampleSize Number of bytes used to represent each sample
+    * @param aDataTypeSize Whether the data is analog or digitized
+    *                    0: digitized
+    *                    1: analog
+    * @param aDataFormat Whether the data is analog or digitized
+    * @param aBitDepth number of bits with which the data was digitized
+    * @param aBitAlignment Whether the bits within each sample are left-aligned 
+    *                      or right-aligned within the sample data word
+    *                      0: left-aligned
+    *                      1: right-aligned
+    * @param aChanVec 
+    * 
+    * @return uint32_t Returns the stream number (used to address the stream later)
+    *************************************************************************/
     uint32_t M4Header::AddStream( const std::string& aSource,
                                  uint32_t anAcqRate, uint32_t aRecSize, uint32_t aSampleSize,
                                  uint32_t aDataTypeSize, uint32_t aDataFormat,
@@ -419,6 +580,29 @@ namespace monarch4
         return fNStreams++;
     }
 
+    /*************************************************************************
+    * @brief Add a stream with multiple channels with aRecSize samples per record
+    * 
+    * @param aSource Device used to produce the stream
+    * @param aNChannels How many channels to add
+    * @param aFormat 
+    * @param anAcqRate Acquisition rate in MHz
+    * @param aRecSize Number of samples in each channel record 
+    *                 (stream record size = # channels * record size)
+    * @param aSampleSize Number of bytes used to represent each sample
+    * @param aDataTypeSize Whether the data is analog or digitized
+    *                    0: digitized
+    *                    1: analog
+    * @param aDataFormat Whether the data is analog or digitized
+    * @param aBitDepth snumber of bits with which the data was digitized
+    * @param aBitAlignment Whether the bits within each sample are left-aligned 
+    *                      or right-aligned within the sample data word
+    *                      0: left-aligned
+    *                      1: right-aligned
+    * @param aChanVec 
+    * 
+    * @return uint32_t Returns the stream number (used to address the stream later)
+    *************************************************************************/
     uint32_t M4Header::AddStream( const std::string& aSource, uint32_t aNChannels, uint32_t aFormat,
                                  uint32_t anAcqRate, uint32_t aRecSize, uint32_t aSampleSize,
                                  uint32_t aDataTypeSize, uint32_t aDataFormat,
@@ -427,21 +611,29 @@ namespace monarch4
     {
         LDEBUG( mlog, "Adding stream " << fNStreams << " for multiple channels with record size " << aRecSize );
         unsigned tFirstNewChannel = fNChannels;
+        
+        // Add channels
         for( uint32_t iNewChannel = 0; iNewChannel < aNChannels; ++iNewChannel )
         {
             LDEBUG( mlog, "Adding channel " << fNChannels );
             if( aChanVec != NULL ) aChanVec->push_back( fNChannels );
+            
             fChannelStreams.push_back( fNStreams );
             fChannelHeaders.push_back( M4ChannelHeader( aSource, fNChannels, anAcqRate, aRecSize, aSampleSize, aDataTypeSize, aDataFormat, aBitDepth, aBitAlignment ) );
             ++fNChannels;
+            
             fChannelCoherence.resize( fNChannels ); // resize number of columns
             for( unsigned i = 0; i < fNChannels; ++i ) // resize all rows
             {
                 fChannelCoherence[ i ].resize( fNChannels, false );
             }
+            
             fChannelCoherence.back().back() = true; // each channel is coherent with itself
-            if( fNChannels > 0 ) // this condition is necessary because if it's not the case, fNChannels-1 will be some huge number, since we're dealing with unsigned ints, so the for-loop condition won't be sufficient
-            {
+            if( fNChannels > 0 ) 
+            { // this condition is necessary because if it's not the case, fNChannels-1 will 
+              // be some huge number, since we're dealing with unsigned ints, so the for-loop 
+              // condition won't be sufficient
+
                 for( unsigned i = tFirstNewChannel; i < fNChannels - 1; ++i )
                 {
                     fChannelCoherence[ fNChannels - 1 ][ i ] = true;
@@ -450,9 +642,16 @@ namespace monarch4
             }
         }
         fStreamHeaders.push_back( M4StreamHeader( aSource, fNStreams, aNChannels, tFirstNewChannel, aFormat, anAcqRate, aRecSize, aSampleSize, aDataTypeSize, aDataFormat, aBitDepth, aBitAlignment ) );
+        
         return fNStreams++;
     }
 
+    /*************************************************************************
+    * @brief Write file attributes, stream headers, channel headers to file
+    * 
+    * @param aFile path/filename
+    * @return none, throw M4Exception on failure
+    *************************************************************************/
     void M4Header::WriteToHDF5( H5::H5File* aFile )
     {
         try
@@ -470,6 +669,7 @@ namespace monarch4
             WriteChannelStreams( fFile );
             WriteChannelCoherence( fFile );
 
+            // Write all the stream headers
             LDEBUG( mlog, "Writing stream headers" );
             fStreamsGroup = new H5::Group( fFile->createGroup( "streams" ) );
             for( uint32_t iStream = 0; iStream < fNStreams; ++iStream )
@@ -477,6 +677,7 @@ namespace monarch4
                 fStreamHeaders[ iStream ].WriteToHDF5( fStreamsGroup );
             }
 
+            // Write all the channel headers
             LDEBUG( mlog, "Writing channel headers" );
             fChannelsGroup = new H5::Group( fFile->createGroup( "channels" ) );
             for( uint32_t iChan = 0; iChan < fNChannels; ++iChan )
@@ -497,12 +698,20 @@ namespace monarch4
         return;
     }
 
+    /*************************************************************************
+    * @brief Read file attributes, stream headers, channel headers from file
+    * 
+    * @param aFile path/filename
+    * @return none, throw M4Exception on failure
+    *************************************************************************/
     void M4Header::ReadFromHDF5( const H5::H5File* aFile ) const
     {
         try
         {
             LDEBUG( mlog, "Reading run header" );
             fFile = const_cast< H5::H5File* >( aFile );
+
+            // Read the File Atrributes
             EggVersion() = ReadScalarFromHDF5< string >( fFile, string("egg_version") );
             Filename() = ReadScalarFromHDF5< string >( fFile, "filename" );
             SetNChannels( ReadScalarFromHDF5< uint32_t >( fFile, "n_channels" ) );
@@ -513,7 +722,7 @@ namespace monarch4
 
             //fChannelStreams.clear();
             //Read1DFromHDF5< std::vector< uint32_t > >( fFile, "channel_streams", fChannelStreams );
-            ReadChannelStreams( aFile );
+            ReadChannelStreams( aFile );            // Read Stream Attributes
             ReadChannelCoherence( aFile );
             /*
             for( unsigned i = 0; i < fNChannels; ++i )
@@ -533,32 +742,43 @@ namespace monarch4
 
             LDEBUG( mlog, "Reading stream headers" );
             fStreamHeaders.clear();
+
+            // Create streams group correspoding to file streams
             fStreamsGroup = new H5::Group( fFile->openGroup( "streams" ) );
             hsize_t nStreams = fStreamsGroup->getNumObjs();
             if( nStreams != fNStreams )
             {
                 throw M4Exception() << "Number of streams <" << fNStreams << "> disagrees with the number of objects in the stream group <" << nStreams << ">";
             }
+
+            // Read each of the stream-header objects and store
             for( hsize_t iStream = 0; iStream < nStreams; ++iStream )
             {
                 //string tStreamLabel = fStreamsGroup->getObjnameByIdx( iStream );
                 unsigned tLabelSize = fStreamsGroup->getObjnameByIdx( iStream, tBuffer, tBuffSize );
                 std::string tStreamLabel( tBuffer, tLabelSize );
 				LDEBUG( mlog, "Attempting to read stream header #" << iStream << "; label <" << tStreamLabel << ">" );
+                
                 fStreamHeaders.push_back( M4StreamHeader() );
+                
                 LDEBUG( mlog, "Testing if we can access the last header: " << fStreamHeaders.back().GetLabel() );
                 fStreamHeaders.back().ReadFromHDF5( fStreamsGroup, tStreamLabel );
             }
 
             LDEBUG( mlog, "Reading channel headers" );
             fChannelHeaders.clear();
+
+            // Create new channel group
             fChannelsGroup = new H5::Group( fFile->openGroup( "channels" ) );
             hsize_t nChannels = fChannelsGroup->getNumObjs();
+            
+            // Read each of the stream-channel objects and store
             for( hsize_t iChan = 0; iChan < nChannels; ++iChan )
             {
                 //string tChannelLabel = fChannelsGroup->getObjnameByIdx( iChan );
                 unsigned tLabelSize = fChannelsGroup->getObjnameByIdx( iChan, tBuffer, tBuffSize );
                 std::string tChannelLabel( tBuffer, tLabelSize );
+                
                 fChannelHeaders.push_back( M4ChannelHeader() );
                 fChannelHeaders.back().ReadFromHDF5( fChannelsGroup, tChannelLabel );
             }
@@ -571,50 +791,73 @@ namespace monarch4
 		return;
     }
 
+    /*************************************************************************
+    * @brief Write channel-streams to file
+    * 
+    * @param aLoc Stream location attribute
+    * @return none, no exceptions thrown
+    *************************************************************************/
     void M4Header::WriteChannelStreams( HAS_ATTR_IFC* aLoc )
     {
         const unsigned tNDims = 1;
         hsize_t tDims[ tNDims ] = { fNChannels };
 
+        // Create data space for channel-streams
         H5::DataSpace tDataspace( tNDims, tDims );
         //H5::DataSet tDataset = aLoc->createDataSet( "channel_streams", MH5Type< uint32_t >::H5(), tDataspace );
         H5::Attribute tAttr = aLoc->createAttribute( "channel_streams", MH5Type< uint32_t >::H5(), tDataspace );
 
+        // Allocate temporary write buffer
         uint32_t* tCSBuffer = new uint32_t[ fNChannels ];
+
+        // Populate write buffer from the fChannelStreams
         for( unsigned i = 0; i < fNChannels; ++i )
         {
             tCSBuffer[ i ] = fChannelStreams[ i ];
         }
 
+        // Write the streams to the file
         //tDataset.write( tCSBuffer, MH5Type< uint32_t >::Native(), tDataspace );
         tAttr.write( MH5Type< uint32_t >::Native(), tCSBuffer );
 
-        delete [] tCSBuffer;
+        delete [] tCSBuffer;        // release temporary buffer
 
         return;
     }
 
+    /*************************************************************************
+    * @brief Read the channel-streams from file
+    * 
+    * @param aLoc Stream location attribute
+    * @return none, no exceptions thrown
+    *************************************************************************/
     void M4Header::ReadChannelStreams( const HAS_ATTR_IFC* aLoc ) const
     {
         const unsigned tNDims = 1;
         hsize_t tDims[ tNDims ];
 
+        // Get access to the channel streams: tAttr
         //H5::DataSet tDataset = aLoc->openDataSet( "channel_streams" );
         H5::Attribute tAttr = aLoc->openAttribute( "channel_streams" );
+        
+        // Get access to the streams data space: tDataspace
         //H5::DataSpace tDataspace( tDataset.getSpace() );
         H5::DataSpace tDataspace( tAttr.getSpace() );
-        tDataspace.getSimpleExtentDims( tDims );
 
+        // Verify data dimensions match that expected in the M4Header::fNChannels
+        tDataspace.getSimpleExtentDims( tDims );
         if( tDims[ 0 ] != fNChannels )
         {
             LERROR( mlog, "Channel-streams dataset dimensions (" << tDims[ 0 ] << ") do not match number of channels, " << fNChannels );
             return;
         }
 
+        // allocate temporary read buffer
         uint32_t* tCSBuffer = new uint32_t[ fNChannels ];
         //tDataset.read( tCSBuffer, MH5Type< uint32_t >::Native(), tDataspace );
         tAttr.read( MH5Type< uint32_t >::Native(), tCSBuffer );
 
+        // Populate the M4Header::fChannelStreams from read buffer
         fChannelStreams.clear();
         fChannelStreams.resize( fNChannels );
         for( unsigned i = 0; i < fNChannels; ++i )
@@ -622,21 +865,30 @@ namespace monarch4
             fChannelStreams[ i ] = tCSBuffer[ i ];
         }
 
-        delete [] tCSBuffer;
+        delete [] tCSBuffer;        // release temporary read buffer
 
         return;
     }
 
+    /*************************************************************************
+    * @brief Write channel-coherence to file
+    * 
+    * @param aLoc 
+    *************************************************************************/
     void M4Header::WriteChannelCoherence( HAS_ATTR_IFC* aLoc )
     {
         const unsigned tNDims = 2;
         hsize_t tDims[ tNDims ] = { fNChannels, fNChannels };
 
+        // Create channel-coherence attribute from data-space: tAttr
         H5::DataSpace tDataspace( tNDims, tDims );
         //H5::DataSet tDataset = aLoc->createDataSet( "channel_coherence", MH5Type< bool >::H5(), tDataspace );
         H5::Attribute tAttr = aLoc->createAttribute( "channel_coherence", MH5Type< bool >::H5(), tDataspace );
 
+        // allocate temporary write buffer
         uint8_t* tCCBuffer = new uint8_t[ fNChannels * fNChannels ];
+
+        // Copy channel-coherence to write buffer
         for( unsigned i = 0; i < fNChannels; ++i )
         {
             for( unsigned j = 0; j < fNChannels; ++j )
@@ -645,6 +897,7 @@ namespace monarch4
             }
         }
 
+        // Write coherence buffer to file
         //tDataset.write( tCCBuffer, MH5Type< bool >::Native(), tDataspace );
         tAttr.write( MH5Type< bool >::Native(), tCCBuffer );
 
@@ -653,27 +906,38 @@ namespace monarch4
         return;
     }
 
+    /*************************************************************************
+    * @brief Read channel-coherence from file
+    * 
+    * @param aLoc 
+    *************************************************************************/
     void M4Header::ReadChannelCoherence( const HAS_ATTR_IFC* aLoc ) const
     {
         const unsigned tNDims = 2;
         hsize_t tDims[ tNDims ];
 
+        // Get access to channel-coherence: tAttr
         //H5::DataSet tDataset = aLoc->openDataSet( "channel_coherence" );
         H5::Attribute tAttr = aLoc->openAttribute( "channel_coherence" );
+
+        // Get acces to the data space: tDataspace
         //H5::DataSpace tDataspace( tDataset.getSpace() );
         H5::DataSpace tDataspace( tAttr.getSpace() );
-        tDataspace.getSimpleExtentDims( tDims );
 
+        // Verify data dimensions match that expected in the M4Header::fNChannels
+        tDataspace.getSimpleExtentDims( tDims );
         if( tDims[ 0 ] != fNChannels || tDims[ 1 ] != fNChannels )
         {
             LERROR( mlog, "Channel coherence dataset dimensions (" << tDims[ 0 ] << ", " << tDims[ 1 ] << ") do not match number of channels, " << fNChannels );
             return;
         }
 
+        // Allocate temporary buffer for read
         uint8_t* tCCBuffer = new uint8_t[ fNChannels * fNChannels ];
         //tDataset.read( tCCBuffer, MH5Type< bool >::Native(), tDataspace );
         tAttr.read( MH5Type< bool >::Native(), tCCBuffer );
 
+        // Copy over channel-coherence from temporary buffer into component
         fChannelCoherence.clear();
         fChannelCoherence.resize( fNChannels );
         for( unsigned i = 0; i < fNChannels; ++i )
@@ -685,7 +949,7 @@ namespace monarch4
             }
         }
 
-        delete [] tCCBuffer;
+        delete [] tCCBuffer;        // release temporary buffer
 
         return;
     }
