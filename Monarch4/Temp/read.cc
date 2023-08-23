@@ -18,8 +18,7 @@ int main() {
     // get handle to a File on the filesystem
     z5::filesystem::handle::File f("readme2.zr");
 
-    // readme
-
+    // file: readme2.zr
 cout << "open the zarr dataset from file: /data\n";
     const std::string dsName = "data";
     const auto dsHandle = z5::filesystem::handle::Dataset(f, dsName);
@@ -88,6 +87,49 @@ cout << "read the attributes of dataset: /data\n";
         z5::readAttributes( streamHandle, oneStrGroupAttr );
         std::cout << "\tStream " << iStr << " attributes: " << oneStrGroupAttr << std::endl;
     }
+
+    // constants for data
+    const int totalChannels = 2;
+    int nChannels = 0;
+    const int recSize = 16;
+    const int datasetNRec = 100;
+    const int chunkNRec = 10;
+    const int maxRecs = datasetNRec / chunkNRec;
+
+    // Using nStreams from above (loaded from stream attributes)
+    // simulate data taking by storing data in each of the stream's dataset
+    z5::types::ShapeType writeOffset = { 0, 0, 0 };
+    xt::xarray< int16_t >::shape_type readShape = { 1, recSize, 1 };
+    xt::xarray< int16_t > readArray( readShape, 0.0 );
+
+    // Read the stream records from file
+    
+    //TODO handle to "streams" group
+
+    std::cout << "Reading records" << std::endl;
+    for( int iStr = 0; iStr < nStreams; ++iStr )
+    {
+        //TODO create streamX name
+        //TODO get handle to streamX 
+        //TODO get handle to streamX/acquisition group
+        //TODO create Dataset for streamX
+        //TODO get handle to Dataset
+        //TODO create xarray buffer for Dataset
+        
+        // Read streamX dataset into xarray
+        std::cout << "Read records from stream " << iStr << std::endl;
+        for( writeOffset[0] = 0; writeOffset[0] < maxRecs; writeOffset[0] += 1 )
+        {
+            z5::multiarray::readSubarray< int16_t >( acqDatasets[iStr], arrayPrototype, writeOffset.begin() );
+        }
+    }
+
+//   // read array from roi (values that were not written before are filled with a fill-value)
+//   z5::types::ShapeType offset2 = { 100, 100, 100 };
+//   xt::xarray<float>::shape_type shape2 = { 300, 200, 75 };
+//   xt::xarray<float> array2(shape2);
+//   z5::multiarray::readSubarray<float>(ds, array2, offset2.begin());
+
 
     return 0;
 }

@@ -92,7 +92,11 @@ cout << "Create streams group\n";
 
     const int totalStreams = 3;
     int nStreams = 0;
+
+    // Handles to each stream
     std::vector< z5::filesystem::handle::Group > streamHandles;
+
+    // Handles to each dataset
     std::vector< std::unique_ptr< z5::Dataset > > acqDatasets;
 
     // std::vector< const z5::filesystem::handle::Dataset > acqDataHandles;
@@ -117,7 +121,7 @@ cout << "create group: " << name << endl;
         z5::createGroup( streamHandles.back(), "acquisitions" );
         z5::filesystem::handle::Group acqHandle = z5::filesystem::handle::Group( streamHandles.back(), "acquisitions" );
 
-        // create a new zarr dataset for the data of this stream
+        // create a new Dataset for the data of this stream
         acqDatasets.emplace_back( z5::createDataset( acqHandle, acqDataName, "int16", datasetShape, chunkShape ) );
         
         // get handle for the dataset for this stream
@@ -136,6 +140,7 @@ cout << "create group: " << name << endl;
     xt::xarray< int16_t >::shape_type writeShape = { 1, recSize, 1 };
     xt::xarray< int16_t > arrayPrototype( writeShape, 42.0 );
 
+    // Write the stream records to file
     std::cout << "Writing records" << std::endl;
     for( int iStr = 0; iStr < totalStreams; ++iStr )
     {
