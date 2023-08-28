@@ -22,6 +22,7 @@ int main() {
     z5::filesystem::handle::File f(z5FileName);
 
     // file: readme2.zr
+    // Group: /data
 cout << "open the zarr dataset from file: /data\n";
     const std::string dsName = "data";
     const auto dsHandle = z5::filesystem::handle::Dataset(f, dsName);
@@ -44,7 +45,7 @@ cout << "read the attributes of dataset: /data\n";
     std::cout << "Attributes: ";
     std::cout << attributesOut << std::endl;
 
-    // channels
+    // Group: /channels
     auto channelsHandle = z5::filesystem::handle::Group( f, "channels" );
     nlohmann::json chGroupAttr;
     z5::readAttributes( channelsHandle, chGroupAttr );
@@ -66,7 +67,7 @@ cout << "read the attributes of dataset: /data\n";
         std::cout << "\tChannel " << iCh << " attributes: " << oneChGroupAttr << std::endl;
     }
 
-    // streams
+    // Group: /streams attributes
     auto streamsHandle = z5::filesystem::handle::Group( f, "streams" );
     nlohmann::json strGroupAttr;
     
@@ -99,36 +100,38 @@ cout << "read the attributes of dataset: /data\n";
     const int maxRecs = datasetNRec / chunkNRec;
     z5::types::ShapeType readOffset = { 0, 0, 0 };
 
-    // Using nStreams from above (loaded from stream attributes)
-    // simulate data taking by storing data in each of the stream's dataset
-    z5::types::ShapeType writeOffset = { 0, 0, 0 };
+    // Reads streamX into the same buffer:  readArray[]
     xt::xarray< int16_t >::shape_type readShape = { 1, recSize, 1 };
     xt::xarray< int16_t > readArray( readShape, 0.0 );
 
     // Read the stream records from file
-    std::cout << "Reading records" << std::endl;
+    std::cout << "Reading streamX/acquisition records\n";
     for( int iStr = 0; iStr < nStreams; ++iStr )
     {
         std::stringstream str;
         std::string streamXName;
-        // z5::filesystem::handle::Group streamXHandle;
-        // z5::filesystem::handle::Group acqHandle;
 
         // Get handle to stream[iStr]: streamXHandle
         str << "stream" << iStr;        // stream name: "stream0", "stream1", ...
         streamXName = str.str();
 std::cout << streamXName << "[" << iStr << "]\n";
-        // z5::filesystem::handle::Group streamXHandle = z5::filesystem::handle::Group( streamsHandle, streamXName );
-        
-        const std::string dsXName = "streams/" + streamXName + "/acquisitions/data";        
+
+        // Dataset is opened by path name: dsXName       
+        std::string dsXName = "streams/" + streamXName + "/acquisitions/data";   
+
+        // Handle the file at the end of the path     
         z5::filesystem::handle::File fX(z5FileName);
         auto dsXHandle = z5::filesystem::handle::Dataset(fX, dsXName);
+
+        // Open the dataset from path
 cout << "openDataset(): " <<  z5FileName << "/" << dsXName << endl;       
         auto dsX = z5::openDataset(fX, dsXName);
 
-std::cout << "readSubarray()\n";
-        // read array from roi (values that were not written before are filled with a fill-value)
-        // z5::multiarray::readSubarray<float>(dsX, readArray, readOffset.begin());
+        // Read into array buffer from dataset
+        z5::multiarray::readSubarray<int16_t>(dsX, readArray, readOffset.begin());
+
+        // Dump array buffer to screen
+        std::cout << readArray << std::endl;
     }
 }
 
@@ -209,110 +212,4 @@ std::cout << "readSubarray()\n";
 // }
 
 
-#if 0
-    for( int iStr = 0; iStr < nStreams; ++iStr )
-    {
-        std::stringstream str;
-        std::string streamXName;
-        // z5::filesystem::handle::Group streamXHandle;
-        // z5::filesystem::handle::Group acqHandle;
-
-        // Get handle to stream[iStr]: streamXHandle
-        str << "stream" << iStr;        // stream name: "stream0", "stream1", ...
-        streamXName = str.str();
-std::cout << streamXName << "[" << iStr << "]\n";
-        z5::filesystem::handle::Group streamXHandle = z5::filesystem::handle::Group( streamsHandle, streamXName );
-        
-        // Get handle to streamX "acquisition" group
-        z5::filesystem::handle::Group acqXHandle = z5::filesystem::handle::Group( streamXHandle, "acquisitions" );
-
-        std::vector< size_t > datasetShape = { datasetNRec, recSize, 1 };
-        std::vector< size_t > chunkShape = {chunkNRec, recSize, 1 };
-
-std::cout << "createDataset()\n";
-        z5::DatasetMetadata::DatasetMetadata dsMeta = z5::DatasetMetadata::DatasetMetadata("int16",datasetShape,chunkShape,true);
-        auto dsX = z5::createDataset( acqXHandle, "dataSetX", dsMeta );
-std::cout << "readSubarray()\n";
-        // read array from roi (values that were not written before are filled with a fill-value)
-        z5::multiarray::readSubarray<float>(dsX, readArray, readOffset.begin());
-
-        // // Get "acquisition/data" group
-        // z5::filesystem::handle::Group dataXHandle = z5::filesystem::handle::Group( acqXHandle, "data" );
-
-        // z5::DatasetMetadata metaXData;
-        // auto dsX = z5::createDatasetMetadata(acqXHandle,"data",metaXData);
-
-//         nlohmann::json dataXAttributes;
-//         z5::readAttributes(acqXHandle,dataXAttributes);
-// std::cout << dataXAttributes << std::endl;
-
-        // // Read shape attributes
-        // nlohmann::json shapeXAttr;
-        // // z5::readAttributes( dataXHandle, shapeXAttr );
-        // z5::readAttributes( acqXHandle, shapeXAttr );
-        // std::cout << "Attributes: ";
-        // std::cout << shapeXAttr << std::endl;
-
-        // Read Dataset for streamX:  readme2.zr/streams/stream0/acquisitions/.zarray 
-        // {
-        //     "chunks": [
-        //         10,
-        //         16,
-        //         1
-        //     ],
-        //     "compressor": null,
-        //     "dimension_separator": ".",
-        //     "dtype": "<i2",
-        //     "fill_value": 0.0,
-        //     "filters": null,
-        //     "order": "C",
-        //     "shape": [
-        //         100,
-        //         16,
-        //         1
-        //     ],
-        //     "zarr_format": 2
-        // }
-
-
-        // virtual bool z5::Dataset::readChunk()
-
-// cout << "read the attributes of dataset: /data\n";
-//     nlohmann::json dataXAttributes;   // object to receive attributes
-//     z5::readAttributes(dsHandle, dataXAttributes);
-//     std::cout << "Attributes: ";
-//     std::cout << attributesOut << std::endl;
-
-        // nlohmann::json dataXGroupAttr;
-        // z5::readAttributes( dataXHandle, dataXGroupAttr );
-        // std::cout << "\tStream " << iStr << " attributes: " << dataXGroupAttr << std::endl;
-
-        // const std::string acqDataName = "data";
-        // const int recSize = 16;
-        // const int datasetNRec = 100;
-        // const int chunkNRec = 10;
-        // const int maxRecs = datasetNRec / chunkNRec;
-        // z5::createDataset( acqXHandle, acqDataName, "int16", datasetShape, chunkShape );
-
-        // // create a new Dataset for the data of this stream
-        // acqDatasets.emplace_back( z5::createDataset( acqHandle, acqDataName, "int16", datasetShape, chunkShape ) );
-        
-        // // get handle for the dataset for this stream
-        // acqDataHandles.push_back( z5::filesystem::handle::Dataset( acqHandle, dsName ) );
-
-
-
-        // //TODO get handle to Dataset
-        // //TODO create xarray buffer for Dataset
-
-        // // Read streamX dataset into xarray
-        // std::cout << "Read records from stream " << iStr << std::endl;
-        // for( writeOffset[0] = 0; writeOffset[0] < maxRecs; writeOffset[0] += 1 )
-        // {
-        //     z5::multiarray::readSubarray< int16_t >( acqDatasets[iStr], arrayPrototype, writeOffset.begin() );
-        // }
-    }
-
-
-#endif
 
