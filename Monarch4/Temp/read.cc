@@ -119,13 +119,24 @@ std::cout << streamXName << "[" << iStr << "]\n";
         // Dataset is opened by path name: dsXName       
         std::string dsXName = "streams/" + streamXName + "/acquisitions/data";   
 
-        // Handle the file at the end of the path     
+        // Handle the file at the end of the path:  as base path    
         z5::filesystem::handle::File fX(z5FileName);
         auto dsXHandle = z5::filesystem::handle::Dataset(fX, dsXName);
 
+        // Read dataset attributes
+        // auto attrXHandle = z5::filesystem::handle::Group( f, dsXName );
+        // nlohmann::json dsAttributes;
+// cout << "readAttributes()\n";
+//         z5::readAttributes(attrXHandle,dsAttributes);
+//         cout << dsAttributes << endl;        
+        
+        // Group: /streams/streamX/acquisitions/data
+        auto acqXHandle = z5::filesystem::handle::Group( fX, dsXName );
+        
         // Open the dataset from path
 cout << "openDataset(): " <<  z5FileName << "/" << dsXName << endl;       
         auto dsX = z5::openDataset(fX, dsXName);
+
 
         // Read into array buffer from dataset
         z5::multiarray::readSubarray<int16_t>(dsX, readArray, readOffset.begin());
@@ -190,7 +201,7 @@ cout << "openDataset(): " <<  z5FileName << "/" << dsXName << endl;
 // └── .zgroup
 
 // Data record attributes
-// cat readme2.zr/streams/stream0/acquisitions/.zarray 
+// cat readme2.zr/streams/stream0/acquisitions/data/.zarray 
 // {
 //     "chunks": [
 //         10,

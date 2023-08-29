@@ -138,18 +138,32 @@ cout << "create group: " << name << endl;
     // simulate data taking by storing data in each of the stream's dataset
     z5::types::ShapeType writeOffset = { 0, 0, 0 };
     xt::xarray< int16_t >::shape_type writeShape = { 1, recSize, 1 };
-    xt::xarray< int16_t > arrayPrototype( writeShape, 42.0 );
+    // xt::xarray< int16_t > arrayPrototype( writeShape, 0 );
+    xt::xarray< int16_t > arrayStream0( writeShape, 0 );
+    xt::xarray< int16_t > arrayStream1( writeShape, 1 );
+    xt::xarray< int16_t > arrayStream2( writeShape, 2 );
 
+    // Initialize array with recognizable data
     // Write the stream records to file
     std::cout << "Writing records" << std::endl;
-    for( int iStr = 0; iStr < totalStreams; ++iStr )
-    {
-        std::cout << "Writing records for stream " << iStr << std::endl;
-        for( writeOffset[0] = 0; writeOffset[0] < maxRecs; writeOffset[0] += 1 )
-        {
-            z5::multiarray::writeSubarray< int16_t >( acqDatasets[iStr], arrayPrototype, writeOffset.begin() );
-        }
-    }
+    // for( int iStr = 0; iStr < totalStreams; ++iStr )
+    // {
+    //     std::cout << "Writing records for stream " << iStr << std::endl;
+    //     // PROGRAMMER'S NOTE: z5::types::ShapeType writeOffset[0]
+    //     for( writeOffset[0] = 0; writeOffset[0] < maxRecs; writeOffset[0] += 1 )
+    //     {
+    //         std::cout << "Write record: " <<  writeOffset[0] << endl;
+    //         z5::multiarray::writeSubarray< int16_t >( acqDatasets[iStr], arrayPrototype, writeOffset.begin() );
+    //     }
+    // }
+    std::cout << "Writing stream0 record\n";
+    z5::multiarray::writeSubarray< int16_t >( acqDatasets[0], arrayStream0, writeOffset.begin() );
+
+    std::cout << "Writing stream1 record\n";
+    z5::multiarray::writeSubarray< int16_t >( acqDatasets[1], arrayStream1, writeOffset.begin() );
+    
+    std::cout << "Writing stream2 record\n";
+    z5::multiarray::writeSubarray< int16_t >( acqDatasets[2], arrayStream2, writeOffset.begin() );
 
     return 0;
 }
