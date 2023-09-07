@@ -145,6 +145,7 @@ cout << "create group: " << name << endl;
     xt::xarray< int16_t > arrayStream1( writeShape, 1 );
     xt::xarray< int16_t > arrayStream2( writeShape, 2 );
 
+    // Create unique recognizable data in each stream
     for (int c = 0; c<recSize; ++c)
     {
         arrayStream0.at(0,c,0) = (int16_t)c;
@@ -160,9 +161,7 @@ cout << "create group: " << name << endl;
     cout << "\narrayStream1: \n" << arrayStream1 << endl;
     cout << "\narrayStream2: \n" << arrayStream2 << endl;
 
-    // Initialize array with recognizable data
-    // Write the stream records to file
-    std::cout << "Writing records" << std::endl;
+    // std::cout << "Writing records" << std::endl;
     // for( int iStr = 0; iStr < totalStreams; ++iStr )
     // {
     //     std::cout << "Writing records for stream " << iStr << std::endl;
@@ -173,6 +172,7 @@ cout << "create group: " << name << endl;
     //         z5::multiarray::writeSubarray< int16_t >( acqDatasets[iStr], arrayPrototype, writeOffset.begin() );
     //     }
     // }
+
     std::cout << "Writing stream0 record\n";
     z5::multiarray::writeSubarray< int16_t >( acqDatasets[0], arrayStream0, writeOffset.begin() );
 
