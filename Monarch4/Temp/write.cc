@@ -1,5 +1,6 @@
 #include "nlohmann/json.hpp"
 #include "xtensor/xarray.hpp"
+#include "xtensor/xio.hpp"
 
 // factory functions to create files, groups and datasets
 #include "z5/factory.hxx"
@@ -137,11 +138,27 @@ cout << "create group: " << name << endl;
 
     // simulate data taking by storing data in each of the stream's dataset
     z5::types::ShapeType writeOffset = { 0, 0, 0 };
-    xt::xarray< int16_t >::shape_type writeShape = { 1, recSize, 1 };
+    xt::xarray< int16_t >::shape_type writeShape = { 2, recSize, 1 };
     // xt::xarray< int16_t > arrayPrototype( writeShape, 0 );
+    
     xt::xarray< int16_t > arrayStream0( writeShape, 0 );
     xt::xarray< int16_t > arrayStream1( writeShape, 1 );
     xt::xarray< int16_t > arrayStream2( writeShape, 2 );
+
+    for (int c = 0; c<recSize; ++c)
+    {
+        arrayStream0.at(0,c,0) = (int16_t)c;
+        arrayStream0.at(1,c,0) = (int16_t)c + (int16_t)16;
+
+        arrayStream1.at(0,c,0) = (int16_t)c + (int16_t)32;
+        arrayStream1.at(1,c,0) = (int16_t)c + (int16_t)48;
+
+        arrayStream2.at(0,c,0) = (int16_t)c + (int16_t)64;
+        arrayStream2.at(1,c,0) = (int16_t)c + (int16_t)80;
+    }
+    cout << "arrayStream0: \n" << arrayStream0 << endl;
+    cout << "\narrayStream1: \n" << arrayStream1 << endl;
+    cout << "\narrayStream2: \n" << arrayStream2 << endl;
 
     // Initialize array with recognizable data
     // Write the stream records to file

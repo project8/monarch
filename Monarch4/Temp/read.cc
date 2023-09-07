@@ -101,7 +101,7 @@ cout << "read the attributes of dataset: /data\n";
     z5::types::ShapeType readOffset = { 0, 0, 0 };
 
     // Reads streamX into the same buffer:  readArray[]
-    xt::xarray< int16_t >::shape_type readShape = { 1, recSize, 1 };
+    xt::xarray< int16_t >::shape_type readShape = { 2, recSize, 1 };
     xt::xarray< int16_t > readArray( readShape, 0.0 );
 
     // Read the stream records from file
