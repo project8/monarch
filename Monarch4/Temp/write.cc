@@ -173,7 +173,7 @@ int main() {
         arrayStream2.at(1,c,0) = (int16_t)(c + 5*recSize);
     }
 
-    // Dump stream arrays for inspection
+    // Print stream arrays for inspection
     cout << "arrayStream0: \n" << arrayStream0 << endl;
     cout << "\narrayStream1: \n" << arrayStream1 << endl;
     cout << "\narrayStream2: \n" << arrayStream2 << endl;
