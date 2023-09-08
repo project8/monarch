@@ -11,6 +11,11 @@
 // attribute functionality
 #include "z5/attributes.hxx"
 
+// Shorter typedefs for z5 types
+typedef z5::filesystem::handle::File z5FileHandle;
+typedef z5::filesystem::handle::Dataset z5DatasetHandle;
+typedef z5::filesystem::handle::Group z5GroupHandle;
+
 using namespace std;
 
 string z5FileName = "readme2.zr";
@@ -25,7 +30,8 @@ int main() {
     // Group: /data
     cout << "open the zarr dataset from file: /data\n";
     const std::string dsName = "data";
-    const auto dsHandle = z5::filesystem::handle::Dataset(f, dsName);
+// const auto dsHandle = z5::filesystem::handle::Dataset(f, dsName);
+    const auto dsHandle = z5DatasetHandle(f, dsName);
     auto ds = z5::openDataset(f, dsName);
 
     cout << "read array from roi (values that were not written before are filled with a fill-value)\n";
@@ -46,7 +52,8 @@ int main() {
     std::cout << attributesOut << std::endl;
 
     // Group: /channels
-    auto channelsHandle = z5::filesystem::handle::Group( f, "channels" );
+// auto channelsHandle = z5::filesystem::handle::Group( f, "channels" );
+    auto channelsHandle = z5GroupHandle( f, "channels" );
     nlohmann::json chGroupAttr;
     z5::readAttributes( channelsHandle, chGroupAttr );
     std::cout << "\nChannels" << std::endl;
@@ -60,7 +67,8 @@ int main() {
         std::string name( str.str() );
         
         std::cout << "Extracting channel <" << name << ">" << endl;
-        z5::filesystem::handle::Group channelHandle = z5::filesystem::handle::Group( channelsHandle, name );
+// z5::filesystem::handle::Group channelHandle = z5::filesystem::handle::Group( channelsHandle, name );
+        z5GroupHandle channelHandle = z5GroupHandle( channelsHandle, name );
         
         nlohmann::json oneChGroupAttr;
         z5::readAttributes( channelHandle, oneChGroupAttr );
@@ -85,7 +93,8 @@ int main() {
         std::string name( str.str() );
         std::cout << "Extracting stream <" << name << ">" << endl;
         
-        z5::filesystem::handle::Group streamHandle = z5::filesystem::handle::Group( streamsHandle, name );
+// z5::filesystem::handle::Group streamHandle = z5::filesystem::handle::Group( streamsHandle, name );
+        z5GroupHandle streamHandle = z5GroupHandle( streamsHandle, name );
         
         nlohmann::json oneStrGroupAttr;
         z5::readAttributes( streamHandle, oneStrGroupAttr );
@@ -121,11 +130,14 @@ int main() {
         std::string dsXName = "streams/" + streamXName + "/acquisitions/data";   
 
         // Handle the file at the end of the path:  as base path    
-        z5::filesystem::handle::File fX(z5FileName);
-        auto dsXHandle = z5::filesystem::handle::Dataset(fX, dsXName);
+// z5::filesystem::handle::File fX(z5FileName);
+        z5FileHandle fX(z5FileName);
+// auto dsXHandle = z5::filesystem::handle::Dataset(fX, dsXName);
+        auto dsXHandle = z5DatasetHandle(fX, dsXName);
         
         // Group: /streams/streamX/acquisitions/data
-        auto acqXHandle = z5::filesystem::handle::Group( fX, dsXName );
+// auto acqXHandle = z5::filesystem::handle::Group( fX, dsXName );
+        auto acqXHandle = z5GroupHandle( fX, dsXName );
         
         // Open the dataset from path
         cout << "openDataset(): " <<  z5FileName << "/" << dsXName << endl;       

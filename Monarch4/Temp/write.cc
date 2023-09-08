@@ -11,12 +11,18 @@
 // attribute functionality
 #include "z5/attributes.hxx"
 
+// Shorter typedefs for z5 types
+typedef z5::filesystem::handle::File z5FileHandle;
+typedef z5::filesystem::handle::Dataset z5DatasetHandle;
+typedef z5::filesystem::handle::Group z5GroupHandle;
+
 using namespace std;
 
 int main() {
 
     cout << "get handle to a File on the filesystem: f\n";
-    z5::filesystem::handle::File f( "readme2.zr", z5::FileMode::modes::a );
+// z5::filesystem::handle::File f( "readme2.zr", z5::FileMode::modes::a );
+    z5FileHandle f( "readme2.zr", z5::FileMode::modes::a );
 
     cout << "create the file in zarr format\n";
     const bool createAsZarr = true;
@@ -29,7 +35,8 @@ int main() {
     auto ds = z5::createDataset(f, dsName, "float32", shape, chunks);
     
     cout << "get handle for the dataset\n";
-    const auto dsHandle = z5::filesystem::handle::Dataset(f, dsName);
+// const auto dsHandle = z5::filesystem::handle::Dataset(f, dsName);
+    const auto dsHandle = z5DatasetHandle(f, dsName);
 
     cout << "write sub-array to roi\n";
     // initialize sub-array with the 'The Meaning of Life'
@@ -51,7 +58,8 @@ int main() {
 
     // Create a group to hold channels
     z5::createGroup(f, "channels");
-    auto channelsHandle = z5::filesystem::handle::Group(f, "channels");
+// auto channelsHandle = z5::filesystem::handle::Group(f, "channels");
+    auto channelsHandle = z5GroupHandle(f, "channels");
 
     const int totalChannels = 2;
     int nChannels = 0;
@@ -63,7 +71,8 @@ int main() {
         cout << "Create channel: " << name << endl;        
         
         z5::createGroup( channelsHandle, name );
-        z5::filesystem::handle::Group channelHandle = z5::filesystem::handle::Group( channelsHandle, name );
+// z5::filesystem::handle::Group channelHandle = z5::filesystem::handle::Group( channelsHandle, name );
+        z5GroupHandle channelHandle = z5GroupHandle( channelsHandle, name );
         
         nlohmann::json oneChGroupAttr;
         oneChGroupAttr["name"] = name;
@@ -78,7 +87,8 @@ int main() {
     // streams
     cout << "Create streams group\n";
     z5::createGroup(f, "streams");
-    auto streamsHandle = z5::filesystem::handle::Group(f, "streams");
+// auto streamsHandle = z5::filesystem::handle::Group(f, "streams");
+    auto streamsHandle = z5GroupHandle(f, "streams");
 
     // constants for data
     const std::string acqDataName = "data";
@@ -101,7 +111,9 @@ int main() {
     std::vector< std::unique_ptr< z5::Dataset > > acqDatasets;
 
     // std::vector< const z5::filesystem::handle::Dataset > acqDataHandles;
-    std::vector< z5::filesystem::handle::Dataset > acqDataHandles;
+    // RED: the const produces an error - no CTOR
+// std::vector< z5::filesystem::handle::Dataset > acqDataHandles;
+    std::vector< z5DatasetHandle > acqDataHandles;
     for( int iStr = 0; iStr < totalStreams; ++iStr )
     {
         std::stringstream str;
@@ -120,13 +132,15 @@ int main() {
 
         // Create stream group attribute: 'acquisitions', and handle
         z5::createGroup( streamHandles.back(), "acquisitions" );
-        z5::filesystem::handle::Group acqHandle = z5::filesystem::handle::Group( streamHandles.back(), "acquisitions" );
+// z5::filesystem::handle::Group acqHandle = z5::filesystem::handle::Group( streamHandles.back(), "acquisitions" );
+        z5GroupHandle acqHandle = z5GroupHandle( streamHandles.back(), "acquisitions" );
 
         // create a new Dataset for the data of this stream
         acqDatasets.emplace_back( z5::createDataset( acqHandle, acqDataName, "int16", datasetShape, chunkShape ) );
         
         // get handle for the dataset for this stream
-        acqDataHandles.push_back( z5::filesystem::handle::Dataset( acqHandle, dsName ) );
+// acqDataHandles.push_back( z5::filesystem::handle::Dataset( acqHandle, dsName ) );
+        acqDataHandles.push_back( z5DatasetHandle( acqHandle, dsName ) );
 
         ++nStreams;
     }
@@ -146,7 +160,7 @@ int main() {
     xt::xarray< int16_t > arrayStream1( writeShape, 1 );
     xt::xarray< int16_t > arrayStream2( writeShape, 2 );
 
-    // Create unique recognizable data in each stream array
+    // Create unique recognizable data records in each stream array
     for (int c = 0; c<recSize; ++c)
     {
         arrayStream0.at(0,c,0) = (int16_t)c;
@@ -158,6 +172,8 @@ int main() {
         arrayStream2.at(0,c,0) = (int16_t)(c + 4*recSize);
         arrayStream2.at(1,c,0) = (int16_t)(c + 5*recSize);
     }
+
+    // Dump stream arrays for inspection
     cout << "arrayStream0: \n" << arrayStream0 << endl;
     cout << "\narrayStream1: \n" << arrayStream1 << endl;
     cout << "\narrayStream2: \n" << arrayStream2 << endl;
