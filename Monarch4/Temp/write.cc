@@ -15,23 +15,23 @@ using namespace std;
 
 int main() {
 
-cout << "get handle to a File on the filesystem: f\n";
+    cout << "get handle to a File on the filesystem: f\n";
     z5::filesystem::handle::File f( "readme2.zr", z5::FileMode::modes::a );
 
-cout << "create the file in zarr format\n";
+    cout << "create the file in zarr format\n";
     const bool createAsZarr = true;
     z5::createFile(f, createAsZarr);
 
-cout << "create a new zarr dataset: /data<float32>[1000,1000,1000]\n";
+    cout << "create a new zarr dataset: /data<float32>[1000,1000,1000]\n";
     const std::string dsName = "data";
     std::vector<size_t> shape = { 1000, 1000, 1000 };
     std::vector<size_t> chunks = { 100, 100, 100 };
     auto ds = z5::createDataset(f, dsName, "float32", shape, chunks);
     
-cout << "get handle for the dataset\n";
+    cout << "get handle for the dataset\n";
     const auto dsHandle = z5::filesystem::handle::Dataset(f, dsName);
 
-cout << "write sub-array to roi\n";
+    cout << "write sub-array to roi\n";
     // initialize sub-array with the 'The Meaning of Life'
     z5::types::ShapeType offset1 = { 50, 100, 150 };
     xt::xarray<float>::shape_type shape1 = { 150, 200, 100 };
@@ -40,7 +40,7 @@ cout << "write sub-array to roi\n";
     // write sub-array to dataset
     z5::multiarray::writeSubarray<float>(ds, array1, offset1.begin());
 
-cout << "create json attributes for the dataset\n";
+    cout << "create json attributes for the dataset\n";
     nlohmann::json attributesIn;
     attributesIn["bar"] = "foo";
     attributesIn["pi"] = 3.141593;
@@ -60,7 +60,7 @@ cout << "create json attributes for the dataset\n";
         std::stringstream str;
         str << "channel" << iCh;
         std::string name( str.str() );
-cout << "Create channel: " << name << endl;        
+        cout << "Create channel: " << name << endl;        
         
         z5::createGroup( channelsHandle, name );
         z5::filesystem::handle::Group channelHandle = z5::filesystem::handle::Group( channelsHandle, name );
@@ -76,7 +76,7 @@ cout << "Create channel: " << name << endl;
     z5::writeAttributes(channelsHandle, chGroupAttr);
 
     // streams
-cout << "Create streams group\n";
+    cout << "Create streams group\n";
     z5::createGroup(f, "streams");
     auto streamsHandle = z5::filesystem::handle::Group(f, "streams");
 
@@ -108,7 +108,7 @@ cout << "Create streams group\n";
         
         str << "stream" << iStr;
         std::string name( str.str() );
-cout << "create group: " << name << endl;
+        cout << "create group: " << name << endl;
         z5::createGroup( streamsHandle, name );
         
         streamHandles.emplace_back( z5::filesystem::handle::Group( streamsHandle, name ) );
@@ -137,25 +137,26 @@ cout << "create group: " << name << endl;
     z5::writeAttributes(streamsHandle, strGroupAttr);
 
     // simulate data taking by storing data in each of the stream's dataset
+    const int numRecords = 2;
     z5::types::ShapeType writeOffset = { 0, 0, 0 };
-    xt::xarray< int16_t >::shape_type writeShape = { 2, recSize, 1 };
+    xt::xarray< int16_t >::shape_type writeShape = { numRecords, recSize, 1 };
     // xt::xarray< int16_t > arrayPrototype( writeShape, 0 );
     
     xt::xarray< int16_t > arrayStream0( writeShape, 0 );
     xt::xarray< int16_t > arrayStream1( writeShape, 1 );
     xt::xarray< int16_t > arrayStream2( writeShape, 2 );
 
-    // Create unique recognizable data in each stream
+    // Create unique recognizable data in each stream array
     for (int c = 0; c<recSize; ++c)
     {
         arrayStream0.at(0,c,0) = (int16_t)c;
-        arrayStream0.at(1,c,0) = (int16_t)c + (int16_t)16;
+        arrayStream0.at(1,c,0) = (int16_t)(c + recSize);
 
-        arrayStream1.at(0,c,0) = (int16_t)c + (int16_t)32;
-        arrayStream1.at(1,c,0) = (int16_t)c + (int16_t)48;
+        arrayStream1.at(0,c,0) = (int16_t)(c + 2*recSize);
+        arrayStream1.at(1,c,0) = (int16_t)(c + 3*recSize);
 
-        arrayStream2.at(0,c,0) = (int16_t)c + (int16_t)64;
-        arrayStream2.at(1,c,0) = (int16_t)c + (int16_t)80;
+        arrayStream2.at(0,c,0) = (int16_t)(c + 4*recSize);
+        arrayStream2.at(1,c,0) = (int16_t)(c + 5*recSize);
     }
     cout << "arrayStream0: \n" << arrayStream0 << endl;
     cout << "\narrayStream1: \n" << arrayStream1 << endl;

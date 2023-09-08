@@ -23,12 +23,12 @@ int main() {
 
     // file: readme2.zr
     // Group: /data
-cout << "open the zarr dataset from file: /data\n";
+    cout << "open the zarr dataset from file: /data\n";
     const std::string dsName = "data";
     const auto dsHandle = z5::filesystem::handle::Dataset(f, dsName);
     auto ds = z5::openDataset(f, dsName);
 
-cout << "read array from roi (values that were not written before are filled with a fill-value)\n";
+    cout << "read array from roi (values that were not written before are filled with a fill-value)\n";
     z5::types::ShapeType offset2 = { 100, 100, 100 };
     xt::xarray<float>::shape_type shape2 = { 300, 200, 75 };
     
@@ -39,7 +39,7 @@ cout << "read array from roi (values that were not written before are filled wit
     std::cout << "\nData:" << std::endl;
     std::cout << array2 << std::endl;
 
-cout << "read the attributes of dataset: /data\n";
+    cout << "read the attributes of dataset: /data\n";
     nlohmann::json attributesOut;   // object to receive attributes
     z5::readAttributes(dsHandle, attributesOut);
     std::cout << "Attributes: ";
@@ -101,7 +101,8 @@ cout << "read the attributes of dataset: /data\n";
     z5::types::ShapeType readOffset = { 0, 0, 0 };
 
     // Reads streamX into the same buffer:  readArray[]
-    xt::xarray< int16_t >::shape_type readShape = { 2, recSize, 1 };
+    const int numRecords = 2;
+    xt::xarray< int16_t >::shape_type readShape = { numRecords, recSize, 1 };
     xt::xarray< int16_t > readArray( readShape, 0.0 );
 
     // Read the stream records from file
@@ -114,7 +115,7 @@ cout << "read the attributes of dataset: /data\n";
         // Get handle to stream[iStr]: streamXHandle
         str << "stream" << iStr;        // stream name: "stream0", "stream1", ...
         streamXName = str.str();
-std::cout << streamXName << "[" << iStr << "]\n";
+        std::cout << streamXName << "[" << iStr << "]\n";
 
         // Dataset is opened by path name: dsXName       
         std::string dsXName = "streams/" + streamXName + "/acquisitions/data";   
@@ -127,7 +128,7 @@ std::cout << streamXName << "[" << iStr << "]\n";
         auto acqXHandle = z5::filesystem::handle::Group( fX, dsXName );
         
         // Open the dataset from path
-cout << "openDataset(): " <<  z5FileName << "/" << dsXName << endl;       
+        cout << "openDataset(): " <<  z5FileName << "/" << dsXName << endl;       
         auto dsX = z5::openDataset(fX, dsXName);
 
         // Read into array buffer from dataset
