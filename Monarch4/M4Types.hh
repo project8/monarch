@@ -10,7 +10,7 @@
 
 #include "M4Exception.hh"
 
-#include "H5Cpp.h"
+// #include "H5Cpp.h"
 
 #include <inttypes.h>
 #include <memory>
@@ -42,6 +42,7 @@ namespace monarch4
     template<bool> struct staticassert;
     template<> struct staticassert<true> {};  //specialization
 
+#if 0
     template< typename T >
     struct MH5Type
     {
@@ -226,7 +227,7 @@ namespace monarch4
             return H5::StrType( H5::PredType::C_S1, aSize + 1 );
         }
     };
-
+#endif
 }
 
 #endif // MTYPES_HH_

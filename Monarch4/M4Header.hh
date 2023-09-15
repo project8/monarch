@@ -11,9 +11,37 @@
 #include "M4Constants.hh"
 #include "logger.hh"
 #include "M4MemberVariable.hh"
-#include "M4Types.hh"
+// #include "M4Types.hh"
+#include "z5/types/types.hxx"         // z5 data types
 
-#include " z5/handle.hxx"
+// factory functions to create files, groups and datasets
+#include "z5/factory.hxx"
+// handles for z5 filesystem objects
+#include "z5/filesystem/handle.hxx"
+// io for xtensor multi-arrays
+#include "z5/multiarray/xtensor_access.hxx"
+// attribute functionality
+#include "z5/attributes.hxx"
+
+// Shorter typedefs for z5 types
+typedef z5::filesystem::handle::File z5FileHandle;
+typedef z5::filesystem::handle::Dataset z5DatasetHandle;
+typedef z5::filesystem::handle::Group z5GroupHandle;
+
+// Search for definitions: in <prj> directory monarch/
+// $ grep -R HAS_GRP_IFC *
+// $ grep -R HAS_ATTR_IFC *
+//
+// HAS_ATTR_IFC and HAS_GRP_IFC was found in monarch/CMakeLists.txt, used in compiler CXX_DEFINES
+// set( HDF5_DEFINITIONS -DHAS_ATTR_IFC=H5::H5Location -DHAS_GRP_IFC=H5::CommonFG)
+// set( HDF5_DEFINITIONS -DHAS_ATTR_IFC=H5::H5Object -DHAS_GRP_IFC=H5::H5Object )
+//
+// HAS_GRP_IFC looks to be similar to z5 Group concept - hold streams, channels, etc.
+// HAS_ATTR_IFC looks to be something that can have attributes, z5 Group can have attributes
+//
+// For initial development, we will define them here to see they compile/build
+#define HAS_GRP_IFC z5::filesystem::handle::Group
+#define HAS_ATTR_IFC z5::filesystem::handle::Group
 
 #include <string>
 #include <vector>
@@ -57,7 +85,6 @@ namespace monarch4
             M4MEMBERVARIABLE( uint32_t, BitAlignment );
             M4MEMBERVARIABLE( uint32_t, NAcquisitions );
             M4MEMBERVARIABLE( uint32_t, NRecords );
-
         public:
             void WriteToFile( HAS_GRP_IFC* aParent );
             void ReadFromFile( const HAS_GRP_IFC* aParent, const std::string& aLabel ) const;
@@ -106,7 +133,6 @@ namespace monarch4
         public:
             void WriteToFile( HAS_GRP_IFC* aParent );
             void ReadFromFile( const HAS_GRP_IFC* aParent, const std::string& aLabel ) const;
-
     };
 
 
@@ -163,10 +189,9 @@ namespace monarch4
                                 uint32_t aDataTypeSize, uint32_t aDataFormat,
                                 uint32_t aBitDepth, uint32_t aBitAlignment,
                                 std::vector< unsigned >* aChanVec = NULL );
-
         public:
-            void WriteToFile( z5::handle::File* aFile );
-            void ReadFromFile( const z5::handle::File* aFile ) const;
+            void WriteToFile( z5::filesystem::handle::File* aFile );
+            void ReadFromFile( const z5::filesystem::handle::File* aFile ) const;
 
             const z5::filesystem::handle::Group* GetStreamsGroup() const;
             z5::filesystem::handle::Group* GetStreamsGroup();
@@ -180,11 +205,10 @@ namespace monarch4
 
             void WriteChannelCoherence( HAS_ATTR_IFC* aLoc );
             void ReadChannelCoherence( const HAS_ATTR_IFC* aLoc ) const;
-
-            mutable z5::Handle* fFile;
+            
+            mutable z5::filesystem::handle::File* fFile;
             mutable z5::filesystem::handle::Group* fStreamsGroup;
             mutable z5::filesystem::handle::Group* fChannelsGroup;
-
         public:
             static void WriteScalarToHDF5( HAS_ATTR_IFC* aLoc, const std::string& aName, const std::string& aValue );
             template< typename XType >
@@ -233,8 +257,7 @@ namespace monarch4
     {
         return fStreamHeaders;
     }
-
-
+#if 0
     inline void M4Header::WriteScalarToHDF5( HAS_ATTR_IFC* aLoc, const std::string& aName, const std::string& aValue )
     {
         LTRACE( mlog_mheader, "Writing string to new scalar metadata <" << aName << ">: " << aValue << "; size = " << aValue.size() );
@@ -252,6 +275,7 @@ namespace monarch4
 		aLoc->createAttribute( aName.c_str(), MH5Type< XType >::H5(), H5::DataSpace( H5S_SCALAR ) ).write( MH5Type< XType >::Native(), &aValue );
         return;
     }
+#endif
 /*
     template< typename XArrayType >
     void M4Header::Write1DToHDF5( HAS_GRP_IFC* aLoc, const std::string& aName, const XArrayType& anArray )
@@ -275,9 +299,8 @@ namespace monarch4
         return;
     }
 */
-
+#if 0
     // Read functions
-
     // read specialization for strings
     template<>
     inline std::string M4Header::ReadScalarFromHDF5( const HAS_ATTR_IFC* aLoc, const std::string& aName )
@@ -336,6 +359,7 @@ namespace monarch4
         LTRACE( mlog_mheader, "Reading value <" << aName << ">: " << tValue );
         return tValue;
     }
+#endif    
 /*
     template< typename XArrayType >
     void M4Header::Read1DFromHDF5( const HAS_ATTR_IFC* aLoc, const std::string& aName, XArrayType& anArray )

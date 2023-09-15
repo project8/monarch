@@ -164,7 +164,7 @@ namespace monarch4
 
         return;
     }
-
+#if 0
     /*************************************************************************
     * @brief 
     * 
@@ -298,7 +298,7 @@ namespace monarch4
 
         return;
     }
-
+#endif
     //*********************
     // M4ChannelHeader
     //*********************
@@ -424,7 +424,7 @@ namespace monarch4
 
         return;
     }
-
+#if 0
     /*************************************************************************
     * @brief 
     * 
@@ -481,7 +481,7 @@ namespace monarch4
 
         return;
     }
-
+#endif
 
     //*********************
     // M4Header
@@ -645,7 +645,7 @@ namespace monarch4
         
         return fNStreams++;
     }
-
+#if 0
     /*************************************************************************
     * @brief Write file attributes, stream headers, channel headers to file
     * 
@@ -953,7 +953,7 @@ namespace monarch4
 
         return;
     }
-
+#endif
 }
 
 M4_API std::ostream& operator<<( std::ostream& out, const monarch4::M4StreamHeader& hdr )

@@ -11,9 +11,10 @@
 #include "M4Header.hh"
 #include "M4MemberVariable.hh"
 #include "M4Record.hh"
-#include "M4Types.hh"
+// #include "M4Types.hh"
+#include "z5/types/types.hxx"         // z5 data types
 
-#include "H5Cpp.h"
+// #include "H5Cpp.h"
 
 namespace monarch4
 {
@@ -196,19 +197,23 @@ namespace monarch4
             mutable z5::filesystem::handle::Group* fZ5AcqLoc;
             mutable z5::filesystem::handle::Dataset* fZ5CurrentAcqDataSet;
 
-            mutable H5::DataSpace* fH5DataSpaceUser;
+            // mutable H5::DataSpace* fH5DataSpaceUser;
+            mutable z5::filesystem::handle::Dataset* fH5DataSpaceUser;
 
-            mutable H5::DataType fDataTypeInFile;
-            mutable H5::DataType fDataTypeUser;
+            // mutable H5::DataType fDataTypeInFile;
+            // mutable H5::DataType fDataTypeUser;
+            // These are found in z5 file: types.hxx
+            mutable z5::types::Datatype fDataTypeInFile;
+            mutable z5::types::Datatype fDataTypeUser;
 
             enum { N_DATA_DIMS = 2 };
-            mutable hsize_t fStrDataDims[ N_DATA_DIMS ];
-            mutable hsize_t fStrMaxDataDims[ N_DATA_DIMS ];
-            mutable hsize_t fStrDataChunkDims[ N_DATA_DIMS ];
-            mutable hsize_t fDataDims1Rec[ N_DATA_DIMS ];
-            mutable hsize_t fDataOffset[ N_DATA_DIMS ];
-            mutable hsize_t fDataStride[ N_DATA_DIMS ];
-            mutable hsize_t fDataBlock[ N_DATA_DIMS ];
+            mutable size_t fStrDataDims[ N_DATA_DIMS ];
+            mutable size_t fStrMaxDataDims[ N_DATA_DIMS ];
+            mutable size_t fStrDataChunkDims[ N_DATA_DIMS ];
+            mutable size_t fDataDims1Rec[ N_DATA_DIMS ];
+            mutable size_t fDataOffset[ N_DATA_DIMS ];
+            mutable size_t fDataStride[ N_DATA_DIMS ];
+            mutable size_t fDataBlock[ N_DATA_DIMS ];
 
             mutable mutex_ptr fMutexPtr;
     };

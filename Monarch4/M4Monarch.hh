@@ -13,7 +13,16 @@
 #include "logger.hh"
 #include "M4Stream.hh"
 
-#include " z5/handle.hxx"
+// factory functions to create files, groups and datasets
+#include "z5/factory.hxx"
+// handles for z5 filesystem objects
+#include "z5/filesystem/handle.hxx"
+// io for xtensor multi-arrays
+#include "z5/multiarray/xtensor_access.hxx"
+// attribute functionality
+#include "z5/attributes.hxx"
+
+
 
 #include <string>
 #include <stdexcept>
@@ -118,11 +127,11 @@ namespace monarch4
             void FinishWriting();
 
         private:
-            // the HDF5 file
+            // the Zarr/Egg file
             mutable std::unique_ptr< z5::filesystem::handle::File > fFile;
 
             // the header
-            mutable sd::unique_ptr< M4Header > fHeader;
+            mutable std::unique_ptr< M4Header > fHeader;
 
             // the streams
             mutable std::vector< M4Stream* > fStreams;
@@ -134,11 +143,11 @@ namespace monarch4
 
     inline const M4Header* Monarch4::GetHeader() const
     {
-        return fHeader;
+        return fHeader.get();       // access to raw pointer not a good idea
     }
     inline M4Header* Monarch4::GetHeader()
     {
-        return fHeader;
+        return fHeader.get();       // access to raw poiner not a good idea
     }
 
     inline const M4Stream* Monarch4::GetStream( unsigned iStream ) const

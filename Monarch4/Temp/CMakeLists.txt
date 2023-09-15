@@ -8,6 +8,7 @@ set( sources
     read.cc
     readme.cc
     write.cc
+    writeMonarch.cc
 )
 
 pbuilder_executables( 
