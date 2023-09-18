@@ -14,6 +14,7 @@
 #include "M4IToA.hh"
 #include "logger.hh"
 #include "M4Version.hh"
+#include "M4Exception.hh"
 
 #include <cstdlib> // for atol in parsing timestamp
 #include <cstring> // for strcpy

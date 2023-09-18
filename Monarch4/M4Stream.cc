@@ -80,20 +80,20 @@ namespace monarch4
             switch( fDataTypeSize )
             {
                 case 1:
-                    fDataTypeInFile = H5::PredType::STD_U8LE;
-                    fDataTypeUser = H5::PredType::NATIVE_UINT8;
+                    fDataTypeInFile = z5::types::uint8;     //H5::PredType::STD_U8LE;
+                    fDataTypeUser = z5::types::uint8;       //H5::PredType::NATIVE_UINT8;
                    break;
                 case 2:
-                    fDataTypeInFile = H5::PredType::STD_U16LE;
-                    fDataTypeUser = H5::PredType::NATIVE_UINT16;
+                    fDataTypeInFile = z5::types::uint16;    //H5::PredType::STD_U16LE;
+                    fDataTypeUser = z5::types::uint16;      //H5::PredType::NATIVE_UINT16;
                     break;
                 case 4:
-                    fDataTypeInFile = H5::PredType::STD_U32LE;
-                    fDataTypeUser = H5::PredType::NATIVE_UINT32;
+                    fDataTypeInFile = z5::types::uint32;    //H5::PredType::STD_U32LE;
+                    fDataTypeUser = z5::types::uint32;      //H5::PredType::NATIVE_UINT32;
                     break;
                 case 8:
-                    fDataTypeInFile = H5::PredType::STD_U64LE;
-                    fDataTypeUser = H5::PredType::NATIVE_UINT64;
+                    fDataTypeInFile = z5::types::uint64;    //H5::PredType::STD_U64LE;
+                    fDataTypeUser = z5::types::uint64;      //H5::PredType::NATIVE_UINT64;
                     break;
                 default:
                     throw M4Exception() << "Unknown unsigned integer data type size: " << fDataTypeSize;
@@ -104,20 +104,20 @@ namespace monarch4
             switch( fDataTypeSize )
             {
                 case 1:
-                    fDataTypeInFile = H5::PredType::STD_I8LE;
-                    fDataTypeUser = H5::PredType::NATIVE_INT8;
+                    fDataTypeInFile = z5::types::int8;      //H5::PredType::STD_I8LE;
+                    fDataTypeUser = z5::types::int8;        //H5::PredType::NATIVE_INT8;
                    break;
                 case 2:
-                    fDataTypeInFile = H5::PredType::STD_I16LE;
-                    fDataTypeUser = H5::PredType::NATIVE_INT16;
+                    fDataTypeInFile = z5::types::int16;      //H5::PredType::STD_I16LE;
+                    fDataTypeUser = z5::types::int16;        //H5::PredType::NATIVE_INT16;
                     break;
                 case 4:
-                    fDataTypeInFile = H5::PredType::STD_I32LE;
-                    fDataTypeUser = H5::PredType::NATIVE_INT32;
+                    fDataTypeInFile = z5::types::int32;     //H5::PredType::STD_I32LE;
+                    fDataTypeUser = z5::types::int32;       //H5::PredType::NATIVE_INT32;
                     break;
                 case 8:
-                    fDataTypeInFile = H5::PredType::STD_I64LE;
-                    fDataTypeUser = H5::PredType::NATIVE_INT64;
+                    fDataTypeInFile = z5::types::int64;     //H5::PredType::STD_I64LE;
+                    fDataTypeUser = z5::types::int64;       //H5::PredType::NATIVE_INT64;
                     break;
                 default:
                     throw M4Exception() << "Unknown signed integer data type size: " << fDataTypeSize;
@@ -128,12 +128,12 @@ namespace monarch4
             switch( fDataTypeSize )
             {
                 case 4:
-                    fDataTypeInFile = H5::PredType::IEEE_F32LE;
-                    fDataTypeUser = H5::PredType::NATIVE_FLOAT;
+                    fDataTypeInFile = z5::types::float32;     //H5::PredType::IEEE_F32LE;
+                    fDataTypeUser = z5::types::float32;     //H5::PredType::NATIVE_FLOAT;
                     break;
                 case 8:
-                    fDataTypeInFile = H5::PredType::IEEE_F64LE ;
-                    fDataTypeUser = H5::PredType::NATIVE_DOUBLE;
+                    fDataTypeInFile = z5::types::float64;       //H5::PredType::IEEE_F64LE ;
+                    fDataTypeUser = z5::types::float64;     //H5::PredType::NATIVE_DOUBLE;
                     break;
                 default:
                     throw M4Exception() << "Unknown floating-point data type size: " << fDataTypeSize;

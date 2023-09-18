@@ -19,7 +19,7 @@ add_definitions( -DEgg_VERSION=${Egg_VERSION} )
 
 # Monarch library options
 set( Monarch_BUILD_MONARCH2 FALSE CACHE BOOL "Build Monarch2 library (requires Protobuf)" )
-set( Monarch_BUILD_MONARCH3 TRUE CACHE BOOL "Build Monarch3 library (requires HDF5)" )
+set( Monarch_BUILD_MONARCH3 FALSE CACHE BOOL "Build Monarch3 library (requires HDF5)" )
 set( Monarch_BUILD_MONARCH4 TRUE CACHE BOOL "Build Monarch4 library (requires Zarr)" )
 
 
@@ -39,6 +39,7 @@ set( PRIVATE_EXT_LIBS_M4 )
 
 if( Monarch_BUILD_MONARCH4 )
 #    set( Monarch_BUILD_MONARCH3 TRUE CACHE BOOL "Build Monarch3 library (requires HDF5)" )
+    message("Build Monarch4 library (requires Zarr)")
 
     find_package( z5 REQUIRED )
     find_package(xtl REQUIRED)

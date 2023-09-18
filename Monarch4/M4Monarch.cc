@@ -65,7 +65,8 @@ namespace monarch4
         }
         LDEBUG( mlog, "Opened egg file <" << aFilename << "> for reading" );
 
-        tMonarch4->fHeader = std::make_unique< M4Header >();
+        // tMonarch4->fHeader = std::make_unique< M4Header >();
+        tMonarch4->fHeader = std::make_shared< M4Header >();
         tMonarch4->fHeader->Filename() = aFilename;
 
         tMonarch4->fState = eOpenToRead;
@@ -96,7 +97,8 @@ namespace monarch4
         }
         LDEBUG( mlog, "Opened egg file <" << aFilename << "> for writing" );
 
-        tMonarch4->fHeader = std::make_unique< M4Header >();
+        // tMonarch4->fHeader = std::make_unique< M4Header >();
+        tMonarch4->fHeader = std::make_shared< M4Header >();
         tMonarch4->fHeader->Filename() = aFilename;
 
         tMonarch4->fState = eOpenToWrite;
@@ -112,13 +114,13 @@ namespace monarch4
         }
 
         // Read the header information from the file (run header, plus all stream and channel headers)
-        fHeader->ReadFromFile( fFile );
+        fHeader->ReadFromFile( fFile.get() );
 
-        //TODO Z5: Creation of streams
-        H5::Group* tStreamsGroup = fHeader->GetStreamsGroup();
+        z5::filesystem::handle::Group* tStreamsGroup = fHeader->GetStreamsGroup();
 
-        try
-        {
+        // TODO: investigate z5/Zarr exceptions
+        // try
+        // {
             // Create the stream objects based on the configuration from the header
             for( M4Header::M4StreamHeaders::const_iterator streamIt = fHeader->StreamHeaders().begin();
                     streamIt != fHeader->StreamHeaders().end();
@@ -127,15 +129,15 @@ namespace monarch4
                 fStreams.push_back( new M4Stream( *streamIt, tStreamsGroup ) );
                 fStreams.back()->SetMutex( fMutexPtr );
             }
-        }
-        catch( H5::Exception& e )
-        {
-            throw M4Exception() << "HDF5 error while creating stream objects for reading:\n\t" << e.getDetailMsg() << " (function: " << e.getFuncName() << ")";
-        }
-        catch( M4Exception& e )
-        {
-            throw;
-        }
+        // }
+        // catch( H5::Exception& e )
+        // {
+        //     throw M4Exception() << "HDF5 error while creating stream objects for reading:\n\t" << e.getDetailMsg() << " (function: " << e.getFuncName() << ")";
+        // }
+        // catch( M4Exception& e )
+        // {
+        //     throw;
+        // }
 
         fState = eReadyToRead;
         return;
@@ -150,13 +152,12 @@ namespace monarch4
 
         // Write the header to the file
         // This will create the following groups: run, streams, and channels
-        fHeader->WriteToFile( fFile );
+        fHeader->WriteToFile( fFile.get() );
 
-        //TODO Z5: Creation of streams
-        H5::Group* tStreamsGroup = fHeader->GetStreamsGroup();
+        z5::filesystem::handle::Group* tStreamsGroup = fHeader->GetStreamsGroup();
 
-        try
-        {
+        // try
+        // {
             // Create the stream objects based on the configuration from the header
             for( M4Header::M4StreamHeaders::const_iterator streamIt = fHeader->StreamHeaders().begin();
                     streamIt != fHeader->StreamHeaders().end();
@@ -165,15 +166,15 @@ namespace monarch4
                 fStreams.push_back( new M4Stream( *streamIt, tStreamsGroup ) );
                 fStreams.back()->SetMutex( fMutexPtr );
             }
-        }
-        catch( H5::Exception& e )
-        {
-            throw M4Exception() << "HDF5 error while creating stream objects:\n\t" << e.getDetailMsg() << " (function: " << e.getFuncName() << ")";
-        }
-        catch( M4Exception& e )
-        {
-            throw;
-        }
+        // }
+        // catch( H5::Exception& e )
+        // {
+        //     throw M4Exception() << "HDF5 error while creating stream objects:\n\t" << e.getDetailMsg() << " (function: " << e.getFuncName() << ")";
+        // }
+        // catch( M4Exception& e )
+        // {
+        //     throw;
+        // }
 
         fState = eReadyToWrite;
         return;
@@ -185,16 +186,19 @@ namespace monarch4
         LDEBUG( mlog, "Finishing reading <" << filename << ">" );
         try
         {
-            delete fHeader;
-            fHeader = nullptr;
+            //delete fHeader;
+            fHeader.reset();  // release ownership on the object 
+            //fHeader = nullptr;
             for( std::vector< M4Stream* >::iterator streamIt = fStreams.begin(); streamIt != fStreams.end(); ++streamIt )
             {
                 const_cast< const M4Stream* >(*streamIt)->Close();
                 delete *streamIt;
                 *streamIt = nullptr;
             }
-            delete fFile;
-            fFile = nullptr;
+// How to properly release shared_ptr?
+            //delete fFile;
+            //fFile = nullptr;
+            fFile.reset();  // release ownership on the object
         }
         catch( std::exception& e )
         {
@@ -210,16 +214,18 @@ namespace monarch4
         LINFO( mlog, "Finishing writing <" << filename << ">" );
         try
         {
-            delete fHeader;
-            fHeader = nullptr;
+            //delete fHeader;
+            //fHeader = nullptr;
+            fHeader.reset();  // release ownership on the object
             for( std::vector< M4Stream* >::iterator streamIt = fStreams.begin(); streamIt != fStreams.end(); ++streamIt )
             {
                 (*streamIt)->Close();
                 delete *streamIt;
                 *streamIt = nullptr;
             }
-            delete fFile;
-            fFile = nullptr;
+            //delete fFile;
+            //fFile = nullptr;
+            fFile.reset();  // release ownership on the object
         }
         catch( std::exception& e )
         {

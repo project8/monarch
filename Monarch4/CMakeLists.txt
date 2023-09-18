@@ -3,7 +3,7 @@
 ####################
 
 add_subdirectory( Temp )
-return()
+# return()
 
 set( MONARCH4_HEADERFILES
     M4Constants.hh

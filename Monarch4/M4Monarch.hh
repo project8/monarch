@@ -128,10 +128,12 @@ namespace monarch4
 
         private:
             // the Zarr/Egg file
-            mutable std::unique_ptr< z5::filesystem::handle::File > fFile;
+            // mutable std::unique_ptr< z5::filesystem::handle::File > fFile;
+            mutable std::shared_ptr< z5::filesystem::handle::File > fFile;
 
             // the header
-            mutable std::unique_ptr< M4Header > fHeader;
+            // mutable std::unique_ptr< M4Header > fHeader;
+            mutable std::shared_ptr< M4Header > fHeader;
 
             // the streams
             mutable std::vector< M4Stream* > fStreams;
