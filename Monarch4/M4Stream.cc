@@ -37,6 +37,13 @@ namespace monarch4
 {
     LOGGER( mlog, "M4Stream" );
 
+    /*************************************************************************
+    * @brief Construct a new M4Stream::M4Stream object
+    * 
+    * @param aHeader 
+    * @param aH5StreamsLoc 
+    * @param aAccessFormat 
+    *************************************************************************/
     M4Stream::M4Stream( const M4StreamHeader& aHeader, HAS_GRP_IFC* aH5StreamsLoc, uint32_t aAccessFormat ) :
             fMode( kRead ),
             fDoReadRecord( nullptr ),
@@ -67,10 +74,10 @@ namespace monarch4
             fRecordCountInFile( 0 ),
             fNRecordsInFile( 0 ),
             fFirstRecordInFile( 0 ),
-            fZ5StreamParentLoc( new H5::Group( aH5StreamsLoc->openGroup( aHeader.GetLabel() ) ) ),
-            fZ5AcqLoc( nullptr ),
-            fZ5CurrentAcqDataSet( nullptr ),
-            fH5DataSpaceUser( NULL ),
+            fStreamParentLoc( new H5::Group( aH5StreamsLoc->openGroup( aHeader.GetLabel() ) ) ),
+            fAcqLoc( nullptr ),
+            fCurrentAcqDataSet( nullptr ),
+            fDataSpaceUser( NULL ),
             fMutexPtr( new std::mutex() )
     {
         LDEBUG( mlog, "Creating stream for <" << aHeader.GetLabel() << ">" );
@@ -147,66 +154,81 @@ namespace monarch4
         // Determine if we're in read or write mode
         // and get/create the acquisitions group
         // Nested exceptions are used so that the outer try block can be used to determine whether we're reading or writing
-        try
-        {
+        // try
+        // {
             // turn off HDF5 error printing because the throwing of an exception here means we're writing instead of reading
             H5::Exception::getAutoPrint( tAutoPrintFunc, &tClientData );
             H5::Exception::dontPrint();
 
-            fH5AcqLoc = new H5::Group( fH5StreamParentLoc->openGroup( "acquisitions" ) );
+            fH5AcqLoc = new H5::Group( fStreamParentLoc->openGroup( "acquisitions" ) );
             LDEBUG( mlog, "Opened acquisition group in <read> mode" );
 
             // turn HDF5 error printing back on
             H5::Exception::setAutoPrint( tAutoPrintFunc, tClientData );
 
-            try
-            {
-                H5::Attribute tAttrNAcq( fH5StreamParentLoc->openAttribute( "n_acquisitions" ) );
+            // try
+            // {
+                H5::Attribute tAttrNAcq( fStreamParentLoc->openAttribute( "n_acquisitions" ) );
                 tAttrNAcq.read( tAttrNAcq.getDataType(), &fNAcquisitions );
-                H5::Attribute tAttrNRec( fH5StreamParentLoc->openAttribute( "n_records" ) );
+                H5::Attribute tAttrNRec( fStreamParentLoc->openAttribute( "n_records" ) );
                 tAttrNRec.read( tAttrNRec.getDataType(), &fNRecordsInFile );
                 BuildIndex();
-            }
-            catch( H5::Exception& )
-            {
-                throw M4Exception() << "Acquisitions group is not properly setup for reading\n";
-            }
+            // }
+            // catch( H5::Exception& )
+            // {
+            //     throw M4Exception() << "Acquisitions group is not properly setup for reading\n";
+            // }
 
             LDEBUG( mlog, "Number of acquisitions found: " << fNAcquisitions << "; Number of records found: " << fNRecordsInFile );
             fMode = kRead;
-        }
-        catch( H5::Exception& )
-        {
-            // if we ended up here, the acquisitions group doesn't exist, so we must be in write mode
+        // }
+        // catch( H5::Exception& )
+        // {
+        //     // if we ended up here, the acquisitions group doesn't exist, so we must be in write mode
 
-            // turn HDF5 error printing back on
-            H5::Exception::setAutoPrint( tAutoPrintFunc, tClientData );
+        //     // turn HDF5 error printing back on
+        //     H5::Exception::setAutoPrint( tAutoPrintFunc, tClientData );
 
-            try
-            {
-                fH5AcqLoc = new H5::Group( fH5StreamParentLoc->createGroup( "acquisitions" ) );
-                LDEBUG( mlog, "Opened acquisition group in <write> mode" );
-                fMode = kWrite;
-            }
-            catch( H5::Exception& )
-            {
-                throw M4Exception() << "Unable to open new acquisitions group for writing\n";
-            }
-        }
+        //     try
+        //     {
+        //         fH5AcqLoc = new H5::Group( fStreamParentLoc->createGroup( "acquisitions" ) );
+        //         LDEBUG( mlog, "Opened acquisition group in <write> mode" );
+        //         fMode = kWrite;
+        //     }
+        //     catch( H5::Exception& )
+        //     {
+        //         throw M4Exception() << "Unable to open new acquisitions group for writing\n";
+        //     }
+        // }
 
         Initialize();
     }
 
+    /*************************************************************************
+    * @brief Destroy the M4Stream::M4Stream object
+    * 
+    *************************************************************************/
     M4Stream::~M4Stream()
     {
-        delete fH5DataSpaceUser; fH5DataSpaceUser = NULL;
-        delete fZ5CurrentAcqDataSet; fH5CurrentAcqDataSet = nullptr;
-        delete fZ5AcqLoc; fH5AcqLoc = nullptr;
-        delete fZ5StreamParentLoc; fH5StreamParentLoc = nullptr;
+        delete fDataSpaceUser; 
+        fDataSpaceUser = nullptr;
+
+        delete fCurrentAcqDataSet; 
+        fCurrentAcqDataSet = nullptr;
+
+        delete fAcqLoc; 
+        fAcqLoc = nullptr;
+
+        delete fStreamParentLoc; 
+        fStreamParentLoc = nullptr;
 
         delete [] fChannelRecords;
     }
 
+    /*************************************************************************
+    * @brief Initialize M4Stream parameters
+    * @return none
+    *************************************************************************/
     void M4Stream::Initialize() const
     {
         LDEBUG( mlog, "Initializing stream" );
@@ -215,7 +237,9 @@ namespace monarch4
         // The case where the access format is separate, but the data in the file is interleaved is special.
         // In this case, the stream record memory is not used.
         // Reading and writing is done directly from the channel records using HDF5's interleaving capabilities.
-        if( fAccessFormat == sSeparate && fDataInterleaved && fNChannels != 1 )
+        if( fAccessFormat == sSeparate && 
+            fDataInterleaved && 
+            fNChannels != 1 )
         {
             // no memory is allocated for the stream record
             fStreamRecord.Initialize();
@@ -230,14 +254,28 @@ namespace monarch4
             fDoReadRecord = &M4Stream::ReadRecordInterleavedToSeparate;
             fDoWriteRecord = &M4Stream::WriteRecordSeparateToInterleaved;
 
-            // Arrays for HDF5 file reading/writing
-            fStrDataDims[ 0 ] = 1;                 fStrDataDims[ 1 ] = fStrRecSize * fSampleSize;
-            fStrMaxDataDims[ 0 ] = H5S_UNLIMITED;  fStrMaxDataDims[ 1 ] = fStrRecSize * fSampleSize;
-            fStrDataChunkDims[ 0 ] = 1;            fStrDataChunkDims[ 1 ] = fStrRecSize * fSampleSize;
-            fDataDims1Rec[ 0 ] = 1;             fDataDims1Rec[ 1 ] = fChanRecSize * fSampleSize;
-            fDataOffset[ 0 ] = 0;               fDataOffset[ 1 ] = 0;
-            fDataStride[ 0 ] = 1;               fDataStride[ 1 ] = fNChannels;
-            fDataBlock[ 0 ] = 1;                fDataBlock[ 1 ] = fSampleSize;
+            // Arrays for data file reading/writing
+            fStrDataDims[ 0 ] = 1;                              // record is one array row
+            fStrDataDims[ 1 ] = fStrRecSize * fSampleSize;      // number of columns to bytes
+            
+            fStrMaxDataDims[ 0 ] = H5S_UNLIMITED;               // unlimited array rows?
+            fStrMaxDataDims[ 1 ] = fStrRecSize * fSampleSize;   // number of columns to bytes
+            
+            fStrDataChunkDims[ 0 ] = 1;                         // access sections by row
+            fStrDataChunkDims[ 1 ] = fStrRecSize * fSampleSize; // number of columns to bytes
+            
+            fDataDims1Rec[ 0 ] = 1;                             // 
+            fDataDims1Rec[ 1 ] = fChanRecSize * fSampleSize;    // 
+            
+            fDataOffset[ 0 ] = 0;               
+            fDataOffset[ 1 ] = 0;
+            
+            fDataStride[ 0 ] = 1;                   // stride by array row
+            fDataStride[ 1 ] = fNChannels;          // stride by number of channels per record???
+            
+            fDataBlock[ 0 ] = 1;                    // data block is one array row
+            fDataBlock[ 1 ] = fSampleSize;          // 
+
             /*
             std::cout << "str data dims: " << fStrDataDims[0] << " " << fStrDataDims[1] << std::endl;
             std::cout << "str max data dims: " << fStrMaxDataDims[0] << " " << fStrMaxDataDims[1] << std::endl;
@@ -248,9 +286,9 @@ namespace monarch4
             std::cout << "str data block: " << fDataBlock[0] << " " << fDataBlock[1] << std::endl;
             */
 
-            // HDF5 object initialization
-            delete fH5DataSpaceUser;
-            fH5DataSpaceUser = new H5::DataSpace( N_DATA_DIMS, fDataDims1Rec, NULL );
+            // Data space object initialization
+            delete fDataSpaceUser;
+            fDataSpaceUser = new H5::DataSpace( N_DATA_DIMS, fDataDims1Rec, NULL );
 
             fIsInitialized = true;
             return;
@@ -289,18 +327,29 @@ namespace monarch4
         */
 
         // HDF5 object initialization
-        delete fH5DataSpaceUser;
-        fH5DataSpaceUser = new H5::DataSpace( N_DATA_DIMS, fDataDims1Rec, NULL );
+        delete fDataSpaceUser;
+        fDataSpaceUser = new H5::DataSpace( N_DATA_DIMS, fDataDims1Rec, NULL );
 
         fIsInitialized = true;
         return;
     }
 
+    /*************************************************************************
+    * @brief Return read-only M4Record access
+    * 
+    * @return const M4Record* 
+    *************************************************************************/
     const M4Record* M4Stream::GetStreamRecord() const
     {
         return &fStreamRecord;
     }
 
+    /*************************************************************************
+    * @brief Return read-only M4Record access to selected stream channel
+    * 
+    * @param aChannel Selected stream channel
+    * @return const M4Record* 
+    *************************************************************************/
     const M4Record* M4Stream::GetChannelRecord( unsigned aChannel ) const
     {
         if( aChannel < fNChannels )
@@ -310,14 +359,24 @@ namespace monarch4
         throw M4Exception() << "Channel <" << aChannel << "> requested; only " << fNChannels << " in this stream.";
     }
 
+    /*************************************************************************
+    * @brief 
+    * 
+    * @param anOffset 
+    * @param aIfNewAcqStartAtFirstRec 
+    * @return bool
+    *   - true Sucessful read
+    *   - false Read failure
+    *************************************************************************/
     bool M4Stream::ReadRecord( int anOffset, bool aIfNewAcqStartAtFirstRec ) const
     {
         if( ! fIsInitialized ) Initialize();
 
         std::unique_lock< std::mutex >( *fMutexPtr.get() );
 
-        // anOffset should not move us forward if this is the very first record read in the file (fRecordsAccessed == false)
-        // Otherwise anOffset should be incremented to 1 to move us forward appropriately (fRecordsAccessed == true)
+        // anOffset should not move us forward if this is the very first record read 
+        // in the file (fRecordsAccessed == false).  Otherwise anOffset should be incremented 
+        // to 1 to move us forward appropriately (fRecordsAccessed == true)
         anOffset += (int)fRecordsAccessed;
 
         LDEBUG( mlog, "Before moving: Record count in file = " << fRecordCountInFile << "; Record ID (in acquisition) = " << fRecordCountInAcq );
@@ -340,13 +399,14 @@ namespace monarch4
         {
             bool tIsNewAcq = false;
             if( nextAcq != fAcquisitionId || ! fRecordsAccessed )
-            {
-                // we are going to a new acquisition
-
-                // check if we need to correct our position in the new acquisition back to the beginning of the acquisition
+            { // we are going to a new acquisition
+                
+                // check if we need to correct our position in the new acquisition back to the 
+                // beginning of the acquisition
                 if( aIfNewAcqStartAtFirstRec && fRecordCountInAcq != 0 )
                 {
                     fRecordCountInFile -= fRecordCountInAcq;
+                    
                     // make sure the record correction ended up in the same new acquisition
                     if( fRecordIndex.at( fRecordCountInFile ).first != nextAcq )
                     {
@@ -358,10 +418,10 @@ namespace monarch4
 
                 tIsNewAcq = true;
                 fAcquisitionId = nextAcq;
-                delete fH5CurrentAcqDataSet;
+                delete fCurrentAcqDataSet;
                 u32toa( fAcquisitionId, fAcqNameBuffer );
                 fH5CurrentAcqDataSet = new H5::DataSet( fH5AcqLoc->openDataSet( fAcqNameBuffer ) );
-                H5::Attribute tAttrNRIA( fH5CurrentAcqDataSet->openAttribute( "n_records" ) );
+                H5::Attribute tAttrNRIA( fCurrentAcqDataSet->openAttribute( "n_records" ) );
                 tAttrNRIA.read( tAttrNRIA.getDataType(), &fNRecordsInAcq );
             }
 
@@ -387,19 +447,35 @@ namespace monarch4
         return true;
     }
 
+    /*************************************************************************
+    * @brief Close the M4Stream, release data
+    * 
+    *************************************************************************/
     void M4Stream::Close() const
     {
         //LDEBUG( mlog, "const M4Stream::Close()" );
 
-        delete fH5DataSpaceUser; fH5DataSpaceUser = NULL;
-        delete fH5CurrentAcqDataSet; fH5CurrentAcqDataSet = NULL;
-        delete fH5AcqLoc; fH5AcqLoc = NULL;
-        delete fH5StreamParentLoc; fH5StreamParentLoc = NULL;
+        delete fDataSpaceUser; 
+        fDataSpaceUser = nullptr;
+
+        delete fCurrentAcqDataSet; 
+        fCurrentAcqDataSet = nullptr;
+
+        delete fAcqLoc; 
+        fAcqLoc = nullptr;
+
+        delete fStreamParentLoc; 
+        fStreamParentLoc = NULL;
 
         return;
     }
 
-
+    /*************************************************************************
+    * @brief Return read/write access to stream channel record
+    * 
+    * @param aChannel Selected channel
+    * @return M4Record* 
+    *************************************************************************/
     M4Record* M4Stream::GetChannelRecord( unsigned aChannel )
     {
         if( aChannel < fNChannels )
@@ -409,24 +485,40 @@ namespace monarch4
         throw M4Exception() << "Channel <" << aChannel << "> requested; only " << fNChannels << " in this stream.";
     }
 
+    /*************************************************************************
+    * @brief Write stream record
+    * 
+    * @param aIsNewAcquisition 
+    * @return bool
+    *   - true Sucessful write
+    *   - false Write failure
+    *************************************************************************/
     bool M4Stream::WriteRecord( bool aIsNewAcquisition )
     {
         // note: fRecordCountInAcq is used to keep track of the number of records written in each acquisition;
         //       fNRecordsInAcq is only valid for the last completed acquisition.
 
         if( ! fIsInitialized ) Initialize();
+
         if( ! fRecordsAccessed ) aIsNewAcquisition = true;
 
-        try
+        // try
         {
             std::unique_lock< std::mutex >( *fMutexPtr.get() );
 
             if( aIsNewAcquisition )
-            {
+            { // New acquisition, create new dataset
+
                 FinalizeCurrentAcq();
 
-                if( fRecordsAccessed ) ++fAcquisitionId;
-                else fRecordsAccessed = true;
+                if( fRecordsAccessed ) 
+                {
+                    ++fAcquisitionId;
+                }
+                else 
+                {
+                    fRecordsAccessed = true;
+                }
 
                 // Setup the new dataset
                 fStrDataDims[ 0 ] = 1;
@@ -434,13 +526,13 @@ namespace monarch4
                 tPropList.setChunk( N_DATA_DIMS, fStrDataChunkDims );
 
                 u32toa( fAcquisitionId, fAcqNameBuffer );
-                fH5CurrentAcqDataSet = new H5::DataSet( fH5AcqLoc->createDataSet( fAcqNameBuffer, fDataTypeInFile, H5::DataSpace( N_DATA_DIMS, fStrDataDims, fStrMaxDataDims ), tPropList ) );
+                fCurrentAcqDataSet = new H5::DataSet( fH5AcqLoc->createDataSet( fAcqNameBuffer, fDataTypeInFile, H5::DataSpace( N_DATA_DIMS, fStrDataDims, fStrMaxDataDims ), tPropList ) );
             }
             else
-            {
-                // Extend the current dataset
+            { // Extend the current dataset
+                
                 fStrDataDims[ 0 ] = fStrDataDims[ 0 ] + 1;
-                fH5CurrentAcqDataSet->extend( fStrDataDims );
+                fCurrentAcqDataSet->extend( fStrDataDims );
             }
 
             LTRACE( mlog, "Writing acq. " << fAcquisitionId << ", record " << fRecordCountInAcq );
@@ -451,71 +543,90 @@ namespace monarch4
 
             ++fRecordCountInAcq;
             ++fRecordCountInFile;
+
             return true;
         }
-        catch( H5::Exception& e )
-        {
-            LWARN( mlog, "DIAGNOSTIC: id of fH5CurrentAcqDataSet: " << fH5CurrentAcqDataSet->getId() );
-            LWARN( mlog, "DIAGNOSTIC: class name: " << fH5CurrentAcqDataSet->fromClass() );
-            H5D_space_status_t t_status;
-            fH5CurrentAcqDataSet->getSpaceStatus( t_status );
-            LWARN( mlog, "DIAGNOSTIC: offset: " << fH5CurrentAcqDataSet->getOffset() << "  space status: " << t_status << "  storage size: " << fH5CurrentAcqDataSet->getStorageSize() << "  in mem data size: " << fH5CurrentAcqDataSet->getInMemDataSize() );
-            throw M4Exception() << "HDF5 error while writing a record:\n\t" << e.getCDetailMsg() << " (function: " << e.getFuncName() << ")";
-        }
-        catch( std::exception& e )
-        {
-            throw M4Exception() << e.what();
-        }
+        // catch( H5::Exception& e )
+        // {
+        //     LWARN( mlog, "DIAGNOSTIC: id of fCurrentAcqDataSet: " << fCurrentAcqDataSet->getId() );
+        //     LWARN( mlog, "DIAGNOSTIC: class name: " << fCurrentAcqDataSet->fromClass() );
+        //     H5D_space_status_t t_status;
+        //     fCurrentAcqDataSet->getSpaceStatus( t_status );
+        //     LWARN( mlog, "DIAGNOSTIC: offset: " << fCurrentAcqDataSet->getOffset() << "  space status: " << t_status << "  storage size: " << fH5CurrentAcqDataSet->getStorageSize() << "  in mem data size: " << fH5CurrentAcqDataSet->getInMemDataSize() );
+        //     throw M4Exception() << "HDF5 error while writing a record:\n\t" << e.getCDetailMsg() << " (function: " << e.getFuncName() << ")";
+        // }
+        // catch( std::exception& e )
+        // {
+        //     throw M4Exception() << e.what();
+        // }
 
         return false;
     }
 
+    /*************************************************************************
+    * @brief Close stream, release data
+    * 
+    *************************************************************************/
     void M4Stream::Close()
     {
         //LDEBUG( mlog, "non-const M4Stream::Close()" );
         FinalizeStream();
 
-        delete fH5DataSpaceUser; fH5DataSpaceUser = NULL;
-        delete fH5CurrentAcqDataSet; fH5CurrentAcqDataSet = NULL;
-        delete fH5AcqLoc; fH5AcqLoc = NULL;
-        delete fH5StreamParentLoc; fH5StreamParentLoc = NULL;
+        delete fDataSpaceUser; 
+        fDataSpaceUser = nullptr;
 
-        return;
+        delete fCurrentAcqDataSet; 
+        fCurrentAcqDataSet = nullptr;
+
+        delete fAcqLoc; 
+        fAcqLoc = nullptr;
+
+        delete fStreamParentLoc; 
+        fStreamParentLoc = nullptr;
     }
 
+    /*************************************************************************
+    * @brief Configure access to M4Stream
+    * 
+    * @param aFormat 
+    *************************************************************************/
     void M4Stream::SetAccessFormat( uint32_t aFormat ) const
     {
         fAccessFormat = aFormat;
         fIsInitialized = false;
-        return;
     }
 
+    /*************************************************************************
+    * @brief 
+    * 
+    * @param aIsNewAcquisition 
+    *************************************************************************/
     void M4Stream::ReadRecordInterleavedToSeparate( bool aIsNewAcquisition ) const
     {
         if( aIsNewAcquisition )
         {
-            try
-            {
+            // try
+            // {
                 delete [] fAcqFirstRecTimes;
                 fAcqFirstRecTimes = new TimeType[ fNChannels ];
-                H5::Attribute tAttrAFRT( fH5CurrentAcqDataSet->openAttribute( "first_record_time" ) );
+                H5::Attribute tAttrAFRT( fCurrentAcqDataSet->openAttribute( "first_record_time" ) );
                 tAttrAFRT.read( tAttrAFRT.getDataType(), fAcqFirstRecTimes );
 
                 delete [] fAcqFirstRecIds;
                 fAcqFirstRecIds = new RecordIdType[ fNChannels ];
-                H5::Attribute tAttrAFRI( fH5CurrentAcqDataSet->openAttribute( "first_record_id" ) );
+                H5::Attribute tAttrAFRI( fCurrentAcqDataSet->openAttribute( "first_record_id" ) );
                 tAttrAFRI.read( tAttrAFRI.getDataType(), fAcqFirstRecIds );
-            }
-            catch( H5::Exception& )
-            {
-                // Backwards compatibility with older files that don't have first_record_time and first_record_id
-                // Times increment by the record length starting at 0, but ID increments starting at 0
-                for( unsigned iChan = 0; iChan < fNChannels; ++iChan )
-                {
-                    fAcqFirstRecTimes[ iChan ] = 0;
-                    fAcqFirstRecIds[ iChan ] = 0;
-                }
-            }
+            // }
+            // catch( H5::Exception& )
+            // {
+            //     // Backwards compatibility with older files that don't have first_record_time and first_record_id
+            //     // Times increment by the record length starting at 0, but ID increments starting at 0
+            //     for( unsigned iChan = 0; iChan < fNChannels; ++iChan )
+            //     {
+            //         fAcqFirstRecTimes[ iChan ] = 0;
+            //         fAcqFirstRecIds[ iChan ] = 0;
+            //     }
+            // }
             fAcqFirstRecTime = fAcqFirstRecTimes[0];
             fAcqFirstRecId = fAcqFirstRecIds[0];
         }
@@ -524,42 +635,49 @@ namespace monarch4
         for( unsigned iChan = 0; iChan < fNChannels; ++iChan )
         {
             fDataOffset[ 1 ] = iChan;
+
             tDataSpaceInFile.selectHyperslab( H5S_SELECT_SET, fDataDims1Rec, fDataOffset, fDataStride, fDataBlock );
-            fH5CurrentAcqDataSet->read( fChannelRecords[ iChan ].GetData(), fDataTypeUser, *fH5DataSpaceUser, tDataSpaceInFile );
+            fCurrentAcqDataSet->read( fChannelRecords[ iChan ].GetData(), fDataTypeUser, *fDataSpaceUser, tDataSpaceInFile );
             fChannelRecords[ iChan ].SetTime( fAcqFirstRecTimes[ iChan ] + fRecordCountInAcq * fChanRecLength );
             fChannelRecords[ iChan ].SetRecordId( fAcqFirstRecIds[ iChan ] + fRecordCountInAcq );
         }
-        return;
     }
 
+    /*************************************************************************
+    * @brief 
+    * 
+    * @param aIsNewAcquisition 
+    *************************************************************************/
     void M4Stream::ReadRecordAsIs( bool aIsNewAcquisition ) const
     {
         if( aIsNewAcquisition )
         {
-            try
-            {
-                H5::Attribute tAttrAFRT( fH5CurrentAcqDataSet->openAttribute( "first_record_time" ) );
+            // try
+            // {
+                H5::Attribute tAttrAFRT( fCurrentAcqDataSet->openAttribute( "first_record_time" ) );
                 tAttrAFRT.read( tAttrAFRT.getDataType(), &fAcqFirstRecTime );
-                H5::Attribute tAttrAFRI( fH5CurrentAcqDataSet->openAttribute( "first_record_id" ) );
+
+                H5::Attribute tAttrAFRI( fCurrentAcqDataSet->openAttribute( "first_record_id" ) );
                 tAttrAFRI.read( tAttrAFRI.getDataType(), &fAcqFirstRecId );
-            }
-            catch( H5::Exception& )
-            {
-                // Backwards compatibility with older files that don't have first_record_time and first_record_id
-                // Times increment by the record length starting at 0, but ID increments starting at 0
-                fAcqFirstRecTime = 0;
-                fAcqFirstRecId = 0;
-                for( unsigned iChan = 0; iChan < fNChannels; ++iChan )
-                {
-                    fAcqFirstRecTimes[ iChan ] = 0;
-                    fAcqFirstRecIds[ iChan ] = 0;
-                }
-            }
+            // }
+            // catch( H5::Exception& )
+            // {
+            //     // Backwards compatibility with older files that don't have first_record_time and first_record_id
+            //     // Times increment by the record length starting at 0, but ID increments starting at 0
+            //     fAcqFirstRecTime = 0;
+            //     fAcqFirstRecId = 0;
+            //     for( unsigned iChan = 0; iChan < fNChannels; ++iChan )
+            //     {
+            //         fAcqFirstRecTimes[ iChan ] = 0;
+            //         fAcqFirstRecIds[ iChan ] = 0;
+            //     }
+            // }
         }
 
-        H5::DataSpace tDataSpaceInFile = fH5CurrentAcqDataSet->getSpace();
+        H5::DataSpace tDataSpaceInFile = fCurrentAcqDataSet->getSpace();
         tDataSpaceInFile.selectHyperslab( H5S_SELECT_SET, fDataDims1Rec, fDataOffset );
-        fH5CurrentAcqDataSet->read( fStreamRecord.GetData(), fDataTypeUser, *fH5DataSpaceUser, tDataSpaceInFile );
+        
+        fCurrentAcqDataSet->read( fStreamRecord.GetData(), fDataTypeUser, *fDataSpaceUser, tDataSpaceInFile );
         fStreamRecord.SetTime( fAcqFirstRecTime + fRecordCountInAcq * fChanRecLength );
         fStreamRecord.SetRecordId( fAcqFirstRecId + fRecordCountInAcq );
         for( unsigned iChan = 0; iChan < fNChannels; ++iChan )
@@ -567,51 +685,66 @@ namespace monarch4
             fChannelRecords[ iChan ].SetTime( fStreamRecord.GetTime() );
             fChannelRecords[ iChan ].SetRecordId( fStreamRecord.GetRecordId() );
         }
-        return;
     }
 
+    /*************************************************************************
+    * @brief 
+    * 
+    * @param aIsNewAcquisition 
+    *************************************************************************/
     void M4Stream::WriteRecordSeparateToInterleaved( bool aIsNewAcquisition )
     {
-        H5::DataSpace tDataSpaceInFile = fH5CurrentAcqDataSet->getSpace();
+        H5::DataSpace tDataSpaceInFile = fCurrentAcqDataSet->getSpace();
         for( unsigned iChan = 0; iChan < fNChannels; ++iChan )
         {
             fDataOffset[ 1 ] = iChan;
             tDataSpaceInFile.selectHyperslab( H5S_SELECT_SET, fDataDims1Rec, fDataOffset, fDataStride, fDataBlock );
             //std::cout << "about to write separate to interleaved  " << fDataTypeUser.fromClass() << std::endl;
-            fH5CurrentAcqDataSet->write( fChannelRecords[ iChan ].GetData(), fDataTypeUser, *fH5DataSpaceUser, tDataSpaceInFile );
+            fCurrentAcqDataSet->write( fChannelRecords[ iChan ].GetData(), fDataTypeUser, *fDataSpaceUser, tDataSpaceInFile );
         }
+
         if( aIsNewAcquisition )
         {
             TimeType* tTimes = new TimeType[ fNChannels ];
             RecordIdType* tIds = new RecordIdType[ fNChannels ];
+
             for( unsigned iChan = 0; iChan < fNChannels; ++iChan )
             {
                 tTimes[ iChan ] = fChannelRecords[ iChan ].GetTime();
                 tIds[ iChan ] = fChannelRecords[ iChan ].GetRecordId();
             }
-            fH5CurrentAcqDataSet->createAttribute( "first_record_time", MH5Type< TimeType >::H5(), H5::DataSpace( H5S_SCALAR ) ).write( MH5Type< TimeType >::Native(), tTimes );
-            fH5CurrentAcqDataSet->createAttribute( "first_record_id", MH5Type< RecordIdType >::H5(), H5::DataSpace( H5S_SCALAR ) ).write( MH5Type< RecordIdType >::Native(), tIds );
+            fCurrentAcqDataSet->createAttribute( "first_record_time", MH5Type< TimeType >::H5(), H5::DataSpace( H5S_SCALAR ) ).write( MH5Type< TimeType >::Native(), tTimes );
+            fCurrentAcqDataSet->createAttribute( "first_record_id", MH5Type< RecordIdType >::H5(), H5::DataSpace( H5S_SCALAR ) ).write( MH5Type< RecordIdType >::Native(), tIds );
             delete [] tTimes;
             delete [] tIds;
         }
-        return;
     }
 
+    /*************************************************************************
+    * @brief 
+    * 
+    * @param aIsNewAcquisition 
+    *************************************************************************/
     void M4Stream::WriteRecordAsIs( bool aIsNewAcquisition )
     {
-        H5::DataSpace tDataSpaceInFile = fH5CurrentAcqDataSet->getSpace();
+        H5::DataSpace tDataSpaceInFile = fCurrentAcqDataSet->getSpace();
+
         tDataSpaceInFile.selectHyperslab( H5S_SELECT_SET, fDataDims1Rec, fDataOffset );
-        fH5CurrentAcqDataSet->write( fStreamRecord.GetData(), fDataTypeUser, *fH5DataSpaceUser, tDataSpaceInFile );
+        fCurrentAcqDataSet->write( fStreamRecord.GetData(), fDataTypeUser, *fDataSpaceUser, tDataSpaceInFile );
+        
         if( aIsNewAcquisition )
         {
             TimeType tTime = fStreamRecord.GetTime();
             RecordIdType tId = fStreamRecord.GetRecordId();
-            fH5CurrentAcqDataSet->createAttribute( "first_record_time", MH5Type< TimeType >::H5(), H5::DataSpace( H5S_SCALAR ) ).write( MH5Type< TimeType >::Native(), &tTime );
-            fH5CurrentAcqDataSet->createAttribute( "first_record_id", MH5Type< RecordIdType >::H5(), H5::DataSpace( H5S_SCALAR ) ).write( MH5Type< RecordIdType >::Native(), &tId );
+            fCurrentAcqDataSet->createAttribute( "first_record_time", MH5Type< TimeType >::H5(), H5::DataSpace( H5S_SCALAR ) ).write( MH5Type< TimeType >::Native(), &tTime );
+            fCurrentAcqDataSet->createAttribute( "first_record_id", MH5Type< RecordIdType >::H5(), H5::DataSpace( H5S_SCALAR ) ).write( MH5Type< RecordIdType >::Native(), &tId );
         }
-        return;
     }
 
+    /*************************************************************************
+    * @brief 
+    * 
+    *************************************************************************/
     void M4Stream::BuildIndex() const
     {
         fRecordIndex.resize( fNRecordsInFile );
@@ -620,7 +753,7 @@ namespace monarch4
         for( unsigned iAcq = 0; iAcq < fNAcquisitions; ++iAcq )
         {
             u32toa( iAcq, fAcqNameBuffer );
-            H5::Attribute tAttr( fH5AcqLoc->openDataSet( fAcqNameBuffer ).openAttribute( "n_records" ) );
+            H5::Attribute tAttr( fAcqLoc->openDataSet( fAcqNameBuffer ).openAttribute( "n_records" ) );
             tAttr.read( tAttr.getDataType(), &tNRecInAcq );
             LDEBUG( mlog, "Acquisition <" << fAcqNameBuffer << "> has " << tNRecInAcq << " records" );
             for( unsigned iRecInAcq = 0; iRecInAcq < tNRecInAcq; ++iRecInAcq )
@@ -631,37 +764,41 @@ namespace monarch4
                 ++iRecInFile;
             }
         }
-        return;
     }
 
+    /*************************************************************************
+    * @brief 
+    * 
+    *************************************************************************/
     void M4Stream::FinalizeCurrentAcq()
     {
-        if( fH5CurrentAcqDataSet == NULL ) return;
+        if( fCurrentAcqDataSet == nullptr ) return;
 
         fNRecordsInAcq = fRecordCountInAcq;
 
-        fH5CurrentAcqDataSet->createAttribute( "n_records", MH5Type< unsigned >::H5(), H5::DataSpace( H5S_SCALAR ) ).write( MH5Type< unsigned >::Native(), &fNRecordsInAcq );
+        fCurrentAcqDataSet->createAttribute( "n_records", MH5Type< unsigned >::H5(), H5::DataSpace( H5S_SCALAR ) ).write( MH5Type< unsigned >::Native(), &fNRecordsInAcq );
         LDEBUG( mlog, "Finalizing acq. " << fAcquisitionId << " with " << fNRecordsInAcq << " records" );
 
         fRecordCountInAcq = 0;
-        delete fH5CurrentAcqDataSet;
-        fH5CurrentAcqDataSet = NULL;
-
-        return;
+        
+        delete fCurrentAcqDataSet;
+        fCurrentAcqDataSet = nullptr;
     }
 
+    /*************************************************************************
+    * @brief 
+    * 
+    *************************************************************************/
     void M4Stream::FinalizeStream()
     {
         FinalizeCurrentAcq();
 
-        if( fH5AcqLoc == NULL ) return;
+        if( fAcqLoc == NULL ) return;
 
         fNAcquisitions = ( fAcquisitionId + 1 ) * (unsigned)fRecordsAccessed;
-        fH5StreamParentLoc->openAttribute( "n_acquisitions" ).write( MH5Type< unsigned >::Native(), &fNAcquisitions );
-        fH5StreamParentLoc->openAttribute( "n_records" ).write( MH5Type< unsigned >::Native(), &fRecordCountInFile );
+        fStreamParentLoc->openAttribute( "n_acquisitions" ).write( MH5Type< unsigned >::Native(), &fNAcquisitions );
+        fStreamParentLoc->openAttribute( "n_records" ).write( MH5Type< unsigned >::Native(), &fRecordCountInFile );
         LDEBUG( mlog, "Finalizing stream with " << fNAcquisitions << " acquisitions and " << fRecordCountInFile << " records" );
-
-        return;
     }
 
 } /* namespace monarch */

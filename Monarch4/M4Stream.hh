@@ -193,12 +193,12 @@ namespace monarch4
 
             mutable char fAcqNameBuffer[ 10 ];
 
-            mutable z5::filesystem::handle::Group* fZ5StreamParentLoc;
-            mutable z5::filesystem::handle::Group* fZ5AcqLoc;
-            mutable z5::filesystem::handle::Dataset* fZ5CurrentAcqDataSet;
+            mutable z5::filesystem::handle::Group* fStreamParentLoc;
+            mutable z5::filesystem::handle::Group* fAcqLoc;
+            mutable z5::filesystem::handle::Dataset* fCurrentAcqDataSet;
 
             // mutable H5::DataSpace* fH5DataSpaceUser;
-            mutable z5::filesystem::handle::Dataset* fH5DataSpaceUser;
+            mutable z5::filesystem::handle::Dataset* fDataSpaceUser;
 
             // mutable H5::DataType fDataTypeInFile;
             // mutable H5::DataType fDataTypeUser;

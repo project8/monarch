@@ -72,7 +72,8 @@ namespace monarch4
             RecordIdType* fRecordId;
             TimeType* fTime;
 
-            mutable byte_type* fData;
+            // TODO: good candidate for smart pointer
+            mutable byte_type* fData;       // data buffer
 
     };
 
