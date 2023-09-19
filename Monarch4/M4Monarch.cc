@@ -18,14 +18,22 @@ namespace monarch4
 {
     LOGGER( mlog, "MMonarch4" );
 
+    /*************************************************************************
+    * @brief Construct a new Monarch 4:: Monarch 4 object
+    * 
+    *************************************************************************/
     Monarch4::Monarch4() :
             fState( eClosed ),
-            fFile(),
+            hFile(nullptr),
             fHeader(),
             fMutexPtr( new std::mutex() )
     {
     }
 
+    /*************************************************************************
+    * @brief Destroy the Monarch 4:: Monarch 4 object
+    * 
+    *************************************************************************/
     Monarch4::~Monarch4()
     {
         if( fState == eOpenToRead || fState == eReadyToRead) FinishReading();
@@ -38,18 +46,33 @@ namespace monarch4
         }
     }
 
+    /*************************************************************************
+    * @brief 
+    * 
+    * @return Monarch4::State 
+    *************************************************************************/
     Monarch4::State Monarch4::GetState() const
     {
         return fState;
     }
 
+    /*************************************************************************
+    * @brief 
+    * 
+    * @param aFilename 
+    * @return const Monarch4* 
+    *************************************************************************/
     const Monarch4* Monarch4::OpenForReading( const string& aFilename )
     {
         Monarch4* tMonarch4 = new Monarch4();
 
         try
         {
-            tMonarch4->fFile = std::make_unique< z5::filesystem::handle::File >( aFilename, z5::FileMode::r );
+            // tMonarch4->fFile = std::make_unique< z5::filesystem::handle::File >( aFilename, z5::FileMode::r );
+// z5::filesystem::handle::File::File()
+            tMonarch4->hFile = new z5FileHandle( aFilename, z5::FileMode::r );
+            z5::createFile( *tMonarch4->hFile, true );
+
         }
         catch( std::exception& e )
         {
@@ -57,12 +80,13 @@ namespace monarch4
             throw M4Exception() << "Could not open <" << aFilename << "> for reading; a std::exception was thrown:\n" << e.what();
             return nullptr;
         }
-        if( tMonarch4->fFile == nullptr )
-        {
-            delete tMonarch4;
-            throw M4Exception() << "Could not open <" << aFilename << "> for reading";
-            return nullptr;
-        }
+
+        // if( tMonarch4->hFile == nullptr )
+        // {
+        //     delete tMonarch4;
+        //     throw M4Exception() << "Could not open <" << aFilename << "> for reading";
+        //     return nullptr;
+        // }
         LDEBUG( mlog, "Opened egg file <" << aFilename << "> for reading" );
 
         // tMonarch4->fHeader = std::make_unique< M4Header >();
@@ -74,14 +98,24 @@ namespace monarch4
         return tMonarch4;
     }
 
+    /*************************************************************************
+    * @brief 
+    * 
+    * @param aFilename 
+    * @return Monarch4* 
+    *************************************************************************/
     Monarch4* Monarch4::OpenForWriting( const string& aFilename )
     {
         Monarch4* tMonarch4 = new Monarch4();
 
         try
         {
-            tMonarch4->fFile = std::make_unique< z5::filesystem::handle::File >( aFilename, z5::FileMode::w );
-            z5::createFile( *tMonarch4->fFile, true );
+// z5::filesystem::handle::File f( "readme2.zr", z5::FileMode::modes::a );
+// z5FileHandle f( "readme2.zr", z5::FileMode::modes::a );
+
+            tMonarch4->hFile = new z5FileHandle( aFilename, z5::FileMode::w );
+            z5::createFile( *tMonarch4->hFile, true );
+
         }
         catch( std::exception& e )
         {
@@ -89,12 +123,14 @@ namespace monarch4
             throw M4Exception() << "Could not open <" << aFilename << "> for writing; a std::exception was thrown:\n" << e.what();
             return nullptr;
         }
-        if( tMonarch4->fFile == nullptr )
-        {
-            delete tMonarch4;
-            throw M4Exception() << "Could not open <" << aFilename << "> for writing";
-            return nullptr;
-        }
+
+        // if( tMonarch4->fFile == nullptr )
+        // {
+        //     delete tMonarch4;
+        //     throw M4Exception() << "Could not open <" << aFilename << "> for writing";
+        //     return nullptr;
+        // }
+
         LDEBUG( mlog, "Opened egg file <" << aFilename << "> for writing" );
 
         // tMonarch4->fHeader = std::make_unique< M4Header >();
@@ -143,6 +179,11 @@ namespace monarch4
         return;
     }
 
+#endif
+    /*************************************************************************
+    * @brief 
+    * 
+    *************************************************************************/
     void Monarch4::WriteHeader()
     {
         if( fState != eOpenToWrite )
@@ -152,8 +193,8 @@ namespace monarch4
 
         // Write the header to the file
         // This will create the following groups: run, streams, and channels
-        fHeader->WriteToFile( fFile.get() );
-
+        fHeader->WriteToFile( *hFile );
+#if 0
         z5::filesystem::handle::Group* tStreamsGroup = fHeader->GetStreamsGroup();
 
         // try
@@ -175,11 +216,10 @@ namespace monarch4
         // {
         //     throw;
         // }
-
-        fState = eReadyToWrite;
-        return;
-    }
 #endif
+        fState = eReadyToWrite;
+    }
+
     /*************************************************************************
     * @brief 
     * 
@@ -203,7 +243,6 @@ namespace monarch4
 // How to properly release shared_ptr?
             //delete fFile;
             //fFile = nullptr;
-            fFile.reset();  // release ownership on the object
         }
         catch( std::exception& e )
         {
@@ -233,7 +272,6 @@ namespace monarch4
             }
             //delete fFile;
             //fFile = nullptr;
-            fFile.reset();  // release ownership on the object
         }
         catch( std::exception& e )
         {

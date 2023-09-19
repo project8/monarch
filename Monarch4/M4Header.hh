@@ -191,9 +191,9 @@ namespace monarch4
                                 uint32_t aBitDepth, uint32_t aBitAlignment,
                                 std::vector< unsigned >* aChanVec = NULL );
         public:
-            void WriteToFile( z5::filesystem::handle::File* aFile );
+            void WriteToFile( z5FileHandle aFile );
             // void ReadFromFile( const z5::filesystem::handle::File* aFile ) const;
-            void ReadFromFile( const z5::filesystem::handle::File* aFile ) const;
+            void ReadFromFile( const z5FileHandle aFile ) const;
 
             const z5GroupHandle* GetStreamsGroup() const;
             z5GroupHandle* GetStreamsGroup();
@@ -209,7 +209,7 @@ namespace monarch4
             void ReadChannelCoherence( const HAS_ATTR_IFC* aLoc ) const;
             
             //mutable z5::filesystem::handle::File* fFile;
-            mutable std::shared_ptr< z5::filesystem::handle::File > fFile;
+            // mutable std::shared_ptr< z5::filesystem::handle::File > fFile;
             mutable z5GroupHandle* fStreamsGroup;
             mutable z5GroupHandle* fChannelsGroup;
 

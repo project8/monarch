@@ -501,10 +501,11 @@ namespace monarch4
             fNStreams( 0 ),
             fChannelStreams(),
             fChannelCoherence(),
-            fFile( nullptr ),
+            // fFile( nullptr ),
             fStreamsGroup( nullptr ),
             fChannelsGroup( nullptr )
     {
+std::cout << "M4Header::M4Header()\n";
     }
 
     /*************************************************************************
@@ -671,7 +672,7 @@ namespace monarch4
         
         return fNStreams++;
     }
-#if 0
+
     /*************************************************************************
     * @brief Write file attributes, stream headers, channel headers to file
     * 
@@ -679,16 +680,25 @@ namespace monarch4
     * @return none, throw M4Exception on failure
     *************************************************************************/
     // void M4Header::WriteToHDF5( H5::H5File* aFile )
-    void M4Header::WriteToFile( H5::H5File* aFile )
+    void M4Header::WriteToFile( z5FileHandle aFile )
     {
-        try
-        {
+std::cout << "M4Header::WriteToFile()\n";        
+        // try
+        // {
             LDEBUG( mlog, "Writing run header" );
 
-// nlohmann::json oneChGroupAttr;
-// oneChGroupAttr["name"] = name;
-// z5::writeAttributes(channelHandle, oneChGroupAttr);
+            nlohmann::json headerAttr;
 
+            headerAttr["egg_version"] = fEggVersion;
+            headerAttr["filename"] = fFilename;
+            headerAttr["n_channels"] = fNChannels;
+            headerAttr["n_streams"] = fNStreams;
+            headerAttr["run_duration"] = fRunDuration;
+            headerAttr["timestamp"] = fTimestamp;
+            headerAttr["description"] = fDescription;
+            z5::writeAttributes(aFile, headerAttr);
+
+#if 0            
             fFile = aFile;
             WriteScalarToHDF5( fFile, "egg_version",   fEggVersion );
             WriteScalarToHDF5( fFile, "filename",      fFilename );
@@ -697,7 +707,7 @@ namespace monarch4
             WriteScalarToHDF5( fFile, "run_duration",  fRunDuration );
             WriteScalarToHDF5( fFile, "timestamp",     fTimestamp );
             WriteScalarToHDF5( fFile, "description",   fDescription );
-            
+
             //////////////Write1DToHDF5( fFile, "channel_streams",  fChannelStreams );
             WriteChannelStreams( fFile );
             WriteChannelCoherence( fFile );
@@ -717,17 +727,22 @@ namespace monarch4
             {
                 fChannelHeaders[ iChan ].WriteToHDF5( fChannelsGroup );
             }
-        }
-        catch( H5::Exception& e )
-        {
-            throw M4Exception() << "HDF5 error while writing header: " << e.getCDetailMsg();
-        }
-        catch( M4Exception& e )
-        {
-            LDEBUG( mlog, "M4Exception: " << e.what() );
-            throw;
-        }
+        // }
+        // catch( H5::Exception& e )
+        // {
+        //     throw M4Exception() << "HDF5 error while writing header: " << e.getCDetailMsg();
+        // }
+        // catch( M4Exception& e )
+        // {
+        //     LDEBUG( mlog, "M4Exception: " << e.what() );
+        //     throw;
+        // }
+#endif        
+std::cout << "M4Header::WriteToFile(): void\n";        
+
     }
+
+#if 0
 
     /*************************************************************************
     * @brief Read file attributes, stream headers, channel headers from file
