@@ -105,7 +105,7 @@ namespace monarch4
 
         return tMonarch4;
     }
-
+#if 0
     void Monarch4::ReadHeader() const
     {
         if( fState != eOpenToRead )
@@ -179,10 +179,15 @@ namespace monarch4
         fState = eReadyToWrite;
         return;
     }
-
+#endif
+    /*************************************************************************
+    * @brief 
+    * 
+    *************************************************************************/
     void Monarch4::FinishReading() const
     {
         std::string filename = fHeader != nullptr ? fHeader->Filename() : std::string();
+        
         LDEBUG( mlog, "Finishing reading <" << filename << ">" );
         try
         {
@@ -205,9 +210,12 @@ namespace monarch4
             throw M4Exception() << "Error while closing file <" << filename << ">:\n" << e.what();
         }
         fState = eClosed;
-        return;
     }
 
+    /*************************************************************************
+    * @brief 
+    * 
+    *************************************************************************/
     void Monarch4::FinishWriting()
     {
         std::string filename = fHeader != nullptr ? fHeader->Filename() : std::string();

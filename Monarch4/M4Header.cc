@@ -28,16 +28,12 @@ namespace monarch4
 {
     LOGGER( mlog, "M4Header" );
 
-    //*********************
-    // M4StreamHeader
-    //*********************
-
     /*************************************************************************
     * @brief Construct a new M4StreamHeader::M4StreamHeader object
     * @note Default CTOR
     *************************************************************************/
     M4StreamHeader::M4StreamHeader() :
-            fLabel( NULL ),
+            fLabel( nullptr ),
             fNumber( 0 ),
             fSource(),
             fNChannels( 0 ),
@@ -144,7 +140,8 @@ namespace monarch4
     *************************************************************************/
     M4StreamHeader::~M4StreamHeader()
     {
-        delete [] fLabel;
+        if (fLabel != nullptr)
+            delete [] fLabel;
     }
 
     /*************************************************************************
@@ -156,14 +153,12 @@ namespace monarch4
     void M4StreamHeader::SetNumber( uint32_t aNumber ) const
     {
         fNumber = aNumber;
-
+//TODO: stream fLabel as std::string
         static const size_t prefixSize = 6; // # of characters in "stream"
         delete [] fLabel;
         fLabel = new char[ prefixSize + 10 ]; // 10 = max digits in 32-bit integer
         strcpy( fLabel, "stream" );
         u32toa( aNumber, fLabel + prefixSize );
-
-        return;
     }
 #if 0
     /*************************************************************************
@@ -171,11 +166,17 @@ namespace monarch4
     * 
     * @param aParent 
     *************************************************************************/
-    void M4StreamHeader::WriteToHDF5( HAS_GRP_IFC* aParent )
+    // void M4StreamHeader::WriteToHDF5( z5GroupHandle* aParent )
+    void M4StreamHeader::WriteToFile( z5GroupHandle* aParent )
     {
+
+// z5::createGroup( channelsHandle, name );
         LDEBUG( mlog, "Writing stream <" << fLabel << ">" );
         H5::Group tThisStreamGroup = aParent->createGroup( fLabel );
 
+// nlohmann::json chGroupAttr;
+// chGroupAttr["nChannels"] = nChannels;
+// z5::writeAttributes(channelsHandle, chGroupAttr);
         M4Header::WriteScalarToHDF5( &tThisStreamGroup, "number", fNumber );
         M4Header::WriteScalarToHDF5( &tThisStreamGroup, "source", fSource );
         M4Header::WriteScalarToHDF5( &tThisStreamGroup, "n_channels", fNChannels );
@@ -191,20 +192,24 @@ namespace monarch4
         M4Header::WriteScalarToHDF5( &tThisStreamGroup, "n_records", fNRecords );
 
         WriteChannels( &tThisStreamGroup );
-
-        return;
     }
 
     /*************************************************************************
     * @brief 
     * 
-    * @param aParent 
-    * @param aLabel 
+    * @param[in] aParent 
+    * @param[in] aLabel 
     *************************************************************************/
-    void M4StreamHeader::ReadFromHDF5( const HAS_GRP_IFC* aParent, const std::string& aLabel ) const
+    // void M4StreamHeader::ReadFromHDF5( const z5GroupHandle* aParent, const std::string& aLabel ) const
+    void M4StreamHeader::ReadFromFile( const z5GroupHandle* aParent, const std::string& aLabel ) const
     {
+
+// nlohmann::json oneStrGroupAttr;
+// z5::readAttributes( streamHandle, oneStrGroupAttr );
+
         LDEBUG( mlog, "Reading stream <" << aLabel << ">" );
         H5::Group tThisStreamGroup = aParent->openGroup( aLabel.c_str() );
+
 
         SetNumber( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisStreamGroup, "number" ) );
         Source() = M4Header::ReadScalarFromHDF5< string >( &tThisStreamGroup, "source" );
@@ -221,8 +226,6 @@ namespace monarch4
         SetNRecords( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisStreamGroup, "n_records" ) );
 
         ReadChannels( &tThisStreamGroup );
-
-        return;
     }
 
     /*************************************************************************
@@ -253,8 +256,6 @@ namespace monarch4
 
         // Release temporary buffer
         delete [] tCSBuffer;
-
-        return;
     }
 
     /*************************************************************************
@@ -296,13 +297,8 @@ namespace monarch4
 
         // Release temporary buffer
         delete [] tCSBuffer;
-
-        return;
     }
 #endif
-    //*********************
-    // M4ChannelHeader
-    //*********************
 
     /*************************************************************************
     * @brief Construct a new M4ChannelHeader::M4ChannelHeader object
@@ -354,21 +350,21 @@ namespace monarch4
                     uint32_t anAcqRate, uint32_t aRecSize, uint32_t aSampleSize,
                     uint32_t aDataTypeSize, uint32_t aDataFormat,
                     uint32_t aBitDepth, uint32_t aBitAlignment ) :
-            fLabel( NULL ),
-            fNumber( 0 ),
-            fSource( aSource ),
-            fAcquisitionRate( anAcqRate ),
-            fRecordSize( aRecSize ),
-            fSampleSize( aSampleSize ),
-            fDataTypeSize( aDataTypeSize ),
-            fDataFormat( aDataFormat ),
-            fBitDepth( aBitDepth ),
-            fBitAlignment( aBitAlignment ),
-            fVoltageOffset( 0. ),
-            fVoltageRange( 0. ),
-            fDACGain( 0. ),
-            fFrequencyMin( 0. ),
-            fFrequencyRange( 0. )
+        fLabel( NULL ),
+        fNumber( 0 ),
+        fSource( aSource ),
+        fAcquisitionRate( anAcqRate ),
+        fRecordSize( aRecSize ),
+        fSampleSize( aSampleSize ),
+        fDataTypeSize( aDataTypeSize ),
+        fDataFormat( aDataFormat ),
+        fBitDepth( aBitDepth ),
+        fBitAlignment( aBitAlignment ),
+        fVoltageOffset( 0. ),
+        fVoltageRange( 0. ),
+        fDACGain( 0. ),
+        fFrequencyMin( 0. ),
+        fFrequencyRange( 0. )
     {
         SetNumber( aNumber );
     }
@@ -405,7 +401,8 @@ namespace monarch4
     *************************************************************************/
     M4ChannelHeader::~M4ChannelHeader()
     {
-        delete [] fLabel;
+        if (fLabel != nullptr)
+            delete [] fLabel;
     }
 
     /*************************************************************************
@@ -416,14 +413,12 @@ namespace monarch4
     void M4ChannelHeader::SetNumber( uint32_t aNumber ) const
     {
         fNumber = aNumber;
-
+//TODO: fLabel as std::string
         static const size_t prefixSize = 7; // # of characters in "channel"
         delete [] fLabel;
         fLabel = new char[ prefixSize + 10 ]; // 10 = max digits in 32-bit integer
         strcpy( fLabel, "channel" );
         u32toa( aNumber, fLabel + prefixSize );
-
-        return;
     }
 #if 0
     /*************************************************************************
@@ -433,8 +428,14 @@ namespace monarch4
     *************************************************************************/
     void M4ChannelHeader::WriteToHDF5( HAS_GRP_IFC* aParent )
     {
+// z5::createGroup( channelsHandle, name );
+
         LDEBUG( mlog, "Writing channel <" << fLabel << ">" );
         H5::Group tThisChannelGroup = aParent->createGroup( fLabel );
+
+// nlohmann::json oneChGroupAttr;
+// oneChGroupAttr["name"] = name;
+// z5::writeAttributes(channelHandle, oneChGroupAttr);
 
         M4Header::WriteScalarToHDF5( &tThisChannelGroup, "number", fNumber );
         M4Header::WriteScalarToHDF5( &tThisChannelGroup, "source", fSource );
@@ -450,8 +451,6 @@ namespace monarch4
         M4Header::WriteScalarToHDF5( &tThisChannelGroup, "dac_gain", fDACGain );
         M4Header::WriteScalarToHDF5( &tThisChannelGroup, "frequency_min", fFrequencyMin );
         M4Header::WriteScalarToHDF5( &tThisChannelGroup, "frequency_range", fFrequencyRange );
-
-        return;
     }
 
     /*************************************************************************
@@ -464,6 +463,12 @@ namespace monarch4
     {
         LDEBUG( mlog, "Reading channel <" << aLabel << ">" );
         H5::Group tThisChannelGroup = aParent->openGroup( aLabel.c_str() );
+
+// auto streamsHandle = z5::filesystem::handle::Group( f, "streams" );
+// nlohmann::json strGroupAttr;
+
+// // Extract the stream attribute: nStreams to indicate how many streams are stored
+// z5::readAttributes( streamsHandle, strGroupAttr );
 
         SetNumber( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisChannelGroup, "number" ) );
         Source() = M4Header::ReadScalarFromHDF5< string >( &tThisChannelGroup, "source" );
@@ -479,15 +484,13 @@ namespace monarch4
         SetDACGain( M4Header::ReadScalarFromHDF5< double >( &tThisChannelGroup, "dac_gain" ) );
         SetFrequencyMin( M4Header::ReadScalarFromHDF5< double >( &tThisChannelGroup, "frequency_min" ) );
         SetFrequencyRange( M4Header::ReadScalarFromHDF5< double >( &tThisChannelGroup, "frequency_range" ) );
-
-        return;
     }
 #endif
 
-    //*********************
-    // M4Header
-    //*********************
-
+    /*************************************************************************
+    * @brief Construct a (default) new M4Header::M4Header object
+    * 
+    *************************************************************************/
     M4Header::M4Header() :
             fEggVersion( TOSTRING(Egg_VERSION) ),
             fFilename(),
@@ -504,12 +507,24 @@ namespace monarch4
     {
     }
 
+    /*************************************************************************
+    * @brief Destroy the M4Header::M4Header object
+    * 
+    *************************************************************************/
     M4Header::~M4Header()
     {
-        delete fStreamsGroup;
-        delete fChannelsGroup;
+        if (fStreamsGroup != nullptr)
+            delete fStreamsGroup;
+        
+        if (fChannelsGroup != nullptr)
+            delete fChannelsGroup;
     }
 
+    /*************************************************************************
+    * @brief Clone information from existing M4Header into this one
+    * 
+    * @param[in] aOrig Existing M4Header (data source)
+    *************************************************************************/
     void M4Header::CopyBasicInfo( const M4Header& aOrig )
     {
         fEggVersion = aOrig.fEggVersion;
@@ -517,15 +532,16 @@ namespace monarch4
         fRunDuration = aOrig.fRunDuration;
         fTimestamp = aOrig.fTimestamp;
         fDescription = aOrig.fDescription;
-        return;
     }
 
     /*************************************************************************
     * @brief Setup time-coherence relationship between channels
     * 
-    * @param aChanA 
-    * @param aChanB 
+    * @param aChanA index of first channel
+    * @param aChanB index of second
     * @param aCoherence 
+    *   - true: channels accquired synchronized together
+    *   - false: channels not synchronized together
     *************************************************************************/
     void M4Header::SetCoherence( unsigned aChanA, unsigned aChanB, bool aCoherence )
     {
@@ -535,7 +551,6 @@ namespace monarch4
         }
         fChannelCoherence[ aChanA ][ aChanB ] = aCoherence;
         fChannelCoherence[ aChanB ][ aChanA ] = aCoherence;
-        return;
     }
 
     /*************************************************************************
@@ -566,11 +581,17 @@ namespace monarch4
                                  std::vector< unsigned >* aChanVec )
     {
         LDEBUG( mlog, "Adding stream " << fNStreams << " for channel " << fNChannels << " with record size " << aRecSize );
-        if( aChanVec != NULL ) aChanVec->push_back( fNChannels );
+        
+        if( aChanVec != nullptr ) 
+        {
+            aChanVec->push_back( fNChannels );
+        }
+
         fChannelStreams.push_back( fNStreams );
         fChannelHeaders.push_back( M4ChannelHeader( aSource, fNChannels, anAcqRate, aRecSize, aSampleSize, aDataTypeSize, aDataFormat, aBitDepth, aBitAlignment ) );
         fStreamHeaders.push_back( M4StreamHeader( aSource, fNStreams, 1, fNChannels, sSeparate, anAcqRate, aRecSize, aSampleSize, aDataTypeSize, aDataFormat, aBitDepth, aBitAlignment ) );
         ++fNChannels;
+
         //std::cout << "resizing to " << fNChannels << std::endl;
         fChannelCoherence.resize( fNChannels ); // resize number of columns
         for( unsigned i = 0; i < fNChannels; ++i ) // resize each row
@@ -578,6 +599,7 @@ namespace monarch4
             fChannelCoherence[ i ].resize( fNChannels, false );
         }
         fChannelCoherence.back().back() = true; // each channel is coherent with itself
+
         return fNStreams++;
     }
 
@@ -617,7 +639,10 @@ namespace monarch4
         for( uint32_t iNewChannel = 0; iNewChannel < aNChannels; ++iNewChannel )
         {
             LDEBUG( mlog, "Adding channel " << fNChannels );
-            if( aChanVec != NULL ) aChanVec->push_back( fNChannels );
+            if( aChanVec != nullptr ) 
+            {
+                aChanVec->push_back( fNChannels );  
+            }
             
             fChannelStreams.push_back( fNStreams );
             fChannelHeaders.push_back( M4ChannelHeader( aSource, fNChannels, anAcqRate, aRecSize, aSampleSize, aDataTypeSize, aDataFormat, aBitDepth, aBitAlignment ) );
@@ -653,11 +678,17 @@ namespace monarch4
     * @param aFile path/filename
     * @return none, throw M4Exception on failure
     *************************************************************************/
-    void M4Header::WriteToHDF5( H5::H5File* aFile )
+    // void M4Header::WriteToHDF5( H5::H5File* aFile )
+    void M4Header::WriteToFile( H5::H5File* aFile )
     {
         try
         {
             LDEBUG( mlog, "Writing run header" );
+
+// nlohmann::json oneChGroupAttr;
+// oneChGroupAttr["name"] = name;
+// z5::writeAttributes(channelHandle, oneChGroupAttr);
+
             fFile = aFile;
             WriteScalarToHDF5( fFile, "egg_version",   fEggVersion );
             WriteScalarToHDF5( fFile, "filename",      fFilename );
@@ -666,6 +697,7 @@ namespace monarch4
             WriteScalarToHDF5( fFile, "run_duration",  fRunDuration );
             WriteScalarToHDF5( fFile, "timestamp",     fTimestamp );
             WriteScalarToHDF5( fFile, "description",   fDescription );
+            
             //////////////Write1DToHDF5( fFile, "channel_streams",  fChannelStreams );
             WriteChannelStreams( fFile );
             WriteChannelCoherence( fFile );
@@ -695,8 +727,6 @@ namespace monarch4
             LDEBUG( mlog, "M4Exception: " << e.what() );
             throw;
         }
-
-        return;
     }
 
     /*************************************************************************
@@ -711,6 +741,9 @@ namespace monarch4
         {
             LDEBUG( mlog, "Reading run header" );
             fFile = const_cast< H5::H5File* >( aFile );
+
+// nlohmann::json oneChGroupAttr;
+// z5::readAttributes( channelHandle, oneChGroupAttr );
 
             // Read the File Atrributes
             EggVersion() = ReadScalarFromHDF5< string >( fFile, string("egg_version") );
@@ -789,7 +822,6 @@ namespace monarch4
             //H5::Exception::printErrorStack();
             throw M4Exception() << "Unable to open header group or find header data\n";
         }
-		return;
     }
 
     /*************************************************************************
@@ -822,8 +854,6 @@ namespace monarch4
         tAttr.write( MH5Type< uint32_t >::Native(), tCSBuffer );
 
         delete [] tCSBuffer;        // release temporary buffer
-
-        return;
     }
 
     /*************************************************************************
@@ -867,8 +897,6 @@ namespace monarch4
         }
 
         delete [] tCSBuffer;        // release temporary read buffer
-
-        return;
     }
 
     /*************************************************************************
@@ -903,8 +931,6 @@ namespace monarch4
         tAttr.write( MH5Type< bool >::Native(), tCCBuffer );
 
         delete [] tCCBuffer;
-
-        return;
     }
 
     /*************************************************************************
@@ -951,12 +977,17 @@ namespace monarch4
         }
 
         delete [] tCCBuffer;        // release temporary buffer
-
-        return;
     }
 #endif
 }
 
+/*************************************************************************
+* @brief output stream operator for M4StreamHeader component
+* 
+* @param[in out] out Output stream
+* @param[in] hdr header component
+* @return M4_API& output tail-chain
+*************************************************************************/
 M4_API std::ostream& operator<<( std::ostream& out, const monarch4::M4StreamHeader& hdr )
 {
     out << "Stream Header Content:\n";
@@ -973,9 +1004,17 @@ M4_API std::ostream& operator<<( std::ostream& out, const monarch4::M4StreamHead
     out << "\tBit Alignment: " << hdr.GetBitAlignment() << '\n';
     out << "\tNumber of Acquisitions: " << hdr.GetNAcquisitions() << '\n';
     out << "\tNumber of Records: " << hdr.GetNRecords() << '\n';
+
     return out;
 }
 
+/*************************************************************************
+* @brief output stream operator for M4ChannelHeader component
+* 
+* @param[in out] out Output stream
+* @param[in] hdr header component
+* @return M4_API& output tail-chain
+*************************************************************************/
 M4_API std::ostream& operator<<( std::ostream& out, const monarch4::M4ChannelHeader& hdr )
 {
     out << "Channel Header Content:\n";
@@ -992,9 +1031,17 @@ M4_API std::ostream& operator<<( std::ostream& out, const monarch4::M4ChannelHea
     out << "\tVoltage Range: " << hdr.GetVoltageRange() << " V\n";
     out << "\tFrequency Min: " << hdr.GetFrequencyMin() << " Hz\n";
     out << "\tFrequency Range: " << hdr.GetFrequencyRange() << " Hz\n";
+
     return out;
 }
 
+/*************************************************************************
+* @brief output stream operator for M4Header component
+* 
+* @param[in out] out Output stream
+* @param[in] hdr header component
+* @return M4_API& output tail-chain
+*************************************************************************/
 M4_API std::ostream& operator<<( std::ostream& out, const monarch4::M4Header& hdr )
 {
     out << "Monarch Header Content:\n";
@@ -1006,6 +1053,7 @@ M4_API std::ostream& operator<<( std::ostream& out, const monarch4::M4Header& hd
     out << "\tNumber of Channels: " << hdr.GetNChannels() << "\n";
     out << "\tNumber of Streams: " << hdr.GetNStreams() << "\n";
     out << "\tChannel-to-stream mapping:\n";
+
     for( uint32_t iChan = 0; iChan < hdr.ChannelStreams().size(); ++iChan )
     {
         out << "\t\tChannel " << iChan << " --> Stream " << hdr.ChannelStreams()[ iChan ] << "\n";
@@ -1020,5 +1068,6 @@ M4_API std::ostream& operator<<( std::ostream& out, const monarch4::M4Header& hd
     {
         out << hdr.ChannelHeaders()[ iChan ];
     }
+
     return out;
 }

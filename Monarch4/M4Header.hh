@@ -85,6 +85,7 @@ namespace monarch4
             M4MEMBERVARIABLE( uint32_t, BitAlignment );
             M4MEMBERVARIABLE( uint32_t, NAcquisitions );
             M4MEMBERVARIABLE( uint32_t, NRecords );
+            
         public:
             void WriteToFile( HAS_GRP_IFC* aParent );
             void ReadFromFile( const HAS_GRP_IFC* aParent, const std::string& aLabel ) const;
@@ -194,11 +195,11 @@ namespace monarch4
             // void ReadFromFile( const z5::filesystem::handle::File* aFile ) const;
             void ReadFromFile( const z5::filesystem::handle::File* aFile ) const;
 
-            const z5::filesystem::handle::Group* GetStreamsGroup() const;
-            z5::filesystem::handle::Group* GetStreamsGroup();
+            const z5GroupHandle* GetStreamsGroup() const;
+            z5GroupHandle* GetStreamsGroup();
 
-            const z5::filesystem::handle::Group* GetChannelsGroup() const;
-            z5::filesystem::handle::Group* GetChannelsGroup();
+            const z5GroupHandle* GetChannelsGroup() const;
+            z5GroupHandle* GetChannelsGroup();
 
         private:
             void WriteChannelStreams( HAS_ATTR_IFC* aLoc );
@@ -209,8 +210,9 @@ namespace monarch4
             
             //mutable z5::filesystem::handle::File* fFile;
             mutable std::shared_ptr< z5::filesystem::handle::File > fFile;
-            mutable z5::filesystem::handle::Group* fStreamsGroup;
-            mutable z5::filesystem::handle::Group* fChannelsGroup;
+            mutable z5GroupHandle* fStreamsGroup;
+            mutable z5GroupHandle* fChannelsGroup;
+
         public:
             static void WriteScalarToHDF5( HAS_ATTR_IFC* aLoc, const std::string& aName, const std::string& aValue );
             template< typename XType >
@@ -230,22 +232,22 @@ namespace monarch4
 
     };
 
-    inline const z5::filesystem::handle::Group* M4Header::GetStreamsGroup() const
+    inline const z5GroupHandle* M4Header::GetStreamsGroup() const
     {
         return fStreamsGroup;
     }
 
-    inline z5::filesystem::handle::Group* M4Header::GetStreamsGroup()
+    inline z5GroupHandle* M4Header::GetStreamsGroup()
     {
         return fStreamsGroup;
     }
 
-    inline const z5::filesystem::handle::Group* M4Header::GetChannelsGroup() const
+    inline const z5GroupHandle* M4Header::GetChannelsGroup() const
     {
         return fChannelsGroup;
     }
 
-    inline z5::filesystem::handle::Group* M4Header::GetChannelsGroup()
+    inline z5GroupHandle* M4Header::GetChannelsGroup()
     {
         return fChannelsGroup;
     }
@@ -259,6 +261,7 @@ namespace monarch4
     {
         return fStreamHeaders;
     }
+
 #if 0
     inline void M4Header::WriteScalarToHDF5( HAS_ATTR_IFC* aLoc, const std::string& aName, const std::string& aValue )
     {

@@ -40,11 +40,11 @@ namespace monarch4
     /*************************************************************************
     * @brief Construct a new M4Stream::M4Stream object
     * 
-    * @param aHeader 
-    * @param aH5StreamsLoc 
+    * @param[in] aHeader Stream Header config
+    * @param[in out] aH5StreamsLoc 
     * @param aAccessFormat 
     *************************************************************************/
-    M4Stream::M4Stream( const M4StreamHeader& aHeader, HAS_GRP_IFC* aH5StreamsLoc, uint32_t aAccessFormat ) :
+    M4Stream::M4Stream( const M4StreamHeader& aHeader, HAS_GRP_IFC* aStreamsLoc, uint32_t aAccessFormat ) :
             fMode( kRead ),
             fDoReadRecord( nullptr ),
             fDoWriteRecord( nullptr ),
@@ -74,13 +74,18 @@ namespace monarch4
             fRecordCountInFile( 0 ),
             fNRecordsInFile( 0 ),
             fFirstRecordInFile( 0 ),
-            fStreamParentLoc( new H5::Group( aH5StreamsLoc->openGroup( aHeader.GetLabel() ) ) ),
+            // fStreamParentLoc( new H5::Group( aStreamsLoc->openGroup( aHeader.GetLabel() ) ) ),
+// fStreamParentLoc(z5GroupHandle( f, aHeader.GetLabel() )),
             fAcqLoc( nullptr ),
             fCurrentAcqDataSet( nullptr ),
             fDataSpaceUser( NULL ),
             fMutexPtr( new std::mutex() )
     {
         LDEBUG( mlog, "Creating stream for <" << aHeader.GetLabel() << ">" );
+// Example code
+// z5FileHandle f( "readme2.zr", z5::FileMode::modes::a );
+// auto channelsHandle = z5GroupHandle( f, "channels" );
+// fStreamParentLoc = z5GroupHandle( f, aHeader.GetLabel() );
 
         if( aHeader.GetDataFormat() == sDigitizedUS )
         {
@@ -135,18 +140,18 @@ namespace monarch4
             switch( fDataTypeSize )
             {
                 case 4:
-                    fDataTypeInFile = z5::types::float32;     //H5::PredType::IEEE_F32LE;
+                    fDataTypeInFile = z5::types::float32;   //H5::PredType::IEEE_F32LE;
                     fDataTypeUser = z5::types::float32;     //H5::PredType::NATIVE_FLOAT;
                     break;
                 case 8:
-                    fDataTypeInFile = z5::types::float64;       //H5::PredType::IEEE_F64LE ;
+                    fDataTypeInFile = z5::types::float64;   //H5::PredType::IEEE_F64LE ;
                     fDataTypeUser = z5::types::float64;     //H5::PredType::NATIVE_DOUBLE;
                     break;
                 default:
                     throw M4Exception() << "Unknown floating-point data type size: " << fDataTypeSize;
             }
         }
-
+#if 0
         // variables to store the HDF5 error printing state
         H5E_auto2_t tAutoPrintFunc;
         void* tClientData;
@@ -167,11 +172,17 @@ namespace monarch4
             H5::Exception::setAutoPrint( tAutoPrintFunc, tClientData );
 
             // try
-            // {
+            // { // try to read attributes
+
                 H5::Attribute tAttrNAcq( fStreamParentLoc->openAttribute( "n_acquisitions" ) );
                 tAttrNAcq.read( tAttrNAcq.getDataType(), &fNAcquisitions );
+
                 H5::Attribute tAttrNRec( fStreamParentLoc->openAttribute( "n_records" ) );
                 tAttrNRec.read( tAttrNRec.getDataType(), &fNRecordsInFile );
+
+// nlohmann::json chGroupAttr;
+// z5::readAttributes( channelsHandle, chGroupAttr );
+
                 BuildIndex();
             // }
             // catch( H5::Exception& )
@@ -180,7 +191,7 @@ namespace monarch4
             // }
 
             LDEBUG( mlog, "Number of acquisitions found: " << fNAcquisitions << "; Number of records found: " << fNRecordsInFile );
-            fMode = kRead;
+            fMode = kRead;      // read mode
         // }
         // catch( H5::Exception& )
         // {
@@ -193,14 +204,14 @@ namespace monarch4
         //     {
         //         fH5AcqLoc = new H5::Group( fStreamParentLoc->createGroup( "acquisitions" ) );
         //         LDEBUG( mlog, "Opened acquisition group in <write> mode" );
-        //         fMode = kWrite;
+        //         fMode = kWrite;  // write mode
         //     }
         //     catch( H5::Exception& )
         //     {
         //         throw M4Exception() << "Unable to open new acquisitions group for writing\n";
         //     }
         // }
-
+#endif
         Initialize();
     }
 
@@ -223,6 +234,8 @@ namespace monarch4
         fStreamParentLoc = nullptr;
 
         delete [] fChannelRecords;
+
+        //TODO: release fMutexPtr created in CTOR M4Stream()
     }
 
     /*************************************************************************
@@ -233,7 +246,7 @@ namespace monarch4
     {
         LDEBUG( mlog, "Initializing stream" );
         fIsInitialized = false;
-
+#if 0
         // The case where the access format is separate, but the data in the file is interleaved is special.
         // In this case, the stream record memory is not used.
         // Reading and writing is done directly from the channel records using HDF5's interleaving capabilities.
@@ -331,8 +344,9 @@ namespace monarch4
         fDataSpaceUser = new H5::DataSpace( N_DATA_DIMS, fDataDims1Rec, NULL );
 
         fIsInitialized = true;
-        return;
+#endif        
     }
+#if 0
 
     /*************************************************************************
     * @brief Return read-only M4Record access
@@ -446,7 +460,7 @@ namespace monarch4
 
         return true;
     }
-
+#endif
     /*************************************************************************
     * @brief Close the M4Stream, release data
     * 
@@ -466,10 +480,8 @@ namespace monarch4
 
         delete fStreamParentLoc; 
         fStreamParentLoc = NULL;
-
-        return;
     }
-
+#if 0
     /*************************************************************************
     * @brief Return read/write access to stream channel record
     * 
@@ -562,7 +574,7 @@ namespace monarch4
 
         return false;
     }
-
+#endif
     /*************************************************************************
     * @brief Close stream, release data
     * 
@@ -585,6 +597,7 @@ namespace monarch4
         fStreamParentLoc = nullptr;
     }
 
+#if 0
     /*************************************************************************
     * @brief Configure access to M4Stream
     * 
@@ -740,30 +753,36 @@ namespace monarch4
             fCurrentAcqDataSet->createAttribute( "first_record_id", MH5Type< RecordIdType >::H5(), H5::DataSpace( H5S_SCALAR ) ).write( MH5Type< RecordIdType >::Native(), &tId );
         }
     }
+#endif
 
     /*************************************************************************
-    * @brief 
+    * @brief Read data file index
     * 
     *************************************************************************/
     void M4Stream::BuildIndex() const
     {
         fRecordIndex.resize( fNRecordsInFile );
+#if 0
         unsigned tNRecInAcq;
         unsigned iRecInFile = 0;
         for( unsigned iAcq = 0; iAcq < fNAcquisitions; ++iAcq )
         {
             u32toa( iAcq, fAcqNameBuffer );
+
             H5::Attribute tAttr( fAcqLoc->openDataSet( fAcqNameBuffer ).openAttribute( "n_records" ) );
             tAttr.read( tAttr.getDataType(), &tNRecInAcq );
             LDEBUG( mlog, "Acquisition <" << fAcqNameBuffer << "> has " << tNRecInAcq << " records" );
+            
             for( unsigned iRecInAcq = 0; iRecInAcq < tNRecInAcq; ++iRecInAcq )
-            {
+            { // read each record
+
                 fRecordIndex.at( iRecInFile ).first = iAcq;
                 fRecordIndex.at( iRecInFile ).second = iRecInAcq;
                 LTRACE( mlog, "Record index: " << iRecInFile << " -- " << iAcq << " -- " << iRecInAcq );
                 ++iRecInFile;
             }
         }
+#endif        
     }
 
     /*************************************************************************
@@ -773,15 +792,16 @@ namespace monarch4
     void M4Stream::FinalizeCurrentAcq()
     {
         if( fCurrentAcqDataSet == nullptr ) return;
-
+#if 0
         fNRecordsInAcq = fRecordCountInAcq;
 
         fCurrentAcqDataSet->createAttribute( "n_records", MH5Type< unsigned >::H5(), H5::DataSpace( H5S_SCALAR ) ).write( MH5Type< unsigned >::Native(), &fNRecordsInAcq );
         LDEBUG( mlog, "Finalizing acq. " << fAcquisitionId << " with " << fNRecordsInAcq << " records" );
 
         fRecordCountInAcq = 0;
-        
+
         delete fCurrentAcqDataSet;
+#endif        
         fCurrentAcqDataSet = nullptr;
     }
 
@@ -793,12 +813,12 @@ namespace monarch4
     {
         FinalizeCurrentAcq();
 
-        if( fAcqLoc == NULL ) return;
-
+        if( fAcqLoc == nullptr ) return;
+#if 0
         fNAcquisitions = ( fAcquisitionId + 1 ) * (unsigned)fRecordsAccessed;
         fStreamParentLoc->openAttribute( "n_acquisitions" ).write( MH5Type< unsigned >::Native(), &fNAcquisitions );
         fStreamParentLoc->openAttribute( "n_records" ).write( MH5Type< unsigned >::Native(), &fRecordCountInFile );
+#endif        
         LDEBUG( mlog, "Finalizing stream with " << fNAcquisitions << " acquisitions and " << fRecordCountInFile << " records" );
     }
-
 } /* namespace monarch */

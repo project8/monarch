@@ -11,7 +11,7 @@ if( Monarch_ENABLE_EXECUTABLES )
     )
     
     set( sources
-        M4Info.cc
+        #M4Info.cc
         #Monarch4Dump.cc
     )
     
