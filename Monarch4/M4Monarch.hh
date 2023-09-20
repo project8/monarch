@@ -69,6 +69,7 @@ namespace monarch4
                 eClosed // state when monarch has no file
             } State;
             State GetState() const;
+            
         private:
             mutable State fState;
 

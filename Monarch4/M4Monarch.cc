@@ -64,6 +64,7 @@ namespace monarch4
     *************************************************************************/
     const Monarch4* Monarch4::OpenForReading( const string& aFilename )
     {
+std::cout << "Monarch4::OpenForReading()\n";        
         Monarch4* tMonarch4 = new Monarch4();
 
         try
@@ -71,8 +72,6 @@ namespace monarch4
             // tMonarch4->fFile = std::make_unique< z5::filesystem::handle::File >( aFilename, z5::FileMode::r );
 // z5::filesystem::handle::File::File()
             tMonarch4->hFile = new z5FileHandle( aFilename, z5::FileMode::r );
-            z5::createFile( *tMonarch4->hFile, true );
-
         }
         catch( std::exception& e )
         {
@@ -95,6 +94,7 @@ namespace monarch4
 
         tMonarch4->fState = eOpenToRead;
 
+std::cout << "Monarch4::OpenForReading(): Monarch4*\n";        
         return tMonarch4;
     }
 
@@ -141,17 +141,22 @@ namespace monarch4
 
         return tMonarch4;
     }
-#if 0
+
+    /*************************************************************************
+    * @brief 
+    * 
+    *************************************************************************/
     void Monarch4::ReadHeader() const
     {
+std::cout << "Monarch4::ReadHeader()\n";
         if( fState != eOpenToRead )
         {
             throw M4Exception() << "File not opened to read";
         }
 
         // Read the header information from the file (run header, plus all stream and channel headers)
-        fHeader->ReadFromFile( fFile.get() );
-
+        fHeader->ReadFromFile( *hFile  );
+#if 0
         z5::filesystem::handle::Group* tStreamsGroup = fHeader->GetStreamsGroup();
 
         // TODO: investigate z5/Zarr exceptions
@@ -174,18 +179,18 @@ namespace monarch4
         // {
         //     throw;
         // }
-
+#endif
         fState = eReadyToRead;
-        return;
+std::cout << "Monarch4::ReadHeader(): void\n";
     }
 
-#endif
     /*************************************************************************
     * @brief 
     * 
     *************************************************************************/
     void Monarch4::WriteHeader()
     {
+std::cout << "Monarch4::WriteHeader()\n";
         if( fState != eOpenToWrite )
         {
             throw M4Exception() << "File not opened to write";
@@ -218,6 +223,7 @@ namespace monarch4
         // }
 #endif
         fState = eReadyToWrite;
+std::cout << "Monarch4::WriteHeader(): void";
     }
 
     /*************************************************************************

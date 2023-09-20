@@ -9,6 +9,7 @@ set( sources
     readme.cc
     write.cc
     writeMonarch.cc
+    readMonarch.cc
 )
 
 set( lib_dependencies 

@@ -742,7 +742,6 @@ std::cout << "M4Header::WriteToFile(): void\n";
 
     }
 
-#if 0
 
     /*************************************************************************
     * @brief Read file attributes, stream headers, channel headers from file
@@ -750,25 +749,46 @@ std::cout << "M4Header::WriteToFile(): void\n";
     * @param aFile path/filename
     * @return none, throw M4Exception on failure
     *************************************************************************/
-    void M4Header::ReadFromHDF5( const H5::H5File* aFile ) const
+    // void M4Header::ReadFromHDF5( const H5::H5File* aFile ) const
+    void M4Header::ReadFromFile( const z5FileHandle aFile ) const
     {
-        try
-        {
-            LDEBUG( mlog, "Reading run header" );
-            fFile = const_cast< H5::H5File* >( aFile );
+std::cout << "M4Header::ReadFromFile()\n";        
+        // try
+        // {
+            // LDEBUG( mlog, "Reading run header" );
+            // fFile = const_cast< H5::H5File* >( aFile );
 
-// nlohmann::json oneChGroupAttr;
-// z5::readAttributes( channelHandle, oneChGroupAttr );
+            // // Read the File Atrributes
+            // EggVersion() = ReadScalarFromHDF5< string >( fFile, string("egg_version") );
+            // Filename() = ReadScalarFromHDF5< string >( fFile, "filename" );
+            // SetNChannels( ReadScalarFromHDF5< uint32_t >( fFile, "n_channels" ) );
+            // SetNStreams( ReadScalarFromHDF5< uint32_t >( fFile, "n_streams" ) );
+            // SetRunDuration( ReadScalarFromHDF5< uint32_t >( fFile, "run_duration" ) );
+            // Timestamp() = ReadScalarFromHDF5< string >( fFile, "timestamp" );
+            // Description() = ReadScalarFromHDF5< string >( fFile, "description" );
 
-            // Read the File Atrributes
-            EggVersion() = ReadScalarFromHDF5< string >( fFile, string("egg_version") );
-            Filename() = ReadScalarFromHDF5< string >( fFile, "filename" );
-            SetNChannels( ReadScalarFromHDF5< uint32_t >( fFile, "n_channels" ) );
-            SetNStreams( ReadScalarFromHDF5< uint32_t >( fFile, "n_streams" ) );
-            SetRunDuration( ReadScalarFromHDF5< uint32_t >( fFile, "run_duration" ) );
-            Timestamp() = ReadScalarFromHDF5< string >( fFile, "timestamp" );
-            Description() = ReadScalarFromHDF5< string >( fFile, "description" );
+            nlohmann::json headerAttr;
+            z5::readAttributes( aFile, headerAttr );
 
+//TODO: handle nlohmann exception
+            fEggVersion = headerAttr.at("egg_version");
+            fFilename = headerAttr.at("filename");
+            fNChannels = headerAttr.at("n_channels");
+            fNStreams = headerAttr.at("n_streams");
+            fRunDuration = headerAttr.at("run_duration");
+            fTimestamp = headerAttr.at("timestamp");
+            fDescription = headerAttr.at("description");
+
+            std::cout << "EggVersion: " << fEggVersion << std::endl;
+            std::cout << "Filename: " << fFilename << std::endl;
+            std::cout << "NChannels: " << fNChannels << std::endl;
+            std::cout << "NStreams: " << fNStreams << std::endl;
+
+            std::cout << "RunDuration: " << fRunDuration << std::endl;
+            std::cout << "Timestamp: " << fTimestamp << std::endl;
+            std::cout << "Description: " << fDescription << std::endl;
+
+#if 0
             //fChannelStreams.clear();
             //Read1DFromHDF5< std::vector< uint32_t > >( fFile, "channel_streams", fChannelStreams );
             ReadChannelStreams( aFile );            // Read Stream Attributes
@@ -831,13 +851,18 @@ std::cout << "M4Header::WriteToFile(): void\n";
                 fChannelHeaders.push_back( M4ChannelHeader() );
                 fChannelHeaders.back().ReadFromHDF5( fChannelsGroup, tChannelLabel );
             }
+
         }
         catch( H5::Exception& e )
         {
             //H5::Exception::printErrorStack();
             throw M4Exception() << "Unable to open header group or find header data\n";
         }
+#endif  
+std::cout << "M4Header::ReadFromFile(): void\n";        
     }
+
+#if 0
 
     /*************************************************************************
     * @brief Write channel-streams to file
