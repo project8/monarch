@@ -779,14 +779,14 @@ std::cout << "M4Header::ReadFromFile()\n";
             fTimestamp = headerAttr.at("timestamp");
             fDescription = headerAttr.at("description");
 
-            std::cout << "EggVersion: " << fEggVersion << std::endl;
-            std::cout << "Filename: " << fFilename << std::endl;
-            std::cout << "NChannels: " << fNChannels << std::endl;
-            std::cout << "NStreams: " << fNStreams << std::endl;
+            // std::cout << "EggVersion: " << fEggVersion << std::endl;
+            // std::cout << "Filename: " << fFilename << std::endl;
+            // std::cout << "NChannels: " << fNChannels << std::endl;
+            // std::cout << "NStreams: " << fNStreams << std::endl;
 
-            std::cout << "RunDuration: " << fRunDuration << std::endl;
-            std::cout << "Timestamp: " << fTimestamp << std::endl;
-            std::cout << "Description: " << fDescription << std::endl;
+            // std::cout << "RunDuration: " << fRunDuration << std::endl;
+            // std::cout << "Timestamp: " << fTimestamp << std::endl;
+            // std::cout << "Description: " << fDescription << std::endl;
 
 #if 0
             //fChannelStreams.clear();
@@ -1093,7 +1093,7 @@ M4_API std::ostream& operator<<( std::ostream& out, const monarch4::M4Header& hd
     out << "\tNumber of Channels: " << hdr.GetNChannels() << "\n";
     out << "\tNumber of Streams: " << hdr.GetNStreams() << "\n";
     out << "\tChannel-to-stream mapping:\n";
-
+#if 0
     for( uint32_t iChan = 0; iChan < hdr.ChannelStreams().size(); ++iChan )
     {
         out << "\t\tChannel " << iChan << " --> Stream " << hdr.ChannelStreams()[ iChan ] << "\n";
@@ -1108,6 +1108,6 @@ M4_API std::ostream& operator<<( std::ostream& out, const monarch4::M4Header& hd
     {
         out << hdr.ChannelHeaders()[ iChan ];
     }
-
+#endif
     return out;
 }

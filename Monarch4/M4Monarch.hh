@@ -130,7 +130,7 @@ namespace monarch4
         private:
             // the Zarr/Egg file
             // mutable std::unique_ptr< z5::filesystem::handle::File > fFile;
-            mutable z5FileHandle* hFile;
+            mutable z5FileHandle* fFile;
 
             // the header
             // mutable std::unique_ptr< M4Header > fHeader;

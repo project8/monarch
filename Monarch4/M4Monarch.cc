@@ -24,10 +24,11 @@ namespace monarch4
     *************************************************************************/
     Monarch4::Monarch4() :
             fState( eClosed ),
-            hFile(nullptr),
+            fFile(nullptr),
             fHeader(),
             fMutexPtr( new std::mutex() )
     {
+std::cout << "Monarch4::Monarch4() default CTOR\n";
     }
 
     /*************************************************************************
@@ -36,20 +37,33 @@ namespace monarch4
     *************************************************************************/
     Monarch4::~Monarch4()
     {
-        if( fState == eOpenToRead || fState == eReadyToRead) FinishReading();
-        if( fState == eOpenToWrite || fState == eReadyToWrite) FinishWriting();
+std::cout << "Monarch4::~Monarch4(): default DTOR\n";        
+        if( fState == eOpenToRead || fState == eReadyToRead)
+        {
+            FinishReading();
+        } 
+        if( fState == eOpenToWrite || fState == eReadyToWrite) 
+        {
+            FinishWriting();
+        }
 
         while( ! fStreams.empty() )
         {
             delete fStreams.back();
             fStreams.pop_back();
         }
+std::cout << "Monarch4::~Monarch4(): Monarch4 component destroyed\n";        
     }
 
     /*************************************************************************
-    * @brief 
+    * @brief Report current state of Monarch4 component WRT file
     * 
     * @return Monarch4::State 
+    *   - eOpenToRead: state when monarch has a file open but hasn't read the header
+    *   - eOpenToWrite: state when monarch has a file open but hasn't written the header
+    *   - eReadyToRead: state when monarch has dealt with the header and is reading records
+    *   - eReadyToWrite:  state when monarch has dealt with the header and is writing records
+    *   - eClosed: state when monarch has no file
     *************************************************************************/
     Monarch4::State Monarch4::GetState() const
     {
@@ -57,10 +71,10 @@ namespace monarch4
     }
 
     /*************************************************************************
-    * @brief 
+    * @brief Create new M4Monarch component for read-only
     * 
-    * @param aFilename 
-    * @return const Monarch4* 
+    * @param[in] aFilename path/filename
+    * @return const Monarch4* Pointer to newly created object
     *************************************************************************/
     const Monarch4* Monarch4::OpenForReading( const string& aFilename )
     {
@@ -70,8 +84,7 @@ std::cout << "Monarch4::OpenForReading()\n";
         try
         {
             // tMonarch4->fFile = std::make_unique< z5::filesystem::handle::File >( aFilename, z5::FileMode::r );
-// z5::filesystem::handle::File::File()
-            tMonarch4->hFile = new z5FileHandle( aFilename, z5::FileMode::r );
+            tMonarch4->fFile = new z5FileHandle( aFilename, z5::FileMode::r );
         }
         catch( std::exception& e )
         {
@@ -88,34 +101,34 @@ std::cout << "Monarch4::OpenForReading()\n";
         // }
         LDEBUG( mlog, "Opened egg file <" << aFilename << "> for reading" );
 
+        // Create the new M4Header
         // tMonarch4->fHeader = std::make_unique< M4Header >();
         tMonarch4->fHeader = std::make_shared< M4Header >();
-        tMonarch4->fHeader->Filename() = aFilename;
 
+        tMonarch4->fHeader->Filename() = aFilename;
         tMonarch4->fState = eOpenToRead;
 
-std::cout << "Monarch4::OpenForReading(): Monarch4*\n";        
-        return tMonarch4;
+std::cout << "Monarch4::OpenForReading(): newly created Monarch4 component\n";        
+        return tMonarch4;   // return a newly created Monarch4 component
     }
 
     /*************************************************************************
-    * @brief 
+    * @brief Create new Monarch4 component for write
     * 
-    * @param aFilename 
-    * @return Monarch4* 
+    * @param[in] aFilename  path/filename
+    * @return Monarch4* Pointer to newly created object
     *************************************************************************/
     Monarch4* Monarch4::OpenForWriting( const string& aFilename )
     {
+std::cout << "Monarch4::OpenForWriting()\n"; 
+
+        // Create new Monarch4 object
         Monarch4* tMonarch4 = new Monarch4();
 
         try
         {
-// z5::filesystem::handle::File f( "readme2.zr", z5::FileMode::modes::a );
-// z5FileHandle f( "readme2.zr", z5::FileMode::modes::a );
-
-            tMonarch4->hFile = new z5FileHandle( aFilename, z5::FileMode::w );
-            z5::createFile( *tMonarch4->hFile, true );
-
+            tMonarch4->fFile = new z5FileHandle( aFilename, z5::FileMode::w );
+            z5::createFile( *tMonarch4->fFile, true );
         }
         catch( std::exception& e )
         {
@@ -133,13 +146,15 @@ std::cout << "Monarch4::OpenForReading(): Monarch4*\n";
 
         LDEBUG( mlog, "Opened egg file <" << aFilename << "> for writing" );
 
+        // Create the new M4Header
         // tMonarch4->fHeader = std::make_unique< M4Header >();
         tMonarch4->fHeader = std::make_shared< M4Header >();
-        tMonarch4->fHeader->Filename() = aFilename;
 
+        tMonarch4->fHeader->Filename() = aFilename;
         tMonarch4->fState = eOpenToWrite;
 
-        return tMonarch4;
+std::cout << "Monarch4::OpenForWriting(): newly created Monarch4 component\n";        
+        return tMonarch4;       // return a newly created Monarch4 component
     }
 
     /*************************************************************************
@@ -155,7 +170,7 @@ std::cout << "Monarch4::ReadHeader()\n";
         }
 
         // Read the header information from the file (run header, plus all stream and channel headers)
-        fHeader->ReadFromFile( *hFile  );
+        fHeader->ReadFromFile( *fFile );
 #if 0
         z5::filesystem::handle::Group* tStreamsGroup = fHeader->GetStreamsGroup();
 
@@ -198,7 +213,7 @@ std::cout << "Monarch4::WriteHeader()\n";
 
         // Write the header to the file
         // This will create the following groups: run, streams, and channels
-        fHeader->WriteToFile( *hFile );
+        fHeader->WriteToFile( *fFile );
 #if 0
         z5::filesystem::handle::Group* tStreamsGroup = fHeader->GetStreamsGroup();
 
@@ -223,7 +238,7 @@ std::cout << "Monarch4::WriteHeader()\n";
         // }
 #endif
         fState = eReadyToWrite;
-std::cout << "Monarch4::WriteHeader(): void";
+std::cout << "Monarch4::WriteHeader(): void\n";
     }
 
     /*************************************************************************
@@ -232,29 +247,35 @@ std::cout << "Monarch4::WriteHeader(): void";
     *************************************************************************/
     void Monarch4::FinishReading() const
     {
+std::cout << "Monarch4::FinishReading()\n";        
         std::string filename = fHeader != nullptr ? fHeader->Filename() : std::string();
         
         LDEBUG( mlog, "Finishing reading <" << filename << ">" );
         try
         {
+            // release ownership of M4Header object 
             //delete fHeader;
-            fHeader.reset();  // release ownership on the object 
+            fHeader.reset();  
             //fHeader = nullptr;
+
+            // release ownership of M4Stream objects
             for( std::vector< M4Stream* >::iterator streamIt = fStreams.begin(); streamIt != fStreams.end(); ++streamIt )
             {
                 const_cast< const M4Stream* >(*streamIt)->Close();
                 delete *streamIt;
                 *streamIt = nullptr;
             }
-// How to properly release shared_ptr?
-            //delete fFile;
-            //fFile = nullptr;
+
+            // release ownership of M4Monarch
+            // fFile->reset();      
+            // fFile = nullptr;
         }
         catch( std::exception& e )
         {
             throw M4Exception() << "Error while closing file <" << filename << ">:\n" << e.what();
         }
         fState = eClosed;
+std::cout << "Monarch4::FinishReading(): void\n";        
     }
 
     /*************************************************************************
