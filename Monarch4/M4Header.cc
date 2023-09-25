@@ -512,7 +512,8 @@ std::cout << "M4ChannelHeader::WriteToFile(): " << fLabel << std::endl;
         chanAttr["dac_gain"] = fDACGain;
         chanAttr["frequency_min"] = fFrequencyMin;
         chanAttr["frequency_range"] = fFrequencyRange;
-// z5::writeAttributes(channelsHandle, chanAttr);
+        
+        z5::writeAttributes(channelsHandle, chanAttr);
 
 std::cout << "M4ChannelHeader::WriteToFile(): void\n";        
     }
@@ -830,9 +831,7 @@ std::cout << "M4Header::WriteToFile()\n";
         //     throw;
         // }
 std::cout << "M4Header::WriteToFile(): void\n";        
-
     }
-
 
     /*************************************************************************
     * @brief Read file attributes, stream headers, channel headers from file
