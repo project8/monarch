@@ -70,7 +70,7 @@ namespace monarch4
             } State;
             State GetState() const;
             
-        private:
+                    private:
             mutable State fState;
 
         public:

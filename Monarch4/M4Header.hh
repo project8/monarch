@@ -27,6 +27,8 @@
 typedef z5::filesystem::handle::File z5FileHandle;
 typedef z5::filesystem::handle::Dataset z5DatasetHandle;
 typedef z5::filesystem::handle::Group z5GroupHandle;
+typedef z5::filesystem::handle::File::GroupType z5GroupType;
+typedef z5::types::ShapeType z5ShapeType;
 
 // Search for definitions: in <prj> directory monarch/
 // $ grep -R HAS_GRP_IFC *
@@ -132,8 +134,10 @@ namespace monarch4
             M4MEMBERVARIABLE( double, FrequencyRange );
 
         public:
-            void WriteToFile( HAS_GRP_IFC* aParent );
-            void ReadFromFile( const HAS_GRP_IFC* aParent, const std::string& aLabel ) const;
+            // void WriteToFile( HAS_GRP_IFC* aParent );
+            // void ReadFromFile( const HAS_GRP_IFC* aParent, const std::string& aLabel ) const;
+            void WriteToFile( z5FileHandle aFile );
+            void ReadFromFile( const z5FileHandle aFile, const std::string& aLabel ) const;
     };
 
 
@@ -202,11 +206,15 @@ namespace monarch4
             z5GroupHandle* GetChannelsGroup();
 
         private:
-            void WriteChannelStreams( HAS_ATTR_IFC* aLoc );
-            void ReadChannelStreams( const HAS_ATTR_IFC* aLoc ) const;
+            // void WriteChannelStreams( HAS_ATTR_IFC* aLoc );
+            // void ReadChannelStreams( const HAS_ATTR_IFC* aLoc ) const;
+            void WriteChannelStreams( z5FileHandle afile, z5GroupHandle aGroup);
+            void ReadChannelStreams( const z5FileHandle aLoc , z5GroupHandle aGroup) const;
 
-            void WriteChannelCoherence( HAS_ATTR_IFC* aLoc );
-            void ReadChannelCoherence( const HAS_ATTR_IFC* aLoc ) const;
+            // void WriteChannelCoherence( HAS_ATTR_IFC* aLoc );
+            // void ReadChannelCoherence( const HAS_ATTR_IFC* aLoc ) const;
+            void WriteChannelCoherence( z5GroupHandle aLoc );
+            void ReadChannelCoherence( const z5GroupHandle aLoc ) const;
             
             //mutable z5::filesystem::handle::File* fFile;
             // mutable std::shared_ptr< z5::filesystem::handle::File > fFile;

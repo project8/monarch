@@ -16,6 +16,9 @@
 #include "M4Version.hh"
 #include "M4Exception.hh"
 
+#include "xtensor/xarray.hpp"
+#include "xtensor/xio.hpp"
+
 #include <cstdlib> // for atol in parsing timestamp
 #include <cstring> // for strcpy
 
@@ -322,6 +325,7 @@ namespace monarch4
             fFrequencyMin( 0. ),
             fFrequencyRange( 0. )
     {
+std::cout << "M4ChannelHeader::M4ChannelHeader() default CTOR\n";
     }
 
     /*************************************************************************
@@ -366,6 +370,7 @@ namespace monarch4
         fFrequencyMin( 0. ),
         fFrequencyRange( 0. )
     {
+std::cout << "M4ChannelHeader::M4ChannelHeader() basic CTOR\n";
         SetNumber( aNumber );
     }
 
@@ -391,6 +396,7 @@ namespace monarch4
             fFrequencyMin( orig.fFrequencyMin ),
             fFrequencyRange( orig.fFrequencyRange )
     {
+std::cout << "M4ChannelHeader::M4ChannelHeader() template CTOR\n";
         SetNumber( orig.fNumber );
     }
 
@@ -401,6 +407,7 @@ namespace monarch4
     *************************************************************************/
     M4ChannelHeader::~M4ChannelHeader()
     {
+std::cout << "M4ChannelHeader::~M4ChannelHeader() DTOR\n";
         if (fLabel != nullptr)
             delete [] fLabel;
     }
@@ -420,72 +427,108 @@ namespace monarch4
         strcpy( fLabel, "channel" );
         u32toa( aNumber, fLabel + prefixSize );
     }
-#if 0
+
     /*************************************************************************
-    * @brief 
+    * @brief Write the channel header attributes to file
     * 
     * @param aParent 
     *************************************************************************/
-    void M4ChannelHeader::WriteToHDF5( HAS_GRP_IFC* aParent )
+    // void M4ChannelHeader::WriteToHDF5( HAS_GRP_IFC* aParent )
+    void M4ChannelHeader::WriteToFile( z5FileHandle aFile )
     {
-// z5::createGroup( channelsHandle, name );
-
+std::cout << "M4ChannelHeader::WriteToFile(): " << fLabel << std::endl;        
         LDEBUG( mlog, "Writing channel <" << fLabel << ">" );
-        H5::Group tThisChannelGroup = aParent->createGroup( fLabel );
+        
+        // Create a group to hold channels, handle to access it
+        // H5::Group tThisChannelGroup = aParent->createGroup( fLabel );
+        z5::createGroup(aFile, "channels");
+        auto channelsHandle = z5GroupHandle(aFile, "channels");
 
-// nlohmann::json oneChGroupAttr;
-// oneChGroupAttr["name"] = name;
-// z5::writeAttributes(channelHandle, oneChGroupAttr);
+        // M4Header::WriteScalarToHDF5( &tThisChannelGroup, "number", fNumber );
+        // M4Header::WriteScalarToHDF5( &tThisChannelGroup, "source", fSource );
+        // M4Header::WriteScalarToHDF5( &tThisChannelGroup, "acquisition_rate", fAcquisitionRate );
+        // M4Header::WriteScalarToHDF5( &tThisChannelGroup, "record_size", fRecordSize );
+        // M4Header::WriteScalarToHDF5( &tThisChannelGroup, "sample_size", fSampleSize );
+        // M4Header::WriteScalarToHDF5( &tThisChannelGroup, "data_type_size", fDataTypeSize );
+        // M4Header::WriteScalarToHDF5( &tThisChannelGroup, "data_format", fDataFormat );
+        // M4Header::WriteScalarToHDF5( &tThisChannelGroup, "bit_depth", fBitDepth );
+        // M4Header::WriteScalarToHDF5( &tThisChannelGroup, "bit_alignment", fBitAlignment );
+        // M4Header::WriteScalarToHDF5( &tThisChannelGroup, "voltage_offset", fVoltageOffset );
+        // M4Header::WriteScalarToHDF5( &tThisChannelGroup, "voltage_range", fVoltageRange );
+        // M4Header::WriteScalarToHDF5( &tThisChannelGroup, "dac_gain", fDACGain );
+        // M4Header::WriteScalarToHDF5( &tThisChannelGroup, "frequency_min", fFrequencyMin );
+        // M4Header::WriteScalarToHDF5( &tThisChannelGroup, "frequency_range", fFrequencyRange );
+        
+        // Create the attributes component and write to file
+        nlohmann::json chanAttr;
 
-        M4Header::WriteScalarToHDF5( &tThisChannelGroup, "number", fNumber );
-        M4Header::WriteScalarToHDF5( &tThisChannelGroup, "source", fSource );
-        M4Header::WriteScalarToHDF5( &tThisChannelGroup, "acquisition_rate", fAcquisitionRate );
-        M4Header::WriteScalarToHDF5( &tThisChannelGroup, "record_size", fRecordSize );
-        M4Header::WriteScalarToHDF5( &tThisChannelGroup, "sample_size", fSampleSize );
-        M4Header::WriteScalarToHDF5( &tThisChannelGroup, "data_type_size", fDataTypeSize );
-        M4Header::WriteScalarToHDF5( &tThisChannelGroup, "data_format", fDataFormat );
-        M4Header::WriteScalarToHDF5( &tThisChannelGroup, "bit_depth", fBitDepth );
-        M4Header::WriteScalarToHDF5( &tThisChannelGroup, "bit_alignment", fBitAlignment );
-        M4Header::WriteScalarToHDF5( &tThisChannelGroup, "voltage_offset", fVoltageOffset );
-        M4Header::WriteScalarToHDF5( &tThisChannelGroup, "voltage_range", fVoltageRange );
-        M4Header::WriteScalarToHDF5( &tThisChannelGroup, "dac_gain", fDACGain );
-        M4Header::WriteScalarToHDF5( &tThisChannelGroup, "frequency_min", fFrequencyMin );
-        M4Header::WriteScalarToHDF5( &tThisChannelGroup, "frequency_range", fFrequencyRange );
+        chanAttr["number"] = fNumber;
+        chanAttr["source"] = fSource;
+        chanAttr["acquisition_rate"] = fAcquisitionRate;
+        chanAttr["record_size"] = fRecordSize;
+        chanAttr["sample_size"] = fSampleSize;
+        chanAttr["data_type_size"] = fDataTypeSize;
+        chanAttr["data_format"] = fDataFormat;
+        chanAttr["bit_depth"] = fBitDepth;
+        chanAttr["bit_alignment"] = fBitAlignment;
+        chanAttr["voltage_offset"] = fVoltageOffset;
+        chanAttr["voltage_range"] = fVoltageRange;
+        chanAttr["dac_gain"] = fDACGain;
+        chanAttr["frequency_min"] = fFrequencyMin;
+        chanAttr["frequency_range"] = fFrequencyRange;
+// z5::writeAttributes(channelsHandle, chanAttr);
+
+std::cout << "M4ChannelHeader::WriteToFile(): void\n";        
     }
 
     /*************************************************************************
-    * @brief 
+    * @brief Read channel header attributes from file
     * 
     * @param aParent 
     * @param aLabel 
     *************************************************************************/
-    void M4ChannelHeader::ReadFromHDF5( const HAS_GRP_IFC* aParent, const std::string& aLabel ) const
+    // void M4ChannelHeader::ReadFromHDF5( const HAS_GRP_IFC* aParent, const std::string& aLabel ) const
+    void M4ChannelHeader::ReadFromFile( const z5FileHandle aFile, const std::string& aLabel ) const
     {
+std::cout << "M4ChannelHeader::ReadFromFile(): " << aLabel << std::endl;
         LDEBUG( mlog, "Reading channel <" << aLabel << ">" );
-        H5::Group tThisChannelGroup = aParent->openGroup( aLabel.c_str() );
+        // H5::Group tThisChannelGroup = aParent->openGroup( aLabel.c_str() );
 
-// auto streamsHandle = z5::filesystem::handle::Group( f, "streams" );
-// nlohmann::json strGroupAttr;
+        // SetNumber( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisChannelGroup, "number" ) );
+        // Source() = M4Header::ReadScalarFromHDF5< string >( &tThisChannelGroup, "source" );
+        // SetAcquisitionRate( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisChannelGroup, "acquisition_rate" ) );
+        // SetRecordSize( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisChannelGroup, "record_size" ) );
+        // SetSampleSize( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisChannelGroup, "sample_size" ) );
+        // SetDataTypeSize( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisChannelGroup, "data_type_size" ) );
+        // SetDataFormat( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisChannelGroup, "data_format" ) );
+        // SetBitDepth( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisChannelGroup, "bit_depth" ) );
+        // SetBitAlignment( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisChannelGroup, "bit_alignment", fBitAlignment ) );
+        // SetVoltageOffset( M4Header::ReadScalarFromHDF5< double >( &tThisChannelGroup, "voltage_offset" ) );
+        // SetVoltageRange( M4Header::ReadScalarFromHDF5< double >( &tThisChannelGroup, "voltage_range" ) );
+        // SetDACGain( M4Header::ReadScalarFromHDF5< double >( &tThisChannelGroup, "dac_gain" ) );
+        // SetFrequencyMin( M4Header::ReadScalarFromHDF5< double >( &tThisChannelGroup, "frequency_min" ) );
+        // SetFrequencyRange( M4Header::ReadScalarFromHDF5< double >( &tThisChannelGroup, "frequency_range" ) );
+        
+        nlohmann::json chanAttr;
+        auto channeHandle = z5GroupHandle(aFile, aLabel);
+// z5::readAttributes( channelHandle, chanAttr );
 
-// // Extract the stream attribute: nStreams to indicate how many streams are stored
-// z5::readAttributes( streamsHandle, strGroupAttr );
-
-        SetNumber( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisChannelGroup, "number" ) );
-        Source() = M4Header::ReadScalarFromHDF5< string >( &tThisChannelGroup, "source" );
-        SetAcquisitionRate( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisChannelGroup, "acquisition_rate" ) );
-        SetRecordSize( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisChannelGroup, "record_size" ) );
-        SetSampleSize( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisChannelGroup, "sample_size" ) );
-        SetDataTypeSize( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisChannelGroup, "data_type_size" ) );
-        SetDataFormat( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisChannelGroup, "data_format" ) );
-        SetBitDepth( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisChannelGroup, "bit_depth" ) );
-        SetBitAlignment( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisChannelGroup, "bit_alignment", fBitAlignment ) );
-        SetVoltageOffset( M4Header::ReadScalarFromHDF5< double >( &tThisChannelGroup, "voltage_offset" ) );
-        SetVoltageRange( M4Header::ReadScalarFromHDF5< double >( &tThisChannelGroup, "voltage_range" ) );
-        SetDACGain( M4Header::ReadScalarFromHDF5< double >( &tThisChannelGroup, "dac_gain" ) );
-        SetFrequencyMin( M4Header::ReadScalarFromHDF5< double >( &tThisChannelGroup, "frequency_min" ) );
-        SetFrequencyRange( M4Header::ReadScalarFromHDF5< double >( &tThisChannelGroup, "frequency_range" ) );
+        fNumber = chanAttr.at("number");
+        fSource = chanAttr.at("source");
+        fAcquisitionRate = chanAttr.at("acquisition_rate");
+        fRecordSize = chanAttr.at("record_size");
+        fSampleSize = chanAttr.at("sample_size");
+        fDataTypeSize = chanAttr.at("data_type_size");
+        fDataFormat = chanAttr.at("data_format");
+        fBitDepth = chanAttr.at("bit_depth");
+        fBitAlignment = chanAttr.at("bit_alignment");
+        fVoltageOffset = chanAttr.at("voltage_offset");
+        fVoltageRange = chanAttr.at("voltage_range");
+        fDACGain = chanAttr.at("dac_gain");
+        fFrequencyMin = chanAttr.at("frequency_min");
+        fFrequencyRange = chanAttr.at("frequency_range");
+std::cout << "M4ChannelHeader::ReadFromFile(): void\n";
     }
-#endif
 
     /*************************************************************************
     * @brief Construct a (default) new M4Header::M4Header object
@@ -546,12 +589,14 @@ std::cout << "M4Header::M4Header()\n";
     *************************************************************************/
     void M4Header::SetCoherence( unsigned aChanA, unsigned aChanB, bool aCoherence )
     {
+std::cout << "M4Header::SetCoherence()\n";        
         if( aChanA >= fNChannels || aChanB >= fNChannels )
         {
             throw M4Exception() << "Channel out of bounds: " << aChanA << " or " << aChanB << " >= " << fNChannels;
         }
         fChannelCoherence[ aChanA ][ aChanB ] = aCoherence;
         fChannelCoherence[ aChanB ][ aChanA ] = aCoherence;
+std::cout << "M4Header::SetCoherence(): void\n";        
     }
 
     /*************************************************************************
@@ -582,7 +627,7 @@ std::cout << "M4Header::M4Header()\n";
                                  std::vector< unsigned >* aChanVec )
     {
         LDEBUG( mlog, "Adding stream " << fNStreams << " for channel " << fNChannels << " with record size " << aRecSize );
-        
+std::cout << "M4Header::AddStream(): " << aSource << std::endl;
         if( aChanVec != nullptr ) 
         {
             aChanVec->push_back( fNChannels );
@@ -601,6 +646,7 @@ std::cout << "M4Header::M4Header()\n";
         }
         fChannelCoherence.back().back() = true; // each channel is coherent with itself
 
+std::cout << "M4Header::AddStream(): void\n";
         return fNStreams++;
     }
 
@@ -633,6 +679,8 @@ std::cout << "M4Header::M4Header()\n";
                                  uint32_t aBitDepth, uint32_t aBitAlignment,
                                  std::vector< unsigned >* aChanVec )
     {
+std::cout << "M4Header::AddStream(): " << aSource << std::endl;
+
         LDEBUG( mlog, "Adding stream " << fNStreams << " for multiple channels with record size " << aRecSize );
         unsigned tFirstNewChannel = fNChannels;
         
@@ -687,6 +735,15 @@ std::cout << "M4Header::WriteToFile()\n";
         // {
             LDEBUG( mlog, "Writing run header" );
 
+            // fFile = aFile;
+            // WriteScalarToHDF5( fFile, "egg_version",   fEggVersion );
+            // WriteScalarToHDF5( fFile, "filename",      fFilename );
+            // WriteScalarToHDF5( fFile, "n_channels",    fNChannels );
+            // WriteScalarToHDF5( fFile, "n_streams",     fNStreams );
+            // WriteScalarToHDF5( fFile, "run_duration",  fRunDuration );
+            // WriteScalarToHDF5( fFile, "timestamp",     fTimestamp );
+            // WriteScalarToHDF5( fFile, "description",   fDescription );
+            
             nlohmann::json headerAttr;
 
             headerAttr["egg_version"] = fEggVersion;
@@ -698,18 +755,13 @@ std::cout << "M4Header::WriteToFile()\n";
             headerAttr["description"] = fDescription;
             z5::writeAttributes(aFile, headerAttr);
 
-#if 0            
-            fFile = aFile;
-            WriteScalarToHDF5( fFile, "egg_version",   fEggVersion );
-            WriteScalarToHDF5( fFile, "filename",      fFilename );
-            WriteScalarToHDF5( fFile, "n_channels",    fNChannels );
-            WriteScalarToHDF5( fFile, "n_streams",     fNStreams );
-            WriteScalarToHDF5( fFile, "run_duration",  fRunDuration );
-            WriteScalarToHDF5( fFile, "timestamp",     fTimestamp );
-            WriteScalarToHDF5( fFile, "description",   fDescription );
+            // Create a group to hold channels
+            z5::createGroup(aFile, "channels");
+            auto channelsHandle = z5GroupHandle(aFile, "channels");
 
+            WriteChannelStreams( aFile, channelsHandle );
+#if 0            
             //////////////Write1DToHDF5( fFile, "channel_streams",  fChannelStreams );
-            WriteChannelStreams( fFile );
             WriteChannelCoherence( fFile );
 
             // Write all the stream headers
@@ -750,7 +802,7 @@ std::cout << "M4Header::WriteToFile(): void\n";
     * @return none, throw M4Exception on failure
     *************************************************************************/
     // void M4Header::ReadFromHDF5( const H5::H5File* aFile ) const
-    void M4Header::ReadFromFile( const z5FileHandle aFile ) const
+    void M4Header::ReadFromFile( z5FileHandle aFile ) const
     {
 std::cout << "M4Header::ReadFromFile()\n";        
         // try
@@ -779,20 +831,11 @@ std::cout << "M4Header::ReadFromFile()\n";
             fTimestamp = headerAttr.at("timestamp");
             fDescription = headerAttr.at("description");
 
-            // std::cout << "EggVersion: " << fEggVersion << std::endl;
-            // std::cout << "Filename: " << fFilename << std::endl;
-            // std::cout << "NChannels: " << fNChannels << std::endl;
-            // std::cout << "NStreams: " << fNStreams << std::endl;
-
-            // std::cout << "RunDuration: " << fRunDuration << std::endl;
-            // std::cout << "Timestamp: " << fTimestamp << std::endl;
-            // std::cout << "Description: " << fDescription << std::endl;
-
-#if 0
-            //fChannelStreams.clear();
+            fChannelStreams.clear();
             //Read1DFromHDF5< std::vector< uint32_t > >( fFile, "channel_streams", fChannelStreams );
-            ReadChannelStreams( aFile );            // Read Stream Attributes
-            ReadChannelCoherence( aFile );
+// ReadChannelStreams( aFile );            // Read Stream Attributes
+// ReadChannelCoherence( aFile );
+
             /*
             for( unsigned i = 0; i < fNChannels; ++i )
             {
@@ -804,6 +847,7 @@ std::cout << "M4Header::ReadFromFile()\n";
                 std::cout << std::endl;
             }
             */
+#if 0
 
 			// Windows' HDF5 really doesn't like using std::strings
 			const unsigned tBuffSize = 256;
@@ -862,26 +906,37 @@ std::cout << "M4Header::ReadFromFile()\n";
 std::cout << "M4Header::ReadFromFile(): void\n";        
     }
 
-#if 0
-
     /*************************************************************************
     * @brief Write channel-streams to file
     * 
     * @param aLoc Stream location attribute
-    * @return none, no exceptions thrown
+    * @return none, no exceptions thrown 
     *************************************************************************/
-    void M4Header::WriteChannelStreams( HAS_ATTR_IFC* aLoc )
+    // void M4Header::WriteChannelStreams( HAS_ATTR_IFC* aLoc )
+    void M4Header::WriteChannelStreams( z5FileHandle aFile, z5GroupHandle aGroup)
     {
-        const unsigned tNDims = 1;
-        hsize_t tDims[ tNDims ] = { fNChannels };
+std::cout << "M4Header::WriteChannelStreams()\n";
+
+        // const unsigned tNDims = 1;
+        // size_t tDims[ tNDims ] = { fNChannels };
 
         // Create data space for channel-streams
-        H5::DataSpace tDataspace( tNDims, tDims );
-        //H5::DataSet tDataset = aLoc->createDataSet( "channel_streams", MH5Type< uint32_t >::H5(), tDataspace );
-        H5::Attribute tAttr = aLoc->createAttribute( "channel_streams", MH5Type< uint32_t >::H5(), tDataspace );
+        // H5::DataSpace tDataspace( tNDims, tDims );
+        // //H5::DataSet tDataset = aLoc->createDataSet( "channel_streams", MH5Type< uint32_t >::H5(), tDataspace );
+        // H5::Attribute tAttr = aLoc->createAttribute( "channel_streams", MH5Type< uint32_t >::H5(), tDataspace );
 
-        // Allocate temporary write buffer
-        uint32_t* tCSBuffer = new uint32_t[ fNChannels ];
+        // Create the group: channel_streams
+        z5::createGroup(aFile, "channel_streams");
+        auto streamsHandle = z5GroupHandle(aFile, "channel_streams");
+
+        // Create stream group attribute: 'name'
+        nlohmann::json oneStrGroupAttr;
+        oneStrGroupAttr["name"] = "name";
+        z5::writeAttributes(streamsHandle, oneStrGroupAttr);
+
+        // create a new Dataset for the data of this stream
+        xt::xarray<float>::shape_type tCSShape = { fNChannels, 1 };
+        xt::xarray<uint32_t> tCSBuffer(tCSShape);
 
         // Populate write buffer from the fChannelStreams
         for( unsigned i = 0; i < fNChannels; ++i )
@@ -889,22 +944,73 @@ std::cout << "M4Header::ReadFromFile(): void\n";
             tCSBuffer[ i ] = fChannelStreams[ i ];
         }
 
+        const string dsName = "data";
+        std::vector<size_t> shape = { fNChannels, 1 };
+        std::vector<size_t> chunks = { fNChannels, 1 };
+        auto ds = z5::createDataset( aFile, dsName, "uint32", shape, chunks );
+        const auto dsHandle = z5DatasetHandle(aFile, dsName);
+
         // Write the streams to the file
         //tDataset.write( tCSBuffer, MH5Type< uint32_t >::Native(), tDataspace );
-        tAttr.write( MH5Type< uint32_t >::Native(), tCSBuffer );
+        //tAttr.write( MH5Type< uint32_t >::Native(), tCSBuffer );
+        // delete [] tCSBuffer;        // release temporary buffer
 
-        delete [] tCSBuffer;        // release temporary buffer
+        z5::types::ShapeType writeOffset = { 0,0 };
+        z5::multiarray::writeSubarray<uint32_t>(ds, tCSBuffer, writeOffset.begin());
+
+std::cout << "M4Header::WriteChannelStreams(): void\n";
     }
+
+    // cout << "create a new zarr dataset: /data<float32>[1000,1000,1000]\n";
+    // const std::string dsName = "data";
+    // std::vector<size_t> shape = { 1000, 1000, 1000 };
+    // std::vector<size_t> chunks = { 100, 100, 100 };
+    // auto ds = z5::createDataset(f, dsName, "float32", shape, chunks);
+
+
+
+    // void M4Header::WriteChannelStreams( HAS_ATTR_IFC* aLoc )
+    // {
+    //     const unsigned tNDims = 1;
+    //     hsize_t tDims[ tNDims ] = { fNChannels };
+
+    //     // Create data space for channel-streams
+    //     H5::DataSpace tDataspace( tNDims, tDims );
+    //     //H5::DataSet tDataset = aLoc->createDataSet( "channel_streams", MH5Type< uint32_t >::H5(), tDataspace );
+    //     H5::Attribute tAttr = aLoc->createAttribute( "channel_streams", MH5Type< uint32_t >::H5(), tDataspace );
+
+    //     // Allocate temporary write buffer
+    //     uint32_t* tCSBuffer = new uint32_t[ fNChannels ];
+
+    //     // Populate write buffer from the fChannelStreams
+    //     for( unsigned i = 0; i < fNChannels; ++i )
+    //     {
+    //         tCSBuffer[ i ] = fChannelStreams[ i ];
+    //     }
+
+    //     // Write the streams to the file
+    //     //tDataset.write( tCSBuffer, MH5Type< uint32_t >::Native(), tDataspace );
+    //     tAttr.write( MH5Type< uint32_t >::Native(), tCSBuffer );
+
+    //     delete [] tCSBuffer;        // release temporary buffer
+    // }
+
+
+
+
 
     /*************************************************************************
     * @brief Read the channel-streams from file
     * 
     * @param aLoc Stream location attribute
-    * @return none, no exceptions thrown
+    * @return none, no exceptions thrown 
     *************************************************************************/
-    void M4Header::ReadChannelStreams( const HAS_ATTR_IFC* aLoc ) const
+    // void M4Header::ReadChannelStreams( const HAS_ATTR_IFC* aLoc ) const
+    void M4Header::ReadChannelStreams( const z5FileHandle aFile , z5GroupHandle aGroup ) const
     {
-        const unsigned tNDims = 1;
+std::cout << "M4Header::ReadChannelStreams()\n";        
+ #if 0
+       const unsigned tNDims = 1;
         hsize_t tDims[ tNDims ];
 
         // Get access to the channel streams: tAttr
@@ -937,6 +1043,8 @@ std::cout << "M4Header::ReadFromFile(): void\n";
         }
 
         delete [] tCSBuffer;        // release temporary read buffer
+#endif        
+std::cout << "M4Header::ReadChannelStreams(): void\n";        
     }
 
     /*************************************************************************
@@ -944,8 +1052,11 @@ std::cout << "M4Header::ReadFromFile(): void\n";
     * 
     * @param aLoc 
     *************************************************************************/
-    void M4Header::WriteChannelCoherence( HAS_ATTR_IFC* aLoc )
+    // void M4Header::WriteChannelCoherence( HAS_ATTR_IFC* aLoc )
+    void M4Header::WriteChannelCoherence( z5GroupHandle aLoc )
     {
+std::cout << "M4Header::WriteChannelCoherence()\n";        
+#if 0
         const unsigned tNDims = 2;
         hsize_t tDims[ tNDims ] = { fNChannels, fNChannels };
 
@@ -971,15 +1082,20 @@ std::cout << "M4Header::ReadFromFile(): void\n";
         tAttr.write( MH5Type< bool >::Native(), tCCBuffer );
 
         delete [] tCCBuffer;
+#endif
+std::cout << "M4Header::WriteChannelCoherence(): void\n";        
     }
 
     /*************************************************************************
     * @brief Read channel-coherence from file
     * 
-    * @param aLoc 
+    * @param aLoc  z5GroupHandle
     *************************************************************************/
-    void M4Header::ReadChannelCoherence( const HAS_ATTR_IFC* aLoc ) const
+    // void M4Header::ReadChannelCoherence( const HAS_ATTR_IFC* aLoc ) const
+    void M4Header::ReadChannelCoherence( const z5GroupHandle aLoc ) const
     {
+std::cout << "M4Header::ReadChannelCoherence()\n";
+#if 0        
         const unsigned tNDims = 2;
         hsize_t tDims[ tNDims ];
 
@@ -1017,8 +1133,9 @@ std::cout << "M4Header::ReadFromFile(): void\n";
         }
 
         delete [] tCCBuffer;        // release temporary buffer
+#endif        
+std::cout << "M4Header::ReadChannelCoherence(): void\n";
     }
-#endif
 }
 
 /*************************************************************************
