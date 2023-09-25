@@ -136,8 +136,8 @@ namespace monarch4
         public:
             // void WriteToFile( HAS_GRP_IFC* aParent );
             // void ReadFromFile( const HAS_GRP_IFC* aParent, const std::string& aLabel ) const;
-            void WriteToFile( z5FileHandle aFile );
-            void ReadFromFile( const z5FileHandle aFile, const std::string& aLabel ) const;
+            void WriteToFile( z5GroupHandle aGroup  );
+            void ReadFromFile( const z5GroupHandle aGroup , const std::string& aLabel ) const;
     };
 
 

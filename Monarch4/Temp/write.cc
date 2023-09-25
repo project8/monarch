@@ -58,7 +58,6 @@ int main() {
 
     // Create a group to hold channels
     z5::createGroup(f, "channels");
-// auto channelsHandle = z5::filesystem::handle::Group(f, "channels");
     auto channelsHandle = z5GroupHandle(f, "channels");
 
     const int totalChannels = 2;
@@ -71,7 +70,6 @@ int main() {
         cout << "Create channel: " << name << endl;        
         
         z5::createGroup( channelsHandle, name );
-// z5::filesystem::handle::Group channelHandle = z5::filesystem::handle::Group( channelsHandle, name );
         z5GroupHandle channelHandle = z5GroupHandle( channelsHandle, name );
         
         nlohmann::json oneChGroupAttr;
@@ -87,7 +85,6 @@ int main() {
     // streams
     cout << "Create streams group\n";
     z5::createGroup(f, "streams");
-// auto streamsHandle = z5::filesystem::handle::Group(f, "streams");
     auto streamsHandle = z5GroupHandle(f, "streams");
 
     // constants for data
@@ -132,14 +129,12 @@ int main() {
 
         // Create stream group attribute: 'acquisitions', and handle
         z5::createGroup( streamHandles.back(), "acquisitions" );
-// z5::filesystem::handle::Group acqHandle = z5::filesystem::handle::Group( streamHandles.back(), "acquisitions" );
         z5GroupHandle acqHandle = z5GroupHandle( streamHandles.back(), "acquisitions" );
 
         // create a new Dataset for the data of this stream
         acqDatasets.emplace_back( z5::createDataset( acqHandle, acqDataName, "int16", datasetShape, chunkShape ) );
         
         // get handle for the dataset for this stream
-// acqDataHandles.push_back( z5::filesystem::handle::Dataset( acqHandle, dsName ) );
         acqDataHandles.push_back( z5DatasetHandle( acqHandle, dsName ) );
 
         ++nStreams;

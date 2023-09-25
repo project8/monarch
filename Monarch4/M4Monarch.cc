@@ -214,7 +214,6 @@ std::cout << "Monarch4::WriteHeader()\n";
         // Write the header to the file
         // This will create the following groups: run, streams, and channels
         fHeader->WriteToFile( *fFile );
-
         
 #if 0
         z5::filesystem::handle::Group* tStreamsGroup = fHeader->GetStreamsGroup();
