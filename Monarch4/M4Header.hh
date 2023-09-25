@@ -89,8 +89,8 @@ namespace monarch4
             M4MEMBERVARIABLE( uint32_t, NRecords );
             
         public:
-            void WriteToFile( HAS_GRP_IFC* aParent );
-            void ReadFromFile( const HAS_GRP_IFC* aParent, const std::string& aLabel ) const;
+            void WriteToFile( z5GroupHandle aGroup  );
+            void ReadFromFile( z5GroupHandle aGroup, const std::string& aLabel ) const;
 
         private:
             void WriteChannels( HAS_ATTR_IFC* aLoc );
@@ -237,7 +237,6 @@ namespace monarch4
 
             //template< typename XArrayType >
             //static void Read1DFromHDF5( const HAS_ATTR_IFC* aLoc, const std::string& aName, XArrayType& anArray );
-
     };
 
     inline const z5GroupHandle* M4Header::GetStreamsGroup() const

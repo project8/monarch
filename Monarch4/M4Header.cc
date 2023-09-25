@@ -169,14 +169,14 @@ namespace monarch4
     * @param aParent 
     *************************************************************************/
     // void M4StreamHeader::WriteToHDF5( z5GroupHandle* aParent )
-    void M4StreamHeader::WriteToFile( z5GroupHandle* aParent )
+    void M4StreamHeader::WriteToFile( z5GroupHandle aGroup )
     {
 std::cout << "M4StreamHeader::WriteToFile()\n";
         LDEBUG( mlog, "Writing stream <" << fLabel << ">" );
         // H5::Group tThisStreamGroup = aParent->createGroup( fLabel );
 
-        z5::createGroup( *aParent, fLabel );
-        z5GroupHandle grpHandle = z5GroupHandle( *aParent, "fLabel" );
+        z5::createGroup( aGroup, fLabel );
+        z5GroupHandle grpHandle = z5GroupHandle( aGroup, "fLabel" );
 
         // M4Header::WriteScalarToHDF5( &tThisStreamGroup, "number", fNumber );
         // M4Header::WriteScalarToHDF5( &tThisStreamGroup, "source", fSource );
@@ -221,7 +221,7 @@ std::cout << "M4StreamHeader::WriteToFile(): void\n";
     * @param[in] aLabel 
     *************************************************************************/
     // void M4StreamHeader::ReadFromHDF5( const z5GroupHandle* aParent, const std::string& aLabel ) const
-    void M4StreamHeader::ReadFromFile( const z5GroupHandle* aParent, const std::string& aLabel ) const
+    void M4StreamHeader::ReadFromFile( const z5GroupHandle aGroup, const std::string& aLabel ) const
     {
 std::cout <<  "M4StreamHeader::ReadFromFile()\n";
 
@@ -229,7 +229,7 @@ std::cout <<  "M4StreamHeader::ReadFromFile()\n";
         // H5::Group tThisStreamGroup = aParent->openGroup( aLabel.c_str() );
 
         nlohmann::json streamAttr;
-        auto channeHandle = z5GroupHandle(*aParent, aLabel);
+        auto channeHandle = z5GroupHandle(aGroup, aLabel);
 
         // SetNumber( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisStreamGroup, "number" ) );
         // Source() = M4Header::ReadScalarFromHDF5< string >( &tThisStreamGroup, "source" );
@@ -246,7 +246,7 @@ std::cout <<  "M4StreamHeader::ReadFromFile()\n";
         // SetNRecords( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisStreamGroup, "n_records" ) );
         // ReadChannels( &tThisStreamGroup );
 
-        z5::readAttributes( *aParent, streamAttr );
+        z5::readAttributes( aGroup, streamAttr );
 
         fNumber = streamAttr.at("number");
         fSource = streamAttr.at("source");
@@ -512,7 +512,7 @@ std::cout << "M4ChannelHeader::WriteToFile(): " << fLabel << std::endl;
         chanAttr["dac_gain"] = fDACGain;
         chanAttr["frequency_min"] = fFrequencyMin;
         chanAttr["frequency_range"] = fFrequencyRange;
-        
+
         z5::writeAttributes(channelsHandle, chanAttr);
 
 std::cout << "M4ChannelHeader::WriteToFile(): void\n";        
@@ -795,9 +795,10 @@ std::cout << "M4Header::WriteToFile()\n";
 
             // Create a group to hold channels
             z5::createGroup(aFile, "channel_streams");
-            auto channelsHandle = z5GroupHandle(aFile, "channel_streams");
+            auto streamsHandle = z5GroupHandle(aFile, "channel_streams");
+
+            WriteChannelStreams( aFile, streamsHandle );
 #if 0            
-            WriteChannelStreams( aFile, channelsHandle );
             //////////////Write1DToHDF5( fFile, "channel_streams",  fChannelStreams );
             WriteChannelCoherence( fFile );
 
@@ -963,14 +964,14 @@ std::cout << "M4Header::WriteChannelStreams()\n";
         // //H5::DataSet tDataset = aLoc->createDataSet( "channel_streams", MH5Type< uint32_t >::H5(), tDataspace );
         // H5::Attribute tAttr = aLoc->createAttribute( "channel_streams", MH5Type< uint32_t >::H5(), tDataspace );
 
-        // Create the group: channel_streams
-        z5::createGroup(aFile, "channel_streams");
-        auto streamsHandle = z5GroupHandle(aFile, "channel_streams");
+        // // Create the group: channel_streams
+        // z5::createGroup(aFile, "channel_streams");
+        // auto streamsHandle = z5GroupHandle(aFile, "channel_streams");
 
-        // Create stream group attribute: 'name'
-        nlohmann::json oneStrGroupAttr;
-        oneStrGroupAttr["name"] = "name";
-        z5::writeAttributes(streamsHandle, oneStrGroupAttr);
+        // // Create stream group attribute: 'name'
+        // nlohmann::json oneStrGroupAttr;
+        // oneStrGroupAttr["name"] = "name";
+        // z5::writeAttributes(streamsHandle, oneStrGroupAttr);
 
         // create a new Dataset for the data of this stream
         xt::xarray<float>::shape_type tCSShape = { fNChannels, 1 };
@@ -982,20 +983,22 @@ std::cout << "M4Header::WriteChannelStreams()\n";
             tCSBuffer[ i ] = fChannelStreams[ i ];
         }
 
-        const string dsName = "data";
+        const string dsName = "acquisitions";
+        // Create stream group attribute: 'acquisitions', and handle
+std::cout << "Create the group\n";
+        z5::createGroup( aGroup, dsName );
+        z5GroupHandle dsHandle = z5GroupHandle( aGroup, dsName );
+
+std::cout << "Create the dataset\n";
         std::vector<size_t> shape = { fNChannels, 1 };
         std::vector<size_t> chunks = { fNChannels, 1 };
-        auto ds = z5::createDataset( aFile, dsName, "uint32", shape, chunks );
-
-//TODO: not in the right place in directory        
-        // const auto dsHandle = z5DatasetHandle(aFile, dsName);
-        const auto dsHandle = z5DatasetHandle(aGroup, dsName);
-
+        auto ds = z5::createDataset( dsHandle, dsName, "uint32", shape, chunks );
         // Write the streams to the file
         //tDataset.write( tCSBuffer, MH5Type< uint32_t >::Native(), tDataspace );
         //tAttr.write( MH5Type< uint32_t >::Native(), tCSBuffer );
         // delete [] tCSBuffer;        // release temporary buffer
 
+std::cout << "Write the streams to the file\n";
         z5::types::ShapeType writeOffset = { 0,0 };
         z5::multiarray::writeSubarray<uint32_t>(ds, tCSBuffer, writeOffset.begin());
 
