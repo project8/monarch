@@ -983,53 +983,56 @@ std::cout << "M4Header::WriteChannelStreams()\n";
             tCSBuffer[ i ] = fChannelStreams[ i ];
         }
 
-        const string dsName = "acquisitions";
         // Create stream group attribute: 'acquisitions', and handle
+        const string dsName = "acquisitions";
 std::cout << "Create the group\n";
-        z5::createGroup( aGroup, dsName );
-        z5GroupHandle dsHandle = z5GroupHandle( aGroup, dsName );
+        // z5::createGroup( aGroup, dsName );
+        // z5GroupHandle dsHandle = z5GroupHandle( aGroup, dsName );
 
 std::cout << "Create the dataset\n";
         std::vector<size_t> shape = { fNChannels, 1 };
         std::vector<size_t> chunks = { fNChannels, 1 };
-        auto ds = z5::createDataset( dsHandle, dsName, "uint32", shape, chunks );
+        // auto ds = z5::createDataset( dsHandle, dsName, "uint32", shape, chunks );
+        auto ds = z5::createDataset( aGroup, dsName, "uint32", shape, chunks );
+        
         // Write the streams to the file
         //tDataset.write( tCSBuffer, MH5Type< uint32_t >::Native(), tDataspace );
         //tAttr.write( MH5Type< uint32_t >::Native(), tCSBuffer );
-        // delete [] tCSBuffer;        // release temporary buffer
 
 std::cout << "Write the streams to the file\n";
         z5::types::ShapeType writeOffset = { 0,0 };
         z5::multiarray::writeSubarray<uint32_t>(ds, tCSBuffer, writeOffset.begin());
 
+        // delete [] tCSBuffer;        // release temporary buffer
+
 std::cout << "M4Header::WriteChannelStreams(): void\n";
     }
 
-    // void M4Header::WriteChannelStreams( HAS_ATTR_IFC* aLoc )
-    // {
-    //     const unsigned tNDims = 1;
-    //     hsize_t tDims[ tNDims ] = { fNChannels };
+// void M4Header::WriteChannelStreams( HAS_ATTR_IFC* aLoc )
+// {
+//     const unsigned tNDims = 1;
+//     hsize_t tDims[ tNDims ] = { fNChannels };
 
-    //     // Create data space for channel-streams
-    //     H5::DataSpace tDataspace( tNDims, tDims );
-    //     //H5::DataSet tDataset = aLoc->createDataSet( "channel_streams", MH5Type< uint32_t >::H5(), tDataspace );
-    //     H5::Attribute tAttr = aLoc->createAttribute( "channel_streams", MH5Type< uint32_t >::H5(), tDataspace );
+//     // Create data space for channel-streams
+//     H5::DataSpace tDataspace( tNDims, tDims );
+//     //H5::DataSet tDataset = aLoc->createDataSet( "channel_streams", MH5Type< uint32_t >::H5(), tDataspace );
+//     H5::Attribute tAttr = aLoc->createAttribute( "channel_streams", MH5Type< uint32_t >::H5(), tDataspace );
 
-    //     // Allocate temporary write buffer
-    //     uint32_t* tCSBuffer = new uint32_t[ fNChannels ];
+//     // Allocate temporary write buffer
+//     uint32_t* tCSBuffer = new uint32_t[ fNChannels ];
 
-    //     // Populate write buffer from the fChannelStreams
-    //     for( unsigned i = 0; i < fNChannels; ++i )
-    //     {
-    //         tCSBuffer[ i ] = fChannelStreams[ i ];
-    //     }
+//     // Populate write buffer from the fChannelStreams
+//     for( unsigned i = 0; i < fNChannels; ++i )
+//     {
+//         tCSBuffer[ i ] = fChannelStreams[ i ];
+//     }
 
-    //     // Write the streams to the file
-    //     //tDataset.write( tCSBuffer, MH5Type< uint32_t >::Native(), tDataspace );
-    //     tAttr.write( MH5Type< uint32_t >::Native(), tCSBuffer );
+//     // Write the streams to the file
+//     //tDataset.write( tCSBuffer, MH5Type< uint32_t >::Native(), tDataspace );
+//     tAttr.write( MH5Type< uint32_t >::Native(), tCSBuffer );
 
-    //     delete [] tCSBuffer;        // release temporary buffer
-    // }
+//     delete [] tCSBuffer;        // release temporary buffer
+// }
 
     /*************************************************************************
     * @brief Read the channel-streams from file
