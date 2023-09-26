@@ -93,8 +93,10 @@ namespace monarch4
             void ReadFromFile( z5GroupHandle aGroup, const std::string& aLabel ) const;
 
         private:
-            void WriteChannels( HAS_ATTR_IFC* aLoc );
-            void ReadChannels( const HAS_ATTR_IFC* aLoc ) const;
+            // void WriteChannels( HAS_ATTR_IFC* aLoc );
+            // void ReadChannels( const HAS_ATTR_IFC* aLoc ) const;
+            void WriteChannels( z5GroupHandle aGroup );
+            void ReadChannels( const z5GroupHandle aGroupc ) const;            
    };
 
     /*!
@@ -195,8 +197,8 @@ namespace monarch4
                                 uint32_t aBitDepth, uint32_t aBitAlignment,
                                 std::vector< unsigned >* aChanVec = NULL );
         public:
-            void WriteToFile( z5FileHandle aFile );
             // void ReadFromFile( const z5::filesystem::handle::File* aFile ) const;
+            void WriteToFile( z5FileHandle aFile );
             void ReadFromFile( const z5FileHandle aFile ) const;
 
             const z5GroupHandle* GetStreamsGroup() const;
@@ -208,18 +210,20 @@ namespace monarch4
         private:
             // void WriteChannelStreams( HAS_ATTR_IFC* aLoc );
             // void ReadChannelStreams( const HAS_ATTR_IFC* aLoc ) const;
-            // void WriteChannelStreams( z5FileHandle afile, z5GroupHandle aGroup);
-            // void ReadChannelStreams( const z5FileHandle aLoc , z5GroupHandle aGroup) const;
-            void WriteChannelStreams( z5GroupHandle aGroup);
-            void ReadChannelStreams( z5GroupHandle aGroup) const;
+            // void WriteChannelStreams( z5GroupHandle aGroup);
+            // void ReadChannelStreams( z5GroupHandle aGroup) const;
+            void WriteChannelStreams( z5FileHandle aFile );
+            void ReadChannelStreams( z5FileHandle aFile ) const;
 
             // void WriteChannelCoherence( HAS_ATTR_IFC* aLoc );
             // void ReadChannelCoherence( const HAS_ATTR_IFC* aLoc ) const;
-            void WriteChannelCoherence( z5GroupHandle aLoc );
-            void ReadChannelCoherence( const z5GroupHandle aLoc ) const;
-            
+            // void WriteChannelCoherence( z5GroupHandle aLoc );
+            // void ReadChannelCoherence( const z5GroupHandle aLoc ) const;
+            void WriteChannelCoherence( z5FileHandle aFile  );
+            void ReadChannelCoherence( const z5FileHandle aFile ) const;
+
             //mutable z5::filesystem::handle::File* fFile;
-            // mutable std::shared_ptr< z5::filesystem::handle::File > fFile;
+            //mutable std::shared_ptr< z5::filesystem::handle::File > fFile;
             mutable z5GroupHandle* fStreamsGroup;
             mutable z5GroupHandle* fChannelsGroup;
 
