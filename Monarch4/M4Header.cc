@@ -313,48 +313,49 @@ std::cout << "Write the streams to the file\n";
 
     }
 
-#if 0
     /*************************************************************************
     * @brief Read data channels
     * 
     * @param aLoc 
     * @return none
     *************************************************************************/
-    void M4StreamHeader::ReadChannels( const HAS_ATTR_IFC* aLoc ) const
+    // void M4StreamHeader::ReadChannels( const HAS_ATTR_IFC* aLoc ) const
+    void M4StreamHeader::ReadChannels( const z5GroupHandle aGroup ) const
     {
-        const unsigned tNDims = 1;
-        hsize_t tDims[ tNDims ];
+std::cout << "M4StreamHeader::ReadChannels()\n";        
+        // const unsigned tNDims = 1;
+        // hsize_t tDims[ tNDims ];
 
-        //H5::DataSet tDataset = aLoc->openDataSet( "channels" );
-        H5::Attribute tAttr = aLoc->openAttribute( "channels" );
-        //H5::DataSpace tDataspace( tDataset.getSpace() );
-        H5::DataSpace tDataspace( tAttr.getSpace() );
-        tDataspace.getSimpleExtentDims( tDims );
+        // //H5::DataSet tDataset = aLoc->openDataSet( "channels" );
+        // H5::Attribute tAttr = aLoc->openAttribute( "channels" );
+        // //H5::DataSpace tDataspace( tDataset.getSpace() );
+        // H5::DataSpace tDataspace( tAttr.getSpace() );
+        // tDataspace.getSimpleExtentDims( tDims );
 
-        if( tDims[ 0 ] != fNChannels )
-        {
-            LERROR( mlog, "Channels dataset dimensions (" << tDims[ 0 ] << ") do not match number of channels, " << fNChannels );
-            return;
-        }
+        // if( tDims[ 0 ] != fNChannels )
+        // {
+        //     LERROR( mlog, "Channels dataset dimensions (" << tDims[ 0 ] << ") do not match number of channels, " << fNChannels );
+        //     return;
+        // }
 
-        // Allocate temporary data buffer for read()
-        uint32_t* tCSBuffer = new uint32_t[ fNChannels ];
+        // // Allocate temporary data buffer for read()
+        // uint32_t* tCSBuffer = new uint32_t[ fNChannels ];
 
-        //tDataset.read( tCSBuffer, MH5Type< uint32_t >::Native(), tDataspace );
-        tAttr.read( MH5Type< uint32_t >::Native(), tCSBuffer );
+        // //tDataset.read( tCSBuffer, MH5Type< uint32_t >::Native(), tDataspace );
+        // tAttr.read( MH5Type< uint32_t >::Native(), tCSBuffer );
 
-        // Read data channels
-        fChannels.clear();
-        fChannels.resize( fNChannels );
-        for( unsigned i = 0; i < fNChannels; ++i )
-        {
-            fChannels[ i ] = tCSBuffer[ i ];
-        }
+        // // Read data channels
+        // fChannels.clear();
+        // fChannels.resize( fNChannels );
+        // for( unsigned i = 0; i < fNChannels; ++i )
+        // {
+        //     fChannels[ i ] = tCSBuffer[ i ];
+        // }
 
-        // Release temporary buffer
-        delete [] tCSBuffer;
+        // // Release temporary buffer
+        // delete [] tCSBuffer;
+std::cout << "M4StreamHeader::ReadChannels(): void\n";        
     }
-#endif
 
     /*************************************************************************
     * @brief Construct a new M4ChannelHeader::M4ChannelHeader object
@@ -545,6 +546,7 @@ std::cout << "M4ChannelHeader::WriteToFile(): void\n";
     void M4ChannelHeader::ReadFromFile( const z5GroupHandle aGroup, const std::string& aLabel ) const
     {
 std::cout << "M4ChannelHeader::ReadFromFile(): " << aLabel << std::endl;
+
         LDEBUG( mlog, "Reading channel <" << aLabel << ">" );
         // H5::Group tThisChannelGroup = aParent->openGroup( aLabel.c_str() );
 
@@ -644,13 +646,15 @@ std::cout << "M4Header::~M4Header()\n";
     *************************************************************************/
     void M4Header::SetCoherence( unsigned aChanA, unsigned aChanB, bool aCoherence )
     {
-std::cout << "M4Header::SetCoherence()\n";        
+std::cout << "M4Header::SetCoherence()\n"; 
+
         if( aChanA >= fNChannels || aChanB >= fNChannels )
         {
             throw M4Exception() << "Channel out of bounds: " << aChanA << " or " << aChanB << " >= " << fNChannels;
         }
         fChannelCoherence[ aChanA ][ aChanB ] = aCoherence;
         fChannelCoherence[ aChanB ][ aChanA ] = aCoherence;
+
 std::cout << "M4Header::SetCoherence(): void\n";        
     }
 
@@ -681,8 +685,9 @@ std::cout << "M4Header::SetCoherence(): void\n";
                                  uint32_t aBitDepth, uint32_t aBitAlignment,
                                  std::vector< unsigned >* aChanVec )
     {
-        LDEBUG( mlog, "Adding stream " << fNStreams << " for channel " << fNChannels << " with record size " << aRecSize );
 std::cout << "M4Header::AddStream(): " << aSource << std::endl;
+
+        LDEBUG( mlog, "Adding stream " << fNStreams << " for channel " << fNChannels << " with record size " << aRecSize );
         if( aChanVec != nullptr ) 
         {
             aChanVec->push_back( fNChannels );
@@ -842,9 +847,9 @@ std::cout << "M4Header::WriteToFile()\n";
             // Create a group to hold channels
             // z5::createGroup(aFile, "channel_streams");
             // auto streamsHandle = z5GroupHandle(aFile, "channel_streams");
-
             // WriteChannelStreams( streamsHandle );
             // WriteChannelCoherence( streamsHandle );
+
             WriteChannelStreams( aFile );
             WriteChannelCoherence( aFile );
 
@@ -908,9 +913,10 @@ std::cout << "M4Header::ReadFromFile()\n";
             fDescription = headerAttr.at("description");
 
             fChannelStreams.clear();
+            ReadChannelStreams( aFile );            // Read Stream Attributes
+            ReadChannelCoherence( aFile );
+
             //Read1DFromHDF5< std::vector< uint32_t > >( fFile, "channel_streams", fChannelStreams );
-// ReadChannelStreams( aFile );            // Read Stream Attributes
-// ReadChannelCoherence( aFile );
 
             /*
             for( unsigned i = 0; i < fNChannels; ++i )
@@ -1085,7 +1091,28 @@ std::cout << "M4Header::ReadChannelStreams()\n";
         }
 
         delete [] tCSBuffer;        // release temporary read buffer
-#endif        
+#endif    
+
+        // Open the "channel_streams" dataset from file
+        const auto dsHandle = z5DatasetHandle(aFile, "channel_streams");
+        auto ds = z5::openDataset(aFile, "channel_streams");
+
+        xt::xarray<uint32_t>::shape_type tCSShape = { fNChannels, 1 };
+        xt::xarray<uint32_t> chanArray(tCSShape);       // array for dataset
+        // xt::xarray<uint32_t> tCSBuffer(tCSShape);
+        
+        z5::types::ShapeType readOffset = { 0,0 };
+        z5::multiarray::readSubarray<uint32_t>(ds, chanArray, readOffset.begin());
+
+        // Populate the M4Header::fChannelStreams from read buffer
+        fChannelStreams.clear();
+        fChannelStreams.resize( fNChannels );
+        for( unsigned i = 0; i < fNChannels; ++i )
+        {
+            fChannelStreams[ i ] = chanArray[ i ];
+            // std::cout << fChannelStreams[ i ] << std::endl;
+        }
+
 std::cout << "M4Header::ReadChannelStreams(): void\n";        
     }
 
@@ -1200,7 +1227,32 @@ std::cout << "M4Header::ReadChannelCoherence()\n";
         }
 
         delete [] tCCBuffer;        // release temporary buffer
-#endif        
+#endif    
+
+        // Open the "channel_coherence" dataset from file
+        const auto dsHandle = z5DatasetHandle(aFile, "channel_coherence");
+        auto ds = z5::openDataset(aFile, "channel_coherence");
+
+        // create a new Dataset for the data of this stream
+        xt::xarray<uint8_t>::shape_type tCCShape = { fNChannels * fNChannels , 1 };
+        xt::xarray<uint8_t> tCCBuffer(tCCShape);
+        
+        z5::types::ShapeType readOffset = { 0,0 };
+        z5::multiarray::readSubarray<uint8_t>(ds, tCCBuffer, readOffset.begin());
+
+        // Copy over channel-coherence from temporary buffer into component
+        fChannelCoherence.clear();
+        fChannelCoherence.resize( fNChannels );
+        for( unsigned i = 0; i < fNChannels; ++i )
+        {
+            fChannelCoherence[ i ].resize( fNChannels );
+            for( unsigned j = 0; j < fNChannels; ++j )
+            {
+                fChannelCoherence[ i ][ j ] = (bool)tCCBuffer[ i * fNChannels + j ];
+                std::cout << fChannelCoherence[ i ][ j ] << std::endl;
+            }
+        }
+
 std::cout << "M4Header::ReadChannelCoherence(): void\n";
     }
 }

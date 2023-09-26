@@ -96,7 +96,7 @@ namespace monarch4
             // void WriteChannels( HAS_ATTR_IFC* aLoc );
             // void ReadChannels( const HAS_ATTR_IFC* aLoc ) const;
             void WriteChannels( z5GroupHandle aGroup );
-            void ReadChannels( const z5GroupHandle aGroupc ) const;            
+            void ReadChannels( const z5GroupHandle aGroup ) const;            
    };
 
     /*!
