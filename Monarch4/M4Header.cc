@@ -797,10 +797,11 @@ std::cout << "M4Header::WriteToFile()\n";
             z5::createGroup(aFile, "channel_streams");
             auto streamsHandle = z5GroupHandle(aFile, "channel_streams");
 
-            WriteChannelStreams( aFile, streamsHandle );
+            // WriteChannelStreams( aFile, streamsHandle );
+            WriteChannelStreams( streamsHandle );
+            WriteChannelCoherence( streamsHandle );
 #if 0            
             //////////////Write1DToHDF5( fFile, "channel_streams",  fChannelStreams );
-            WriteChannelCoherence( fFile );
 
             // Write all the stream headers
             LDEBUG( mlog, "Writing stream headers" );
@@ -952,64 +953,11 @@ std::cout << "M4Header::ReadFromFile(): void\n";
     * @return none, no exceptions thrown 
     *************************************************************************/
     // void M4Header::WriteChannelStreams( HAS_ATTR_IFC* aLoc )
-    void M4Header::WriteChannelStreams( z5FileHandle aFile, z5GroupHandle aGroup)
+    // void M4Header::WriteChannelStreams( z5FileHandle aFile, z5GroupHandle aGroup)
+    void M4Header::WriteChannelStreams( z5GroupHandle aGroup)
     {
 std::cout << "M4Header::WriteChannelStreams()\n";
 
-        // const unsigned tNDims = 1;
-        // size_t tDims[ tNDims ] = { fNChannels };
-
-        // Create data space for channel-streams
-        // H5::DataSpace tDataspace( tNDims, tDims );
-        // //H5::DataSet tDataset = aLoc->createDataSet( "channel_streams", MH5Type< uint32_t >::H5(), tDataspace );
-        // H5::Attribute tAttr = aLoc->createAttribute( "channel_streams", MH5Type< uint32_t >::H5(), tDataspace );
-
-        // // Create the group: channel_streams
-        // z5::createGroup(aFile, "channel_streams");
-        // auto streamsHandle = z5GroupHandle(aFile, "channel_streams");
-
-        // // Create stream group attribute: 'name'
-        // nlohmann::json oneStrGroupAttr;
-        // oneStrGroupAttr["name"] = "name";
-        // z5::writeAttributes(streamsHandle, oneStrGroupAttr);
-
-        // create a new Dataset for the data of this stream
-        xt::xarray<float>::shape_type tCSShape = { fNChannels, 1 };
-        xt::xarray<uint32_t> tCSBuffer(tCSShape);
-
-        // Populate write buffer from the fChannelStreams
-        for( unsigned i = 0; i < fNChannels; ++i )
-        {
-            tCSBuffer[ i ] = fChannelStreams[ i ];
-        }
-
-        // Create stream group attribute: 'acquisitions', and handle
-        const string dsName = "acquisitions";
-std::cout << "Create the group\n";
-        // z5::createGroup( aGroup, dsName );
-        // z5GroupHandle dsHandle = z5GroupHandle( aGroup, dsName );
-
-std::cout << "Create the dataset\n";
-        std::vector<size_t> shape = { fNChannels, 1 };
-        std::vector<size_t> chunks = { fNChannels, 1 };
-        // auto ds = z5::createDataset( dsHandle, dsName, "uint32", shape, chunks );
-        auto ds = z5::createDataset( aGroup, dsName, "uint32", shape, chunks );
-        
-        // Write the streams to the file
-        //tDataset.write( tCSBuffer, MH5Type< uint32_t >::Native(), tDataspace );
-        //tAttr.write( MH5Type< uint32_t >::Native(), tCSBuffer );
-
-std::cout << "Write the streams to the file\n";
-        z5::types::ShapeType writeOffset = { 0,0 };
-        z5::multiarray::writeSubarray<uint32_t>(ds, tCSBuffer, writeOffset.begin());
-
-        // delete [] tCSBuffer;        // release temporary buffer
-
-std::cout << "M4Header::WriteChannelStreams(): void\n";
-    }
-
-// void M4Header::WriteChannelStreams( HAS_ATTR_IFC* aLoc )
-// {
 //     const unsigned tNDims = 1;
 //     hsize_t tDims[ tNDims ] = { fNChannels };
 
@@ -1032,7 +980,29 @@ std::cout << "M4Header::WriteChannelStreams(): void\n";
 //     tAttr.write( MH5Type< uint32_t >::Native(), tCSBuffer );
 
 //     delete [] tCSBuffer;        // release temporary buffer
-// }
+
+        // create a new Dataset for the data of this stream
+        xt::xarray<uint32_t>::shape_type tCSShape = { fNChannels, 1 };
+        xt::xarray<uint32_t> tCSBuffer(tCSShape);
+
+        // Populate write buffer from the fChannelStreams
+        for( unsigned i = 0; i < fNChannels; ++i )
+        {
+            tCSBuffer[ i ] = fChannelStreams[ i ];
+        }
+
+        // Create the dataset for "acquisitions"
+        const string dsName = "acquisitions";
+        std::vector<size_t> shape = { fNChannels, 1 };
+        std::vector<size_t> chunks = { fNChannels, 1 };
+        auto ds = z5::createDataset( aGroup, dsName, "uint32", shape, chunks );
+        
+std::cout << "Write the streams to the file\n";
+        z5::types::ShapeType writeOffset = { 0,0 };
+        z5::multiarray::writeSubarray<uint32_t>(ds, tCSBuffer, writeOffset.begin());
+
+std::cout << "M4Header::WriteChannelStreams(): void\n";
+    }
 
     /*************************************************************************
     * @brief Read the channel-streams from file
@@ -1041,7 +1011,8 @@ std::cout << "M4Header::WriteChannelStreams(): void\n";
     * @return none, no exceptions thrown 
     *************************************************************************/
     // void M4Header::ReadChannelStreams( const HAS_ATTR_IFC* aLoc ) const
-    void M4Header::ReadChannelStreams( const z5FileHandle aFile , z5GroupHandle aGroup ) const
+    // void M4Header::ReadChannelStreams( const z5FileHandle aFile , z5GroupHandle aGroup ) const
+    void M4Header::ReadChannelStreams( z5GroupHandle aGroup ) const
     {
 std::cout << "M4Header::ReadChannelStreams()\n";        
  #if 0
@@ -1088,7 +1059,7 @@ std::cout << "M4Header::ReadChannelStreams(): void\n";
     * @param aLoc 
     *************************************************************************/
     // void M4Header::WriteChannelCoherence( HAS_ATTR_IFC* aLoc )
-    void M4Header::WriteChannelCoherence( z5GroupHandle aLoc )
+    void M4Header::WriteChannelCoherence( z5GroupHandle aGroup )
     {
 std::cout << "M4Header::WriteChannelCoherence()\n";        
 #if 0
@@ -1118,6 +1089,29 @@ std::cout << "M4Header::WriteChannelCoherence()\n";
 
         delete [] tCCBuffer;
 #endif
+        // create a new Dataset for the data of this stream
+        xt::xarray<uint8_t>::shape_type tCCShape = { fNChannels * fNChannels , 1 };
+        xt::xarray<uint8_t> tCCBuffer(tCCShape);
+
+        // Populate write buffer from the fChannelStreams
+        for( unsigned i = 0; i < fNChannels; ++i )
+        {
+            for( unsigned j = 0; j < fNChannels; ++j )
+            {
+                tCCBuffer[ i * fNChannels + j ] = (uint8_t)fChannelCoherence[ i ][ j ];
+            }
+        }
+std::cout << "Create the dataset for channel_coherence\n";
+        // Create the dataset for "channel_coherence"
+        const string dsName = "channel_coherence";
+        std::vector<size_t> shape = { fNChannels * fNChannels, 1 };
+        std::vector<size_t> chunks = { fNChannels * fNChannels, 1 };
+        auto ds = z5::createDataset( aGroup, dsName, "uint8", shape, chunks );
+        
+std::cout << "Write the coherence to the file\n";
+        z5::types::ShapeType writeOffset = { 0,0 };
+        z5::multiarray::writeSubarray<uint8_t>(ds, tCCBuffer, writeOffset.begin());
+
 std::cout << "M4Header::WriteChannelCoherence(): void\n";        
     }
 

@@ -208,8 +208,10 @@ namespace monarch4
         private:
             // void WriteChannelStreams( HAS_ATTR_IFC* aLoc );
             // void ReadChannelStreams( const HAS_ATTR_IFC* aLoc ) const;
-            void WriteChannelStreams( z5FileHandle afile, z5GroupHandle aGroup);
-            void ReadChannelStreams( const z5FileHandle aLoc , z5GroupHandle aGroup) const;
+            // void WriteChannelStreams( z5FileHandle afile, z5GroupHandle aGroup);
+            // void ReadChannelStreams( const z5FileHandle aLoc , z5GroupHandle aGroup) const;
+            void WriteChannelStreams( z5GroupHandle aGroup);
+            void ReadChannelStreams( z5GroupHandle aGroup) const;
 
             // void WriteChannelCoherence( HAS_ATTR_IFC* aLoc );
             // void ReadChannelCoherence( const HAS_ATTR_IFC* aLoc ) const;
