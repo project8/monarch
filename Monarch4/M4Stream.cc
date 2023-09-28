@@ -81,6 +81,8 @@ namespace monarch4
             fDataSpaceUser( NULL ),
             fMutexPtr( new std::mutex() )
     {
+std::cout << "M4Stream::M4Stream() : "  << aHeader.GetLabel() << std::endl;
+
         LDEBUG( mlog, "Creating stream for <" << aHeader.GetLabel() << ">" );
 // Example code
 // z5FileHandle f( "readme2.zr", z5::FileMode::modes::a );
@@ -213,6 +215,7 @@ namespace monarch4
         // }
 #endif
         Initialize();
+std::cout << "M4Stream::M4Stream() : void "  << aHeader.GetLabel() << std::endl;
     }
 
     /*************************************************************************
@@ -221,6 +224,7 @@ namespace monarch4
     *************************************************************************/
     M4Stream::~M4Stream()
     {
+std::cout << "M4Stream::~M4Stream() DTOR\n";
         delete fDataSpaceUser; 
         fDataSpaceUser = nullptr;
 
@@ -244,6 +248,7 @@ namespace monarch4
     *************************************************************************/
     void M4Stream::Initialize() const
     {
+std::cout << "M4Stream::Initialize()\n";        
         LDEBUG( mlog, "Initializing stream" );
         fIsInitialized = false;
 #if 0
@@ -344,9 +349,9 @@ namespace monarch4
         fDataSpaceUser = new H5::DataSpace( N_DATA_DIMS, fDataDims1Rec, NULL );
 
         fIsInitialized = true;
-#endif        
+#endif  
+std::cout << "M4Stream::Initialize(): void\n";        
     }
-#if 0
 
     /*************************************************************************
     * @brief Return read-only M4Record access
@@ -373,6 +378,7 @@ namespace monarch4
         throw M4Exception() << "Channel <" << aChannel << "> requested; only " << fNChannels << " in this stream.";
     }
 
+#if 0
     /*************************************************************************
     * @brief 
     * 
@@ -467,7 +473,8 @@ namespace monarch4
     *************************************************************************/
     void M4Stream::Close() const
     {
-        //LDEBUG( mlog, "const M4Stream::Close()" );
+std::cout << "M4Stream::Close()\n";
+        LDEBUG( mlog, "const M4Stream::Close()" );
 
         delete fDataSpaceUser; 
         fDataSpaceUser = nullptr;
@@ -480,8 +487,9 @@ namespace monarch4
 
         delete fStreamParentLoc; 
         fStreamParentLoc = NULL;
+std::cout << "M4Stream::Close(): void\n";
     }
-#if 0
+
     /*************************************************************************
     * @brief Return read/write access to stream channel record
     * 
@@ -497,6 +505,7 @@ namespace monarch4
         throw M4Exception() << "Channel <" << aChannel << "> requested; only " << fNChannels << " in this stream.";
     }
 
+#if 0
     /*************************************************************************
     * @brief Write stream record
     * 
@@ -581,6 +590,7 @@ namespace monarch4
     *************************************************************************/
     void M4Stream::Close()
     {
+std::cout << "M4Stream::Close()\n";        
         //LDEBUG( mlog, "non-const M4Stream::Close()" );
         FinalizeStream();
 
@@ -595,9 +605,9 @@ namespace monarch4
 
         delete fStreamParentLoc; 
         fStreamParentLoc = nullptr;
+std::cout << "M4Stream::Close(): void\n";        
     }
 
-#if 0
     /*************************************************************************
     * @brief Configure access to M4Stream
     * 
@@ -609,6 +619,7 @@ namespace monarch4
         fIsInitialized = false;
     }
 
+#if 0
     /*************************************************************************
     * @brief 
     * 
@@ -761,6 +772,7 @@ namespace monarch4
     *************************************************************************/
     void M4Stream::BuildIndex() const
     {
+std::cout << "M4Stream::BuildIndex()\n";        
         fRecordIndex.resize( fNRecordsInFile );
 #if 0
         unsigned tNRecInAcq;
@@ -783,6 +795,7 @@ namespace monarch4
             }
         }
 #endif        
+std::cout << "M4Stream::BuildIndex(): void\n";        
     }
 
     /*************************************************************************
@@ -791,6 +804,8 @@ namespace monarch4
     *************************************************************************/
     void M4Stream::FinalizeCurrentAcq()
     {
+std::cout << "M4Stream::FinalizeCurrentAcq()\n";
+//ToDo: one entry, one exit        
         if( fCurrentAcqDataSet == nullptr ) return;
 #if 0
         fNRecordsInAcq = fRecordCountInAcq;
@@ -803,6 +818,7 @@ namespace monarch4
         delete fCurrentAcqDataSet;
 #endif        
         fCurrentAcqDataSet = nullptr;
+std::cout << "M4Stream::FinalizeCurrentAcq(): void\n";
     }
 
     /*************************************************************************
@@ -811,8 +827,10 @@ namespace monarch4
     *************************************************************************/
     void M4Stream::FinalizeStream()
     {
+std::cout << "M4Stream::FinalizeStream()\n";        
         FinalizeCurrentAcq();
 
+//ToDo: one entry, one exit        
         if( fAcqLoc == nullptr ) return;
 #if 0
         fNAcquisitions = ( fAcquisitionId + 1 ) * (unsigned)fRecordsAccessed;
@@ -820,5 +838,6 @@ namespace monarch4
         fStreamParentLoc->openAttribute( "n_records" ).write( MH5Type< unsigned >::Native(), &fRecordCountInFile );
 #endif        
         LDEBUG( mlog, "Finalizing stream with " << fNAcquisitions << " acquisitions and " << fRecordCountInFile << " records" );
+std::cout << "M4Stream::FinalizeStream(): void\n";        
     }
 } /* namespace monarch */
