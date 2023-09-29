@@ -215,11 +215,11 @@ std::cout << "Monarch4::WriteHeader()\n";
         // This will create the following groups: run, streams, and channels
         fHeader->WriteToFile( *fFile );
         
-#if 0
-        z5::filesystem::handle::Group* tStreamsGroup = fHeader->GetStreamsGroup();
+        // z5::filesystem::handle::Group* tStreamsGroup = fHeader->GetStreamsGroup();
 
         // try
         // {
+#if 0
             // Create the stream objects based on the configuration from the header
             for( M4Header::M4StreamHeaders::const_iterator streamIt = fHeader->StreamHeaders().begin();
                     streamIt != fHeader->StreamHeaders().end();
@@ -228,6 +228,7 @@ std::cout << "Monarch4::WriteHeader()\n";
                 fStreams.push_back( new M4Stream( *streamIt, tStreamsGroup ) );
                 fStreams.back()->SetMutex( fMutexPtr );
             }
+#endif
         // }
         // catch( H5::Exception& e )
         // {
@@ -237,14 +238,13 @@ std::cout << "Monarch4::WriteHeader()\n";
         // {
         //     throw;
         // }
-#endif
         fState = eReadyToWrite;
 std::cout << "Monarch4::WriteHeader(): void\n";
     }
 
     /*************************************************************************
     * @brief 
-    * 
+    * @note Deconstruct internal components?
     *************************************************************************/
     void Monarch4::FinishReading() const
     {
@@ -263,6 +263,7 @@ std::cout << "Monarch4::FinishReading()\n";
             for( std::vector< M4Stream* >::iterator streamIt = fStreams.begin(); streamIt != fStreams.end(); ++streamIt )
             {
                 const_cast< const M4Stream* >(*streamIt)->Close();
+
                 delete *streamIt;
                 *streamIt = nullptr;
             }
@@ -281,7 +282,7 @@ std::cout << "Monarch4::FinishReading(): void\n";
 
     /*************************************************************************
     * @brief 
-    * 
+    * @note Deconstruct internal components?
     *************************************************************************/
     void Monarch4::FinishWriting()
     {
@@ -295,6 +296,7 @@ std::cout << "Monarch4::FinishReading(): void\n";
             for( std::vector< M4Stream* >::iterator streamIt = fStreams.begin(); streamIt != fStreams.end(); ++streamIt )
             {
                 (*streamIt)->Close();
+
                 delete *streamIt;
                 *streamIt = nullptr;
             }
