@@ -211,8 +211,13 @@ std::cout << "Monarch4::WriteHeader()\n";
             throw M4Exception() << "File not opened to write";
         }
 
-        // Write the header to the file
-        // This will create the following groups: run, streams, and channels
+        // Write the run-configuration headers to the file
+        // This will create the following groups: 
+        //  file root directory
+        //      channel_coherence, 
+        //      channels/channel0..channelN-1, 
+        //      channel_streams
+        //      streams/stream0..streamN-1
         fHeader->WriteToFile( *fFile );
         
         // z5::filesystem::handle::Group* tStreamsGroup = fHeader->GetStreamsGroup();

@@ -103,8 +103,9 @@ namespace monarch4
             fNAcquisitions( 0 ),
             fNRecords( 0 )
     {
-std::cout << "M4StreamHeader::M4StreamHeader() multi-channel\n";        
-        SetNumber( aNumber );
+std::cout << "M4StreamHeader::M4StreamHeader() for " << aNChannels << " channels: stream " << aNumber << std::endl;        
+        SetNumber( aNumber );       // set stream number
+
         for( unsigned iChannel = 0; iChannel < fNChannels; ++iChannel )
         {
             fChannels[ iChannel ] = aFirstChannel + iChannel;
@@ -134,8 +135,8 @@ std::cout << "M4StreamHeader::M4StreamHeader() multi-channel\n";
             fNAcquisitions( orig.fNAcquisitions ),
             fNRecords( orig.fNRecords )
     {
-std::cout << "M4StreamHeader::M4StreamHeader() single-channel\n";        
-        SetNumber( orig.fNumber );
+std::cout << "M4StreamHeader::M4StreamHeader() from template for single-channel: stream " << orig.fNumber << std::endl;        
+        SetNumber( orig.fNumber );      // set stream number
     }
 
     /*************************************************************************
@@ -145,7 +146,7 @@ std::cout << "M4StreamHeader::M4StreamHeader() single-channel\n";
     *************************************************************************/
     M4StreamHeader::~M4StreamHeader()
     {
-std::cout << "M4StreamHeader::~M4StreamHeader() DTOR\n";        
+std::cout << "M4StreamHeader::~M4StreamHeader() DTOR: stream " << fNumber << std::endl;;        
         if (fLabel != nullptr)
             delete [] fLabel;
     }
@@ -167,9 +168,9 @@ std::cout << "M4StreamHeader::~M4StreamHeader() DTOR\n";
         u32toa( aNumber, fLabel + prefixSize );
     }
     /*************************************************************************
-    * @brief 
+    * @brief Write the stream/channel metadata configuration
     * 
-    * @param aParent 
+    * @param aGroup 
     *************************************************************************/
     // void M4StreamHeader::WriteToHDF5( z5GroupHandle* aParent )
     void M4StreamHeader::WriteToFile( z5GroupHandle aGroup )
@@ -387,7 +388,7 @@ std::cout << "M4StreamHeader::ReadChannels(): void " << fLabel << std::endl;;
     /*************************************************************************
     * @brief Construct a new M4ChannelHeader::M4ChannelHeader object
     * @return none
-    * @note Default M4ChannelHeader CTOR
+    * @note Default M4ChannelHeader CTOR, initializes member vars
     *************************************************************************/
     M4ChannelHeader::M4ChannelHeader() :
             fLabel( NULL ),
@@ -410,7 +411,8 @@ std::cout << "M4ChannelHeader::M4ChannelHeader() default CTOR\n";
     }
 
     /*************************************************************************
-    * @brief Construct a new M4ChannelHeader::M4ChannelHeader object from specifications
+    * @brief Construct a new M4ChannelHeader::M4ChannelHeader object from 
+    * parameter specifications and initializes member vars with specified values.
     * 
     * @param aSource Device used to produce the channel
     * @param aNumber Sequential integer used to uniquely identify each channel in the file
@@ -451,12 +453,13 @@ std::cout << "M4ChannelHeader::M4ChannelHeader() default CTOR\n";
         fFrequencyMin( 0. ),
         fFrequencyRange( 0. )
     {
-std::cout << "M4ChannelHeader::M4ChannelHeader() basic CTOR\n";
+std::cout << "M4ChannelHeader::M4ChannelHeader() params CTOR: chan " << aNumber << std::endl;
         SetNumber( aNumber );
     }
 
     /*************************************************************************
-    * @brief Construct a new M4ChannelHeader::M4ChannelHeader object from template
+    * @brief Construct a new M4ChannelHeader::M4ChannelHeader object from 
+    * template specifications and initializes member vars with specified values.
     * 
     * @param orig M4ChannelHeader template
     *************************************************************************/
@@ -477,7 +480,7 @@ std::cout << "M4ChannelHeader::M4ChannelHeader() basic CTOR\n";
             fFrequencyMin( orig.fFrequencyMin ),
             fFrequencyRange( orig.fFrequencyRange )
     {
-std::cout << "M4ChannelHeader::M4ChannelHeader() template CTOR\n";
+std::cout << "M4ChannelHeader::M4ChannelHeader() template CTOR: chan " << orig.fNumber << std::endl;
         SetNumber( orig.fNumber );
     }
 
@@ -488,7 +491,7 @@ std::cout << "M4ChannelHeader::M4ChannelHeader() template CTOR\n";
     *************************************************************************/
     M4ChannelHeader::~M4ChannelHeader()
     {
-std::cout << "M4ChannelHeader::~M4ChannelHeader() DTOR\n";
+std::cout << "M4ChannelHeader::~M4ChannelHeader() DTOR: chan " << fNumber << std::endl;
         if (fLabel != nullptr)
             delete [] fLabel;
     }
@@ -687,7 +690,7 @@ std::cout << "M4Header::SetCoherence(): void\n";
     }
 
     /*************************************************************************
-    * @brief Add a stream with one channel with aRecSize samples per record
+    * @brief Add a new single-channel stream 
     * 
     * @param aSource Device used to produce the stream
     * @param anAcqRate Acquisition rate in MHz
@@ -703,7 +706,7 @@ std::cout << "M4Header::SetCoherence(): void\n";
     *                      or right-aligned within the sample data word
     *                      0: left-aligned
     *                      1: right-aligned
-    * @param[out] aChanVec Vector returned with the channels number of this stream
+    * @param[out] aChanVec Vector returned with the channel numbers of this stream
     * 
     * @return uint32_t Returns the stream number (used to address the stream later)
     *************************************************************************/
@@ -718,16 +721,23 @@ std::cout << "M4Header::AddStream() single-channel: " << aSource << std::endl;
         LDEBUG( mlog, "Adding stream " << fNStreams << " for channel " << fNChannels << " with record size " << aRecSize );
         
         if( aChanVec != nullptr ) 
-        {
-            aChanVec->push_back( fNChannels );      // report the channel number for this stream
+        { 
+            aChanVec->push_back( fNChannels );      // this channel number for this stream
         }
 
-        fChannelStreams.push_back( fNStreams );
+        fChannelStreams.push_back( fNStreams );     // adding another stream to M4Header
 
+        // Create a new channel header with specified metadata, add to M4Header
         fChannelHeaders.push_back( M4ChannelHeader( aSource, fNChannels, anAcqRate, aRecSize, aSampleSize, aDataTypeSize, aDataFormat, aBitDepth, aBitAlignment ) );
+        
+        // Create a new (single) stream header with specified metadata, add to M4Header
+std::cout << "[ push_back()\n";
         fStreamHeaders.push_back( M4StreamHeader( aSource, fNStreams, 1, fNChannels, sSeparate, anAcqRate, aRecSize, aSampleSize, aDataTypeSize, aDataFormat, aBitDepth, aBitAlignment ) );
-        ++fNChannels;
+std::cout << "push_back() ]\n";
 
+        ++fNChannels;   // next channel number used
+
+        // Setup channel coherence mapping
         std::cout << "resizing coherence to " << fNChannels << " channels" << std::endl;
         fChannelCoherence.resize( fNChannels ); // resize number of columns
         for( unsigned i = 0; i < fNChannels; ++i ) // resize each row
@@ -741,7 +751,7 @@ std::cout << "M4Header::AddStream() single-channel: EXIT\n";
     }
 
     /*************************************************************************
-    * @brief Add a stream with multiple channels with aRecSize samples per record
+    * @brief Add a new multi-channel stream 
     * 
     * @param aSource Device used to produce the stream
     * @param aNChannels How many channels to add
@@ -759,7 +769,7 @@ std::cout << "M4Header::AddStream() single-channel: EXIT\n";
     *                      or right-aligned within the sample data word
     *                      0: left-aligned
     *                      1: right-aligned
-    * @param[out] aChanVec Vector returned with the channels numbers used in this stream
+    * @param[out] aChanVec Vector returned with the channel numbers used in this stream
     * 
     * @return uint32_t Returns the stream number (used to address the stream later)
     *************************************************************************/
@@ -772,21 +782,25 @@ std::cout << "M4Header::AddStream() single-channel: EXIT\n";
 std::cout << "M4Header::AddStream() multi-channel: " << aSource << std::endl;
 
         LDEBUG( mlog, "Adding stream " << fNStreams << " for multiple channels with record size " << aRecSize );
+
+        // First new channel for this stream picks up where previously allocated channels left off
         unsigned tFirstNewChannel = fNChannels;
         
-        // Add multiple channels to the stream
+        // Add multiple channels to this stream
         for( uint32_t iNewChannel = 0; iNewChannel < aNChannels; ++iNewChannel )
         {
             LDEBUG( mlog, "Adding channel " << fNChannels );
             if( aChanVec != nullptr ) 
             {
-                aChanVec->push_back( fNChannels );  // report the channel number for this stream
+                aChanVec->push_back( fNChannels );  // report the channel number used in this stream
             }
             
-            fChannelStreams.push_back( fNStreams );
+            fChannelStreams.push_back( fNStreams ); // adding another stream to M4Header
+
+            // Create a new channel header with specified metadata, add to M4Header
             fChannelHeaders.push_back( M4ChannelHeader( aSource, fNChannels, anAcqRate, aRecSize, 
                 aSampleSize, aDataTypeSize, aDataFormat, aBitDepth, aBitAlignment ) );
-            ++fNChannels;
+            ++fNChannels;   // next channel number used
             
             std::cout << "resizing coherence to " << fNChannels << " channels" << std::endl;
             fChannelCoherence.resize( fNChannels ); // resize number of columns
@@ -795,6 +809,7 @@ std::cout << "M4Header::AddStream() multi-channel: " << aSource << std::endl;
                 fChannelCoherence[ i ].resize( fNChannels, false );
             }
             
+            // Setup channel coherence mapping
             fChannelCoherence.back().back() = true; // each channel is coherent with itself
             if( fNChannels > 0 ) 
             { // this condition is necessary because if it's not the case, fNChannels-1 will 
@@ -809,9 +824,11 @@ std::cout << "M4Header::AddStream() multi-channel: " << aSource << std::endl;
             }
         }
 
-        // Create the stream's header
+        // Create the new (multi) stream header
+std::cout << "[ push_back()\n";
         fStreamHeaders.push_back( M4StreamHeader( aSource, fNStreams, aNChannels, tFirstNewChannel, 
             aFormat, anAcqRate, aRecSize, aSampleSize, aDataTypeSize, aDataFormat, aBitDepth, aBitAlignment ) );
+std::cout << "push_back() ]\n";
         
 std::cout << "M4Header::AddStream() multi-channel EXIT\n";
         return fNStreams++;
@@ -882,11 +899,11 @@ std::cout << "M4Header::WriteToFile()\n";
             WriteChannelStreams( aFile );
             WriteChannelCoherence( aFile );
 
-            // Write all the stream headers
+            // Write all the stream headers to file
             z5::createGroup(aFile, "streams");
             auto strmHeaderHandle = z5GroupHandle(aFile, "streams");
 
-            LDEBUG( mlog, "Writing stream headers" );
+            LDEBUG( mlog, "Writing all stream headers" );
             for( uint32_t iStream = 0; iStream < fNStreams; ++iStream )
             {
                 // fStreamHeaders[ iStream ].WriteToHDF5( fStreamsGroup );
@@ -894,7 +911,7 @@ std::cout << "M4Header::WriteToFile()\n";
             }
 
             // Write all the channel headers
-            LDEBUG( mlog, "Writing channel headers" );
+            LDEBUG( mlog, "Writing all channel headers" );
             z5::createGroup( aFile, "channels" );
             z5GroupHandle channelsHandle = z5GroupHandle( aFile, "channels" );
 
@@ -942,6 +959,14 @@ std::cout << "M4Header::ReadFromFile()\n";
             fTimestamp = headerAttr.at("timestamp");
             fDescription = headerAttr.at("description");
 
+//std::cout << "fEggVersion: " << (std::string)fEggVersion << std::endl;
+//std::cout << "fFilename: " << (std::string)fFilename << std::endl;
+//std::cout << "fNChannels: " << (uint32_t)fNChannels << std::endl;
+//std::cout << "fNStreams: " << (uint32_t)fNStreams << std::endl;
+//std::cout << "fRunDuration: " << (uint32_t)fRunDuration << std::endl;
+//std::cout << "fTimestamp: " << (std::string)fTimestamp << std::endl;
+//std::cout << "fDescription: " << (std::string)fDescription << std::endl;
+
             fChannelStreams.clear();
             ReadChannelStreams( aFile );            // Read Stream Attributes
             ReadChannelCoherence( aFile );
@@ -960,9 +985,9 @@ std::cout << "M4Header::ReadFromFile()\n";
             }
             */
 
-			// // Windows' HDF5 really doesn't like using std::strings
-			// const unsigned tBuffSize = 256;
-			// char tBuffer[ tBuffSize ];
+      // // Windows' HDF5 really doesn't like using std::strings
+      // const unsigned tBuffSize = 256;
+      // char tBuffer[ tBuffSize ];
 
             // LDEBUG( mlog, "Reading stream headers" );
             // fStreamHeaders.clear();
@@ -985,7 +1010,7 @@ std::cout << "M4Header::ReadFromFile()\n";
                 //string tStreamLabel = fStreamsGroup->getObjnameByIdx( iStream );
                 unsigned tLabelSize = fStreamsGroup->getObjnameByIdx( iStream, tBuffer, tBuffSize );
                 std::string tStreamLabel( tBuffer, tLabelSize );
-				LDEBUG( mlog, "Attempting to read stream header #" << iStream << "; label <" << tStreamLabel << ">" );
+        LDEBUG( mlog, "Attempting to read stream header #" << iStream << "; label <" << tStreamLabel << ">" );
                 
                 fStreamHeaders.push_back( M4StreamHeader() );
                 
@@ -1024,12 +1049,11 @@ std::cout << "M4Header::ReadFromFile(): void\n";
     /*************************************************************************
     * @brief Write channel-streams to file
     * 
-    * @param aLoc Stream location attribute
+    * @param aFile File handle
     * @return none, no exceptions thrown 
     *************************************************************************/
     // void M4Header::WriteChannelStreams( HAS_ATTR_IFC* aLoc )
     void M4Header::WriteChannelStreams( z5FileHandle aFile)
-    // void M4Header::WriteChannelStreams( z5GroupHandle aGroup)
     {
 std::cout << "M4Header::WriteChannelStreams()\n";
 
@@ -1057,22 +1081,25 @@ std::cout << "M4Header::WriteChannelStreams()\n";
 //     delete [] tCSBuffer;        // release temporary buffer
 
         // create a new Dataset for the data of this stream
-        xt::xarray<uint32_t>::shape_type tCSShape = { fNChannels, 1 };
-        xt::xarray<uint32_t> tCSBuffer(tCSShape);
+//      xt::xarray<uint32_t>::shape_type tCSShape = { fNChannels, 1 };
+xt::xarray<uint32_t>::shape_type tCSShape = { 1,fNChannels };       // reversed: <row>,<col>
+        xt::xarray<uint32_t> tCSBuffer(tCSShape,0);
 
-        // Populate write buffer from the fChannelStreams
+        // Populate write buffer from the fChannelStreams: channel->stream mapping
         for( unsigned i = 0; i < fNChannels; ++i )
         {
             tCSBuffer[ i ] = fChannelStreams[ i ];
+std::cout << "fChannelStreams[" << i << "]: " << fChannelStreams[ i ] << " / " << tCSBuffer[ i ] << std::endl;
         }
 
         // Create the dataset for "channels"
         const string dsName = "channel_streams";
-        std::vector<size_t> shape = { fNChannels, 1 };
-        std::vector<size_t> chunks = { fNChannels, 1 };
+//      std::vector<size_t> shape = { fNChannels, 1 };
+//      std::vector<size_t> chunks = { fNChannels, 1 };
+std::vector<size_t> shape = { 1,fNChannels };       // reversed: <row>,<col>
+std::vector<size_t> chunks = { 1,fNChannels };      // reversed: <row>,<col>
         auto ds = z5::createDataset( aFile, dsName, "uint32", shape, chunks );
         
-std::cout << "Write the streams to the file\n";
         z5::types::ShapeType writeOffset = { 0,0 };
         z5::multiarray::writeSubarray<uint32_t>(ds, tCSBuffer, writeOffset.begin());
 
@@ -1089,7 +1116,7 @@ std::cout << "M4Header::WriteChannelStreams(): void\n";
     void M4Header::ReadChannelStreams( const z5FileHandle aFile ) const
     // void M4Header::ReadChannelStreams( z5GroupHandle aGroup ) const
     {
-std::cout << "M4Header::ReadChannelStreams()\n";        
+std::cout << "M4Header::ReadChannelStreams(): " << fNChannels << " channels\n";
  #if 0
        const unsigned tNDims = 1;
         hsize_t tDims[ tNDims ];
@@ -1130,20 +1157,21 @@ std::cout << "M4Header::ReadChannelStreams()\n";
         const auto dsHandle = z5DatasetHandle(aFile, "channel_streams");
         auto ds = z5::openDataset(aFile, "channel_streams");
 
-        xt::xarray<uint32_t>::shape_type tCSShape = { fNChannels, 1 };
-        xt::xarray<uint32_t> chanArray(tCSShape);       // array for dataset
-        // xt::xarray<uint32_t> tCSBuffer(tCSShape);
+        // Programmer's Note: M4Header::ReadFromFile() initializes fNChannels from M4Header metadata
+//      xt::xarray<uint32_t>::shape_type tCSShape = { fNChannels, 1 };
+xt::xarray<uint32_t>::shape_type tCSShape = { 1,fNChannels };   // reversed: <row>,<col>
+        xt::xarray<uint32_t> tCSBuffer(tCSShape,0);   // buffer-array for dataset
         
         z5::types::ShapeType readOffset = { 0,0 };
-        z5::multiarray::readSubarray<uint32_t>(ds, chanArray, readOffset.begin());
+        z5::multiarray::readSubarray<uint32_t>(ds, tCSBuffer, readOffset.begin());
 
         // Populate the M4Header::fChannelStreams from read buffer
         fChannelStreams.clear();
         fChannelStreams.resize( fNChannels );
         for( unsigned i = 0; i < fNChannels; ++i )
         {
-            fChannelStreams[ i ] = chanArray[ i ];
-            // std::cout << fChannelStreams[ i ] << std::endl;
+            fChannelStreams[ i ] = tCSBuffer[ i ];
+std::cout << "fChannelStreams[" << i << "]: " << fChannelStreams[ i ] << " / " << tCSBuffer[ i ] << std::endl;
         }
 
 std::cout << "M4Header::ReadChannelStreams(): void\n";        
@@ -1187,7 +1215,8 @@ std::cout << "M4Header::WriteChannelCoherence()\n";
         // delete [] tCCBuffer;
 
         // create a new Dataset for the data of this channel
-        xt::xarray<uint8_t>::shape_type tCCShape = { fNChannels * fNChannels , 1 };
+//      xt::xarray<uint8_t>::shape_type tCCShape = { fNChannels * fNChannels , 1 };
+xt::xarray<uint8_t>::shape_type tCCShape = { 1,fNChannels * fNChannels };   // reversed: <row>,<col>
         xt::xarray<uint8_t> tCCBuffer(tCCShape);
 
         // Populate write buffer from the fChannelStreams
@@ -1201,8 +1230,10 @@ std::cout << "M4Header::WriteChannelCoherence()\n";
 
         // Create the dataset for "channel_coherence"
         const string dsName = "channel_coherence";
-        std::vector<size_t> shape = { fNChannels * fNChannels, 1 };
-        std::vector<size_t> chunks = { fNChannels * fNChannels, 1 };
+//      std::vector<size_t> shape = { fNChannels * fNChannels, 1 };
+//      std::vector<size_t> chunks = { fNChannels * fNChannels, 1 };
+std::vector<size_t> shape = { 1,fNChannels * fNChannels };      // reversed: <row>,<col>
+std::vector<size_t> chunks = { 1,fNChannels * fNChannels };     // reversed: <row>,<col>
         auto ds = z5::createDataset( aFile, dsName, "uint8", shape, chunks );
         
         z5::types::ShapeType writeOffset = { 0,0 };
@@ -1265,7 +1296,8 @@ std::cout << "M4Header::ReadChannelCoherence()\n";
         auto ds = z5::openDataset(aFile, "channel_coherence");
 
         // create a new Dataset for the data of this stream
-        xt::xarray<uint8_t>::shape_type tCCShape = { fNChannels * fNChannels , 1 };
+//      xt::xarray<uint8_t>::shape_type tCCShape = { fNChannels * fNChannels , 1 };
+xt::xarray<uint8_t>::shape_type tCCShape = { 1,fNChannels * fNChannels };   // reversed: <row>,<col>
         xt::xarray<uint8_t> tCCBuffer(tCCShape);
         
         z5::types::ShapeType readOffset = { 0,0 };
