@@ -264,22 +264,36 @@ std::cout <<  "M4StreamHeader::ReadFromFile()\n";
         ReadChannels( &tThisStreamGroup );
 #endif
 
-        nlohmann::json streamAttr;
-        z5::readAttributes( aGroup, streamAttr );
+        nlohmann::json jstreamAttr;
+        z5::readAttributes( aGroup, jstreamAttr );
 
-        fNumber = streamAttr.at("number");
-        fSource = streamAttr.at("source");
-        fNChannels = streamAttr.at("n_channels");
-        fChannelFormat = streamAttr.at("channel_format");
-        fAcquisitionRate = streamAttr.at("acquisition_rate");
-        fRecordSize = streamAttr.at("record_size");
-        fSampleSize = streamAttr.at("sample_size");
-        fDataTypeSize = streamAttr.at("data_type_size");
-        fDataFormat = streamAttr.at("data_format");
-        fBitDepth = streamAttr.at("bit_depth");
-        fBitAlignment = streamAttr.at("bit_alignment");
-        fNAcquisitions = streamAttr.at("n_acquisitions");
-        fNRecords = streamAttr.at("n_records");
+std::cout << "number: " << jstreamAttr.at("number") << std::endl;
+std::cout << "source: " << jstreamAttr.at("source") << std::endl;
+std::cout << "n_channels: " << jstreamAttr.at("n_channels") << std::endl;
+std::cout << "channel_format: " << jstreamAttr.at("channel_format") << std::endl;
+std::cout << "acquisition_rate: " << jstreamAttr.at("acquisition_rate") << std::endl;
+std::cout << "record_size: " << jstreamAttr.at("record_size") << std::endl;
+std::cout << "sample_size: " << jstreamAttr.at("sample_size") << std::endl;
+std::cout << "data_type_size: " << jstreamAttr.at("data_type_size") << std::endl;
+std::cout << "data_format: " << jstreamAttr.at("data_format") << std::endl;
+std::cout << "bit_depth: " << jstreamAttr.at("bit_depth") << std::endl;
+std::cout << "bit_alignment: " << jstreamAttr.at("bit_alignment") << std::endl;
+std::cout << "n_acquisitions: " << jstreamAttr.at("n_acquisitions") << std::endl;
+std::cout << "n_records: " << jstreamAttr.at("n_records") << std::endl << std::endl;
+
+        fNumber = jstreamAttr.at("number");
+        fSource = jstreamAttr.at("source");
+        fNChannels = jstreamAttr.at("n_channels");
+        fChannelFormat = jstreamAttr.at("channel_format");
+        fAcquisitionRate = jstreamAttr.at("acquisition_rate");
+        fRecordSize = jstreamAttr.at("record_size");
+        fSampleSize = jstreamAttr.at("sample_size");
+        fDataTypeSize = jstreamAttr.at("data_type_size");
+        fDataFormat = jstreamAttr.at("data_format");
+        fBitDepth = jstreamAttr.at("bit_depth");
+        fBitAlignment = jstreamAttr.at("bit_alignment");
+        fNAcquisitions = jstreamAttr.at("n_acquisitions");
+        fNRecords = jstreamAttr.at("n_records");
 
 std::cout <<  "M4StreamHeader::ReadFromFile(): void\n";
     }
@@ -1054,21 +1068,6 @@ std::cout << "M4Header::ReadFromFile()\n";
             size_t nStreams = jstreamAttr.at("NStreams");
 std::cout << "nStreams: " << nStreams << std::endl;
 
-///@todo create access to stream
-//fNumber = jstreamAttr.at("number");
-//fSource = jstreamAttr.at("source");
-//fNChannels = jstreamAttr.at("n_channels");
-//fChannelFormat = jstreamAttr.at("channel_format");
-//fAcquisitionRate = jstreamAttr.at("acquisition_rate");
-//fRecordSize = jstreamAttr.at("record_size");
-//fSampleSize = jstreamAttr.at("sample_size");
-//fDataTypeSize = jstreamAttr.at("data_type_size");
-//fDataFormat = jstreamAttr.at("data_format");
-//fBitDepth = jstreamAttr.at("bit_depth");
-//fBitAlignment = jstreamAttr.at("bit_alignment");
-//fNAcquisitions = jstreamAttr.at("n_acquisitions");
-//fNRecords = jstreamAttr.at("n_records");
-
 #if 0
             // Read each of the stream-header objects and store
             for( size_t iStream = 0; iStream < nStreams; ++iStream )
@@ -1084,7 +1083,25 @@ std::cout << "nStreams: " << nStreams << std::endl;
                 LDEBUG( mlog, "Testing if we can access the last header: " << fStreamHeaders.back().GetLabel() );
                 fStreamHeaders.back().ReadFromHDF5( fStreamsGroup, tStreamLabel );
             }
+#endif
 
+            // Read each of the stream-header objects and store
+            for( size_t iStream = 0; iStream < nStreams; ++iStream )
+            {
+                // Stream label
+                std::string streamLabel = "streams/stream" + std::to_string(iStream);
+                std::cout << "label: " << streamLabel << std::endl;
+
+                // Create a new M4StreamHeader in the collection, at the back
+                fStreamHeaders.push_back( M4StreamHeader() );
+
+                // Populate the new header (within the collection) from the file
+                // Stream group at this label-path
+                auto strmHandle = z5GroupHandle( aFile, streamLabel );
+                fStreamHeaders.back().ReadFromFile( strmHandle, streamLabel );
+            }
+
+#if 0
             LDEBUG( mlog, "Reading channel headers" );
             fChannelHeaders.clear();
 
@@ -1381,7 +1398,7 @@ xt::xarray<uint8_t>::shape_type tCCShape = { 1,fNChannels * fNChannels };   // r
             for( unsigned j = 0; j < fNChannels; ++j )
             {
                 fChannelCoherence[ i ][ j ] = (bool)tCCBuffer[ i * fNChannels + j ];
-std::cout << "fChannelCoherence[" << i << "][" << j << "]: " << fChannelCoherence[ i ][ j ] << std::endl;
+//std::cout << "fChannelCoherence[" << i << "][" << j << "]: " << fChannelCoherence[ i ][ j ] << std::endl;
             }
         }
 
