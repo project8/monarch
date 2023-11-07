@@ -178,25 +178,42 @@ std::cout << "M4StreamHeader::~M4StreamHeader() DTOR: stream " << fNumber << std
 std::cout << "M4StreamHeader::WriteToFile(): " << fLabel << std::endl;
 
         LDEBUG( mlog, "Writing stream header <" << fLabel << ">" );
-        // H5::Group tThisStreamGroup = aParent->createGroup( fLabel );
-        // M4Header::WriteScalarToHDF5( &tThisStreamGroup, "number", fNumber );
-        // M4Header::WriteScalarToHDF5( &tThisStreamGroup, "source", fSource );
-        // M4Header::WriteScalarToHDF5( &tThisStreamGroup, "n_channels", fNChannels );
-        // M4Header::WriteScalarToHDF5( &tThisStreamGroup, "channel_format", fChannelFormat );
-        // M4Header::WriteScalarToHDF5( &tThisStreamGroup, "acquisition_rate", fAcquisitionRate );
-        // M4Header::WriteScalarToHDF5( &tThisStreamGroup, "record_size", fRecordSize );
-        // M4Header::WriteScalarToHDF5( &tThisStreamGroup, "sample_size", fSampleSize );
-        // M4Header::WriteScalarToHDF5( &tThisStreamGroup, "data_type_size", fDataTypeSize );
-        // M4Header::WriteScalarToHDF5( &tThisStreamGroup, "data_format", fDataFormat );
-        // M4Header::WriteScalarToHDF5( &tThisStreamGroup, "bit_depth", fBitDepth );
-        // M4Header::WriteScalarToHDF5( &tThisStreamGroup, "bit_alignment", fBitAlignment );
-        // M4Header::WriteScalarToHDF5( &tThisStreamGroup, "n_acquisitions", fNAcquisitions );
-        // M4Header::WriteScalarToHDF5( &tThisStreamGroup, "n_records", fNRecords );
-        // WriteChannels( &tThisStreamGroup );
+#if 0
+        H5::Group tThisStreamGroup = aParent->createGroup( fLabel );
+        M4Header::WriteScalarToHDF5( &tThisStreamGroup, "number", fNumber );
+        M4Header::WriteScalarToHDF5( &tThisStreamGroup, "source", fSource );
+        M4Header::WriteScalarToHDF5( &tThisStreamGroup, "n_channels", fNChannels );
+        M4Header::WriteScalarToHDF5( &tThisStreamGroup, "channel_format", fChannelFormat );
+        M4Header::WriteScalarToHDF5( &tThisStreamGroup, "acquisition_rate", fAcquisitionRate );
+        M4Header::WriteScalarToHDF5( &tThisStreamGroup, "record_size", fRecordSize );
+        M4Header::WriteScalarToHDF5( &tThisStreamGroup, "sample_size", fSampleSize );
+        M4Header::WriteScalarToHDF5( &tThisStreamGroup, "data_type_size", fDataTypeSize );
+        M4Header::WriteScalarToHDF5( &tThisStreamGroup, "data_format", fDataFormat );
+        M4Header::WriteScalarToHDF5( &tThisStreamGroup, "bit_depth", fBitDepth );
+        M4Header::WriteScalarToHDF5( &tThisStreamGroup, "bit_alignment", fBitAlignment );
+        M4Header::WriteScalarToHDF5( &tThisStreamGroup, "n_acquisitions", fNAcquisitions );
+        M4Header::WriteScalarToHDF5( &tThisStreamGroup, "n_records", fNRecords );
+        WriteChannels( &tThisStreamGroup );
+#endif
 
         z5::createGroup( aGroup, fLabel );
         z5GroupHandle grpHandle = z5GroupHandle( aGroup, fLabel );
         nlohmann::json streamAttr;
+
+std::cout << "  number: " << fNumber << std::endl;
+std::cout << "  source: " << fSource << std::endl;
+std::cout << "  n_channels: " << fNChannels << std::endl;
+std::cout << "  channel_format: " << fChannelFormat << std::endl;
+std::cout << "  acquisition_rate: " << fAcquisitionRate << std::endl;
+std::cout << "  record_size: " << fRecordSize << std::endl;
+std::cout << "  sample_size: " << fSampleSize << std::endl;
+std::cout << "  data_type_size: " << fDataTypeSize << std::endl;
+std::cout << "  data_format: " << fDataFormat << std::endl;
+std::cout << "  bit_depth: " << fBitDepth << std::endl;
+std::cout << "  bit_alignment: " << fBitAlignment << std::endl;
+std::cout << "  n_acquisitions: " << fNAcquisitions << std::endl;
+std::cout << "  n_records: " << fNRecords << std::endl;
+
 
         streamAttr["number"] = fNumber;
         streamAttr["source"] = fSource;
@@ -228,22 +245,24 @@ std::cout << "M4StreamHeader::WriteToFile(): void " << fLabel << std::endl;
 std::cout <<  "M4StreamHeader::ReadFromFile()\n";
 
         LDEBUG( mlog, "Reading stream header <" << aLabel << ">" );
-        // H5::Group tThisStreamGroup = aParent->openGroup( aLabel.c_str() );
+#if 0
+        H5::Group tThisStreamGroup = aParent->openGroup( aLabel.c_str() );
 
-        // SetNumber( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisStreamGroup, "number" ) );
-        // Source() = M4Header::ReadScalarFromHDF5< string >( &tThisStreamGroup, "source" );
-        // SetNChannels( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisStreamGroup, "n_channels" ) );
-        // SetChannelFormat( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisStreamGroup, "channel_format" ) );
-        // SetAcquisitionRate( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisStreamGroup, "acquisition_rate" ) );
-        // SetRecordSize( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisStreamGroup, "record_size" ) );
-        // SetSampleSize( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisStreamGroup, "sample_size" ) );
-        // SetDataTypeSize( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisStreamGroup, "data_type_size" ) );
-        // SetDataFormat( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisStreamGroup, "data_format" ) );
-        // SetBitDepth( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisStreamGroup, "bit_depth" ) );
-        // SetBitAlignment( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisStreamGroup, "bit_alignment", fBitAlignment ) );
-        // SetNAcquisitions( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisStreamGroup, "n_acquisitions" ) );
-        // SetNRecords( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisStreamGroup, "n_records" ) );
-        // ReadChannels( &tThisStreamGroup );
+        SetNumber( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisStreamGroup, "number" ) );
+        Source() = M4Header::ReadScalarFromHDF5< string >( &tThisStreamGroup, "source" );
+        SetNChannels( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisStreamGroup, "n_channels" ) );
+        SetChannelFormat( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisStreamGroup, "channel_format" ) );
+        SetAcquisitionRate( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisStreamGroup, "acquisition_rate" ) );
+        SetRecordSize( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisStreamGroup, "record_size" ) );
+        SetSampleSize( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisStreamGroup, "sample_size" ) );
+        SetDataTypeSize( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisStreamGroup, "data_type_size" ) );
+        SetDataFormat( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisStreamGroup, "data_format" ) );
+        SetBitDepth( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisStreamGroup, "bit_depth" ) );
+        SetBitAlignment( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisStreamGroup, "bit_alignment", fBitAlignment ) );
+        SetNAcquisitions( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisStreamGroup, "n_acquisitions" ) );
+        SetNRecords( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisStreamGroup, "n_records" ) );
+        ReadChannels( &tThisStreamGroup );
+#endif
 
         nlohmann::json streamAttr;
         z5::readAttributes( aGroup, streamAttr );
@@ -275,28 +294,28 @@ std::cout <<  "M4StreamHeader::ReadFromFile(): void\n";
     void M4StreamHeader::WriteChannels( z5GroupHandle aGroup )
     {
 std::cout << "M4StreamHeader::WriteChannels() for " << fLabel << std::endl;
+#if 0
+        const unsigned tNDims = 1;
+        hsize_t tDims[ tNDims ] = { fNChannels };
 
-        // const unsigned tNDims = 1;
-        // hsize_t tDims[ tNDims ] = { fNChannels };
+        H5::DataSpace tDataspace( tNDims, tDims );
+        //H5::DataSet tDataset = aLoc->createDataSet( "channels", MH5Type< uint32_t >::H5(), tDataspace );
+        H5::Attribute tAttr = aLoc->createAttribute( "channels", MH5Type< uint32_t >::H5(), tDataspace );
 
-        // H5::DataSpace tDataspace( tNDims, tDims );
-        // //H5::DataSet tDataset = aLoc->createDataSet( "channels", MH5Type< uint32_t >::H5(), tDataspace );
-        // H5::Attribute tAttr = aLoc->createAttribute( "channels", MH5Type< uint32_t >::H5(), tDataspace );
+        // Allocate temporary data buffer for write()
+        uint32_t* tCSBuffer = new uint32_t[ fNChannels ];
+        for( unsigned i = 0; i < fNChannels; ++i )
+        { // write channels to data buffer
+            tCSBuffer[ i ] = fChannels[ i ];
+        }
 
-        // // Allocate temporary data buffer for write()
-        // uint32_t* tCSBuffer = new uint32_t[ fNChannels ];
-        // for( unsigned i = 0; i < fNChannels; ++i )
-        // { // write channels to data buffer
-        //     tCSBuffer[ i ] = fChannels[ i ];
-        // }
+        // Write data buffer to file
+        //tDataset.write( tCSBuffer, MH5Type< uint32_t >::Native(), tDataspace );
+        tAttr.write( MH5Type< uint32_t >::Native(), tCSBuffer );
 
-        // // Write data buffer to file
-        // //tDataset.write( tCSBuffer, MH5Type< uint32_t >::Native(), tDataspace );
-        // tAttr.write( MH5Type< uint32_t >::Native(), tCSBuffer );
-
-        // // Release temporary buffer
-        // delete [] tCSBuffer;
-
+        // Release temporary buffer
+        delete [] tCSBuffer;
+#endif
         // create a new Dataset for the data of this channel
 //      xt::xarray<uint32_t>::shape_type tCSShape = { fNChannels, 1 };
 xt::xarray<uint32_t>::shape_type tCSShape = { 1,fNChannels };
@@ -333,38 +352,39 @@ std::cout << "M4StreamHeader::WriteChannels() void " << fLabel << std::endl;
     void M4StreamHeader::ReadChannels( const z5GroupHandle aGroup ) const
     {
 std::cout << "M4StreamHeader::ReadChannels() " << fLabel << std::endl;
-        // const unsigned tNDims = 1;
-        // hsize_t tDims[ tNDims ];
+#if 0
+        const unsigned tNDims = 1;
+        hsize_t tDims[ tNDims ];
 
-        // //H5::DataSet tDataset = aLoc->openDataSet( "channels" );
-        // H5::Attribute tAttr = aLoc->openAttribute( "channels" );
-        // //H5::DataSpace tDataspace( tDataset.getSpace() );
-        // H5::DataSpace tDataspace( tAttr.getSpace() );
-        // tDataspace.getSimpleExtentDims( tDims );
+        //H5::DataSet tDataset = aLoc->openDataSet( "channels" );
+        H5::Attribute tAttr = aLoc->openAttribute( "channels" );
+        //H5::DataSpace tDataspace( tDataset.getSpace() );
+        H5::DataSpace tDataspace( tAttr.getSpace() );
+        tDataspace.getSimpleExtentDims( tDims );
 
-        // if( tDims[ 0 ] != fNChannels )
-        // {
-        //     LERROR( mlog, "Channels dataset dimensions (" << tDims[ 0 ] << ") do not match number of channels, " << fNChannels );
-        //     return;
-        // }
+        if( tDims[ 0 ] != fNChannels )
+        {
+            LERROR( mlog, "Channels dataset dimensions (" << tDims[ 0 ] << ") do not match number of channels, " << fNChannels );
+            return;
+        }
 
-        // // Allocate temporary data buffer for read()
-        // uint32_t* tCSBuffer = new uint32_t[ fNChannels ];
+        // Allocate temporary data buffer for read()
+        uint32_t* tCSBuffer = new uint32_t[ fNChannels ];
 
-        // //tDataset.read( tCSBuffer, MH5Type< uint32_t >::Native(), tDataspace );
-        // tAttr.read( MH5Type< uint32_t >::Native(), tCSBuffer );
+        //tDataset.read( tCSBuffer, MH5Type< uint32_t >::Native(), tDataspace );
+        tAttr.read( MH5Type< uint32_t >::Native(), tCSBuffer );
 
-        // // Read data channels
-        // fChannels.clear();
-        // fChannels.resize( fNChannels );
-        // for( unsigned i = 0; i < fNChannels; ++i )
-        // {
-        //     fChannels[ i ] = tCSBuffer[ i ];
-        // }
+        // Read data channels
+        fChannels.clear();
+        fChannels.resize( fNChannels );
+        for( unsigned i = 0; i < fNChannels; ++i )
+        {
+            fChannels[ i ] = tCSBuffer[ i ];
+        }
 
-        // // Release temporary buffer
-        // delete [] tCSBuffer;
-
+        // Release temporary buffer
+        delete [] tCSBuffer;
+#endif
 
         // Open the "channels" dataset from file
         // const auto dsHandle = z5DatasetHandle(aGroup, "channels");
@@ -527,28 +547,44 @@ std::cout << "M4ChannelHeader::~M4ChannelHeader() DTOR: chan " << fNumber << std
 std::cout << "M4ChannelHeader::WriteToFile(): " << fLabel << std::endl;        
         LDEBUG( mlog, "Writing channel header <" << fLabel << ">" );
         
+#if 0
         // Create a group to hold channels, handle to access it
-        // H5::Group tThisChannelGroup = aParent->createGroup( fLabel );
+        H5::Group tThisChannelGroup = aParent->createGroup( fLabel );
 
-        // M4Header::WriteScalarToHDF5( &tThisChannelGroup, "number", fNumber );
-        // M4Header::WriteScalarToHDF5( &tThisChannelGroup, "source", fSource );
-        // M4Header::WriteScalarToHDF5( &tThisChannelGroup, "acquisition_rate", fAcquisitionRate );
-        // M4Header::WriteScalarToHDF5( &tThisChannelGroup, "record_size", fRecordSize );
-        // M4Header::WriteScalarToHDF5( &tThisChannelGroup, "sample_size", fSampleSize );
-        // M4Header::WriteScalarToHDF5( &tThisChannelGroup, "data_type_size", fDataTypeSize );
-        // M4Header::WriteScalarToHDF5( &tThisChannelGroup, "data_format", fDataFormat );
-        // M4Header::WriteScalarToHDF5( &tThisChannelGroup, "bit_depth", fBitDepth );
-        // M4Header::WriteScalarToHDF5( &tThisChannelGroup, "bit_alignment", fBitAlignment );
-        // M4Header::WriteScalarToHDF5( &tThisChannelGroup, "voltage_offset", fVoltageOffset );
-        // M4Header::WriteScalarToHDF5( &tThisChannelGroup, "voltage_range", fVoltageRange );
-        // M4Header::WriteScalarToHDF5( &tThisChannelGroup, "dac_gain", fDACGain );
-        // M4Header::WriteScalarToHDF5( &tThisChannelGroup, "frequency_min", fFrequencyMin );
-        // M4Header::WriteScalarToHDF5( &tThisChannelGroup, "frequency_range", fFrequencyRange );
-        
+        M4Header::WriteScalarToHDF5( &tThisChannelGroup, "number", fNumber );
+        M4Header::WriteScalarToHDF5( &tThisChannelGroup, "source", fSource );
+        M4Header::WriteScalarToHDF5( &tThisChannelGroup, "acquisition_rate", fAcquisitionRate );
+        M4Header::WriteScalarToHDF5( &tThisChannelGroup, "record_size", fRecordSize );
+        M4Header::WriteScalarToHDF5( &tThisChannelGroup, "sample_size", fSampleSize );
+        M4Header::WriteScalarToHDF5( &tThisChannelGroup, "data_type_size", fDataTypeSize );
+        M4Header::WriteScalarToHDF5( &tThisChannelGroup, "data_format", fDataFormat );
+        M4Header::WriteScalarToHDF5( &tThisChannelGroup, "bit_depth", fBitDepth );
+        M4Header::WriteScalarToHDF5( &tThisChannelGroup, "bit_alignment", fBitAlignment );
+        M4Header::WriteScalarToHDF5( &tThisChannelGroup, "voltage_offset", fVoltageOffset );
+        M4Header::WriteScalarToHDF5( &tThisChannelGroup, "voltage_range", fVoltageRange );
+        M4Header::WriteScalarToHDF5( &tThisChannelGroup, "dac_gain", fDACGain );
+        M4Header::WriteScalarToHDF5( &tThisChannelGroup, "frequency_min", fFrequencyMin );
+        M4Header::WriteScalarToHDF5( &tThisChannelGroup, "frequency_range", fFrequencyRange );
+#endif        
         // Create the attributes component and write to file
         z5::createGroup(aGroup, fLabel);
         auto channelsHandle = z5GroupHandle(aGroup, fLabel);
         nlohmann::json chanAttr;
+
+std::cout << "  number: " << fNumber << std::endl;
+std::cout << "  source: " << fSource << std::endl;
+std::cout << "  acquisition_rate: " << fAcquisitionRate << std::endl;
+std::cout << "  record_size: " << fRecordSize << std::endl;
+std::cout << "  sample_size: " << fSampleSize << std::endl;
+std::cout << "  data_type_size: " << fDataTypeSize << std::endl;
+std::cout << "  data_format: " << fDataFormat << std::endl;
+std::cout << "  bit_depth: " << fBitDepth << std::endl;
+std::cout << "  bit_alignment: " << fBitAlignment << std::endl;
+std::cout << "  voltage_offset: " << fVoltageOffset << std::endl;
+std::cout << "  voltage_range: " << fVoltageRange << std::endl;
+std::cout << "  dac_gain: " << fDACGain << std::endl;
+std::cout << "  frequency_min: " << fFrequencyMin << std::endl;
+std::cout << "  frequency_range: " << fFrequencyRange << std::endl;
 
         chanAttr["number"] = fNumber;
         chanAttr["source"] = fSource;
@@ -582,23 +618,24 @@ std::cout << "M4ChannelHeader::WriteToFile(): void " << fLabel << std::endl;
 std::cout << "M4ChannelHeader::ReadFromFile(): " << aLabel << std::endl;
 
         LDEBUG( mlog, "Reading channel header <" << aLabel << ">" );
-        // H5::Group tThisChannelGroup = aParent->openGroup( aLabel.c_str() );
+#if 0
+        H5::Group tThisChannelGroup = aParent->openGroup( aLabel.c_str() );
 
-        // SetNumber( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisChannelGroup, "number" ) );
-        // Source() = M4Header::ReadScalarFromHDF5< string >( &tThisChannelGroup, "source" );
-        // SetAcquisitionRate( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisChannelGroup, "acquisition_rate" ) );
-        // SetRecordSize( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisChannelGroup, "record_size" ) );
-        // SetSampleSize( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisChannelGroup, "sample_size" ) );
-        // SetDataTypeSize( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisChannelGroup, "data_type_size" ) );
-        // SetDataFormat( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisChannelGroup, "data_format" ) );
-        // SetBitDepth( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisChannelGroup, "bit_depth" ) );
-        // SetBitAlignment( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisChannelGroup, "bit_alignment", fBitAlignment ) );
-        // SetVoltageOffset( M4Header::ReadScalarFromHDF5< double >( &tThisChannelGroup, "voltage_offset" ) );
-        // SetVoltageRange( M4Header::ReadScalarFromHDF5< double >( &tThisChannelGroup, "voltage_range" ) );
-        // SetDACGain( M4Header::ReadScalarFromHDF5< double >( &tThisChannelGroup, "dac_gain" ) );
-        // SetFrequencyMin( M4Header::ReadScalarFromHDF5< double >( &tThisChannelGroup, "frequency_min" ) );
-        // SetFrequencyRange( M4Header::ReadScalarFromHDF5< double >( &tThisChannelGroup, "frequency_range" ) );
-        
+        SetNumber( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisChannelGroup, "number" ) );
+        Source() = M4Header::ReadScalarFromHDF5< string >( &tThisChannelGroup, "source" );
+        SetAcquisitionRate( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisChannelGroup, "acquisition_rate" ) );
+        SetRecordSize( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisChannelGroup, "record_size" ) );
+        SetSampleSize( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisChannelGroup, "sample_size" ) );
+        SetDataTypeSize( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisChannelGroup, "data_type_size" ) );
+        SetDataFormat( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisChannelGroup, "data_format" ) );
+        SetBitDepth( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisChannelGroup, "bit_depth" ) );
+        SetBitAlignment( M4Header::ReadScalarFromHDF5< uint32_t >( &tThisChannelGroup, "bit_alignment", fBitAlignment ) );
+        SetVoltageOffset( M4Header::ReadScalarFromHDF5< double >( &tThisChannelGroup, "voltage_offset" ) );
+        SetVoltageRange( M4Header::ReadScalarFromHDF5< double >( &tThisChannelGroup, "voltage_range" ) );
+        SetDACGain( M4Header::ReadScalarFromHDF5< double >( &tThisChannelGroup, "dac_gain" ) );
+        SetFrequencyMin( M4Header::ReadScalarFromHDF5< double >( &tThisChannelGroup, "frequency_min" ) );
+        SetFrequencyRange( M4Header::ReadScalarFromHDF5< double >( &tThisChannelGroup, "frequency_range" ) );
+#endif        
         nlohmann::json chanAttr;
         auto channelHandle = z5GroupHandle(aGroup, aLabel);
         z5::readAttributes( channelHandle, chanAttr );
@@ -735,9 +772,9 @@ std::cout << "M4Header::AddStream() single-channel: " << aSource << std::endl;
         fChannelHeaders.push_back( M4ChannelHeader( aSource, fNChannels, anAcqRate, aRecSize, aSampleSize, aDataTypeSize, aDataFormat, aBitDepth, aBitAlignment ) );
         
         // Create a new (single) stream header with specified metadata, add to M4Header
-std::cout << "[ push_back()\n";
+//std::cout << "[ push_back()\n";
         fStreamHeaders.push_back( M4StreamHeader( aSource, fNStreams, 1, fNChannels, sSeparate, anAcqRate, aRecSize, aSampleSize, aDataTypeSize, aDataFormat, aBitDepth, aBitAlignment ) );
-std::cout << "push_back() ]\n";
+//std::cout << "push_back() ]\n";
 
         ++fNChannels;   // next channel number used
 
@@ -829,10 +866,10 @@ std::cout << "M4Header::AddStream() multi-channel: " << aSource << std::endl;
         }
 
         // Create the new (multi) stream header
-std::cout << "[ push_back()\n";
+//std::cout << "[ push_back()\n";
         fStreamHeaders.push_back( M4StreamHeader( aSource, fNStreams, aNChannels, tFirstNewChannel, 
             aFormat, anAcqRate, aRecSize, aSampleSize, aDataTypeSize, aDataFormat, aBitDepth, aBitAlignment ) );
-std::cout << "push_back() ]\n";
+//std::cout << "push_back() ]\n";
         
 std::cout << "M4Header::AddStream() multi-channel EXIT\n";
         return fNStreams++;
@@ -847,87 +884,88 @@ std::cout << "M4Header::AddStream() multi-channel EXIT\n";
     // void M4Header::WriteToHDF5( H5::H5File* aFile )
     void M4Header::WriteToFile( z5FileHandle aFile )
     {
-std::cout << "M4Header::WriteToFile()\n";  
-    //    try
-    //     {
-    //         LDEBUG( mlog, "Writing run header" );
-    //         fFile = aFile;
-    //         WriteScalarToHDF5( fFile, "egg_version",   fEggVersion );
-    //         WriteScalarToHDF5( fFile, "filename",      fFilename );
-    //         WriteScalarToHDF5( fFile, "n_channels",    fNChannels );
-    //         WriteScalarToHDF5( fFile, "n_streams",     fNStreams );
-    //         WriteScalarToHDF5( fFile, "run_duration",  fRunDuration );
-    //         WriteScalarToHDF5( fFile, "timestamp",     fTimestamp );
-    //         WriteScalarToHDF5( fFile, "description",   fDescription );
-    //         //////////////Write1DToHDF5( fFile, "channel_streams",  fChannelStreams );
-    //         WriteChannelStreams( fFile );
-    //         WriteChannelCoherence( fFile );
-
-    //         LDEBUG( mlog, "Writing stream headers" );
-    //         fStreamsGroup = new H5::Group( fFile->createGroup( "streams" ) );
-    //         for( uint32_t iStream = 0; iStream < fNStreams; ++iStream )
-    //         {
-    //             fStreamHeaders[ iStream ].WriteToHDF5( fStreamsGroup );
-    //         }
-
-    //         LDEBUG( mlog, "Writing channel headers" );
-    //         fChannelsGroup = new H5::Group( fFile->createGroup( "channels" ) );
-    //         for( uint32_t iChan = 0; iChan < fNChannels; ++iChan )
-    //         {
-    //             fChannelHeaders[ iChan ].WriteToHDF5( fChannelsGroup );
-    //         }
-    //     }
-    //     catch( H5::Exception& e )
-    //     {
-    //         throw M4Exception() << "HDF5 error while writing header: " << e.getCDetailMsg();
-    //     }
-    //     catch( M4Exception& e )
-    //     {
-    //         LDEBUG( mlog, "M4Exception: " << e.what() );
-    //         throw;
-    //     }
-
+std::cout << "M4Header::WriteToFile()\n"; 
+#if 0
+        try
+        {
             LDEBUG( mlog, "Writing run header" );
+            fFile = aFile;
+            WriteScalarToHDF5( fFile, "egg_version",   fEggVersion );
+            WriteScalarToHDF5( fFile, "filename",      fFilename );
+            WriteScalarToHDF5( fFile, "n_channels",    fNChannels );
+            WriteScalarToHDF5( fFile, "n_streams",     fNStreams );
+            WriteScalarToHDF5( fFile, "run_duration",  fRunDuration );
+            WriteScalarToHDF5( fFile, "timestamp",     fTimestamp );
+            WriteScalarToHDF5( fFile, "description",   fDescription );
+            //////////////Write1DToHDF5( fFile, "channel_streams",  fChannelStreams );
+            WriteChannelStreams( fFile );
+            WriteChannelCoherence( fFile );
 
-            nlohmann::json headerAttr;
-
-            headerAttr["egg_version"] = fEggVersion;
-            headerAttr["filename"] = fFilename;
-            headerAttr["n_channels"] = fNChannels;
-            headerAttr["n_streams"] = fNStreams;
-            headerAttr["run_duration"] = fRunDuration;
-            headerAttr["timestamp"] = fTimestamp;
-            headerAttr["description"] = fDescription;
-            z5::writeAttributes(aFile, headerAttr);
-
-            WriteChannelStreams( aFile );
-            WriteChannelCoherence( aFile );
-
-            // Write all the stream headers to file
-            z5::createGroup(aFile, "streams");
-            auto strmHeaderHandle = z5GroupHandle(aFile, "streams");
-
-            // create attr: NStreams to record how many streams were in run
-            nlohmann::json jstreamAttr;
-            jstreamAttr["NStreams"] = fNStreams;
-            z5::writeAttributes(strmHeaderHandle, jstreamAttr);
-
-            LDEBUG( mlog, "Writing all stream headers" );
+            LDEBUG( mlog, "Writing stream headers" );
+            fStreamsGroup = new H5::Group( fFile->createGroup( "streams" ) );
             for( uint32_t iStream = 0; iStream < fNStreams; ++iStream )
             {
-                // fStreamHeaders[ iStream ].WriteToHDF5( fStreamsGroup );
-                fStreamHeaders[ iStream ].WriteToFile( strmHeaderHandle );
+                fStreamHeaders[ iStream ].WriteToHDF5( fStreamsGroup );
             }
 
-            // Write all the channel headers
-            LDEBUG( mlog, "Writing all channel headers" );
-            z5::createGroup( aFile, "channels" );
-            z5GroupHandle channelsHandle = z5GroupHandle( aFile, "channels" );
-
+            LDEBUG( mlog, "Writing channel headers" );
+            fChannelsGroup = new H5::Group( fFile->createGroup( "channels" ) );
             for( uint32_t iChan = 0; iChan < fNChannels; ++iChan )
             {
-                fChannelHeaders[ iChan ].WriteToFile( channelsHandle );
+                fChannelHeaders[ iChan ].WriteToHDF5( fChannelsGroup );
             }
+        }
+        catch( H5::Exception& e )
+        {
+            throw M4Exception() << "HDF5 error while writing header: " << e.getCDetailMsg();
+        }
+        catch( M4Exception& e )
+        {
+            LDEBUG( mlog, "M4Exception: " << e.what() );
+            throw;
+        }
+#endif
+        LDEBUG( mlog, "Writing run header" );
+
+        nlohmann::json headerAttr;
+
+        headerAttr["egg_version"] = fEggVersion;
+        headerAttr["filename"] = fFilename;
+        headerAttr["n_channels"] = fNChannels;
+        headerAttr["n_streams"] = fNStreams;
+        headerAttr["run_duration"] = fRunDuration;
+        headerAttr["timestamp"] = fTimestamp;
+        headerAttr["description"] = fDescription;
+        z5::writeAttributes(aFile, headerAttr);
+
+        WriteChannelStreams( aFile );
+        WriteChannelCoherence( aFile );
+
+        // Write all the stream headers to file
+        z5::createGroup(aFile, "streams");
+        auto strmHeaderHandle = z5GroupHandle(aFile, "streams");
+
+        // create attr: NStreams to record how many streams were in run
+        nlohmann::json jstreamAttr;
+        jstreamAttr["NStreams"] = fNStreams;
+        z5::writeAttributes(strmHeaderHandle, jstreamAttr);
+
+        LDEBUG( mlog, "Writing all stream headers" );
+        for( uint32_t iStream = 0; iStream < fNStreams; ++iStream )
+        {
+            // fStreamHeaders[ iStream ].WriteToHDF5( fStreamsGroup );
+            fStreamHeaders[ iStream ].WriteToFile( strmHeaderHandle );
+        }
+
+        // Write all the channel headers
+        LDEBUG( mlog, "Writing all channel headers" );
+        z5::createGroup( aFile, "channels" );
+        z5GroupHandle channelsHandle = z5GroupHandle( aFile, "channels" );
+
+        for( uint32_t iChan = 0; iChan < fNChannels; ++iChan )
+        {
+            fChannelHeaders[ iChan ].WriteToFile( channelsHandle );
+        }
 
 std::cout << "M4Header::WriteToFile(): void\n";        
     }
@@ -1085,30 +1123,31 @@ std::cout << "M4Header::ReadFromFile(): void\n";
     void M4Header::WriteChannelStreams( z5FileHandle aFile)
     {
 std::cout << "M4Header::WriteChannelStreams()\n";
+#if 0
+        const unsigned tNDims = 1;
+        hsize_t tDims[ tNDims ] = { fNChannels };
 
-//     const unsigned tNDims = 1;
-//     hsize_t tDims[ tNDims ] = { fNChannels };
+        // Create data space for channel-streams
+        H5::DataSpace tDataspace( tNDims, tDims );
+        //H5::DataSet tDataset = aLoc->createDataSet( "channel_streams", MH5Type< uint32_t >::H5(), tDataspace );
+        H5::Attribute tAttr = aLoc->createAttribute( "channel_streams", MH5Type< uint32_t >::H5(), tDataspace );
 
-//     // Create data space for channel-streams
-//     H5::DataSpace tDataspace( tNDims, tDims );
-//     //H5::DataSet tDataset = aLoc->createDataSet( "channel_streams", MH5Type< uint32_t >::H5(), tDataspace );
-//     H5::Attribute tAttr = aLoc->createAttribute( "channel_streams", MH5Type< uint32_t >::H5(), tDataspace );
+        // Allocate temporary write buffer
+        uint32_t* tCSBuffer = new uint32_t[ fNChannels ];
 
-//     // Allocate temporary write buffer
-//     uint32_t* tCSBuffer = new uint32_t[ fNChannels ];
+        // Populate write buffer from the fChannelStreams
+        for( unsigned i = 0; i < fNChannels; ++i )
+        {
+            tCSBuffer[ i ] = fChannelStreams[ i ];
+        }
 
-//     // Populate write buffer from the fChannelStreams
-//     for( unsigned i = 0; i < fNChannels; ++i )
-//     {
-//         tCSBuffer[ i ] = fChannelStreams[ i ];
-//     }
+        // Write the streams to the file
+        //tDataset.write( tCSBuffer, MH5Type< uint32_t >::Native(), tDataspace );
+        tAttr.write( MH5Type< uint32_t >::Native(), tCSBuffer );
 
-//     // Write the streams to the file
-//     //tDataset.write( tCSBuffer, MH5Type< uint32_t >::Native(), tDataspace );
-//     tAttr.write( MH5Type< uint32_t >::Native(), tCSBuffer );
+        delete [] tCSBuffer;        // release temporary buffer
 
-//     delete [] tCSBuffer;        // release temporary buffer
-
+#endif
         // create a new Dataset for the data of this stream
 //      xt::xarray<uint32_t>::shape_type tCSShape = { fNChannels, 1 };
 xt::xarray<uint32_t>::shape_type tCSShape = { 1,fNChannels };       // reversed: <row>,<col>
@@ -1216,32 +1255,33 @@ std::cout << "M4Header::ReadChannelStreams(): void\n";
     void M4Header::WriteChannelCoherence( z5FileHandle aFile )
     {
 std::cout << "M4Header::WriteChannelCoherence()\n";  
+#if 0
+        const unsigned tNDims = 2;
+        hsize_t tDims[ tNDims ] = { fNChannels, fNChannels };
 
-        // const unsigned tNDims = 2;
-        // hsize_t tDims[ tNDims ] = { fNChannels, fNChannels };
+        // Create channel-coherence attribute from data-space: tAttr
+        H5::DataSpace tDataspace( tNDims, tDims );
+        //H5::DataSet tDataset = aLoc->createDataSet( "channel_coherence", MH5Type< bool >::H5(), tDataspace );
+        H5::Attribute tAttr = aLoc->createAttribute( "channel_coherence", MH5Type< bool >::H5(), tDataspace );
 
-        // // Create channel-coherence attribute from data-space: tAttr
-        // H5::DataSpace tDataspace( tNDims, tDims );
-        // //H5::DataSet tDataset = aLoc->createDataSet( "channel_coherence", MH5Type< bool >::H5(), tDataspace );
-        // H5::Attribute tAttr = aLoc->createAttribute( "channel_coherence", MH5Type< bool >::H5(), tDataspace );
+        // allocate temporary write buffer
+        uint8_t* tCCBuffer = new uint8_t[ fNChannels * fNChannels ];
 
-        // // allocate temporary write buffer
-        // uint8_t* tCCBuffer = new uint8_t[ fNChannels * fNChannels ];
+        // Copy channel-coherence to write buffer
+        for( unsigned i = 0; i < fNChannels; ++i )
+        {
+            for( unsigned j = 0; j < fNChannels; ++j )
+            {
+                tCCBuffer[ i * fNChannels + j ] = (uint8_t)fChannelCoherence[ i ][ j ];
+            }
+        }
 
-        // // Copy channel-coherence to write buffer
-        // for( unsigned i = 0; i < fNChannels; ++i )
-        // {
-        //     for( unsigned j = 0; j < fNChannels; ++j )
-        //     {
-        //         tCCBuffer[ i * fNChannels + j ] = (uint8_t)fChannelCoherence[ i ][ j ];
-        //     }
-        // }
+        // Write coherence buffer to file
+        //tDataset.write( tCCBuffer, MH5Type< bool >::Native(), tDataspace );
+        tAttr.write( MH5Type< bool >::Native(), tCCBuffer );
 
-        // // Write coherence buffer to file
-        // //tDataset.write( tCCBuffer, MH5Type< bool >::Native(), tDataspace );
-        // tAttr.write( MH5Type< bool >::Native(), tCCBuffer );
-
-        // delete [] tCCBuffer;
+        delete [] tCCBuffer;
+#endif
 
         // create a new Dataset for the data of this channel
 //      xt::xarray<uint8_t>::shape_type tCCShape = { fNChannels * fNChannels , 1 };
@@ -1281,45 +1321,45 @@ std::cout << "M4Header::WriteChannelCoherence(): void\n";
     void M4Header::ReadChannelCoherence( const z5FileHandle aFile ) const
     {
 std::cout << "M4Header::ReadChannelCoherence()\n";
+#if 0
+        const unsigned tNDims = 2;
+        hsize_t tDims[ tNDims ];
 
-        // const unsigned tNDims = 2;
-        // hsize_t tDims[ tNDims ];
+        // Get access to channel-coherence: tAttr
+        //H5::DataSet tDataset = aLoc->openDataSet( "channel_coherence" );
+        H5::Attribute tAttr = aLoc->openAttribute( "channel_coherence" );
 
-        // // Get access to channel-coherence: tAttr
-        // //H5::DataSet tDataset = aLoc->openDataSet( "channel_coherence" );
-        // H5::Attribute tAttr = aLoc->openAttribute( "channel_coherence" );
+        // Get acces to the data space: tDataspace
+        //H5::DataSpace tDataspace( tDataset.getSpace() );
+        H5::DataSpace tDataspace( tAttr.getSpace() );
 
-        // // Get acces to the data space: tDataspace
-        // //H5::DataSpace tDataspace( tDataset.getSpace() );
-        // H5::DataSpace tDataspace( tAttr.getSpace() );
+        // Verify data dimensions match that expected in the M4Header::fNChannels
+        tDataspace.getSimpleExtentDims( tDims );
+        if( tDims[ 0 ] != fNChannels || tDims[ 1 ] != fNChannels )
+        {
+            LERROR( mlog, "Channel coherence dataset dimensions (" << tDims[ 0 ] << ", " << tDims[ 1 ] << ") do not match number of channels, " << fNChannels );
+            return;
+        }
 
-        // // Verify data dimensions match that expected in the M4Header::fNChannels
-        // tDataspace.getSimpleExtentDims( tDims );
-        // if( tDims[ 0 ] != fNChannels || tDims[ 1 ] != fNChannels )
-        // {
-        //     LERROR( mlog, "Channel coherence dataset dimensions (" << tDims[ 0 ] << ", " << tDims[ 1 ] << ") do not match number of channels, " << fNChannels );
-        //     return;
-        // }
+        // Allocate temporary buffer for read
+        uint8_t* tCCBuffer = new uint8_t[ fNChannels * fNChannels ];
+        //tDataset.read( tCCBuffer, MH5Type< bool >::Native(), tDataspace );
+        tAttr.read( MH5Type< bool >::Native(), tCCBuffer );
 
-        // // Allocate temporary buffer for read
-        // uint8_t* tCCBuffer = new uint8_t[ fNChannels * fNChannels ];
-        // //tDataset.read( tCCBuffer, MH5Type< bool >::Native(), tDataspace );
-        // tAttr.read( MH5Type< bool >::Native(), tCCBuffer );
+        // Copy over channel-coherence from temporary buffer into component
+        fChannelCoherence.clear();
+        fChannelCoherence.resize( fNChannels );
+        for( unsigned i = 0; i < fNChannels; ++i )
+        {
+            fChannelCoherence[ i ].resize( fNChannels );
+            for( unsigned j = 0; j < fNChannels; ++j )
+            {
+                fChannelCoherence[ i ][ j ] = (bool)tCCBuffer[ i * fNChannels + j ];
+            }
+        }
 
-        // // Copy over channel-coherence from temporary buffer into component
-        // fChannelCoherence.clear();
-        // fChannelCoherence.resize( fNChannels );
-        // for( unsigned i = 0; i < fNChannels; ++i )
-        // {
-        //     fChannelCoherence[ i ].resize( fNChannels );
-        //     for( unsigned j = 0; j < fNChannels; ++j )
-        //     {
-        //         fChannelCoherence[ i ][ j ] = (bool)tCCBuffer[ i * fNChannels + j ];
-        //     }
-        // }
-
-        // delete [] tCCBuffer;        // release temporary buffer
-
+        delete [] tCCBuffer;        // release temporary buffer
+#endif
         // Open the "channel_coherence" dataset from file
         const auto dsHandle = z5DatasetHandle(aFile, "channel_coherence");
         auto ds = z5::openDataset(aFile, "channel_coherence");
