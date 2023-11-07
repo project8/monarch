@@ -298,7 +298,8 @@ std::cout << "M4StreamHeader::WriteChannels() for " << fLabel << std::endl;
         // delete [] tCSBuffer;
 
         // create a new Dataset for the data of this channel
-        xt::xarray<uint32_t>::shape_type tCSShape = { fNChannels, 1 };
+//      xt::xarray<uint32_t>::shape_type tCSShape = { fNChannels, 1 };
+xt::xarray<uint32_t>::shape_type tCSShape = { 1,fNChannels };
         xt::xarray<uint32_t> tCSBuffer(tCSShape);
 
         // Populate write buffer from the fChannelStreams
@@ -309,8 +310,10 @@ std::cout << "M4StreamHeader::WriteChannels() for " << fLabel << std::endl;
 
         // Create the dataset for "channels"
         const string dsName = "channels";
-        std::vector<size_t> shape = { fNChannels, 1 };
-        std::vector<size_t> chunks = { fNChannels, 1 };
+//      std::vector<size_t> shape = { fNChannels, 1 };
+//      std::vector<size_t> chunks = { fNChannels, 1 };
+std::vector<size_t> shape = { 1,fNChannels };
+std::vector<size_t> chunks = { 1,fNChannels };
         auto ds = z5::createDataset( aGroup, dsName, "uint32", shape, chunks );
         
 std::cout << "Write the streams to the file\n";
@@ -368,7 +371,8 @@ std::cout << "M4StreamHeader::ReadChannels() " << fLabel << std::endl;
         auto ds = z5::openDataset(aGroup, "channels");
 
         // create a new Dataset for the data of this channel
-        xt::xarray<uint32_t>::shape_type tCSShape = { fNChannels, 1 };
+//      xt::xarray<uint32_t>::shape_type tCSShape = { fNChannels, 1 };
+xt::xarray<uint32_t>::shape_type tCSShape = { 1,fNChannels };
         xt::xarray<uint32_t> tCSBuffer(tCSShape);
         
         z5::types::ShapeType readOffset = { 0,0 };
@@ -903,6 +907,11 @@ std::cout << "M4Header::WriteToFile()\n";
             z5::createGroup(aFile, "streams");
             auto strmHeaderHandle = z5GroupHandle(aFile, "streams");
 
+            // create attr: NStreams to record how many streams were in run
+            nlohmann::json jstreamAttr;
+            jstreamAttr["NStreams"] = fNStreams;
+            z5::writeAttributes(strmHeaderHandle, jstreamAttr);
+
             LDEBUG( mlog, "Writing all stream headers" );
             for( uint32_t iStream = 0; iStream < fNStreams; ++iStream )
             {
@@ -989,28 +998,48 @@ std::cout << "M4Header::ReadFromFile()\n";
       // const unsigned tBuffSize = 256;
       // char tBuffer[ tBuffSize ];
 
-            // LDEBUG( mlog, "Reading stream headers" );
-            // fStreamHeaders.clear();
+            LDEBUG( mlog, "Reading stream headers" );
+            fStreamHeaders.clear();
 
-            // // Create streams group correspoding to file streams
-            // // fStreamsGroup = new H5::Group( fFile->openGroup( "streams" ) );
-            // fStreamsGroup = new z5GroupHandle( aFile, "streams" );
+            // size_t nStreams = fStreamsGroup->getNumObjs();
+//          size_t nStreams = fStreamsGroup->size();
+//          if( nStreams != fNStreams )
+//          {
+//              throw M4Exception() << "Number of streams <" << fNStreams << "> disagrees with the number of objects in the stream group <" << nStreams << ">";
+//          }
 
-            // // size_t nStreams = fStreamsGroup->getNumObjs();
-            // size_t nStreams = fStreamsGroup->size();
-            // if( nStreams != fNStreams )
-            // {
-            //     throw M4Exception() << "Number of streams <" << fNStreams << "> disagrees with the number of objects in the stream group <" << nStreams << ">";
-            // }
+            // // Create streams group correspoding to streams group
+            auto strmHeaderHandle = z5GroupHandle(aFile, "streams");
+            nlohmann::json jstreamAttr;
+            z5::readAttributes( strmHeaderHandle, jstreamAttr );
+
+            size_t nStreams = jstreamAttr.at("NStreams");
+std::cout << "nStreams: " << nStreams << std::endl;
+
+///@todo create access to stream
+//fNumber = jstreamAttr.at("number");
+//fSource = jstreamAttr.at("source");
+//fNChannels = jstreamAttr.at("n_channels");
+//fChannelFormat = jstreamAttr.at("channel_format");
+//fAcquisitionRate = jstreamAttr.at("acquisition_rate");
+//fRecordSize = jstreamAttr.at("record_size");
+//fSampleSize = jstreamAttr.at("sample_size");
+//fDataTypeSize = jstreamAttr.at("data_type_size");
+//fDataFormat = jstreamAttr.at("data_format");
+//fBitDepth = jstreamAttr.at("bit_depth");
+//fBitAlignment = jstreamAttr.at("bit_alignment");
+//fNAcquisitions = jstreamAttr.at("n_acquisitions");
+//fNRecords = jstreamAttr.at("n_records");
 
 #if 0
             // Read each of the stream-header objects and store
-            for( hsize_t iStream = 0; iStream < nStreams; ++iStream )
+            for( size_t iStream = 0; iStream < nStreams; ++iStream )
             {
                 //string tStreamLabel = fStreamsGroup->getObjnameByIdx( iStream );
                 unsigned tLabelSize = fStreamsGroup->getObjnameByIdx( iStream, tBuffer, tBuffSize );
+
                 std::string tStreamLabel( tBuffer, tLabelSize );
-        LDEBUG( mlog, "Attempting to read stream header #" << iStream << "; label <" << tStreamLabel << ">" );
+                LDEBUG( mlog, "Attempting to read stream header #" << iStream << "; label <" << tStreamLabel << ">" );
                 
                 fStreamHeaders.push_back( M4StreamHeader() );
                 
@@ -1312,7 +1341,7 @@ xt::xarray<uint8_t>::shape_type tCCShape = { 1,fNChannels * fNChannels };   // r
             for( unsigned j = 0; j < fNChannels; ++j )
             {
                 fChannelCoherence[ i ][ j ] = (bool)tCCBuffer[ i * fNChannels + j ];
-                // std::cout << fChannelCoherence[ i ][ j ] << std::endl;
+std::cout << "fChannelCoherence[" << i << "][" << j << "]: " << fChannelCoherence[ i ][ j ] << std::endl;
             }
         }
 
@@ -1393,7 +1422,6 @@ M4_API std::ostream& operator<<( std::ostream& out, const monarch4::M4Header& hd
     out << "\tNumber of Streams: " << hdr.GetNStreams() << "\n";
     out << "\tChannel-to-stream mapping:\n";
 
-// #if 0
     for( uint32_t iChan = 0; iChan < hdr.ChannelStreams().size(); ++iChan )
     {
         out << "\t\tChannel " << iChan << " --> Stream " << hdr.ChannelStreams()[ iChan ] << "\n";
@@ -1408,6 +1436,6 @@ M4_API std::ostream& operator<<( std::ostream& out, const monarch4::M4Header& hd
     {
         out << hdr.ChannelHeaders()[ iChan ];
     }
-// #endif
+
     return out;
 }
