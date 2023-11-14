@@ -7,9 +7,7 @@
 #define M4_API_EXPORTS
 
 #include "M4Monarch.hh"
-
 #include "logger.hh"
-
 #include "z5/factory.hxx"
 
 using std::string;
@@ -116,7 +114,8 @@ std::cout << "Monarch4::OpenForReading(): newly created Monarch4 component\n";
     * @brief Create new Monarch4 component for write
     * 
     * @param[in] aFilename  path/filename
-    * @return Monarch4* Pointer to newly created object
+    * @return Monarch4* Pointer to newly created object 
+    * @note Open fails is (filename) exists 
     *************************************************************************/
     Monarch4* Monarch4::OpenForWriting( const string& aFilename )
     {
@@ -218,12 +217,13 @@ std::cout << "Monarch4::WriteHeader()\n";
         //      channels/channel0..channelN-1, 
         //      channel_streams
         //      streams/stream0..streamN-1
+///@todo Handle nulptr fHeader
         fHeader->WriteToFile( *fFile );
         
         // z5::filesystem::handle::Group* tStreamsGroup = fHeader->GetStreamsGroup();
 
-        // try
-        // {
+        try
+        {
 #if 0
             // Create the stream objects based on the configuration from the header
             for( M4Header::M4StreamHeaders::const_iterator streamIt = fHeader->StreamHeaders().begin();
@@ -234,15 +234,15 @@ std::cout << "Monarch4::WriteHeader()\n";
                 fStreams.back()->SetMutex( fMutexPtr );
             }
 #endif
-        // }
+        }
         // catch( H5::Exception& e )
         // {
         //     throw M4Exception() << "HDF5 error while creating stream objects:\n\t" << e.getDetailMsg() << " (function: " << e.getFuncName() << ")";
         // }
-        // catch( M4Exception& e )
-        // {
-        //     throw;
-        // }
+        catch( M4Exception& e )
+        {
+            throw;
+        }
         fState = eReadyToWrite;
 std::cout << "Monarch4::WriteHeader(): void\n";
     }

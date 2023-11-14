@@ -280,19 +280,31 @@ std::cout <<  "M4StreamHeader::ReadFromFile()\n";
 //std::cout << "n_acquisitions: " << jstreamAttr.at("n_acquisitions") << std::endl;
 //std::cout << "n_records: " << jstreamAttr.at("n_records") << std::endl << std::endl;
 
-        fNumber = jstreamAttr.at("number");
-        fSource = jstreamAttr.at("source");
-        fNChannels = jstreamAttr.at("n_channels");
-        fChannelFormat = jstreamAttr.at("channel_format");
-        fAcquisitionRate = jstreamAttr.at("acquisition_rate");
-        fRecordSize = jstreamAttr.at("record_size");
-        fSampleSize = jstreamAttr.at("sample_size");
-        fDataTypeSize = jstreamAttr.at("data_type_size");
-        fDataFormat = jstreamAttr.at("data_format");
-        fBitDepth = jstreamAttr.at("bit_depth");
-        fBitAlignment = jstreamAttr.at("bit_alignment");
-        fNAcquisitions = jstreamAttr.at("n_acquisitions");
-        fNRecords = jstreamAttr.at("n_records");
+
+///@todo add try/catch() for nlohmann::json
+// Programmer's Note: using casts to ensure correct conversion function gets selected
+// Programmer's Note: using .at() function to ensure proper exception operation
+        try
+        {
+            fNumber = (uint32_t)jstreamAttr.at("number");
+            fSource = (std::string)jstreamAttr.at("source");
+            fNChannels = (uint32_t)jstreamAttr.at("n_channels");
+            fChannelFormat = (uint32_t)jstreamAttr.at("channel_format");
+            fAcquisitionRate = (uint32_t)jstreamAttr.at("acquisition_rate");
+            fRecordSize = (uint32_t)jstreamAttr.at("record_size");
+            fSampleSize = (uint32_t)jstreamAttr.at("sample_size");
+            fDataTypeSize = (uint32_t)jstreamAttr.at("data_type_size");
+            fDataFormat = (uint32_t)jstreamAttr.at("data_format");
+            fBitDepth = (uint32_t)jstreamAttr.at("bit_depth");
+            fBitAlignment = jstreamAttr.at("bit_alignment");
+            fNAcquisitions = (uint32_t)jstreamAttr.at("n_acquisitions");
+            fNRecords = (uint32_t)jstreamAttr.at("n_records");
+            
+        }
+        catch (const nlohmann::json::exception& e)
+        { // JSON error
+            throw M4Exception() << "JSON error M4StreamHeader::ReadFromFile(): <" << e.what();
+        }
 
 std::cout <<  "M4StreamHeader::ReadFromFile(): void\n";
     }
@@ -330,7 +342,7 @@ std::cout << "M4StreamHeader::WriteChannels() for " << fLabel << std::endl;
         delete [] tCSBuffer;
 #endif
         // create a new Dataset for the data of this channel
-        xt::xarray<uint32_t>::shape_type tCSShape = { 1,fNChannels };
+        xt::xarray<uint32_t>::shape_type tCSShape = { 1,fNChannels };   // <row>,<col>
         xt::xarray<uint32_t> tCSBuffer(tCSShape);
 
         // Populate write buffer from the fChannelStreams
@@ -341,8 +353,8 @@ std::cout << "M4StreamHeader::WriteChannels() for " << fLabel << std::endl;
 
         // Create the dataset for "channels"
         const string dsName = "channels";
-        std::vector<size_t> shape = { 1,fNChannels };
-        std::vector<size_t> chunks = { 1,fNChannels };
+        std::vector<size_t> shape = { 1,fNChannels };   // <row>,<col>
+        std::vector<size_t> chunks = { 1,fNChannels };  // <row>,<col>
         auto ds = z5::createDataset( aGroup, dsName, "uint32", shape, chunks );
         
 std::cout << "Write the streams to the file\n";
@@ -358,7 +370,6 @@ std::cout << "M4StreamHeader::WriteChannels() void " << fLabel << std::endl;
     * @param aLoc 
     * @return none
     *************************************************************************/
-    // void M4StreamHeader::ReadChannels( const HAS_ATTR_IFC* aLoc ) const
     void M4StreamHeader::ReadChannels( const z5GroupHandle aGroup ) const
     {
 std::cout << "M4StreamHeader::ReadChannels() " << fLabel << std::endl;
@@ -397,12 +408,10 @@ std::cout << "M4StreamHeader::ReadChannels() " << fLabel << std::endl;
 #endif
 
         // Open the "channels" dataset from file
-        // const auto dsHandle = z5DatasetHandle(aGroup, "channels");
         auto ds = z5::openDataset(aGroup, "channels");
 
         // create a new Dataset for the data of this channel
-//      xt::xarray<uint32_t>::shape_type tCSShape = { fNChannels, 1 };
-xt::xarray<uint32_t>::shape_type tCSShape = { 1,fNChannels };
+        xt::xarray<uint32_t>::shape_type tCSShape = { 1,fNChannels };       // <row>,<col>
         xt::xarray<uint32_t> tCSBuffer(tCSShape);
         
         z5::types::ShapeType readOffset = { 0,0 };
@@ -579,7 +588,7 @@ std::cout << "M4ChannelHeader::WriteToFile(): " << fLabel << std::endl;
         // Create the attributes component and write to file
         z5::createGroup(aGroup, fLabel);
         auto channelsHandle = z5GroupHandle(aGroup, fLabel);
-        nlohmann::json chanAttr;
+        nlohmann::json jchanAttr;
 
 //std::cout << "  number: " << fNumber << std::endl;
 //std::cout << "  source: " << fSource << std::endl;
@@ -596,22 +605,23 @@ std::cout << "M4ChannelHeader::WriteToFile(): " << fLabel << std::endl;
 //std::cout << "  frequency_min: " << fFrequencyMin << std::endl;
 //std::cout << "  frequency_range: " << fFrequencyRange << std::endl;
 
-        chanAttr["number"] = fNumber;
-        chanAttr["source"] = fSource;
-        chanAttr["acquisition_rate"] = fAcquisitionRate;
-        chanAttr["record_size"] = fRecordSize;
-        chanAttr["sample_size"] = fSampleSize;
-        chanAttr["data_type_size"] = fDataTypeSize;
-        chanAttr["data_format"] = fDataFormat;
-        chanAttr["bit_depth"] = fBitDepth;
-        chanAttr["bit_alignment"] = fBitAlignment;
-        chanAttr["voltage_offset"] = fVoltageOffset;
-        chanAttr["voltage_range"] = fVoltageRange;
-        chanAttr["dac_gain"] = fDACGain;
-        chanAttr["frequency_min"] = fFrequencyMin;
-        chanAttr["frequency_range"] = fFrequencyRange;
 
-        z5::writeAttributes(channelsHandle, chanAttr);
+        jchanAttr["number"] = fNumber;
+        jchanAttr["source"] = fSource;
+        jchanAttr["acquisition_rate"] = fAcquisitionRate;
+        jchanAttr["record_size"] = fRecordSize;
+        jchanAttr["sample_size"] = fSampleSize;
+        jchanAttr["data_type_size"] = fDataTypeSize;
+        jchanAttr["data_format"] = fDataFormat;
+        jchanAttr["bit_depth"] = fBitDepth;
+        jchanAttr["bit_alignment"] = fBitAlignment;
+        jchanAttr["voltage_offset"] = fVoltageOffset;
+        jchanAttr["voltage_range"] = fVoltageRange;
+        jchanAttr["dac_gain"] = fDACGain;
+        jchanAttr["frequency_min"] = fFrequencyMin;
+        jchanAttr["frequency_range"] = fFrequencyRange;
+
+        z5::writeAttributes(channelsHandle, jchanAttr);
 
 std::cout << "M4ChannelHeader::WriteToFile(): void " << fLabel << std::endl;        
     }
@@ -622,7 +632,6 @@ std::cout << "M4ChannelHeader::WriteToFile(): void " << fLabel << std::endl;
     * @param aParent 
     * @param aLabel 
     *************************************************************************/
-    // void M4ChannelHeader::ReadFromHDF5( const HAS_GRP_IFC* aParent, const std::string& aLabel ) const
     void M4ChannelHeader::ReadFromFile( const z5GroupHandle aGroup, const std::string& aLabel ) const
     {
 std::cout << "M4ChannelHeader::ReadFromFile(): " << aLabel << std::endl;
@@ -646,8 +655,8 @@ std::cout << "M4ChannelHeader::ReadFromFile(): " << aLabel << std::endl;
         SetFrequencyMin( M4Header::ReadScalarFromHDF5< double >( &tThisChannelGroup, "frequency_min" ) );
         SetFrequencyRange( M4Header::ReadScalarFromHDF5< double >( &tThisChannelGroup, "frequency_range" ) );
 #endif        
-        nlohmann::json chanAttr;
-        z5::readAttributes( aGroup, chanAttr );
+        nlohmann::json jchanAttr;
+        z5::readAttributes( aGroup, jchanAttr );
 
 //std::cout << "  number: " << chanAttr.at("number") << std::endl;
 //std::cout << "  source: " << chanAttr.at("source") << std::endl;
@@ -664,20 +673,31 @@ std::cout << "M4ChannelHeader::ReadFromFile(): " << aLabel << std::endl;
 //std::cout << "  frequency_min: " << chanAttr.at("frequency_min") << std::endl;
 //std::cout << "  frequency_range: " << chanAttr.at("frequency_range") << std::endl;
 
-        fNumber = chanAttr.at("number");
-        fSource = chanAttr.at("source");
-        fAcquisitionRate = chanAttr.at("acquisition_rate");
-        fRecordSize = chanAttr.at("record_size");
-        fSampleSize = chanAttr.at("sample_size");
-        fDataTypeSize = chanAttr.at("data_type_size");
-        fDataFormat = chanAttr.at("data_format");
-        fBitDepth = chanAttr.at("bit_depth");
-        fBitAlignment = chanAttr.at("bit_alignment");
-        fVoltageOffset = chanAttr.at("voltage_offset");
-        fVoltageRange = chanAttr.at("voltage_range");
-        fDACGain = chanAttr.at("dac_gain");
-        fFrequencyMin = chanAttr.at("frequency_min");
-        fFrequencyRange = chanAttr.at("frequency_range");
+///@todo add try/catch() for nlohmann::json
+// Programmer's Note: using casts to ensure correct conversion function gets selected
+// Programmer's Note: using .at() function to ensure proper exception operation
+
+        try
+        {
+            fNumber = (uint32_t)jchanAttr.at("number");
+            fSource = (std::string)jchanAttr.at("source");
+            fAcquisitionRate = (uint32_t)jchanAttr.at("acquisition_rate");
+            fRecordSize = (uint32_t)jchanAttr.at("record_size");
+            fSampleSize = (uint32_t)jchanAttr.at("sample_size");
+            fDataTypeSize = (uint32_t)jchanAttr.at("data_type_size");
+            fDataFormat = (uint32_t)jchanAttr.at("data_format");
+            fBitDepth = (uint32_t)jchanAttr.at("bit_depth");
+            fBitAlignment = (uint32_t)jchanAttr.at("bit_alignment");
+            fVoltageOffset = (double)jchanAttr.at("voltage_offset");
+            fVoltageRange = (double)jchanAttr.at("voltage_range");
+            fDACGain = (double)jchanAttr.at("dac_gain");
+            fFrequencyMin = (double)jchanAttr.at("frequency_min");
+            fFrequencyRange = (double)jchanAttr.at("frequency_range");
+        }
+        catch (const nlohmann::json::exception& e)
+        { // JSON error
+            throw M4Exception() << "JSON error M4ChannelHeader::ReadFromFile(): <" << e.what();
+        }
 
 std::cout << "M4ChannelHeader::ReadFromFile(): void\n";
     }
@@ -793,10 +813,12 @@ std::cout << "M4Header::AddStream() single-channel: " << aSource << std::endl;
         fChannelStreams.push_back( fNStreams );     // adding another stream to M4Header
 
         // Create a new channel header with specified metadata, add to M4Header
-        fChannelHeaders.push_back( M4ChannelHeader( aSource, fNChannels, anAcqRate, aRecSize, aSampleSize, aDataTypeSize, aDataFormat, aBitDepth, aBitAlignment ) );
+        fChannelHeaders.push_back( M4ChannelHeader( aSource, fNChannels, anAcqRate, aRecSize, aSampleSize, 
+                                                    aDataTypeSize, aDataFormat, aBitDepth, aBitAlignment ) );
         
         // Create a new (single) stream header with specified metadata, add to M4Header
-        fStreamHeaders.push_back( M4StreamHeader( aSource, fNStreams, 1, fNChannels, sSeparate, anAcqRate, aRecSize, aSampleSize, aDataTypeSize, aDataFormat, aBitDepth, aBitAlignment ) );
+        fStreamHeaders.push_back( M4StreamHeader( aSource, fNStreams, 1, fNChannels, sSeparate, anAcqRate, 
+                                                  aRecSize, aSampleSize, aDataTypeSize, aDataFormat, aBitDepth, aBitAlignment ) );
 
         ++fNChannels;   // next channel number used
 
@@ -863,6 +885,7 @@ std::cout << "M4Header::AddStream() multi-channel: " << aSource << std::endl;
             // Create a new channel header with specified metadata, add to M4Header
             fChannelHeaders.push_back( M4ChannelHeader( aSource, fNChannels, anAcqRate, aRecSize, 
                 aSampleSize, aDataTypeSize, aDataFormat, aBitDepth, aBitAlignment ) );
+
             ++fNChannels;   // next channel number used
             
             std::cout << "resizing coherence to " << fNChannels << " channels" << std::endl;
@@ -947,16 +970,16 @@ std::cout << "M4Header::WriteToFile()\n";
 #endif
         LDEBUG( mlog, "Writing run header" );
 
-        nlohmann::json headerAttr;
+        nlohmann::json jheaderAttr;
 
-        headerAttr["egg_version"] = fEggVersion;
-        headerAttr["filename"] = fFilename;
-        headerAttr["n_channels"] = fNChannels;
-        headerAttr["n_streams"] = fNStreams;
-        headerAttr["run_duration"] = fRunDuration;
-        headerAttr["timestamp"] = fTimestamp;
-        headerAttr["description"] = fDescription;
-        z5::writeAttributes(aFile, headerAttr);
+        jheaderAttr["egg_version"] = fEggVersion;
+        jheaderAttr["filename"] = fFilename;
+        jheaderAttr["n_channels"] = fNChannels;
+        jheaderAttr["n_streams"] = fNStreams;
+        jheaderAttr["run_duration"] = fRunDuration;
+        jheaderAttr["timestamp"] = fTimestamp;
+        jheaderAttr["description"] = fDescription;
+        z5::writeAttributes(aFile, jheaderAttr);
 
         WriteChannelStreams( aFile );
         WriteChannelCoherence( aFile );
@@ -1003,7 +1026,6 @@ std::cout << "M4Header::WriteToFile(): void\n";
     * @param aFile path/filename
     * @return none, throw M4Exception on failure
     *************************************************************************/
-    // void M4Header::ReadFromHDF5( const H5::H5File* aFile ) const
     void M4Header::ReadFromFile( z5FileHandle aFile ) const
     {
 std::cout << "M4Header::ReadFromFile()\n";        
@@ -1024,14 +1046,24 @@ std::cout << "M4Header::ReadFromFile()\n";
             nlohmann::json headerAttr;
             z5::readAttributes( aFile, headerAttr );
 
-//TODO: handle nlohmann exception
-            fEggVersion = headerAttr.at("egg_version");
-            fFilename = headerAttr.at("filename");
-            fNChannels = headerAttr.at("n_channels");
-            fNStreams = headerAttr.at("n_streams");
-            fRunDuration = headerAttr.at("run_duration");
-            fTimestamp = headerAttr.at("timestamp");
-            fDescription = headerAttr.at("description");
+///@todo add try/catch() for nlohmann::json
+// Programmer's Note: using casts to ensure correct conversion function gets selected
+// Programmer's Note: using .at() function to ensure proper exception operation
+
+            try
+            {
+                fEggVersion = (std::string)headerAttr.at("egg_version");
+                fFilename = (std::string)headerAttr.at("filename");
+                fNChannels = (uint32_t)headerAttr.at("n_channels");
+                fNStreams = (uint32_t)headerAttr.at("n_streams");
+                fRunDuration = (uint32_t)headerAttr.at("run_duration");
+                fTimestamp = (std::string)headerAttr.at("timestamp");
+                fDescription = (std::string)headerAttr.at("description");
+            }
+            catch (const nlohmann::json::exception& e)
+            { // JSON error
+                throw M4Exception() << "JSON error M4Header::ReadFromFile(): <" << e.what();
+            }
 
 //std::cout << "fEggVersion: " << (std::string)fEggVersion << std::endl;
 //std::cout << "fFilename: " << (std::string)fFilename << std::endl;
@@ -1173,7 +1205,6 @@ std::cout << "M4Header::ReadFromFile(): void\n";
     * @param aFile File handle
     * @return none, no exceptions thrown 
     *************************************************************************/
-    // void M4Header::WriteChannelStreams( HAS_ATTR_IFC* aLoc )
     void M4Header::WriteChannelStreams( z5FileHandle aFile)
     {
 std::cout << "M4Header::WriteChannelStreams()\n";
@@ -1200,10 +1231,10 @@ std::cout << "M4Header::WriteChannelStreams()\n";
         tAttr.write( MH5Type< uint32_t >::Native(), tCSBuffer );
 
         delete [] tCSBuffer;        // release temporary buffer
-
 #endif
+
         // create a new Dataset for the data of this stream
-        xt::xarray<uint32_t>::shape_type tCSShape = { 1,fNChannels };       // reversed: <row>,<col>
+        xt::xarray<uint32_t>::shape_type tCSShape = { 1,fNChannels };       // <row>,<col>
         xt::xarray<uint32_t> tCSBuffer(tCSShape,0);
 
         // Populate write buffer from the fChannelStreams: channel->stream mapping
@@ -1215,8 +1246,8 @@ std::cout << "fChannelStreams[" << i << "]: " << fChannelStreams[ i ] << " / " <
 
         // Create the dataset for "channels"
         const string dsName = "channel_streams";
-        std::vector<size_t> shape = { 1,fNChannels };       // reversed: <row>,<col>
-        std::vector<size_t> chunks = { 1,fNChannels };      // reversed: <row>,<col>
+        std::vector<size_t> shape = { 1,fNChannels };       // <row>,<col>
+        std::vector<size_t> chunks = { 1,fNChannels };      // <row>,<col>
         auto ds = z5::createDataset( aFile, dsName, "uint32", shape, chunks );
         
         z5::types::ShapeType writeOffset = { 0,0 };
@@ -1231,9 +1262,7 @@ std::cout << "M4Header::WriteChannelStreams(): void\n";
     * @param aLoc Stream location attribute
     * @return none, no exceptions thrown 
     *************************************************************************/
-    // void M4Header::ReadChannelStreams( const HAS_ATTR_IFC* aLoc ) const
     void M4Header::ReadChannelStreams( const z5FileHandle aFile ) const
-    // void M4Header::ReadChannelStreams( z5GroupHandle aGroup ) const
     {
 std::cout << "M4Header::ReadChannelStreams(): " << fNChannels << " channels\n";
  #if 0
@@ -1277,7 +1306,7 @@ std::cout << "M4Header::ReadChannelStreams(): " << fNChannels << " channels\n";
         auto ds = z5::openDataset(aFile, "channel_streams");
 
         // Programmer's Note: M4Header::ReadFromFile() initializes fNChannels from M4Header metadata
-        xt::xarray<uint32_t>::shape_type tCSShape = { 1,fNChannels };   // reversed: <row>,<col>
+        xt::xarray<uint32_t>::shape_type tCSShape = { 1,fNChannels };   // <row>,<col>
         xt::xarray<uint32_t> tCSBuffer(tCSShape,0);   // buffer-array for dataset
         
         z5::types::ShapeType readOffset = { 0,0 };
@@ -1300,8 +1329,6 @@ std::cout << "M4Header::ReadChannelStreams(): void\n";
     * 
     * @param aLoc 
     *************************************************************************/
-    // void M4Header::WriteChannelCoherence( HAS_ATTR_IFC* aLoc )
-    // void M4Header::WriteChannelCoherence( z5GroupHandle aGroup )
     void M4Header::WriteChannelCoherence( z5FileHandle aFile )
     {
 std::cout << "M4Header::WriteChannelCoherence()\n";  
@@ -1348,8 +1375,8 @@ std::cout << "M4Header::WriteChannelCoherence()\n";
 
         // Create the dataset for "channel_coherence"
         const string dsName = "channel_coherence";
-        std::vector<size_t> shape = { 1,fNChannels * fNChannels };      // reversed: <row>,<col>
-        std::vector<size_t> chunks = { 1,fNChannels * fNChannels };     // reversed: <row>,<col>
+        std::vector<size_t> shape = { 1,fNChannels * fNChannels };      // <row>,<col>
+        std::vector<size_t> chunks = { 1,fNChannels * fNChannels };     // <row>,<col>
         auto ds = z5::createDataset( aFile, dsName, "uint8", shape, chunks );
         
         z5::types::ShapeType writeOffset = { 0,0 };
@@ -1363,7 +1390,6 @@ std::cout << "M4Header::WriteChannelCoherence(): void\n";
     * 
     * @param aLoc  
     *************************************************************************/
-    // void M4Header::ReadChannelCoherence( const HAS_ATTR_IFC* aLoc ) const
     void M4Header::ReadChannelCoherence( const z5FileHandle aFile ) const
     {
 std::cout << "M4Header::ReadChannelCoherence()\n";
@@ -1411,8 +1437,7 @@ std::cout << "M4Header::ReadChannelCoherence()\n";
         auto ds = z5::openDataset(aFile, "channel_coherence");
 
         // create a new Dataset for the data of this stream
-//      xt::xarray<uint8_t>::shape_type tCCShape = { fNChannels * fNChannels , 1 };
-xt::xarray<uint8_t>::shape_type tCCShape = { 1,fNChannels * fNChannels };   // reversed: <row>,<col>
+        xt::xarray<uint8_t>::shape_type tCCShape = { 1,fNChannels * fNChannels };   // <row>,<col>
         xt::xarray<uint8_t> tCCBuffer(tCCShape);
         
         z5::types::ShapeType readOffset = { 0,0 };
