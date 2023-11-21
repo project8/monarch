@@ -722,11 +722,11 @@ std::cout << "M4StreamHeader::ReadChannels(): void " << fLabel << std::endl;;
     M4Header::~M4Header()
     {
 //std::cout << "M4Header::~M4Header()\n";
-//      if (fStreamsGroup != nullptr)   // z5/Zarr implemenation is no longer a pointer
-//          delete fStreamsGroup;
+        if (fStreamsGroup != nullptr)   
+            delete fStreamsGroup;
         
-//      if (fChannelsGroup != nullptr)  // z5/Zarr implemenation is no longer a pointer
-//          delete fChannelsGroup;
+        if (fChannelsGroup != nullptr)  
+            delete fChannelsGroup;
     }
 
     /*************************************************************************
@@ -979,39 +979,43 @@ std::cout << "M4Header::WriteToFile()\n";
 
         // Write all the stream headers to file
         z5::createGroup(*aFile, "streams");    // creates z5 Group in file
-        auto strmHeaderHandle = z5GroupHandle(*aFile, "streams");
+//      auto strmHeaderHandle = z5GroupHandle(*aFile, "streams");
+        fStreamsGroup = new z5GroupHandle(*aFile, "streams");
 ///@todo assign to fStreamsGroup?
-//      fStreamsGroup = strmHeaderHandle;
 
         // create attr: NStreams to record how many streams were in run
         nlohmann::json jstreamAttr;
         jstreamAttr["NStreams"] = fNStreams;
-        z5::writeAttributes(strmHeaderHandle, jstreamAttr);
+//      z5::writeAttributes(strmHeaderHandle, jstreamAttr);
+        z5::writeAttributes(*fStreamsGroup, jstreamAttr);
 
         LDEBUG( mlog, "Writing all stream headers" );
         for( uint32_t iStream = 0; iStream < fNStreams; ++iStream )
         {
             // fStreamHeaders[ iStream ].WriteToHDF5( fStreamsGroup );
-            fStreamHeaders[ iStream ].WriteToFile( strmHeaderHandle );
+//          fStreamHeaders[ iStream ].WriteToFile( strmHeaderHandle );
+            fStreamHeaders[ iStream ].WriteToFile( *fStreamsGroup );
         }
 
         // Write all the channel headers
         LDEBUG( mlog, "Writing all channel headers" );
 
         z5::createGroup( *aFile, "channels" );   // creates z5 Group in file
-        z5GroupHandle channelsHandle = z5GroupHandle( *aFile, "channels" );
+//      z5GroupHandle channelsHandle = z5GroupHandle( *aFile, "channels" );
+        fChannelsGroup = new z5GroupHandle( *aFile, "channels" );
 ///@todo assign to fChannelsGroup?0
-//      fChannelsGroup = channelsHandle;
 
         // create attr: NChannels to record how many channels were in run
         nlohmann::json jchanAttr;
 
         jchanAttr["NChannels"] = fNChannels;
-        z5::writeAttributes(channelsHandle, jchanAttr);
+//      z5::writeAttributes(channelsHandle, jchanAttr);
+        z5::writeAttributes(*fChannelsGroup, jchanAttr);
 
         for( uint32_t iChan = 0; iChan < fNChannels; ++iChan )
         {
-            fChannelHeaders[ iChan ].WriteToFile( channelsHandle );
+//          fChannelHeaders[ iChan ].WriteToFile( channelsHandle );
+            fChannelHeaders[ iChan ].WriteToFile( *fChannelsGroup );
         }
 
 std::cout << "M4Header::WriteToFile(): void\n";        
@@ -1099,7 +1103,7 @@ std::cout << "M4Header::ReadFromFile()\n";
         }
 #endif
         LDEBUG( mlog, "Reading run header" );
-//      fFile = aFile;
+        fFile = (z5FileHandle*)aFile;
 
         // // Read the File Atrributes
         nlohmann::json headerAttr;
@@ -1139,12 +1143,14 @@ std::cout << "M4Header::ReadFromFile()\n";
         // char tBuffer[ tBuffSize ];
 
         // Create streams group correspoding to streams group
-        auto strmHeaderHandle = z5GroupHandle(*aFile, "streams");
+//      auto strmHeaderHandle = z5GroupHandle(*aFile, "streams");
+        fStreamsGroup = new z5GroupHandle(*aFile, "streams");
 ///@todo save this into fStreamsGroup?
 
         // See how many streams are used
         nlohmann::json jstreamAttr;
-        z5::readAttributes( strmHeaderHandle, jstreamAttr );
+//      z5::readAttributes( strmHeaderHandle, jstreamAttr );
+        z5::readAttributes( *fStreamsGroup, jstreamAttr );
 
         size_t nStreams = jstreamAttr.at("NStreams");
 //std::cout << "nStreams: " << nStreams << std::endl;
@@ -1169,11 +1175,12 @@ std::cout << "\tlabel: " << streamLabel << std::endl;
         }
 
         // Create channels group correspoding to file group
-        auto chanHeaderHandle = z5GroupHandle( *aFile, "channels");
-///@todo save this into fChannelsGroup? 
+//      auto chanHeaderHandle = z5GroupHandle( *aFile, "channels");
+        fChannelsGroup = new z5GroupHandle( *aFile, "channels");
 
         nlohmann::json jchanAttr;
-        z5::readAttributes( chanHeaderHandle, jchanAttr );
+//      z5::readAttributes( chanHeaderHandle, jchanAttr );
+        z5::readAttributes( *fChannelsGroup, jchanAttr );
 
         // Get how many channels are in group
         size_t nChannels = jchanAttr.at("NChannels");
