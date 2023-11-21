@@ -13,6 +13,18 @@
 #include "M4Record.hh"
 // #include "M4Types.hh"
 #include "z5/types/types.hxx"         // z5 data types
+//#include "z5/factory.hxx"   // factory functions to create files, groups and datasets
+//#include "z5/filesystem/handle.hxx"     // handles for z5 filesystem objects
+//#include "z5/multiarray/xtensor_access.hxx"     // io for xtensor multi-arrays
+//#include "z5/attributes.hxx"        // attribute functionality
+
+// Shorter typedefs for z5 types
+typedef z5::filesystem::handle::File z5FileHandle;
+typedef z5::filesystem::handle::Dataset z5DatasetHandle;
+typedef z5::filesystem::handle::Group z5GroupHandle;
+typedef z5::filesystem::handle::File::GroupType z5GroupType;
+typedef z5::types::ShapeType z5ShapeType;
+typedef z5::types::Datatype z5Datatype;
 
 // #include "H5Cpp.h"
 
@@ -56,6 +68,8 @@ namespace monarch4
             M4Stream( const M4StreamHeader& aHeader, HAS_GRP_IFC* aH5StreamParentLoc, uint32_t aAccessFormat = sSeparate );
             virtual ~M4Stream();
 
+            // Programmer's Note: With an explicit deletion of a function you express that it must never 
+            // be used. This leads especially to clearly understandable error messages when trying to call such a function.
             M4Stream( const M4Stream& ) = delete;
             M4Stream& operator=( const M4Stream& ) = delete;
 
@@ -74,6 +88,7 @@ namespace monarch4
         public:
             /// Get the pointer to the stream record
             const M4Record* GetStreamRecord() const;
+              
             /// Get the pointer to a particular channel record
             const M4Record* GetChannelRecord( unsigned aChannel ) const;
 
@@ -103,6 +118,7 @@ namespace monarch4
         public:
             /// Get the pointer to the stream record
             M4Record* GetStreamRecord();
+             
             /// Get the pointer to a particular channel record
             M4Record* GetChannelRecord( unsigned aChannel );
 
@@ -111,7 +127,6 @@ namespace monarch4
 
             /// Close the stream
             void Close();
-
 
         public:
             bool GetIsInitialized() const              { return fIsInitialized;   }
@@ -193,18 +208,18 @@ namespace monarch4
 
             mutable char fAcqNameBuffer[ 10 ];
 
-            mutable z5::filesystem::handle::Group* fStreamParentLoc;
-            mutable z5::filesystem::handle::Group* fAcqLoc;
-            mutable z5::filesystem::handle::Dataset* fCurrentAcqDataSet;
+            mutable z5GroupHandle* fStreamParentLoc;
+            mutable z5GroupHandle* fAcqLoc;
+            mutable z5DatasetHandle* fCurrentAcqDataSet;
 
             // mutable H5::DataSpace* fH5DataSpaceUser;
-            mutable z5::filesystem::handle::Dataset* fDataSpaceUser;
+            mutable z5DatasetHandle* fDataSpaceUser;
 
             // mutable H5::DataType fDataTypeInFile;
             // mutable H5::DataType fDataTypeUser;
             // These are found in z5 file: types.hxx
-            mutable z5::types::Datatype fDataTypeInFile;
-            mutable z5::types::Datatype fDataTypeUser;
+            mutable z5Datatype fDataTypeInFile;
+            mutable z5Datatype fDataTypeUser;
 
             enum { N_DATA_DIMS = 2 };
             mutable size_t fStrDataDims[ N_DATA_DIMS ];

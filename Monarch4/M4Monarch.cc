@@ -26,7 +26,7 @@ namespace monarch4
             fHeader(),
             fMutexPtr( new std::mutex() )
     {
-std::cout << "Monarch4::Monarch4() default CTOR\n";
+//std::cout << "Monarch4::Monarch4() default CTOR\n";
     }
 
     /*************************************************************************
@@ -35,7 +35,7 @@ std::cout << "Monarch4::Monarch4() default CTOR\n";
     *************************************************************************/
     Monarch4::~Monarch4()
     {
-std::cout << "Monarch4::~Monarch4(): default DTOR\n";        
+//std::cout << "Monarch4::~Monarch4(): default DTOR\n";
         if( fState == eOpenToRead || fState == eReadyToRead)
         {
             FinishReading();
@@ -50,7 +50,7 @@ std::cout << "Monarch4::~Monarch4(): default DTOR\n";
             delete fStreams.back();
             fStreams.pop_back();
         }
-std::cout << "Monarch4::~Monarch4(): Monarch4 component destroyed\n";        
+//std::cout << "Monarch4::~Monarch4(): Monarch4 component destroyed\n";
     }
 
     /*************************************************************************

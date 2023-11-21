@@ -33,7 +33,9 @@ typedef z5::filesystem::handle::Group z5GroupHandle;
 using namespace std;
 using namespace monarch4;
 
-string tFilename = "readme3.zr";    // read/write Zarr with Monarch4 components
+LOGGER( mlog, "M4WriteTest" );
+
+string tFilename = "readme4.zr";    // read/write Zarr with Monarch4 components
 
 int main() {
 
@@ -41,7 +43,7 @@ int main() {
 
     if (tWriteTest != nullptr)
     {
-        cout << "SUCCESS: Zarr file opened for writing\n";
+        cout << "writeMonarch: SUCCESS: Zarr file opened for writing\n";
 
         M4Header* tHeader = tWriteTest->GetHeader();
         tHeader->Filename() = tFilename;
@@ -61,35 +63,45 @@ int main() {
         unsigned tFloatStreamNum = tHeader->AddStream( "Floating-point device", 100, tFlSSamples, 1, 4, sAnalog, 8, sBitsAlignedLeft );
 
         tWriteTest->WriteHeader();
+
+        // Programmer's Note: *tHeader into ostream generates dump of header info
+//      LINFO( mlog, "Wrote header:\n" << *tHeader );
+        LINFO( mlog, "Writing data" );
+//
+//      // Stream 0
+//      M4Stream* tSingleStream = tWriteTest->GetStream( tSingleStreamNum );
+//      byte_type* tSSData = tSingleStream->GetStreamRecord()->GetData();
+//      if (tSingleStream != nullptr && tSSData != nullptr)
+//      {
+//        std::cout << "stream and data pointers okay\n";
+//      }
+//      for( unsigned iSample = 0; iSample < tSSSamples; ++iSample )
+//      {
+//          tSSData[ iSample ] = 1;
+//      }
+//      if( ! tSingleStream->WriteRecord( true ) )
+//      {
+//          LERROR( mlog, "Unable to write the record!" );
+//          return RETURN_ERROR;
+//      }
+//
+//      for( unsigned iSample = 0; iSample < tSSSamples; ++iSample )
+//      {
+//          tSSData[ iSample ] = 10;
+//      }
+//      if( ! tSingleStream->WriteRecord( false ) )
+//      {
+//          LERROR( mlog, "Unable to write the record!" );
+//          return RETURN_ERROR;
+//      }
+    }
+    else 
+    {
+      LINFO( mlog, "writeMonarch: Error creating WriteTest\n" );
     }
 
 #if 0
-        LINFO( mlog, "Wrote header:\n" << *tHeader );
 
-        LINFO( mlog, "Writing data" );
-
-        // Stream 0
-        M4Stream* tSingleStream = tWriteTest->GetStream( tSingleStreamNum );
-        byte_type* tSSData = tSingleStream->GetStreamRecord()->GetData();
-        for( unsigned iSample = 0; iSample < tSSSamples; ++iSample )
-        {
-            tSSData[ iSample ] = 1;
-        }
-        if( ! tSingleStream->WriteRecord( true ) )
-        {
-            LERROR( mlog, "Unable to write the record!" );
-            return RETURN_ERROR;
-        }
-
-        for( unsigned iSample = 0; iSample < tSSSamples; ++iSample )
-        {
-            tSSData[ iSample ] = 10;
-        }
-        if( ! tSingleStream->WriteRecord( false ) )
-        {
-            LERROR( mlog, "Unable to write the record!" );
-            return RETURN_ERROR;
-        }
 
 
         // Stream 1
@@ -244,5 +256,6 @@ int main() {
         return RETURN_ERROR;
     }
 #endif
+    std::cout << "writeMonarch: End of test\n";
     return 0;
 }

@@ -92,6 +92,7 @@ namespace monarch4
             void WriteToFile( z5GroupHandle aGroup  );
             void ReadFromFile( z5GroupHandle aGroup, const std::string& aLabel ) const;
 
+
         private:
             // void WriteChannels( HAS_ATTR_IFC* aLoc );
             // void ReadChannels( const HAS_ATTR_IFC* aLoc ) const;
@@ -183,14 +184,15 @@ namespace monarch4
 
         public:
             /// Add a stream with one channel with aRecSize samples per record
-            /// Returns the stream number (used to address the stream later)
+            /// Returns the channel number assigned/used by this stream
             unsigned AddStream( const std::string& aSource,
                                 uint32_t anAcqRate, uint32_t aRecSize, uint32_t aSampleSize,
                                 uint32_t aDataTypeSize, uint32_t aDataFormat,
                                 uint32_t aBitDepth, uint32_t aBitAlignment,
                                 std::vector< unsigned >* aChanVec = NULL );
+
             /// Add a stream with multiple channels with aRecSize samples per record
-            /// Returns the stream number (used to address the stream later)
+            /// Returns vector of the channel numbers assigned/used by this stream
             unsigned AddStream( const std::string& aSource, uint32_t aNChannels, uint32_t aFormat,
                                 uint32_t anAcqRate, uint32_t aRecSize, uint32_t aSampleSize,
                                 uint32_t aDataTypeSize, uint32_t aDataFormat,
@@ -273,8 +275,8 @@ namespace monarch4
     inline void M4Header::WriteScalarToHDF5( HAS_ATTR_IFC* aLoc, const std::string& aName, const std::string& aValue )
     {
         LTRACE( mlog_mheader, "Writing string to new scalar metadata <" << aName << ">: " << aValue << "; size = " << aValue.size() );
-		// aName.c_str() and aValue.c_str() are used because while using the std::string itself, the value was getting mangled
-		H5::DataType tType = MH5Type< std::string >::H5( aValue );
+    // aName.c_str() and aValue.c_str() are used because while using the std::string itself, the value was getting mangled
+    H5::DataType tType = MH5Type< std::string >::H5( aValue );
         aLoc->createAttribute( aName.c_str(), tType, H5::DataSpace( H5S_SCALAR ) ).write( tType, aValue.c_str() );
         return;
     }
@@ -284,7 +286,7 @@ namespace monarch4
     {
         LTRACE( mlog_mheader, "Writing value to new scalar metadata <" << aName << ">: " << aValue );
         // aName.c_str() is used because while using the std::string itself, the value was getting mangled
-		aLoc->createAttribute( aName.c_str(), MH5Type< XType >::H5(), H5::DataSpace( H5S_SCALAR ) ).write( MH5Type< XType >::Native(), &aValue );
+    aLoc->createAttribute( aName.c_str(), MH5Type< XType >::H5(), H5::DataSpace( H5S_SCALAR ) ).write( MH5Type< XType >::Native(), &aValue );
         return;
     }
 #endif
@@ -318,12 +320,12 @@ namespace monarch4
     inline std::string M4Header::ReadScalarFromHDF5( const HAS_ATTR_IFC* aLoc, const std::string& aName )
     {
         //std::string tValue;
-		char tBuffer[ 65536 ]; // this array size matches the maximum standard attribute size according to the HDF5 documentation
+    char tBuffer[ 65536 ]; // this array size matches the maximum standard attribute size according to the HDF5 documentation
         H5::Attribute* tAttr = new H5::Attribute( aLoc->openAttribute( aName.c_str() ) );
         //tAttr->read( tAttr->getDataType(), tValue );
-		tAttr->read( tAttr->getDataType(), tBuffer );
+    tAttr->read( tAttr->getDataType(), tBuffer );
         delete tAttr;
-		std::string tValue( tBuffer );
+    std::string tValue( tBuffer );
         LTRACE( mlog_mheader, "Reading string <" << aName << ">: " << tValue << "; size = " << tValue.size() );
         return tValue;
     }

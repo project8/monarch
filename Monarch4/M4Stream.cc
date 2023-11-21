@@ -40,8 +40,8 @@ namespace monarch4
     /*************************************************************************
     * @brief Construct a new M4Stream::M4Stream object
     * 
-    * @param[in] aHeader Stream Header config
-    * @param[in out] aH5StreamsLoc 
+    * @param[in] aHeader M4StreamHeader representing the steram
+    * @param[in out] aStreamsLoc 
     * @param aAccessFormat 
     *************************************************************************/
     M4Stream::M4Stream( const M4StreamHeader& aHeader, HAS_GRP_IFC* aStreamsLoc, uint32_t aAccessFormat ) :
@@ -75,7 +75,6 @@ namespace monarch4
             fNRecordsInFile( 0 ),
             fFirstRecordInFile( 0 ),
             // fStreamParentLoc( new H5::Group( aStreamsLoc->openGroup( aHeader.GetLabel() ) ) ),
-// fStreamParentLoc(z5GroupHandle( f, aHeader.GetLabel() )),
             fAcqLoc( nullptr ),
             fCurrentAcqDataSet( nullptr ),
             fDataSpaceUser( NULL ),
@@ -84,10 +83,6 @@ namespace monarch4
 std::cout << "M4Stream::M4Stream() : "  << aHeader.GetLabel() << std::endl;
 
         LDEBUG( mlog, "Creating stream for <" << aHeader.GetLabel() << ">" );
-// Example code
-// z5FileHandle f( "readme2.zr", z5::FileMode::modes::a );
-// auto channelsHandle = z5GroupHandle( f, "channels" );
-// fStreamParentLoc = z5GroupHandle( f, aHeader.GetLabel() );
 
         if( aHeader.GetDataFormat() == sDigitizedUS )
         {
@@ -110,7 +105,7 @@ std::cout << "M4Stream::M4Stream() : "  << aHeader.GetLabel() << std::endl;
                     fDataTypeUser = z5::types::uint64;      //H5::PredType::NATIVE_UINT64;
                     break;
                 default:
-                    throw M4Exception() << "Unknown unsigned integer data type size: " << fDataTypeSize;
+                    throw M4Exception() << "M4Stream::M4Stream() Unknown unsigned integer data type size: " << fDataTypeSize;
             }
         }
         else if( aHeader.GetDataFormat() == sDigitizedS )
@@ -134,7 +129,7 @@ std::cout << "M4Stream::M4Stream() : "  << aHeader.GetLabel() << std::endl;
                     fDataTypeUser = z5::types::int64;       //H5::PredType::NATIVE_INT64;
                     break;
                 default:
-                    throw M4Exception() << "Unknown signed integer data type size: " << fDataTypeSize;
+                    throw M4Exception() << "M4Stream::M4Stream() Unknown signed integer data type size: " << fDataTypeSize;
             }
         }
         else // aHeader.GetDataFormat() == sAnalog
@@ -150,9 +145,16 @@ std::cout << "M4Stream::M4Stream() : "  << aHeader.GetLabel() << std::endl;
                     fDataTypeUser = z5::types::float64;     //H5::PredType::NATIVE_DOUBLE;
                     break;
                 default:
-                    throw M4Exception() << "Unknown floating-point data type size: " << fDataTypeSize;
+                    throw M4Exception() << "M4Stream::M4Stream() Unknown floating-point data type size: " << fDataTypeSize;
             }
         }
+///@todo initialize M4Stream::fStreamParentLoc
+// z5FileHandle f( "readme2.zr", z5::FileMode::modes::a );
+// auto channelsHandle = z5GroupHandle( f, "channels" );
+// fStreamParentLoc = z5GroupHandle( f, aHeader.GetLabel() );
+// nlohmann::json chGroupAttr;
+// z5::readAttributes( channelsHandle, chGroupAttr );
+
 #if 0
         // variables to store the HDF5 error printing state
         H5E_auto2_t tAutoPrintFunc;
@@ -182,8 +184,6 @@ std::cout << "M4Stream::M4Stream() : "  << aHeader.GetLabel() << std::endl;
                 H5::Attribute tAttrNRec( fStreamParentLoc->openAttribute( "n_records" ) );
                 tAttrNRec.read( tAttrNRec.getDataType(), &fNRecordsInFile );
 
-// nlohmann::json chGroupAttr;
-// z5::readAttributes( channelsHandle, chGroupAttr );
 
                 BuildIndex();
             // }
@@ -214,6 +214,14 @@ std::cout << "M4Stream::M4Stream() : "  << aHeader.GetLabel() << std::endl;
         //     }
         // }
 #endif
+        // open path: /streams/streamX/acquisitions
+        //  if path doesn't exist, must be write mode
+        // readAcquisitions()
+        //   n_acquisitions
+        //   n_records
+        // : n_acquisitions > 0 and n_records > 0
+        // -> already has data
+
         Initialize();
 std::cout << "M4Stream::M4Stream() : void "  << aHeader.GetLabel() << std::endl;
     }
