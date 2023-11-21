@@ -20,7 +20,7 @@ typedef z5::filesystem::handle::Group z5GroupHandle;
 using namespace std;
 using namespace monarch4;
 
-string tFilename = "readme3.zr";    // read/write Zarr with Monarch4 components
+string tFilename = "readme4.zr";    // read/write Zarr with Monarch4 components
 
 int main() {
 

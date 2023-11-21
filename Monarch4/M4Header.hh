@@ -200,8 +200,8 @@ namespace monarch4
                                 std::vector< unsigned >* aChanVec = NULL );
         public:
             // void ReadFromFile( const z5::filesystem::handle::File* aFile ) const;
-            void WriteToFile( z5FileHandle aFile );
-            void ReadFromFile( const z5FileHandle aFile ) const;
+            void WriteToFile( z5FileHandle* aFile );
+            void ReadFromFile( const z5FileHandle* aFile ) const;
 
             const z5GroupHandle* GetStreamsGroup() const;
             z5GroupHandle* GetStreamsGroup();
@@ -212,14 +212,15 @@ namespace monarch4
         private:
             // void WriteChannelStreams( HAS_ATTR_IFC* aLoc );
             // void ReadChannelStreams( const HAS_ATTR_IFC* aLoc ) const;
-            void WriteChannelStreams( z5FileHandle aFile );
-            void ReadChannelStreams( z5FileHandle aFile ) const;
+            void WriteChannelStreams( z5FileHandle* aFile );
+            void ReadChannelStreams( const z5FileHandle* aFile ) const;
 
             // void WriteChannelCoherence( HAS_ATTR_IFC* aLoc );
             // void ReadChannelCoherence( const HAS_ATTR_IFC* aLoc ) const;
-            void WriteChannelCoherence( z5FileHandle aFile  );
-            void ReadChannelCoherence( const z5FileHandle aFile ) const;
+            void WriteChannelCoherence( z5FileHandle* aFile  );
+            void ReadChannelCoherence( const z5FileHandle* aFile ) const;
 
+            mutable z5FileHandle* fFile;
             mutable z5GroupHandle* fStreamsGroup;
             mutable z5GroupHandle* fChannelsGroup;
 

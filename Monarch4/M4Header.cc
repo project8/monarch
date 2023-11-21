@@ -21,11 +21,7 @@
 
 #include <cstdlib> // for atol in parsing timestamp
 #include <cstring> // for strcpy
-
-// for parsing timestamp
-#include <sstream>
-//using std::stringstream;
-//using std::string;
+#include <sstream>  // for parsing timestamp
 
 namespace monarch4
 {
@@ -712,9 +708,9 @@ std::cout << "M4StreamHeader::ReadChannels(): void " << fLabel << std::endl;;
             fNStreams( 0 ),
             fChannelStreams(),
             fChannelCoherence(),
-            // fFile( nullptr ),
-            fStreamsGroup( nullptr ),
-            fChannelsGroup( nullptr )
+            fFile(nullptr),
+            fStreamsGroup( nullptr ),   
+            fChannelsGroup( nullptr )   
     {
 //std::cout << "M4Header::M4Header()\n";
     }
@@ -726,11 +722,11 @@ std::cout << "M4StreamHeader::ReadChannels(): void " << fLabel << std::endl;;
     M4Header::~M4Header()
     {
 //std::cout << "M4Header::~M4Header()\n";
-        if (fStreamsGroup != nullptr)
-            delete fStreamsGroup;
+//      if (fStreamsGroup != nullptr)   // z5/Zarr implemenation is no longer a pointer
+//          delete fStreamsGroup;
         
-        if (fChannelsGroup != nullptr)
-            delete fChannelsGroup;
+//      if (fChannelsGroup != nullptr)  // z5/Zarr implemenation is no longer a pointer
+//          delete fChannelsGroup;
     }
 
     /*************************************************************************
@@ -921,7 +917,7 @@ std::cout << "M4Header::AddStream() multi-channel EXIT\n";
     * @return none, throw M4Exception on failure
     *************************************************************************/
     // void M4Header::WriteToHDF5( H5::H5File* aFile )
-    void M4Header::WriteToFile( z5FileHandle aFile )
+    void M4Header::WriteToFile( z5FileHandle* aFile )
     {
 std::cout << "M4Header::WriteToFile()\n"; 
 #if 0 // old HDF5 code reference
@@ -965,6 +961,7 @@ std::cout << "M4Header::WriteToFile()\n";
         }
 #endif
         LDEBUG( mlog, "Writing run header" );
+        fFile = aFile;
 
         nlohmann::json jheaderAttr;
 
@@ -975,14 +972,14 @@ std::cout << "M4Header::WriteToFile()\n";
         jheaderAttr["run_duration"] = fRunDuration;
         jheaderAttr["timestamp"] = fTimestamp;
         jheaderAttr["description"] = fDescription;
-        z5::writeAttributes(aFile, jheaderAttr);
+        z5::writeAttributes(*aFile, jheaderAttr);
 
         WriteChannelStreams( aFile );
         WriteChannelCoherence( aFile );
 
         // Write all the stream headers to file
-        z5::createGroup(aFile, "streams");    // creates z5 Group in file
-        auto strmHeaderHandle = z5GroupHandle(aFile, "streams");
+        z5::createGroup(*aFile, "streams");    // creates z5 Group in file
+        auto strmHeaderHandle = z5GroupHandle(*aFile, "streams");
 ///@todo assign to fStreamsGroup?
 //      fStreamsGroup = strmHeaderHandle;
 
@@ -1001,8 +998,8 @@ std::cout << "M4Header::WriteToFile()\n";
         // Write all the channel headers
         LDEBUG( mlog, "Writing all channel headers" );
 
-        z5::createGroup( aFile, "channels" );   // creates z5 Group in file
-        z5GroupHandle channelsHandle = z5GroupHandle( aFile, "channels" );
+        z5::createGroup( *aFile, "channels" );   // creates z5 Group in file
+        z5GroupHandle channelsHandle = z5GroupHandle( *aFile, "channels" );
 ///@todo assign to fChannelsGroup?0
 //      fChannelsGroup = channelsHandle;
 
@@ -1026,57 +1023,27 @@ std::cout << "M4Header::WriteToFile(): void\n";
     * @param aFile path/filename
     * @return none, throw M4Exception on failure
     *************************************************************************/
-    void M4Header::ReadFromFile( z5FileHandle aFile ) const
+    void M4Header::ReadFromFile(const z5FileHandle* aFile ) const
     {
-std::cout << "M4Header::ReadFromFile()\n";        
-        // try
-        // {
-            // LDEBUG( mlog, "Reading run header" );
-            // fFile = const_cast< H5::H5File* >( aFile );
+std::cout << "M4Header::ReadFromFile()\n"; 
+       
+#if 0 // old HDF5 code reference
+        try
+        {
+            LDEBUG( mlog, "Reading run header" );
+            fFile = const_cast< H5::H5File* >( aFile );
+            EggVersion() = ReadScalarFromHDF5< string >( fFile, string("egg_version") );
+            Filename() = ReadScalarFromHDF5< string >( fFile, "filename" );
+            SetNChannels( ReadScalarFromHDF5< uint32_t >( fFile, "n_channels" ) );
+            SetNStreams( ReadScalarFromHDF5< uint32_t >( fFile, "n_streams" ) );
+            SetRunDuration( ReadScalarFromHDF5< uint32_t >( fFile, "run_duration" ) );
+            Timestamp() = ReadScalarFromHDF5< string >( fFile, "timestamp" );
+            Description() = ReadScalarFromHDF5< string >( fFile, "description" );
 
-            // // Read the File Atrributes
-            // EggVersion() = ReadScalarFromHDF5< string >( fFile, string("egg_version") );
-            // Filename() = ReadScalarFromHDF5< string >( fFile, "filename" );
-            // SetNChannels( ReadScalarFromHDF5< uint32_t >( fFile, "n_channels" ) );
-            // SetNStreams( ReadScalarFromHDF5< uint32_t >( fFile, "n_streams" ) );
-            // SetRunDuration( ReadScalarFromHDF5< uint32_t >( fFile, "run_duration" ) );
-            // Timestamp() = ReadScalarFromHDF5< string >( fFile, "timestamp" );
-            // Description() = ReadScalarFromHDF5< string >( fFile, "description" );
-
-            nlohmann::json headerAttr;
-            z5::readAttributes( aFile, headerAttr );
-
-            try
-            {
-                // Programmer's Note: using casts to ensure correct conversion function gets selected
-                // Programmer's Note: using .at() function to ensure proper exception operation
-                fEggVersion = (std::string)headerAttr.at("egg_version");
-                fFilename = (std::string)headerAttr.at("filename");
-                fNChannels = (uint32_t)headerAttr.at("n_channels");
-                fNStreams = (uint32_t)headerAttr.at("n_streams");
-                fRunDuration = (uint32_t)headerAttr.at("run_duration");
-                fTimestamp = (std::string)headerAttr.at("timestamp");
-                fDescription = (std::string)headerAttr.at("description");
-            }
-            catch (const nlohmann::json::exception& e)
-            { // JSON error
-                throw M4Exception() << "JSON error M4Header::ReadFromFile(): " << e.what();
-            }
-
-//std::cout << "fEggVersion: " << (std::string)fEggVersion << std::endl;
-//std::cout << "fFilename: " << (std::string)fFilename << std::endl;
-//std::cout << "fNChannels: " << (uint32_t)fNChannels << std::endl;
-//std::cout << "fNStreams: " << (uint32_t)fNStreams << std::endl;
-//std::cout << "fRunDuration: " << (uint32_t)fRunDuration << std::endl;
-//std::cout << "fTimestamp: " << (std::string)fTimestamp << std::endl;
-//std::cout << "fDescription: " << (std::string)fDescription << std::endl;
-
-            fChannelStreams.clear();
-            ReadChannelStreams( aFile );            // Read Stream Attributes
-            ReadChannelCoherence( aFile );
-
+            //fChannelStreams.clear();
             //Read1DFromHDF5< std::vector< uint32_t > >( fFile, "channel_streams", fChannelStreams );
-
+            ReadChannelStreams( aFile );
+            ReadChannelCoherence( aFile );
             /*
             for( unsigned i = 0; i < fNChannels; ++i )
             {
@@ -1089,91 +1056,122 @@ std::cout << "M4Header::ReadFromFile()\n";
             }
             */
 
-      // // Windows' HDF5 really doesn't like using std::strings
-      // const unsigned tBuffSize = 256;
-      // char tBuffer[ tBuffSize ];
+      // Windows' HDF5 really doesn't like using std::strings
+      const unsigned tBuffSize = 256;
+      char tBuffer[ tBuffSize ];
 
             LDEBUG( mlog, "Reading stream headers" );
             fStreamHeaders.clear();
-
-            // size_t nStreams = fStreamsGroup->getNumObjs();
-//          size_t nStreams = fStreamsGroup->size();
-//          if( nStreams != fNStreams )
-//          {
-//              throw M4Exception() << "Number of streams <" << fNStreams << "> disagrees with the number of objects in the stream group <" << nStreams << ">";
-//          }
-
-            // Create streams group correspoding to streams group
-            auto strmHeaderHandle = z5GroupHandle(aFile, "streams");
-///@todo save this into fStreamsGroup?
-            nlohmann::json jstreamAttr;
-            z5::readAttributes( strmHeaderHandle, jstreamAttr );
-
-            size_t nStreams = jstreamAttr.at("NStreams");
-std::cout << "nStreams: " << nStreams << std::endl;
-
-#if 0 // old HDF5 code reference
-            // Read each of the stream-header objects and store
-            for( size_t iStream = 0; iStream < nStreams; ++iStream )
+            fStreamsGroup = new H5::Group( fFile->openGroup( "streams" ) );
+            hsize_t nStreams = fStreamsGroup->getNumObjs();
+            if( nStreams != fNStreams )
+            {
+                throw M4Exception() << "Number of streams <" << fNStreams << "> disagrees with the number of objects in the stream group <" << nStreams << ">";
+            }
+            for( hsize_t iStream = 0; iStream < nStreams; ++iStream )
             {
                 //string tStreamLabel = fStreamsGroup->getObjnameByIdx( iStream );
                 unsigned tLabelSize = fStreamsGroup->getObjnameByIdx( iStream, tBuffer, tBuffSize );
-
                 std::string tStreamLabel( tBuffer, tLabelSize );
-                LDEBUG( mlog, "Attempting to read stream header #" << iStream << "; label <" << tStreamLabel << ">" );
-                
+        LDEBUG( mlog, "Attempting to read stream header #" << iStream << "; label <" << tStreamLabel << ">" );
                 fStreamHeaders.push_back( M4StreamHeader() );
-                
                 LDEBUG( mlog, "Testing if we can access the last header: " << fStreamHeaders.back().GetLabel() );
                 fStreamHeaders.back().ReadFromHDF5( fStreamsGroup, tStreamLabel );
-            }
-#endif
-
-            // Read each of the stream-header objects and store
-            for( size_t iStream = 0; iStream < nStreams; ++iStream )
-            {
-                // Stream label
-                std::string streamLabel = "streams/stream" + std::to_string(iStream);
-                std::cout << "label: " << streamLabel << std::endl;
-
-                // Create a new M4StreamHeader in the collection, at the back
-                fStreamHeaders.push_back( M4StreamHeader() );
-
-                // Populate the new header (within the collection) from the file
-                // Stream group at this label-path
-                auto strmHandle = z5GroupHandle( aFile, streamLabel );
-                fStreamHeaders.back().ReadFromFile( strmHandle, streamLabel );
             }
 
             LDEBUG( mlog, "Reading channel headers" );
             fChannelHeaders.clear();
-
-#if 0 // old HDF5 code reference
-            // Create new channel group
             fChannelsGroup = new H5::Group( fFile->openGroup( "channels" ) );
             hsize_t nChannels = fChannelsGroup->getNumObjs();
-            
-            // Read each of the stream-channel objects and store
             for( hsize_t iChan = 0; iChan < nChannels; ++iChan )
             {
                 //string tChannelLabel = fChannelsGroup->getObjnameByIdx( iChan );
                 unsigned tLabelSize = fChannelsGroup->getObjnameByIdx( iChan, tBuffer, tBuffSize );
                 std::string tChannelLabel( tBuffer, tLabelSize );
-                
                 fChannelHeaders.push_back( M4ChannelHeader() );
                 fChannelHeaders.back().ReadFromHDF5( fChannelsGroup, tChannelLabel );
             }
-
         }
         catch( H5::Exception& e )
         {
             //H5::Exception::printErrorStack();
             throw M4Exception() << "Unable to open header group or find header data\n";
         }
-#endif 
+#endif
+        LDEBUG( mlog, "Reading run header" );
+//      fFile = aFile;
+
+        // // Read the File Atrributes
+        nlohmann::json headerAttr;
+        z5::readAttributes( *aFile, headerAttr );
+
+        try
+        {
+            // Programmer's Note: using casts to ensure correct conversion function gets selected
+            // Programmer's Note: using .at() function to ensure proper exception operation
+            fEggVersion = (std::string)headerAttr.at("egg_version");
+            fFilename = (std::string)headerAttr.at("filename");
+            fNChannels = (uint32_t)headerAttr.at("n_channels");
+            fNStreams = (uint32_t)headerAttr.at("n_streams");
+            fRunDuration = (uint32_t)headerAttr.at("run_duration");
+            fTimestamp = (std::string)headerAttr.at("timestamp");
+            fDescription = (std::string)headerAttr.at("description");
+        }
+        catch (const nlohmann::json::exception& e)
+        { // JSON error
+            throw M4Exception() << "JSON error M4Header::ReadFromFile(): " << e.what();
+        }
+
+//std::cout << "fEggVersion: " << (std::string)fEggVersion << std::endl;
+//std::cout << "fFilename: " << (std::string)fFilename << std::endl;
+//std::cout << "fNChannels: " << (uint32_t)fNChannels << std::endl;
+//std::cout << "fNStreams: " << (uint32_t)fNStreams << std::endl;
+//std::cout << "fRunDuration: " << (uint32_t)fRunDuration << std::endl;
+//std::cout << "fTimestamp: " << (std::string)fTimestamp << std::endl;
+//std::cout << "fDescription: " << (std::string)fDescription << std::endl;
+
+        fChannelStreams.clear();
+        ReadChannelStreams( aFile );            // Read Stream Attributes
+        ReadChannelCoherence( aFile );
+
+        // // Windows' HDF5 really doesn't like using std::strings
+        // const unsigned tBuffSize = 256;
+        // char tBuffer[ tBuffSize ];
+
+        // Create streams group correspoding to streams group
+        auto strmHeaderHandle = z5GroupHandle(*aFile, "streams");
+///@todo save this into fStreamsGroup?
+
+        // See how many streams are used
+        nlohmann::json jstreamAttr;
+        z5::readAttributes( strmHeaderHandle, jstreamAttr );
+
+        size_t nStreams = jstreamAttr.at("NStreams");
+//std::cout << "nStreams: " << nStreams << std::endl;
+
+        LDEBUG( mlog, "Reading stream headers" );
+        fStreamHeaders.clear();
+
+        // Read each of the stream-header objects and store
+        for( size_t iStream = 0; iStream < nStreams; ++iStream )
+        {
+            // Construct the stream label
+            std::string streamLabel = "streams/stream" + std::to_string(iStream);
+std::cout << "\tlabel: " << streamLabel << std::endl;
+
+            // Create a new M4StreamHeader in the collection, at the back
+            fStreamHeaders.push_back( M4StreamHeader() );
+
+            // Populate the new header (within the collection) from the file
+            // Stream group at this label-path
+            auto strmHandle = z5GroupHandle( *aFile, streamLabel );
+            fStreamHeaders.back().ReadFromFile( strmHandle, streamLabel );
+        }
+
         // Create channels group correspoding to file group
-        auto chanHeaderHandle = z5GroupHandle(aFile, "channels");
-///@todo save this into fChannelsGroup?
+        auto chanHeaderHandle = z5GroupHandle( *aFile, "channels");
+///@todo save this into fChannelsGroup? 
+
         nlohmann::json jchanAttr;
         z5::readAttributes( chanHeaderHandle, jchanAttr );
 
@@ -1181,22 +1179,25 @@ std::cout << "nStreams: " << nStreams << std::endl;
         size_t nChannels = jchanAttr.at("NChannels");
         std::cout << "nChannels: " << nChannels << std::endl;
 
+        LDEBUG( mlog, "Reading channel headers" );
+        fChannelHeaders.clear();
+
         // Read each of the channel-header objects and store
         for( size_t iChan = 0; iChan < nChannels; ++iChan )
         {
             // Channel label
             std::string chanLabel = "channels/channel" + std::to_string(iChan);
-            std::cout << "label: " << chanLabel << std::endl;
+std::cout << "\tlabel: " << chanLabel << std::endl;
 
             // Create a new M4ChannelHeader in the collection, at the back
             fChannelHeaders.push_back( M4ChannelHeader() );
 
             // Populate the new header (within the collection) from the file
             // Channel group at this label-path
-            auto chanHandle = z5GroupHandle( aFile, chanLabel );
+            auto chanHandle = z5GroupHandle( *aFile, chanLabel );
             fChannelHeaders.back().ReadFromFile( chanHandle, chanLabel );
         }
-std::cout << "M4Header::ReadFromFile(): void\n";        
+std::cout << "M4Header::ReadFromFile(): void\n";
     }
 
     /*************************************************************************
@@ -1205,7 +1206,7 @@ std::cout << "M4Header::ReadFromFile(): void\n";
     * @param aFile File handle
     * @return none, no exceptions thrown 
     *************************************************************************/
-    void M4Header::WriteChannelStreams( z5FileHandle aFile)
+    void M4Header::WriteChannelStreams( z5FileHandle* aFile)
     {
 //std::cout << "M4Header::WriteChannelStreams()\n";
 #if 0 // old HDF5 code reference
@@ -1248,7 +1249,7 @@ std::cout << "M4Header::ReadFromFile(): void\n";
         const std::string dsName = "channel_streams";
         std::vector<size_t> shape = { 1,fNChannels };       // <row>,<col>
         std::vector<size_t> chunks = { 1,fNChannels };      // <row>,<col>
-        auto ds = z5::createDataset( aFile, dsName, "uint32", shape, chunks );
+        auto ds = z5::createDataset( *aFile, dsName, "uint32", shape, chunks );
         
         z5::types::ShapeType writeOffset = { 0,0 };
         z5::multiarray::writeSubarray<uint32_t>(ds, tCSBuffer, writeOffset.begin());
@@ -1262,7 +1263,7 @@ std::cout << "M4Header::ReadFromFile(): void\n";
     * @param aLoc Stream location attribute
     * @return none, no exceptions thrown 
     *************************************************************************/
-    void M4Header::ReadChannelStreams( const z5FileHandle aFile ) const
+    void M4Header::ReadChannelStreams( const z5FileHandle* aFile ) const
     {
 //std::cout << "M4Header::ReadChannelStreams(): " << fNChannels << " channels\n";
  #if 0 // old HDF5 code reference
@@ -1302,8 +1303,8 @@ std::cout << "M4Header::ReadFromFile(): void\n";
 #endif    
 
         // Open the "channel_streams" dataset from file
-        const auto dsHandle = z5DatasetHandle(aFile, "channel_streams");
-        auto ds = z5::openDataset(aFile, "channel_streams");
+        const auto dsHandle = z5DatasetHandle(*aFile, "channel_streams");
+        auto ds = z5::openDataset(*aFile, "channel_streams");
 
         // Programmer's Note: M4Header::ReadFromFile() initializes fNChannels from M4Header metadata
         xt::xarray<uint32_t>::shape_type tCSShape = { 1,fNChannels };   // <row>,<col>
@@ -1329,9 +1330,9 @@ std::cout << "M4Header::ReadFromFile(): void\n";
     * 
     * @param aLoc 
     *************************************************************************/
-    void M4Header::WriteChannelCoherence( z5FileHandle aFile )
+    void M4Header::WriteChannelCoherence( z5FileHandle* aFile )
     {
-std::cout << "M4Header::WriteChannelCoherence()\n";  
+//std::cout << "M4Header::WriteChannelCoherence()\n";
 #if 0 // old HDF5 code reference
         const unsigned tNDims = 2;
         hsize_t tDims[ tNDims ] = { fNChannels, fNChannels };
@@ -1377,12 +1378,12 @@ std::cout << "M4Header::WriteChannelCoherence()\n";
         const std::string dsName = "channel_coherence";
         std::vector<size_t> shape = { 1,fNChannels * fNChannels };      // <row>,<col>
         std::vector<size_t> chunks = { 1,fNChannels * fNChannels };     // <row>,<col>
-        auto ds = z5::createDataset( aFile, dsName, "uint8", shape, chunks );
+        auto ds = z5::createDataset( *aFile, dsName, "uint8", shape, chunks );
         
         z5::types::ShapeType writeOffset = { 0,0 };
         z5::multiarray::writeSubarray<uint8_t>(ds, tCCBuffer, writeOffset.begin());
 
-std::cout << "M4Header::WriteChannelCoherence(): void\n";        
+//std::cout << "M4Header::WriteChannelCoherence(): void\n";
     }
 
     /*************************************************************************
@@ -1390,9 +1391,9 @@ std::cout << "M4Header::WriteChannelCoherence(): void\n";
     * 
     * @param aLoc  
     *************************************************************************/
-    void M4Header::ReadChannelCoherence( const z5FileHandle aFile ) const
+    void M4Header::ReadChannelCoherence( const z5FileHandle* aFile ) const
     {
-std::cout << "M4Header::ReadChannelCoherence()\n";
+//std::cout << "M4Header::ReadChannelCoherence()\n";
 #if 0 // old HDF5 code reference
         const unsigned tNDims = 2;
         hsize_t tDims[ tNDims ];
@@ -1433,8 +1434,8 @@ std::cout << "M4Header::ReadChannelCoherence()\n";
         delete [] tCCBuffer;        // release temporary buffer
 #endif
         // Open the "channel_coherence" dataset from file
-        const auto dsHandle = z5DatasetHandle(aFile, "channel_coherence");
-        auto ds = z5::openDataset(aFile, "channel_coherence");
+        const auto dsHandle = z5DatasetHandle(*aFile, "channel_coherence");
+        auto ds = z5::openDataset(*aFile, "channel_coherence");
 
         // create a new Dataset for the data of this stream
         xt::xarray<uint8_t>::shape_type tCCShape = { 1,fNChannels * fNChannels };   // <row>,<col>
@@ -1456,7 +1457,7 @@ std::cout << "M4Header::ReadChannelCoherence()\n";
             }
         }
 
-std::cout << "M4Header::ReadChannelCoherence(): void\n";
+//std::cout << "M4Header::ReadChannelCoherence(): void\n";
     }
 }
 

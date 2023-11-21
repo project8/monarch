@@ -81,6 +81,7 @@ std::cout << "Monarch4::OpenForReading()\n";
 
         try
         {
+            // Create a new z5/Zarr File
             // tMonarch4->fFile = std::make_unique< z5::filesystem::handle::File >( aFilename, z5::FileMode::r );
             tMonarch4->fFile = new z5FileHandle( aFilename, z5::FileMode::r );
         }
@@ -126,6 +127,7 @@ std::cout << "Monarch4::OpenForWriting()\n";
 
         try
         {
+            // Create a new z5/Zarr File
             tMonarch4->fFile = new z5FileHandle( aFilename, z5::FileMode::w );
             z5::createFile( *tMonarch4->fFile, true );
         }
@@ -169,7 +171,7 @@ std::cout << "Monarch4::ReadHeader()\n";
         }
 
         // Read the header information from the file (run header, plus all stream and channel headers)
-        fHeader->ReadFromFile( *fFile );
+        fHeader->ReadFromFile( fFile );
 #if 0
         z5::filesystem::handle::Group* tStreamsGroup = fHeader->GetStreamsGroup();
 
@@ -218,7 +220,7 @@ std::cout << "Monarch4::WriteHeader()\n";
         //      channel_streams
         //      streams/stream0..streamN-1
 ///@todo Handle nulptr fHeader
-        fHeader->WriteToFile( *fFile );
+        fHeader->WriteToFile( fFile );
         
         // z5::filesystem::handle::Group* tStreamsGroup = fHeader->GetStreamsGroup();
 

@@ -64,7 +64,7 @@ int main() {
 
         tWriteTest->WriteHeader();
 
-        // Programmer's Note: *tHeader into ostream generates dump of header info
+        // Programmer's Note: *tHeader into mlog (ostream) dumps header info to terminal!
 //      LINFO( mlog, "Wrote header:\n" << *tHeader );
         LINFO( mlog, "Writing data" );
 //
