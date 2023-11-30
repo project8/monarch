@@ -143,7 +143,6 @@ namespace monarch4
             void ReadFromFile( const z5GroupHandle aGroup , const std::string& aLabel ) const;
     };
 
-
     /*!
      @class M4Header
      @author N. S. Oblath

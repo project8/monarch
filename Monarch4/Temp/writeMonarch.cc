@@ -67,14 +67,16 @@ int main() {
         // Programmer's Note: *tHeader into mlog (ostream) dumps header info to terminal!
 //      LINFO( mlog, "Wrote header:\n" << *tHeader );
         LINFO( mlog, "Writing data" );
-//
-//      // Stream 0
-//      M4Stream* tSingleStream = tWriteTest->GetStream( tSingleStreamNum );
-//      byte_type* tSSData = tSingleStream->GetStreamRecord()->GetData();
-//      if (tSingleStream != nullptr && tSSData != nullptr)
-//      {
-//        std::cout << "stream and data pointers okay\n";
-//      }
+
+        // Stream 0
+//        M4Stream* tSingleStream = tWriteTest->GetStream( tSingleStreamNum );
+//std::cout << "tSingleStream: " << tSingleStream << std::endl;
+//        byte_type* tSSData = tSingleStream->GetStreamRecord()->GetData();
+//std::cout << "tSSData: " << tSSData << std::endl;
+//        if (tSingleStream != nullptr && tSSData != nullptr)
+//        {
+//          std::cout << "stream and data pointers okay\n";
+//        }
 //      for( unsigned iSample = 0; iSample < tSSSamples; ++iSample )
 //      {
 //          tSSData[ iSample ] = 1;

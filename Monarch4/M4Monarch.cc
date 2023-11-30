@@ -223,10 +223,12 @@ std::cout << "Monarch4::WriteHeader()\n";
         fHeader->WriteToFile( fFile );
         
         // z5::filesystem::handle::Group* tStreamsGroup = fHeader->GetStreamsGroup();
+        z5GroupHandle* tStreamsGroup = fHeader->GetStreamsGroup();
 
         try
         {
-#if 0
+//#if 0
+std::cout << "Create the stream objects based on the configuration from the header\n";
             // Create the stream objects based on the configuration from the header
             for( M4Header::M4StreamHeaders::const_iterator streamIt = fHeader->StreamHeaders().begin();
                     streamIt != fHeader->StreamHeaders().end();
@@ -235,7 +237,8 @@ std::cout << "Monarch4::WriteHeader()\n";
                 fStreams.push_back( new M4Stream( *streamIt, tStreamsGroup ) );
                 fStreams.back()->SetMutex( fMutexPtr );
             }
-#endif
+std::cout << "streams created okay\n";
+//#endif
         }
         // catch( H5::Exception& e )
         // {
