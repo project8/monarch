@@ -11,22 +11,10 @@
 #include "M4Header.hh"
 #include "M4MemberVariable.hh"
 #include "M4Record.hh"
-// #include "M4Types.hh"
-#include "z5/types/types.hxx"         // z5 data types
-//#include "z5/factory.hxx"   // factory functions to create files, groups and datasets
-//#include "z5/filesystem/handle.hxx"     // handles for z5 filesystem objects
-//#include "z5/multiarray/xtensor_access.hxx"     // io for xtensor multi-arrays
-//#include "z5/attributes.hxx"        // attribute functionality
-
-// Shorter typedefs for z5 types
-typedef z5::filesystem::handle::File z5FileHandle;
-typedef z5::filesystem::handle::Dataset z5DatasetHandle;
-typedef z5::filesystem::handle::Group z5GroupHandle;
-typedef z5::filesystem::handle::File::GroupType z5GroupType;
-typedef z5::types::ShapeType z5ShapeType;
-typedef z5::types::Datatype z5Datatype;
 
 // #include "H5Cpp.h"
+#include "z5includes.hh"
+
 
 namespace monarch4
 {
@@ -177,7 +165,7 @@ namespace monarch4
             mutable unsigned fChanRecSize;
             mutable uint64_t fChanRecLength; // ns
 
-            mutable M4Record fStreamRecord;
+            mutable M4Record fStreamRecord;     // Contains the information that makes up a record.
 
             mutable unsigned fNChannels;
             mutable M4Record* fChannelRecords;
@@ -187,15 +175,17 @@ namespace monarch4
 
             mutable unsigned fRecordCountInAcq;
             mutable unsigned fNRecordsInAcq;
-            mutable TimeType fAcqFirstRecTime; // used when reading with the stream record
-            mutable RecordIdType fAcqFirstRecId; // used when reading with the stream record
-            mutable TimeType* fAcqFirstRecTimes; // used when reading with the channel records
-            mutable RecordIdType* fAcqFirstRecIds; // used when reading with the channel records
+            mutable TimeType fAcqFirstRecTime;      // used when reading with the stream record
+            mutable RecordIdType fAcqFirstRecId;    // used when reading with the stream record
+            mutable TimeType* fAcqFirstRecTimes;    // used when reading with the channel records
+            mutable RecordIdType* fAcqFirstRecIds;  // used when reading with the channel records
 
             mutable bool fDataInterleaved;
             mutable uint32_t fAccessFormat;
 
-            mutable std::vector< std::pair< unsigned, unsigned > > fRecordIndex;  // has an entry for every record: (acquisition ID, record ID)
+            // has an entry for every record: (acquisition ID, record ID)
+            mutable std::vector< std::pair< unsigned, unsigned > > fRecordIndex;  
+
             mutable unsigned fRecordCountInFile;
             mutable unsigned fNRecordsInFile;
             mutable unsigned fFirstRecordInFile;
@@ -209,7 +199,7 @@ namespace monarch4
             mutable char fAcqNameBuffer[ 10 ];
 
             mutable z5GroupHandle* fStreamParentLoc;
-            mutable z5GroupHandle* fAcqLoc;
+            mutable z5GroupHandle* fAcqLoc;     // <root>/"streams"/"streamsN"/"acquisitions"
             mutable z5DatasetHandle* fCurrentAcqDataSet;
 
             // mutable H5::DataSpace* fH5DataSpaceUser;
@@ -239,6 +229,10 @@ namespace monarch4
         return;
     }
 
+    /*************************************************************************//**
+    * @brief Contains the information that makes up a record.
+    * @return M4Record*
+    ******************************************************************************/
     inline M4Record* M4Stream::GetStreamRecord()
     {
         return &fStreamRecord;

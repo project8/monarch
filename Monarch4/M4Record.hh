@@ -12,6 +12,8 @@
 #include "M4MemberVariable.hh"
 #include "M4Types.hh"
 
+#include "z5includes.hh"
+
 namespace monarch4
 {
     /*!

@@ -99,7 +99,7 @@ namespace monarch4
             fNAcquisitions( 0 ),
             fNRecords( 0 )
     {
-//std::cout << "M4StreamHeader::M4StreamHeader() for " << aNChannels << " channels: stream " << aNumber << std::endl;
+std::cout << "M4StreamHeader::M4StreamHeader() for " << aNChannels << " channels: stream " << aNumber << std::endl;
         SetNumber( aNumber );       // set stream number
 
         for( unsigned iChannel = 0; iChannel < fNChannels; ++iChannel )
@@ -131,7 +131,7 @@ namespace monarch4
             fNAcquisitions( orig.fNAcquisitions ),
             fNRecords( orig.fNRecords )
     {
-//std::cout << "M4StreamHeader::M4StreamHeader() from template for single-channel: stream " << orig.fNumber << std::endl;
+std::cout << "M4StreamHeader::M4StreamHeader() from template for single-channel: stream " << orig.fNumber << std::endl;
         SetNumber( orig.fNumber );      // set stream number
     }
 
@@ -166,12 +166,12 @@ namespace monarch4
     /*************************************************************************
     * @brief Write the stream/channel metadata configuration
     * 
-    * @param aGroup 
+    * @param [in] aGroup  <root>/"streams"
     *************************************************************************/
     // void M4StreamHeader::WriteToHDF5( z5GroupHandle* aParent )
     void M4StreamHeader::WriteToFile( z5GroupHandle aGroup )
     {
-//std::cout << "M4StreamHeader::WriteToFile(): " << fLabel << std::endl;
+std::cout << "M4StreamHeader::WriteToFile(): " << fLabel << std::endl;
 
         LDEBUG( mlog, "Writing stream header <" << fLabel << ">" );
 #if 0 // old HDF5 code reference
@@ -193,7 +193,7 @@ namespace monarch4
 #endif
 
         z5::createGroup( aGroup, fLabel );
-        z5GroupHandle grpHandle = z5GroupHandle( aGroup, fLabel );
+        z5GroupHandle grpHandle = z5GroupHandle( aGroup, fLabel );  // <root>/"streams"/"streamsN"
         nlohmann::json streamAttr;
 
 //std::cout << "  number: " << fNumber << std::endl;
@@ -225,14 +225,14 @@ namespace monarch4
         streamAttr["n_records"] = fNRecords;
         z5::writeAttributes(grpHandle, streamAttr);
 
-//std::cout << "M4StreamHeader::WriteToFile(): void " << fLabel << std::endl;
+std::cout << "M4StreamHeader::WriteToFile(): void " << fLabel << std::endl;
     }
 
     /*************************************************************************
     * @brief 
     * 
-    * @param[in] aParent 
-    * @param[in] aLabel 
+    * @param [in] aGroup  <root>/"streams"
+    * @param [in] aLabel 
     *************************************************************************/
     // void M4StreamHeader::ReadFromHDF5( const z5GroupHandle* aParent, const std::string& aLabel ) const
     void M4StreamHeader::ReadFromFile( const z5GroupHandle aGroup, const std::string& aLabel ) const
@@ -306,8 +306,7 @@ namespace monarch4
     /*************************************************************************
     * @brief Write data channels
     * 
-    * @param aLoc 
-    * @return none
+    * @param [in] aGroup <root>/"channels"
     *************************************************************************/
     // void M4StreamHeader::WriteChannels( HAS_ATTR_IFC* aLoc )
     void M4StreamHeader::WriteChannels( z5GroupHandle aGroup )
@@ -361,8 +360,7 @@ std::cout << "M4StreamHeader::WriteChannels() void " << fLabel << std::endl;
     /*************************************************************************
     * @brief Read data channels
     * 
-    * @param aLoc 
-    * @return none
+    * @param [in] aGroup <root>/"channels"
     *************************************************************************/
     void M4StreamHeader::ReadChannels( const z5GroupHandle aGroup ) const
     {
@@ -530,7 +528,9 @@ std::cout << "M4StreamHeader::ReadChannels(): void " << fLabel << std::endl;;
     {
 //std::cout << "M4ChannelHeader::~M4ChannelHeader() DTOR: chan " << fNumber << std::endl;
         if (fLabel != nullptr)
+        {
             delete [] fLabel;
+        }
     }
 
     /*************************************************************************
@@ -540,10 +540,14 @@ std::cout << "M4StreamHeader::ReadChannels(): void " << fLabel << std::endl;;
     *************************************************************************/
     void M4ChannelHeader::SetNumber( uint32_t aNumber ) const
     {
+///@todo fLabel as std::string 
+ 
         fNumber = aNumber;
-//TODO: fLabel as std::string
         static const size_t prefixSize = 7; // # of characters in "channel"
-        delete [] fLabel;
+        if(fLabel != nullptr)
+        {
+            delete[] fLabel;
+        }
         fLabel = new char[ prefixSize + 10 ]; // 10 = max digits in 32-bit integer
         strcpy( fLabel, "channel" );
         u32toa( aNumber, fLabel + prefixSize );
@@ -552,7 +556,7 @@ std::cout << "M4StreamHeader::ReadChannels(): void " << fLabel << std::endl;;
     /*************************************************************************
     * @brief Write the channel header attributes to file
     * 
-    * @param aParent 
+    * @param [in] aGroup <root>/"channels" group
     *************************************************************************/
     // void M4ChannelHeader::WriteToHDF5( HAS_GRP_IFC* aParent )
     void M4ChannelHeader::WriteToFile( z5GroupHandle aGroup )
@@ -622,13 +626,14 @@ std::cout << "M4StreamHeader::ReadChannels(): void " << fLabel << std::endl;;
     /*************************************************************************
     * @brief Read channel header attributes from file
     * 
-    * @param aParent 
-    * @param aLabel 
+    * @param [in] aGroup <root>/"channels" group
+    * @param [in] aLabel 
     *************************************************************************/
     void M4ChannelHeader::ReadFromFile( const z5GroupHandle aGroup, const std::string& aLabel ) const
     {
 //std::cout << "M4ChannelHeader::ReadFromFile(): " << aLabel << std::endl;
-
+///@todo ?? don't need aLabel parameter anymore ?? 
+/// 
         LDEBUG( mlog, "Reading channel header <" << aLabel << ">" );
 #if 0 // old HDF5 code reference
         H5::Group tThisChannelGroup = aParent->openGroup( aLabel.c_str() );
@@ -665,7 +670,6 @@ std::cout << "M4StreamHeader::ReadChannels(): void " << fLabel << std::endl;;
 //std::cout << "  dac_gain: " << chanAttr.at("dac_gain") << std::endl;
 //std::cout << "  frequency_min: " << chanAttr.at("frequency_min") << std::endl;
 //std::cout << "  frequency_range: " << chanAttr.at("frequency_range") << std::endl;
-
 
         try
         {
@@ -712,7 +716,7 @@ std::cout << "M4StreamHeader::ReadChannels(): void " << fLabel << std::endl;;
             fStreamsGroup( nullptr ),   
             fChannelsGroup( nullptr )   
     {
-//std::cout << "M4Header::M4Header()\n";
+std::cout << "M4Header::M4Header()\n";
     }
 
     /*************************************************************************
@@ -721,12 +725,16 @@ std::cout << "M4StreamHeader::ReadChannels(): void " << fLabel << std::endl;;
     *************************************************************************/
     M4Header::~M4Header()
     {
-//std::cout << "M4Header::~M4Header()\n";
-        if (fStreamsGroup != nullptr)   
+std::cout << "M4Header::~M4Header()\n";
+        if (fStreamsGroup != nullptr)  
+        {
             delete fStreamsGroup;
+        }
         
         if (fChannelsGroup != nullptr)  
+        {
             delete fChannelsGroup;
+        }
     }
 
     /*************************************************************************
@@ -769,7 +777,7 @@ std::cout << "M4StreamHeader::ReadChannels(): void " << fLabel << std::endl;;
     /*************************************************************************
     * @brief Add a new single-channel stream 
     * 
-    * @param aSource Device used to produce the stream
+    * @param [in] aSource Device used to produce the stream
     * @param anAcqRate Acquisition rate in MHz
     * @param aRecSize Number of samples in each channel record 
     *                 (stream record size = # channels * record size)
@@ -783,7 +791,7 @@ std::cout << "M4StreamHeader::ReadChannels(): void " << fLabel << std::endl;;
     *                      or right-aligned within the sample data word
     *                      0: left-aligned
     *                      1: right-aligned
-    * @param[out] aChanVec Vector returned with the channel numbers of this stream
+    * @param [out] aChanVec Vector returned with the channel numbers of this stream
     * 
     * @return uint32_t Returns the stream number (used to address the stream later)
     *************************************************************************/
@@ -799,7 +807,7 @@ std::cout << "M4Header::AddStream() single-channel: " << aSource << std::endl;
         
         if( aChanVec != nullptr ) 
         { 
-            aChanVec->push_back( fNChannels );      // this channel number for this stream
+            aChanVec->push_back( fNChannels );      // this channel number allocated for this stream
         }
 
         fChannelStreams.push_back( fNStreams );     // adding another stream to M4Header
@@ -830,7 +838,7 @@ std::cout << "M4Header::AddStream() single-channel: EXIT\n";
     /*************************************************************************
     * @brief Add a new multi-channel stream 
     * 
-    * @param aSource Device used to produce the stream
+    * @param [in] aSource Device used to produce the stream
     * @param aNChannels How many channels to add
     * @param aFormat 
     * @param anAcqRate Acquisition rate in MHz
@@ -846,7 +854,7 @@ std::cout << "M4Header::AddStream() single-channel: EXIT\n";
     *                      or right-aligned within the sample data word
     *                      0: left-aligned
     *                      1: right-aligned
-    * @param[out] aChanVec Vector returned with the channel numbers used in this stream
+    * @param [out] aChanVec Vector returned with the channel numbers used in this stream
     * 
     * @return uint32_t Returns the stream number (used to address the stream later)
     *************************************************************************/
@@ -878,17 +886,17 @@ std::cout << "M4Header::AddStream() multi-channel: " << aSource << std::endl;
             fChannelHeaders.push_back( M4ChannelHeader( aSource, fNChannels, anAcqRate, aRecSize, 
                 aSampleSize, aDataTypeSize, aDataFormat, aBitDepth, aBitAlignment ) );
 
-            ++fNChannels;   // next channel number used
+            ++fNChannels;   // next channel number
             
-//std::cout << "resizing coherence to " << fNChannels << " channels" << std::endl;
-            fChannelCoherence.resize( fNChannels ); // resize number of columns
-            for( unsigned i = 0; i < fNChannels; ++i ) // resize all rows
+            fChannelCoherence.resize( fNChannels );         // resize number of columns
+            for( unsigned i = 0; i < fNChannels; ++i )      // resize all rows
             {
                 fChannelCoherence[ i ].resize( fNChannels, false );
             }
             
             // Setup channel coherence mapping
-            fChannelCoherence.back().back() = true; // each channel is coherent with itself
+            fChannelCoherence.back().back() = true;     // each channel is coherent with itself
+
             if( fNChannels > 0 ) 
             { // this condition is necessary because if it's not the case, fNChannels-1 will 
               // be some huge number, since we're dealing with unsigned ints, so the for-loop 
@@ -978,43 +986,35 @@ std::cout << "M4Header::WriteToFile()\n";
         WriteChannelCoherence( aFile );
 
         // Write all the stream headers to file
-        z5::createGroup(*aFile, "streams");    // creates z5 Group in file
-//      auto strmHeaderHandle = z5GroupHandle(*aFile, "streams");
-        fStreamsGroup = new z5GroupHandle(*aFile, "streams");
-///@todo assign to fStreamsGroup?
+        z5::createGroup(*aFile, "streams");    
+        fStreamsGroup = new z5GroupHandle(*aFile, "streams");   // <root>/"streams" group
 
         // create attr: NStreams to record how many streams were in run
         nlohmann::json jstreamAttr;
         jstreamAttr["NStreams"] = fNStreams;
-//      z5::writeAttributes(strmHeaderHandle, jstreamAttr);
         z5::writeAttributes(*fStreamsGroup, jstreamAttr);
 
         LDEBUG( mlog, "Writing all stream headers" );
         for( uint32_t iStream = 0; iStream < fNStreams; ++iStream )
         {
-            // fStreamHeaders[ iStream ].WriteToHDF5( fStreamsGroup );
-//          fStreamHeaders[ iStream ].WriteToFile( strmHeaderHandle );
             fStreamHeaders[ iStream ].WriteToFile( *fStreamsGroup );
         }
 
         // Write all the channel headers
         LDEBUG( mlog, "Writing all channel headers" );
 
-        z5::createGroup( *aFile, "channels" );   // creates z5 Group in file
-//      z5GroupHandle channelsHandle = z5GroupHandle( *aFile, "channels" );
-        fChannelsGroup = new z5GroupHandle( *aFile, "channels" );
-///@todo assign to fChannelsGroup?0
+        z5::createGroup( *aFile, "channels" );   
+        fChannelsGroup = new z5GroupHandle( *aFile, "channels" );   // <root>/"channels" group
 
         // create attr: NChannels to record how many channels were in run
         nlohmann::json jchanAttr;
 
         jchanAttr["NChannels"] = fNChannels;
-//      z5::writeAttributes(channelsHandle, jchanAttr);
         z5::writeAttributes(*fChannelsGroup, jchanAttr);
 
         for( uint32_t iChan = 0; iChan < fNChannels; ++iChan )
         {
-//          fChannelHeaders[ iChan ].WriteToFile( channelsHandle );
+            // Write each of the channel headers
             fChannelHeaders[ iChan ].WriteToFile( *fChannelsGroup );
         }
 
@@ -1120,11 +1120,6 @@ std::cout << "M4Header::ReadFromFile()\n";
             fRunDuration = (uint32_t)headerAttr.at("run_duration");
             fTimestamp = (std::string)headerAttr.at("timestamp");
             fDescription = (std::string)headerAttr.at("description");
-        }
-        catch (const nlohmann::json::exception& e)
-        { // JSON error
-            throw M4Exception() << "JSON error M4Header::ReadFromFile(): " << e.what();
-        }
 
 //std::cout << "fEggVersion: " << (std::string)fEggVersion << std::endl;
 //std::cout << "fFilename: " << (std::string)fFilename << std::endl;
@@ -1134,76 +1129,75 @@ std::cout << "M4Header::ReadFromFile()\n";
 //std::cout << "fTimestamp: " << (std::string)fTimestamp << std::endl;
 //std::cout << "fDescription: " << (std::string)fDescription << std::endl;
 
-        fChannelStreams.clear();
-        ReadChannelStreams( aFile );            // Read Stream Attributes
-        ReadChannelCoherence( aFile );
+            fChannelStreams.clear();
+            ReadChannelStreams( aFile );            // Read Stream Attributes
+            ReadChannelCoherence( aFile );
 
-        // // Windows' HDF5 really doesn't like using std::strings
-        // const unsigned tBuffSize = 256;
-        // char tBuffer[ tBuffSize ];
+///@todo adapt for Windows
+            // // Windows' HDF5 really doesn't like using std::strings
+            // const unsigned tBuffSize = 256;
+            // char tBuffer[ tBuffSize ];
 
-        // Create streams group correspoding to streams group
-//      auto strmHeaderHandle = z5GroupHandle(*aFile, "streams");
-        fStreamsGroup = new z5GroupHandle(*aFile, "streams");
-///@todo save this into fStreamsGroup?
+            // Create streams group correspoding to streams group
+            fStreamsGroup = new z5GroupHandle(*aFile, "streams");   // <root>/"streams" group
 
-        // See how many streams are used
-        nlohmann::json jstreamAttr;
-//      z5::readAttributes( strmHeaderHandle, jstreamAttr );
-        z5::readAttributes( *fStreamsGroup, jstreamAttr );
+            // See how many streams are used
+            nlohmann::json jstreamAttr;
+            z5::readAttributes( *fStreamsGroup, jstreamAttr );
 
-        size_t nStreams = jstreamAttr.at("NStreams");
-//std::cout << "nStreams: " << nStreams << std::endl;
+            size_t nStreams = jstreamAttr.at("NStreams");
 
-        LDEBUG( mlog, "Reading stream headers" );
-        fStreamHeaders.clear();
+            LDEBUG( mlog, "Reading stream headers" );
+            fStreamHeaders.clear();
 
-        // Read each of the stream-header objects and store
-        for( size_t iStream = 0; iStream < nStreams; ++iStream )
-        {
-            // Construct the stream label
-            std::string streamLabel = "streams/stream" + std::to_string(iStream);
-std::cout << "\tlabel: " << streamLabel << std::endl;
+            // Read each of the stream-header objects and store
+            for( size_t iStream = 0; iStream < nStreams; ++iStream )
+            {
+                // Construct the stream label
+                std::string streamLabel = "streams/stream" + std::to_string(iStream);
 
-            // Create a new M4StreamHeader in the collection, at the back
-            fStreamHeaders.push_back( M4StreamHeader() );
+                // Create a new M4StreamHeader in the collection, at the back
+                fStreamHeaders.push_back( M4StreamHeader() );
 
-            // Populate the new header (within the collection) from the file
-            // Stream group at this label-path
-            auto strmHandle = z5GroupHandle( *aFile, streamLabel );
-            fStreamHeaders.back().ReadFromFile( strmHandle, streamLabel );
+                // Populate the new header (within the collection) from the file
+                // Stream group at this label-path
+                auto strmHandle = z5GroupHandle( *aFile, streamLabel );
+                fStreamHeaders.back().ReadFromFile( strmHandle, streamLabel );
+            }
+
+            // Create channels group correspoding to file group
+            fChannelsGroup = new z5GroupHandle( *aFile, "channels");    // <root>/"channels"
+
+            nlohmann::json jchanAttr;
+            z5::readAttributes( *fChannelsGroup, jchanAttr );
+
+            // Get how many channels are in group
+            size_t nChannels = jchanAttr.at("NChannels");
+            std::cout << "nChannels: " << nChannels << std::endl;
+
+            LDEBUG( mlog, "Reading channel headers" );
+            fChannelHeaders.clear();
+
+            // Read each of the channel-header objects and store
+            for( size_t iChan = 0; iChan < nChannels; ++iChan )
+            {
+                // Channel label
+                std::string chanLabel = "channels/channel" + std::to_string(iChan);
+
+                // Create a new M4ChannelHeader in the collection, at the back
+                fChannelHeaders.push_back( M4ChannelHeader() );
+
+                // Populate the new header (within the collection) from the file
+                // Channel group at this label-path
+                auto chanHandle = z5GroupHandle( *aFile, chanLabel );
+                fChannelHeaders.back().ReadFromFile( chanHandle, chanLabel );
+            }
+        }
+        catch (const nlohmann::json::exception& e)
+        { // JSON error
+            throw M4Exception() << "JSON error M4Header::ReadFromFile(): " << e.what();
         }
 
-        // Create channels group correspoding to file group
-//      auto chanHeaderHandle = z5GroupHandle( *aFile, "channels");
-        fChannelsGroup = new z5GroupHandle( *aFile, "channels");
-
-        nlohmann::json jchanAttr;
-//      z5::readAttributes( chanHeaderHandle, jchanAttr );
-        z5::readAttributes( *fChannelsGroup, jchanAttr );
-
-        // Get how many channels are in group
-        size_t nChannels = jchanAttr.at("NChannels");
-        std::cout << "nChannels: " << nChannels << std::endl;
-
-        LDEBUG( mlog, "Reading channel headers" );
-        fChannelHeaders.clear();
-
-        // Read each of the channel-header objects and store
-        for( size_t iChan = 0; iChan < nChannels; ++iChan )
-        {
-            // Channel label
-            std::string chanLabel = "channels/channel" + std::to_string(iChan);
-std::cout << "\tlabel: " << chanLabel << std::endl;
-
-            // Create a new M4ChannelHeader in the collection, at the back
-            fChannelHeaders.push_back( M4ChannelHeader() );
-
-            // Populate the new header (within the collection) from the file
-            // Channel group at this label-path
-            auto chanHandle = z5GroupHandle( *aFile, chanLabel );
-            fChannelHeaders.back().ReadFromFile( chanHandle, chanLabel );
-        }
 std::cout << "M4Header::ReadFromFile(): void\n";
     }
 
@@ -1252,7 +1246,7 @@ std::cout << "M4Header::ReadFromFile(): void\n";
 //std::cout << "fChannelStreams[" << i << "]: " << fChannelStreams[ i ] << " / " << tCSBuffer[ i ] << std::endl;
         }
 
-        // Create the dataset for "channel_streams"
+        // Create the Dataspace for "channel_streams"
         const std::string dsName = "channel_streams";
         std::vector<size_t> shape = { 1,fNChannels };       // <row>,<col>
         std::vector<size_t> chunks = { 1,fNChannels };      // <row>,<col>

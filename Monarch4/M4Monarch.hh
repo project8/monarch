@@ -13,16 +13,7 @@
 #include "logger.hh"
 #include "M4Stream.hh"
 
-// factory functions to create files, groups and datasets
-#include "z5/factory.hxx"
-// handles for z5 filesystem objects
-#include "z5/filesystem/handle.hxx"
-// io for xtensor multi-arrays
-#include "z5/multiarray/xtensor_access.hxx"
-// attribute functionality
-#include "z5/attributes.hxx"
-
-
+#include "z5includes.hh"
 
 #include <string>
 #include <stdexcept>

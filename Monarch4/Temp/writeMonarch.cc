@@ -69,14 +69,14 @@ int main() {
         LINFO( mlog, "Writing data" );
 
         // Stream 0
-//        M4Stream* tSingleStream = tWriteTest->GetStream( tSingleStreamNum );
-//std::cout << "tSingleStream: " << tSingleStream << std::endl;
-//        byte_type* tSSData = tSingleStream->GetStreamRecord()->GetData();
-//std::cout << "tSSData: " << tSSData << std::endl;
-//        if (tSingleStream != nullptr && tSSData != nullptr)
-//        {
-//          std::cout << "stream and data pointers okay\n";
-//        }
+        M4Stream* tSingleStream = tWriteTest->GetStream( tSingleStreamNum );
+std::cout << "tSingleStream: " << tSingleStream << std::endl;
+        byte_type* tSSData = tSingleStream->GetStreamRecord()->GetData();
+std::cout << "tSSData: " << tSSData << std::endl;
+        if (tSingleStream != nullptr && tSSData != nullptr)
+        {
+          std::cout << "stream and data pointers okay\n";
+        }
 //      for( unsigned iSample = 0; iSample < tSSSamples; ++iSample )
 //      {
 //          tSSData[ iSample ] = 1;

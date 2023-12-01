@@ -12,23 +12,8 @@
 #include "logger.hh"
 #include "M4MemberVariable.hh"
 // #include "M4Types.hh"
-#include "z5/types/types.hxx"         // z5 data types
 
-// factory functions to create files, groups and datasets
-#include "z5/factory.hxx"
-// handles for z5 filesystem objects
-#include "z5/filesystem/handle.hxx"
-// io for xtensor multi-arrays
-#include "z5/multiarray/xtensor_access.hxx"
-// attribute functionality
-#include "z5/attributes.hxx"
-
-// Shorter typedefs for z5 types
-typedef z5::filesystem::handle::File z5FileHandle;
-typedef z5::filesystem::handle::Dataset z5DatasetHandle;
-typedef z5::filesystem::handle::Group z5GroupHandle;
-typedef z5::filesystem::handle::File::GroupType z5GroupType;
-typedef z5::types::ShapeType z5ShapeType;
+#include "z5includes.hh"
 
 // Search for definitions: in <prj> directory monarch/
 // $ grep -R HAS_GRP_IFC *
@@ -219,9 +204,9 @@ namespace monarch4
             void WriteChannelCoherence( z5FileHandle* aFile  );
             void ReadChannelCoherence( const z5FileHandle* aFile ) const;
 
-            mutable z5FileHandle* fFile;
-            mutable z5GroupHandle* fStreamsGroup;
-            mutable z5GroupHandle* fChannelsGroup;
+            mutable z5FileHandle* fFile;            // <root>
+            mutable z5GroupHandle* fStreamsGroup;   // <root>/"streams"
+            mutable z5GroupHandle* fChannelsGroup;  // <root>/"channels"
 
         public:
             static void WriteScalarToHDF5( HAS_ATTR_IFC* aLoc, const std::string& aName, const std::string& aValue );

@@ -6,6 +6,7 @@
  */
 #define M4_API_EXPORTS
 
+#include <iostream>
 #include "M4Record.hh"
 
 namespace monarch4
@@ -21,6 +22,7 @@ namespace monarch4
             fTime( nullptr ),
             fData( nullptr )
     {
+std::cout << "M4Record::M4Record(size)\n";
         if( aNBytes != 0 )
         {
             // Note: see type definitions in M4Types.h
@@ -28,6 +30,7 @@ namespace monarch4
             fTime = new TimeType();
             fData = new byte_type[ aNBytes ];
         }
+std::cout << "M4Record::M4Record(): void\n";
     }
 
     /*************************************************************************
@@ -43,6 +46,7 @@ namespace monarch4
             fTime( aTimePtr ),
             fData( aDataPtr )
     {
+std::cout << "M4Record::M4Record(template)\n";
     }
 
     /*************************************************************************
@@ -51,6 +55,7 @@ namespace monarch4
     *************************************************************************/
     M4Record::~M4Record()
     {
+std::cout << "M4Record::~M4Record()\n";
         ClearData();
     }
 
@@ -70,6 +75,7 @@ namespace monarch4
     *************************************************************************/
     void M4Record::Initialize( unsigned aNBytes )
     {
+std::cout << "M4Record::Initialize()\n";
         ClearData();
         fRecordId = new RecordIdType();
 
@@ -78,8 +84,9 @@ namespace monarch4
         SetRecordId( 0 );
         SetTime( 0 );
 
-//TODO: smart-pointer instead?
+///@todo smart-pointer instead?
         fData = new byte_type[ aNBytes ];
+std::cout << "M4Record::Initialize(): void\n";
     }
 
     /*************************************************************************
@@ -106,6 +113,7 @@ namespace monarch4
     *************************************************************************/
     void M4Record::ClearData()
     {
+std::cout << "M4Record::ClearData()\n";
         if( fOwnsData )
         {
             if (fRecordId != nullptr)
@@ -128,6 +136,7 @@ namespace monarch4
         fTime = nullptr;
         fData = nullptr;
         fOwnsData = true;       // <<<-------- in M4Record::Initialize( unsigned aNBytes ) instead?
+std::cout << "M4Record::ClearData(): void\n";
     }
 
     /*************************************************************************

@@ -41,7 +41,7 @@ namespace monarch4
     * @brief Construct a new M4Stream::M4Stream object
     * 
     * @param[in] aHeader M4StreamHeader representing the steram
-    * @param[in out] aStreamsLoc 
+    * @param[in] aStreamsLoc <root>/"streams"/"streamsN"
     * @param aAccessFormat 
     *************************************************************************/
     M4Stream::M4Stream( const M4StreamHeader& aHeader, HAS_GRP_IFC* aStreamsLoc, uint32_t aAccessFormat ) :
@@ -86,6 +86,7 @@ std::cout << "M4Stream::M4Stream() : "  << aHeader.GetLabel() << std::endl;
 
         if( aHeader.GetDataFormat() == sDigitizedUS )
         {
+std::cout << "Unsigned stream data\n";
             switch( fDataTypeSize )
             {
                 case 1:
@@ -110,6 +111,7 @@ std::cout << "M4Stream::M4Stream() : "  << aHeader.GetLabel() << std::endl;
         }
         else if( aHeader.GetDataFormat() == sDigitizedS )
         {
+std::cout << "Signed stream data\n";
             switch( fDataTypeSize )
             {
                 case 1:
@@ -134,6 +136,7 @@ std::cout << "M4Stream::M4Stream() : "  << aHeader.GetLabel() << std::endl;
         }
         else // aHeader.GetDataFormat() == sAnalog
         {
+std::cout << "Analog/floating-point stream data\n";
             switch( fDataTypeSize )
             {
                 case 4:
@@ -155,6 +158,14 @@ std::cout << "M4Stream::M4Stream() : "  << aHeader.GetLabel() << std::endl;
 // nlohmann::json chGroupAttr;
 // z5::readAttributes( channelsHandle, chGroupAttr );
 
+// open path: /streams/streamX/acquisitions
+//  if path doesn't exist, must be write mode
+// readAcquisitions()
+//   n_acquisitions
+//   n_records
+// : n_acquisitions > 0 and n_records > 0
+// -> already has data
+
 #if 0
         // variables to store the HDF5 error printing state
         H5E_auto2_t tAutoPrintFunc;
@@ -169,6 +180,7 @@ std::cout << "M4Stream::M4Stream() : "  << aHeader.GetLabel() << std::endl;
             H5::Exception::getAutoPrint( tAutoPrintFunc, &tClientData );
             H5::Exception::dontPrint();
 
+            // open stream's "acquisitions" group
             fH5AcqLoc = new H5::Group( fStreamParentLoc->openGroup( "acquisitions" ) );
             LDEBUG( mlog, "Opened acquisition group in <read> mode" );
 
@@ -214,13 +226,46 @@ std::cout << "M4Stream::M4Stream() : "  << aHeader.GetLabel() << std::endl;
         //     }
         // }
 #endif
-        // open path: /streams/streamX/acquisitions
-        //  if path doesn't exist, must be write mode
-        // readAcquisitions()
-        //   n_acquisitions
-        //   n_records
-        // : n_acquisitions > 0 and n_records > 0
-        // -> already has data
+
+        fStreamParentLoc = aStreamsLoc;     // keep <root>/"streams"/"streamsN" group
+
+        // See if there are any records currently in file
+        if(z5::filesystem::isSubGroup(*fStreamParentLoc, "acquisitions") == true)
+        { // "acquisitions" exists == read mode
+
+            LDEBUG( mlog, "Opened acquisition group in <read> mode" );
+
+            // open stream's "acquisitions" group
+            fAcqLoc = new z5GroupHandle(*fStreamParentLoc, "acquisitions");     // <root>/"streams"/"streamsN"/"acquisitions"
+
+            nlohmann::json acqGroupAttr;
+            z5::readAttributes( *fAcqLoc, acqGroupAttr );        // read the existing attributes
+
+            try
+            { // Store existing attributes into class
+
+                fNAcquisitions = (unsigned)acqGroupAttr["n_acquisitions"];
+                fNRecordsInFile = (unsigned)acqGroupAttr["n_records"];
+
+                BuildIndex();
+
+                LDEBUG( mlog, "Number of acquisitions found: " << fNAcquisitions << "; Number of records found: " << fNRecordsInFile );
+                fMode = kRead;      // read mode
+            }
+            catch (const nlohmann::json::exception& e)
+            { // JSON error
+                throw M4Exception() << "JSON error M4Stream::M4Stream(): " << e.what();
+            }
+        }
+        else
+        { // "acquisitions" doesn't exist == write mode, create new
+
+            fAcqLoc = new z5GroupHandle(*fStreamParentLoc, "acquisitions");     // <root>/"streams"/"streamsN"/"acquisitions"
+
+            LDEBUG( mlog, "Opened acquisition group in <write> mode" );
+            fMode = kWrite;  // write mode
+        }
+
 
         Initialize();
 std::cout << "M4Stream::M4Stream() : void "  << aHeader.GetLabel() << std::endl;
@@ -259,7 +304,7 @@ std::cout << "M4Stream::~M4Stream() DTOR\n";
 std::cout << "M4Stream::Initialize()\n";        
         LDEBUG( mlog, "Initializing stream" );
         fIsInitialized = false;
-#if 0
+
         // The case where the access format is separate, but the data in the file is interleaved is special.
         // In this case, the stream record memory is not used.
         // Reading and writing is done directly from the channel records using HDF5's interleaving capabilities.
@@ -267,6 +312,8 @@ std::cout << "M4Stream::Initialize()\n";
             fDataInterleaved && 
             fNChannels != 1 )
         {
+            LDEBUG(mlog, "Interleaved data");
+#if 0
             // no memory is allocated for the stream record
             fStreamRecord.Initialize();
 
@@ -313,13 +360,41 @@ std::cout << "M4Stream::Initialize()\n";
             */
 
             // Data space object initialization
-            delete fDataSpaceUser;
-            fDataSpaceUser = new H5::DataSpace( N_DATA_DIMS, fDataDims1Rec, NULL );
+            if(fDataSpaceUser != nullptr)
+            { // release any existing data space
+                delete fDataSpaceUser;
+            }
 
+            // A dataspace defines the size and shape of the dataset or attribute raw data, 
+            // and must be defined when the dataset or attribute is created.
+            // A Dataset contains the data values themselves.
+            
+            // A dataset is an object composed of a collection of data elements, or raw data, 
+            // and metadata that stores a description of the data elements, data layout, and all other 
+            // information necessary to write, read, and interpret the stored data.
+//          fDataSpaceUser = new H5::DataSpace( N_DATA_DIMS, fDataDims1Rec, NULL );
+
+//fDataTypeInFile = z5::types::int64;     //H5::PredType::STD_I64LE;
+//fDataTypeUser = z5::types::int64;       //H5::PredType::NATIVE_INT64;
+
+            std::vector<size_t> shape = { N_DATA_DIMS,fDataDims1Rec };       // <row>,<col>
+            std::vector<size_t> chunks = { N_DATA_DIMS,fDataDims1Rec };      // <row>,<col>
+            z5::types::InverseDtypeMap& N5type = z5::types::dtypeToN5();
+            std::string strDataType = N5type(fDataTypeInFile);     // lookup/convert type to string
+
+            fDataSpaceUser = z5DatasetHandle( *aFile, dsName, strDataType, shape, chunks );
+
+
+//// Create the Dataspace for "channel_streams"
+//const std::string dsName = "channel_streams";
+//std::vector<size_t> shape = { 1,fNChannels };       // <row>,<col>
+//std::vector<size_t> chunks = { 1,fNChannels };      // <row>,<col>
+//auto ds = z5::createDataset( *aFile, dsName, "uint32", shape, chunks );
+#endif
             fIsInitialized = true;
             return;
         }
-
+#if 0
         // allocate stream record memory
         fStreamRecord.Initialize( fStrRecNBytes );
 
@@ -362,7 +437,7 @@ std::cout << "M4Stream::Initialize(): void\n";
     }
 
     /*************************************************************************
-    * @brief Return read-only M4Record access
+    * @brief Get the pointer to the stream record
     * 
     * @return const M4Record* 
     *************************************************************************/
@@ -372,7 +447,7 @@ std::cout << "M4Stream::Initialize(): void\n";
     }
 
     /*************************************************************************
-    * @brief Return read-only M4Record access to selected stream channel
+    * @brief Get the pointer to a particular channel record
     * 
     * @param aChannel Selected stream channel
     * @return const M4Record* 
@@ -386,7 +461,6 @@ std::cout << "M4Stream::Initialize(): void\n";
         throw M4Exception() << "Channel <" << aChannel << "> requested; only " << fNChannels << " in this stream.";
     }
 
-#if 0
     /*************************************************************************
     * @brief 
     * 
@@ -398,6 +472,8 @@ std::cout << "M4Stream::Initialize(): void\n";
     *************************************************************************/
     bool M4Stream::ReadRecord( int anOffset, bool aIfNewAcqStartAtFirstRec ) const
     {
+std::cout << "M4Stream::ReadRecord()\n";
+#if 0
         if( ! fIsInitialized ) Initialize();
 
         std::unique_lock< std::mutex >( *fMutexPtr.get() );
@@ -472,9 +548,11 @@ std::cout << "M4Stream::Initialize(): void\n";
             throw M4Exception() << "HDF5 error while reading a record:\n\t" << e.getCDetailMsg() << " (function: " << e.getFuncName() << ")";
         }
 
+#endif
+std::cout << "M4Stream::ReadRecord(): void\n";
         return true;
     }
-#endif
+
     /*************************************************************************
     * @brief Close the M4Stream, release data
     * 
@@ -513,7 +591,6 @@ std::cout << "M4Stream::Close(): void\n";
         throw M4Exception() << "Channel <" << aChannel << "> requested; only " << fNChannels << " in this stream.";
     }
 
-#if 0
     /*************************************************************************
     * @brief Write stream record
     * 
@@ -524,9 +601,11 @@ std::cout << "M4Stream::Close(): void\n";
     *************************************************************************/
     bool M4Stream::WriteRecord( bool aIsNewAcquisition )
     {
+std::cout << "M4Stream::WriteRecord()\n";
         // note: fRecordCountInAcq is used to keep track of the number of records written in each acquisition;
         //       fNRecordsInAcq is only valid for the last completed acquisition.
 
+#if 0
         if( ! fIsInitialized ) Initialize();
 
         if( ! fRecordsAccessed ) aIsNewAcquisition = true;
@@ -555,7 +634,8 @@ std::cout << "M4Stream::Close(): void\n";
                 tPropList.setChunk( N_DATA_DIMS, fStrDataChunkDims );
 
                 u32toa( fAcquisitionId, fAcqNameBuffer );
-                fCurrentAcqDataSet = new H5::DataSet( fH5AcqLoc->createDataSet( fAcqNameBuffer, fDataTypeInFile, H5::DataSpace( N_DATA_DIMS, fStrDataDims, fStrMaxDataDims ), tPropList ) );
+                fCurrentAcqDataSet = new H5::DataSet( fH5AcqLoc->createDataSet( fAcqNameBuffer, fDataTypeInFile, 
+                H5::DataSpace( N_DATA_DIMS, fStrDataDims, fStrMaxDataDims ), tPropList ) );
             }
             else
             { // Extend the current dataset
@@ -589,9 +669,11 @@ std::cout << "M4Stream::Close(): void\n";
         //     throw M4Exception() << e.what();
         // }
 
+#endif
+std::cout << "M4Stream::WriteRecord(): void\n";
         return false;
     }
-#endif
+
     /*************************************************************************
     * @brief Close stream, release data
     * 
@@ -627,7 +709,6 @@ std::cout << "M4Stream::Close(): void\n";
         fIsInitialized = false;
     }
 
-#if 0
     /*************************************************************************
     * @brief 
     * 
@@ -635,6 +716,8 @@ std::cout << "M4Stream::Close(): void\n";
     *************************************************************************/
     void M4Stream::ReadRecordInterleavedToSeparate( bool aIsNewAcquisition ) const
     {
+std::cout << "M4Stream::ReadRecordInterleavedToSeparate()\n";
+#if 0
         if( aIsNewAcquisition )
         {
             // try
@@ -673,6 +756,8 @@ std::cout << "M4Stream::Close(): void\n";
             fChannelRecords[ iChan ].SetTime( fAcqFirstRecTimes[ iChan ] + fRecordCountInAcq * fChanRecLength );
             fChannelRecords[ iChan ].SetRecordId( fAcqFirstRecIds[ iChan ] + fRecordCountInAcq );
         }
+#endif
+std::cout << "M4Stream::ReadRecordInterleavedToSeparate(): void\n";
     }
 
     /*************************************************************************
@@ -682,6 +767,8 @@ std::cout << "M4Stream::Close(): void\n";
     *************************************************************************/
     void M4Stream::ReadRecordAsIs( bool aIsNewAcquisition ) const
     {
+std::cout << "M4Stream::ReadRecordAsIs()\n";
+#if 0
         if( aIsNewAcquisition )
         {
             // try
@@ -717,6 +804,8 @@ std::cout << "M4Stream::Close(): void\n";
             fChannelRecords[ iChan ].SetTime( fStreamRecord.GetTime() );
             fChannelRecords[ iChan ].SetRecordId( fStreamRecord.GetRecordId() );
         }
+#endif
+std::cout << "M4Stream::ReadRecordAsIs(): void\n";
     }
 
     /*************************************************************************
@@ -726,6 +815,8 @@ std::cout << "M4Stream::Close(): void\n";
     *************************************************************************/
     void M4Stream::WriteRecordSeparateToInterleaved( bool aIsNewAcquisition )
     {
+std::cout << "M4Stream::WriteRecordSeparateToInterleaved()\n";
+#if 0
         H5::DataSpace tDataSpaceInFile = fCurrentAcqDataSet->getSpace();
         for( unsigned iChan = 0; iChan < fNChannels; ++iChan )
         {
@@ -750,6 +841,8 @@ std::cout << "M4Stream::Close(): void\n";
             delete [] tTimes;
             delete [] tIds;
         }
+#endif
+std::cout << "M4Stream::WriteRecordSeparateToInterleaved(): void\n";
     }
 
     /*************************************************************************
@@ -759,6 +852,8 @@ std::cout << "M4Stream::Close(): void\n";
     *************************************************************************/
     void M4Stream::WriteRecordAsIs( bool aIsNewAcquisition )
     {
+std::cout << "M4Stream::WriteRecordAsIs()\n";
+#if 0
         H5::DataSpace tDataSpaceInFile = fCurrentAcqDataSet->getSpace();
 
         tDataSpaceInFile.selectHyperslab( H5S_SELECT_SET, fDataDims1Rec, fDataOffset );
@@ -771,8 +866,9 @@ std::cout << "M4Stream::Close(): void\n";
             fCurrentAcqDataSet->createAttribute( "first_record_time", MH5Type< TimeType >::H5(), H5::DataSpace( H5S_SCALAR ) ).write( MH5Type< TimeType >::Native(), &tTime );
             fCurrentAcqDataSet->createAttribute( "first_record_id", MH5Type< RecordIdType >::H5(), H5::DataSpace( H5S_SCALAR ) ).write( MH5Type< RecordIdType >::Native(), &tId );
         }
-    }
 #endif
+std::cout << "M4Stream::WriteRecordAsIs(): void\n";
+    }
 
     /*************************************************************************
     * @brief Read data file index
@@ -836,16 +932,16 @@ std::cout << "M4Stream::FinalizeCurrentAcq(): void\n";
     void M4Stream::FinalizeStream()
     {
 std::cout << "M4Stream::FinalizeStream()\n";        
+#if 0
         FinalizeCurrentAcq();
 
-//ToDo: one entry, one exit        
+///@todo one entry, one exit
         if( fAcqLoc == nullptr ) return;
-#if 0
         fNAcquisitions = ( fAcquisitionId + 1 ) * (unsigned)fRecordsAccessed;
         fStreamParentLoc->openAttribute( "n_acquisitions" ).write( MH5Type< unsigned >::Native(), &fNAcquisitions );
         fStreamParentLoc->openAttribute( "n_records" ).write( MH5Type< unsigned >::Native(), &fRecordCountInFile );
-#endif        
         LDEBUG( mlog, "Finalizing stream with " << fNAcquisitions << " acquisitions and " << fRecordCountInFile << " records" );
+#endif        
 std::cout << "M4Stream::FinalizeStream(): void\n";        
     }
 } /* namespace monarch */

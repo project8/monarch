@@ -8,7 +8,8 @@
 
 #include "M4Monarch.hh"
 #include "logger.hh"
-#include "z5/factory.hxx"
+
+#include "z5includes.hh"
 
 using std::string;
 
@@ -222,23 +223,20 @@ std::cout << "Monarch4::WriteHeader()\n";
 ///@todo Handle nulptr fHeader
         fHeader->WriteToFile( fFile );
         
-        // z5::filesystem::handle::Group* tStreamsGroup = fHeader->GetStreamsGroup();
         z5GroupHandle* tStreamsGroup = fHeader->GetStreamsGroup();
 
         try
         {
-//#if 0
-std::cout << "Create the stream objects based on the configuration from the header\n";
+std::cout << "\n\nCreate the stream objects based on the configuration from the header\n\n";
+
             // Create the stream objects based on the configuration from the header
             for( M4Header::M4StreamHeaders::const_iterator streamIt = fHeader->StreamHeaders().begin();
                     streamIt != fHeader->StreamHeaders().end();
                     ++streamIt )
-            {
-                fStreams.push_back( new M4Stream( *streamIt, tStreamsGroup ) );
+            {                
+                fStreams.push_back( new M4Stream( *streamIt, tStreamsGroup ) );     // Create new M4Stream
                 fStreams.back()->SetMutex( fMutexPtr );
             }
-std::cout << "streams created okay\n";
-//#endif
         }
         // catch( H5::Exception& e )
         // {
