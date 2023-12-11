@@ -230,22 +230,42 @@ std::cout << "Monarch4::WriteHeader()\n";
 std::cout << "\n\nMonarch4::WriteHeader(): Create the stream objects based on the configuration from the header\n\n";
 
             // Create the stream objects based on the configuration from the header
-//#if 0
 int strmNum = 0;
+#if 0
             for( M4Header::M4StreamHeaders::const_iterator streamIt = fHeader->StreamHeaders().begin();
                     streamIt != fHeader->StreamHeaders().end();
                     ++streamIt )
             {
 std::cout << "\nfor() Create M4Stream: " << strmNum++ << std::endl;
                 fStreams.push_back( new M4Stream( *streamIt, tStreamsGroup ) );     // Create new M4Stream
-//              fStreams.back()->SetMutex( fMutexPtr );
+                fStreams.back()->SetMutex( fMutexPtr );
             }
-//#endif
+#endif
+#if 0
+            for(auto strm : fHeader->GetStreamHeaders())
+            {
+std::cout << "\nfor() Create M4Stream: " << strmNum++ << std::endl;
+                fStreams.push_back( new M4Stream( strm, tStreamsGroup ) );     // Create new M4Stream
+                fStreams.back()->SetMutex( fMutexPtr );
+            }
+#endif
+    
             // Programmer's Note: create single stream for testing
-//          auto streamIt = fHeader->StreamHeaders().begin();
-//          auto mym4 = new M4Stream( *streamIt, tStreamsGroup );
-//          delete mym4;
-// Programmer's Note: how is deleting this causing a segfault?
+            fStreams.reserve(10);
+std::cout << "fStreams.size(): " << fStreams.size() << std::endl;
+//          auto strm0 = new M4Stream( fHeader->GetStreamHeaders()[0], tStreamsGroup );
+            fStreams[0] = new M4Stream( fHeader->GetStreamHeaders()[0], tStreamsGroup );
+
+//          auto strm1 = new M4Stream( fHeader->GetStreamHeaders()[1], tStreamsGroup );
+            fStreams[1] = new M4Stream( fHeader->GetStreamHeaders()[1], tStreamsGroup );
+
+//          auto strm2 = new M4Stream( fHeader->GetStreamHeaders()[2], tStreamsGroup );
+            fStreams[2] = new M4Stream( fHeader->GetStreamHeaders()[2], tStreamsGroup );
+
+//          auto strm3 = new M4Stream( fHeader->GetStreamHeaders()[3], tStreamsGroup );
+            fStreams[3] = new M4Stream( fHeader->GetStreamHeaders()[3], tStreamsGroup );
+/// 
+//// Programmer's Note: how is deleting these causing a segfault?
         }
         // catch( H5::Exception& e )
         // {

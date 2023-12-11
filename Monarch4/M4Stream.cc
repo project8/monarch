@@ -45,7 +45,6 @@ namespace monarch4
     * @param[in] aStreamsLoc <root>/"streams"/"streamsN"
     * @param aAccessFormat 
     *************************************************************************/
-//  M4Stream::M4Stream( const M4StreamHeader& aHeader, HAS_GRP_IFC* aStreamsLoc, uint32_t aAccessFormat ) :
     M4Stream::M4Stream( const M4StreamHeader& aHeader, z5GroupHandle* aStreamsLoc, uint32_t aAccessFormat ) :
             fMode( kRead ),
             fDoReadRecord( nullptr ),
@@ -239,6 +238,7 @@ std::cout << "float64\n";
         // }
 #endif
         fStreamParentLoc = aStreamsLoc;     // keep <root>/"streams"/"streamsN" group
+std::cout << "See if there are any acquisition records currently in file\n";
 
         // See if there are any acquisition records currently in file
         if(z5::filesystem::isSubGroup(*fStreamParentLoc, "acquisitions") == true)
@@ -346,7 +346,6 @@ std::cout << "M4Stream::Initialize()\n";
             fNChannels != 1 )
         {
             LDEBUG(mlog, "Interleaved data" << " not implemented yet");
-#if 0 // original HDF5 code
             // no memory is allocated for the stream record
             fStreamRecord.Initialize();
 
@@ -361,26 +360,57 @@ std::cout << "M4Stream::Initialize()\n";
             fDoWriteRecord = &M4Stream::WriteRecordSeparateToInterleaved;
 
             // Arrays for data file reading/writing
-            fStrDataDims[ 0 ] = 1;                              // record is one array row
-            fStrDataDims[ 1 ] = fStrRecSize * fSampleSize;      // number of columns to bytes
+//          fStrDataDims[ 0 ] = 1;                              // record is one array row
+//          fStrDataDims[ 1 ] = fStrRecSize * fSampleSize;      // number of columns to bytes
+            // fStrDataDims  This keeps track of how much data has been recorded.  
+            // [0] is the number of records recorded, and 
+            // [1] is the size of a stream record in bytes
+            fStrDataDims[ 0 ] = 1;                 
+            fStrDataDims[ 1 ] = fStrRecSize * fSampleSize;
             
-            fStrMaxDataDims[ 0 ] = H5S_UNLIMITED;               // unlimited array rows?
-            fStrMaxDataDims[ 1 ] = fStrRecSize * fSampleSize;   // number of columns to bytes
+//          fStrMaxDataDims[ 0 ] = H5S_UNLIMITED;               // unlimited array rows?
+//          fStrMaxDataDims[ 1 ] = fStrRecSize * fSampleSize;   // number of columns to bytes
+            // fStrMaxDataDims  This is used to create the HDF5 dataset object.  
+            // It has unlimited rows, and its width is the size of a stream record in bytes
+            fStrMaxDataDims[ 0 ] = -1; //H5S_UNLIMITED;  
+            fStrMaxDataDims[ 1 ] = fStrRecSize * fSampleSize;
             
-            fStrDataChunkDims[ 0 ] = 1;                         // access sections by row
-            fStrDataChunkDims[ 1 ] = fStrRecSize * fSampleSize; // number of columns to bytes
+//          fStrDataChunkDims[ 0 ] = 1;                         // access sections by row
+//          fStrDataChunkDims[ 1 ] = fStrRecSize * fSampleSize; // number of columns to bytes
+            // fStrDataChunkDims  In HDF5 a chunk is the size of data that is contiguous, 
+            // and helps inform how the file is structured.  In this case the dimensions are 
+            // always 1 record (i.e. 1 row) by a stream record in bytes wide.
+            fStrDataChunkDims[ 0 ] = 1;            
+            fStrDataChunkDims[ 1 ] = fStrRecSize * fSampleSize;
             
-            fDataDims1Rec[ 0 ] = 1;                             // 
-            fDataDims1Rec[ 1 ] = fChanRecSize * fSampleSize;    // 
+//          fDataDims1Rec[ 0 ] = 1;                             //
+//          fDataDims1Rec[ 1 ] = fChanRecSize * fSampleSize;    //
+            // fDataDims1Rec  This describes the size of the data object that a user interacts with.  
+            // So when the data is accessed as separate channels, its one channel record wide in bytes.  
+            // When data is not accessed separately, its one stream record wide in bytes.
+            fDataDims1Rec[ 0 ] = 1;             
+            fDataDims1Rec[ 1 ] = fStrRecSize * fSampleSize;
             
+//          fDataOffset[ 0 ] = 0;
+//          fDataOffset[ 1 ] = 0;
+            // fDataOffset  This says where within the data space the data reading/writing starts.  
+            // So how many records (i.e. rows) down, and how many bytes over (only non-zero if 
+            // using separate-channel access)
             fDataOffset[ 0 ] = 0;               
             fDataOffset[ 1 ] = 0;
             
-            fDataStride[ 0 ] = 1;                   // stride by array row
-            fDataStride[ 1 ] = fNChannels;          // stride by number of channels per record???
+//          fDataStride[ 0 ] = 1;                   // stride by array row
+//          fDataStride[ 1 ] = fNChannels;          // stride by number of channels per record???
+            // fDataStride  I believe this specifies how far to move in memory between reads/writes
+            fDataStride[ 0 ] = 1;               
+            fDataStride[ 1 ] = fNChannels;
             
-            fDataBlock[ 0 ] = 1;                    // data block is one array row
-            fDataBlock[ 1 ] = fSampleSize;          // 
+//          fDataBlock[ 0 ] = 1;                    // data block is one array row
+//          fDataBlock[ 1 ] = fSampleSize;          //
+            // fDataBlock  I dont actually remember the significance of this or why its fSampleSize 
+            // for separate access, but the stream record size in the other case
+            fDataBlock[ 0 ] = 1;                
+            fDataBlock[ 1 ] = fSampleSize;
 
             /*
             std::cout << "str data dims: " << fStrDataDims[0] << " " << fStrDataDims[1] << std::endl;
@@ -392,6 +422,7 @@ std::cout << "M4Stream::Initialize()\n";
             std::cout << "str data block: " << fDataBlock[0] << " " << fDataBlock[1] << std::endl;
             */
 
+#if 0 // original HDF5 code
             // Data space object initialization
             if(fDataSpaceUser != nullptr)
             { // release any existing data space
@@ -416,7 +447,6 @@ std::cout << "M4Stream::Initialize()\n";
             std::string strDataType = N5type(fDataTypeInFile);     // lookup/convert type to string
 
             fDataSpaceUser = z5DatasetHandle( *aFile, dsName, strDataType, shape, chunks );
-
 
 //// Create the Dataspace for "channel_streams"
 //const std::string dsName = "channel_streams";
@@ -513,8 +543,6 @@ std::cout << "stream datatype: " << strDataType << std::endl;
 //z5DatasetHandle hDataset;
 //
 //std::unique_ptr<z5::Dataset> mydataset = z5::createDataset(hDataset,meta);
-
-
 
         if(fDataSpaceUser != nullptr)
         {
