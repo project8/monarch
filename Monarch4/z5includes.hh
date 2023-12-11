@@ -35,10 +35,19 @@
 #include "z5/attributes.hxx"    // attribute functionality
 
 // Shorter typedefs for z5 types
-typedef z5::filesystem::handle::File z5FileHandle;
-typedef z5::filesystem::handle::Dataset z5DatasetHandle;
-typedef z5::filesystem::handle::Group z5GroupHandle;
-typedef z5::filesystem::handle::File::GroupType z5GroupType;
-typedef z5::types::ShapeType z5ShapeType;
-typedef z5::types::Datatype z5Datatype;
+//typedef z5::filesystem::handle::File z5FileHandle;
+//typedef z5::filesystem::handle::Dataset z5DatasetHandle;
+//typedef z5::filesystem::handle::Group z5GroupHandle;
+//typedef z5::filesystem::handle::File::GroupType z5GroupType;
+//typedef z5::types::ShapeType z5ShapeType;
+//typedef z5::types::Datatype z5Datatype;
+
+// More modern equivalent form since we are merely aliasing instead of creating new types:  xxx_t 
+// One c++/STL advantage: Using can be used with a template whereas typedef cannot
+using z5FileHandle = z5::filesystem::handle::File;
+using z5DatasetHandle = z5::filesystem::handle::Dataset;
+using z5GroupHandle = z5::filesystem::handle::Group;
+using z5GroupType = z5::filesystem::handle::File::GroupType;
+using z5ShapeType = z5::types::ShapeType;
+using z5Datatype = z5::types::Datatype;
 
