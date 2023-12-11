@@ -53,7 +53,8 @@ namespace monarch4
             typedef void (M4Stream::*DoWriteRecordFunc)( bool );
 
         public:
-            M4Stream( const M4StreamHeader& aHeader, HAS_GRP_IFC* aH5StreamParentLoc, uint32_t aAccessFormat = sSeparate );
+//          M4Stream( const M4StreamHeader& aHeader, HAS_GRP_IFC* aH5StreamParentLoc, uint32_t aAccessFormat = sSeparate );
+            M4Stream( const M4StreamHeader& aHeader, z5GroupHandle* aStreamsLoc, uint32_t aAccessFormat = sSeparate );
             virtual ~M4Stream();
 
             // Programmer's Note: With an explicit deletion of a function you express that it must never 
@@ -200,8 +201,15 @@ namespace monarch4
 
             mutable z5GroupHandle* fStreamParentLoc;
             mutable z5GroupHandle* fAcqLoc;     // <root>/"streams"/"streamsN"/"acquisitions"
+
+            // fCurrentAcqDataset  This is the pointer to the dataset being actively used at any 
+            // given time.  This is the thing to (from) which data is written (read).
             mutable z5DatasetHandle* fCurrentAcqDataSet;
 
+            // fH5DataSpaceUser  This describes the size of the dataset that the user interacts with.  
+            // In other words, one record, since the dimensions of the dataset from the user perspective 
+            // is 1 row x [size of a record] bytes.  The user doesnt interact with all of the records, 
+            // so they dont see the dataspace that defines each acquisition (i.e. contiguous block of data).
             // mutable H5::DataSpace* fH5DataSpaceUser;
             mutable z5DatasetHandle* fDataSpaceUser;
 
@@ -212,12 +220,36 @@ namespace monarch4
             mutable z5Datatype fDataTypeUser;
 
             enum { N_DATA_DIMS = 2 };
+
+            // fStrDataDims  This keeps track of how much data has been recorded.  
+            // [0] is the number of records recorded, and 
+            // [1] is the size of a stream record in bytes
             mutable size_t fStrDataDims[ N_DATA_DIMS ];
+
+            // fStrMaxDataDims  This is used to create the HDF5 dataset object.  
+            // It has unlimited rows, and its width is the size of a stream record in bytes
             mutable size_t fStrMaxDataDims[ N_DATA_DIMS ];
+
+            // fStrDataChunkDims  In HDF5 a chunk is the size of data that is contiguous, 
+            // and helps inform how the file is structured.  In this case the dimensions are 
+            // always 1 record (i.e. 1 row) by a stream record in bytes wide.
             mutable size_t fStrDataChunkDims[ N_DATA_DIMS ];
+
+            // fDataDims1Rec  This describes the size of the data object that a user interacts with.  
+            // So when the data is accessed as separate channels, its one channel record wide in bytes.  
+            // When data is not accessed separately, its one stream record wide in bytes.
             mutable size_t fDataDims1Rec[ N_DATA_DIMS ];
+
+            // fDataOffset  This says where within the data space the data reading/writing starts.  
+            // So how many records (i.e. rows) down, and how many bytes over (only non-zero if 
+            // using separate-channel access)
             mutable size_t fDataOffset[ N_DATA_DIMS ];
+
+            // fDataStride  I believe this specifies how far to move in memory between reads/writes
             mutable size_t fDataStride[ N_DATA_DIMS ];
+
+            // fDataBlock  I dont actually remember the significance of this or why its fSampleSize 
+            // for separate access, but the stream record size in the other case
             mutable size_t fDataBlock[ N_DATA_DIMS ];
 
             mutable mutex_ptr fMutexPtr;

@@ -65,6 +65,7 @@ std::cout << "M4Record::~M4Record()\n";
     *************************************************************************/
     void M4Record::Initialize()
     {
+std::cout << "M4Record::Initialize(): clear\n";
         ClearData();
     }
 
@@ -75,7 +76,7 @@ std::cout << "M4Record::~M4Record()\n";
     *************************************************************************/
     void M4Record::Initialize( unsigned aNBytes )
     {
-std::cout << "M4Record::Initialize()\n";
+std::cout << "M4Record::Initialize(): " << aNBytes << " bytes\n";;
         ClearData();
         fRecordId = new RecordIdType();
 
@@ -92,12 +93,13 @@ std::cout << "M4Record::Initialize(): void\n";
     /*************************************************************************
     * @brief Initialize an M4Record with an external buffer
     * 
-    * @param aRecPtr Pointer to type of record identifier
-    * @param aTimePtr Pointer to record start time
-    * @param aDataPtr Pointer to external data buffer
+    * @param[in] aRecPtr Pointer to type of record identifier
+    * @param[in] aTimePtr Pointer to record start time
+    * @param[in] aDataPtr Pointer to external data buffer
     *************************************************************************/
     void M4Record::Initialize( RecordIdType* aRecPtr, TimeType* aTimePtr, byte_type* aDataPtr )
     {
+std::cout << "M4Record::Initialize()\n";
         ClearData();
 
         fOwnsData = false;          // signal data buffer owned externally
@@ -105,6 +107,7 @@ std::cout << "M4Record::Initialize(): void\n";
         fRecordId = aRecPtr;
         fTime = aTimePtr;
         fData = aDataPtr;
+std::cout << "M4Record::Initialize(): void\n";
     }
 
     /*************************************************************************
@@ -116,18 +119,24 @@ std::cout << "M4Record::Initialize(): void\n";
 std::cout << "M4Record::ClearData()\n";
         if( fOwnsData )
         {
+            // avoid releasing unallocated memory: segfault
             if (fRecordId != nullptr)
-            { // avoid releasing unallocated memory: segfault
+            { 
+std::cout << "release fRecordId\n";
                 delete fRecordId;
             }
 
+            // avoid releasing unallocated memory: segfault
             if (fTime != nullptr)
-            { // avoid releasing unallocated memory: segfault
+            { 
+std::cout << "release fData\n";
                 delete fTime;
             }
 
+            // avoid releasing unallocated memory: segfault
             if (fData != nullptr)
-            { // avoid releasing unallocated memory: segfault
+            { 
+std::cout << "release fTime\n";
                 delete [] fData;
             }
         }

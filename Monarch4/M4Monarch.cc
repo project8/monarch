@@ -41,6 +41,7 @@ namespace monarch4
         {
             FinishReading();
         } 
+
         if( fState == eOpenToWrite || fState == eReadyToWrite) 
         {
             FinishWriting();
@@ -222,21 +223,29 @@ std::cout << "Monarch4::WriteHeader()\n";
         //      streams/stream0..streamN-1
 ///@todo Handle nulptr fHeader
         fHeader->WriteToFile( fFile );
-        
-        z5GroupHandle* tStreamsGroup = fHeader->GetStreamsGroup();
 
+        z5GroupHandle* tStreamsGroup = fHeader->GetStreamsGroup();
         try
         {
-std::cout << "\n\nCreate the stream objects based on the configuration from the header\n\n";
+std::cout << "\n\nMonarch4::WriteHeader(): Create the stream objects based on the configuration from the header\n\n";
 
             // Create the stream objects based on the configuration from the header
+//#if 0
+int strmNum = 0;
             for( M4Header::M4StreamHeaders::const_iterator streamIt = fHeader->StreamHeaders().begin();
                     streamIt != fHeader->StreamHeaders().end();
                     ++streamIt )
-            {                
+            {
+std::cout << "\nfor() Create M4Stream: " << strmNum++ << std::endl;
                 fStreams.push_back( new M4Stream( *streamIt, tStreamsGroup ) );     // Create new M4Stream
-                fStreams.back()->SetMutex( fMutexPtr );
+//              fStreams.back()->SetMutex( fMutexPtr );
             }
+//#endif
+            // Programmer's Note: create single stream for testing
+//          auto streamIt = fHeader->StreamHeaders().begin();
+//          auto mym4 = new M4Stream( *streamIt, tStreamsGroup );
+//          delete mym4;
+// Programmer's Note: how is deleting this causing a segfault?
         }
         // catch( H5::Exception& e )
         // {
@@ -247,7 +256,7 @@ std::cout << "\n\nCreate the stream objects based on the configuration from the 
             throw;
         }
         fState = eReadyToWrite;
-std::cout << "Monarch4::WriteHeader(): void\n";
+std::cout << "Monarch4::WriteHeader(): void\n\n";
     }
 
     /*************************************************************************

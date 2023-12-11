@@ -803,7 +803,7 @@ std::cout << "M4Header::~M4Header()\n";
     {
 std::cout << "M4Header::AddStream() single-channel: " << aSource << std::endl;
 
-        LDEBUG( mlog, "Adding stream " << fNStreams << " for channel " << fNChannels << " with record size " << aRecSize );
+        LDEBUG( mlog, "Adding stream " << fNStreams << " for channel " << fNChannels << " with record size " << aRecSize << " bitDepth: " << aBitDepth);
         
         if( aChanVec != nullptr ) 
         { 
@@ -866,7 +866,7 @@ std::cout << "M4Header::AddStream() single-channel: EXIT\n";
     {
 std::cout << "M4Header::AddStream() multi-channel: " << aSource << std::endl;
 
-        LDEBUG( mlog, "Adding stream " << fNStreams << " for multiple channels with record size " << aRecSize );
+        LDEBUG( mlog, "Adding stream " << fNStreams << " for multiple channels with record size " << aRecSize << " bitDepth: " << aBitDepth);
 
         // First new channel for this stream picks up where previously allocated channels left off
         unsigned tFirstNewChannel = fNChannels;

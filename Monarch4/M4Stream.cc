@@ -11,6 +11,7 @@
 
 #include "M4IToA.hh"
 #include "logger.hh"
+#include "z5includes.hh"
 
 #include <cstdlib> // for abs
 
@@ -44,7 +45,8 @@ namespace monarch4
     * @param[in] aStreamsLoc <root>/"streams"/"streamsN"
     * @param aAccessFormat 
     *************************************************************************/
-    M4Stream::M4Stream( const M4StreamHeader& aHeader, HAS_GRP_IFC* aStreamsLoc, uint32_t aAccessFormat ) :
+//  M4Stream::M4Stream( const M4StreamHeader& aHeader, HAS_GRP_IFC* aStreamsLoc, uint32_t aAccessFormat ) :
+    M4Stream::M4Stream( const M4StreamHeader& aHeader, z5GroupHandle* aStreamsLoc, uint32_t aAccessFormat ) :
             fMode( kRead ),
             fDoReadRecord( nullptr ),
             fDoWriteRecord( nullptr ),
@@ -77,33 +79,37 @@ namespace monarch4
             // fStreamParentLoc( new H5::Group( aStreamsLoc->openGroup( aHeader.GetLabel() ) ) ),
             fAcqLoc( nullptr ),
             fCurrentAcqDataSet( nullptr ),
-            fDataSpaceUser( NULL ),
+            fDataSpaceUser( nullptr ),
             fMutexPtr( new std::mutex() )
     {
-std::cout << "M4Stream::M4Stream() : "  << aHeader.GetLabel() << std::endl;
+std::cout << "\nM4Stream::M4Stream() : "  << aHeader.GetLabel() << std::endl;
 
-        LDEBUG( mlog, "Creating stream for <" << aHeader.GetLabel() << ">" );
+//      LDEBUG( mlog, "Creating stream for <" << aHeader.GetLabel() << ">" );
 
         if( aHeader.GetDataFormat() == sDigitizedUS )
         {
-std::cout << "Unsigned stream data\n";
+std::cout << "sDigitizedUS stream data of: ";
             switch( fDataTypeSize )
             {
                 case 1:
                     fDataTypeInFile = z5::types::uint8;     //H5::PredType::STD_U8LE;
                     fDataTypeUser = z5::types::uint8;       //H5::PredType::NATIVE_UINT8;
+std::cout << "uint8\n";
                    break;
                 case 2:
                     fDataTypeInFile = z5::types::uint16;    //H5::PredType::STD_U16LE;
                     fDataTypeUser = z5::types::uint16;      //H5::PredType::NATIVE_UINT16;
+std::cout << "uint16\n";
                     break;
                 case 4:
                     fDataTypeInFile = z5::types::uint32;    //H5::PredType::STD_U32LE;
                     fDataTypeUser = z5::types::uint32;      //H5::PredType::NATIVE_UINT32;
+std::cout << "uint32\n";
                     break;
                 case 8:
                     fDataTypeInFile = z5::types::uint64;    //H5::PredType::STD_U64LE;
                     fDataTypeUser = z5::types::uint64;      //H5::PredType::NATIVE_UINT64;
+std::cout << "uint64\n";
                     break;
                 default:
                     throw M4Exception() << "M4Stream::M4Stream() Unknown unsigned integer data type size: " << fDataTypeSize;
@@ -111,24 +117,28 @@ std::cout << "Unsigned stream data\n";
         }
         else if( aHeader.GetDataFormat() == sDigitizedS )
         {
-std::cout << "Signed stream data\n";
+std::cout << "sDigitizedS stream data of: ";
             switch( fDataTypeSize )
             {
                 case 1:
                     fDataTypeInFile = z5::types::int8;      //H5::PredType::STD_I8LE;
                     fDataTypeUser = z5::types::int8;        //H5::PredType::NATIVE_INT8;
+std::cout << "int8\n";
                    break;
                 case 2:
                     fDataTypeInFile = z5::types::int16;      //H5::PredType::STD_I16LE;
                     fDataTypeUser = z5::types::int16;        //H5::PredType::NATIVE_INT16;
+std::cout << "int16\n";
                     break;
                 case 4:
                     fDataTypeInFile = z5::types::int32;     //H5::PredType::STD_I32LE;
                     fDataTypeUser = z5::types::int32;       //H5::PredType::NATIVE_INT32;
+std::cout << "int32\n";
                     break;
                 case 8:
                     fDataTypeInFile = z5::types::int64;     //H5::PredType::STD_I64LE;
                     fDataTypeUser = z5::types::int64;       //H5::PredType::NATIVE_INT64;
+std::cout << "int64\n";
                     break;
                 default:
                     throw M4Exception() << "M4Stream::M4Stream() Unknown signed integer data type size: " << fDataTypeSize;
@@ -136,16 +146,18 @@ std::cout << "Signed stream data\n";
         }
         else // aHeader.GetDataFormat() == sAnalog
         {
-std::cout << "Analog/floating-point stream data\n";
+std::cout << "Analog/floating-point stream data of: ";
             switch( fDataTypeSize )
             {
                 case 4:
                     fDataTypeInFile = z5::types::float32;   //H5::PredType::IEEE_F32LE;
                     fDataTypeUser = z5::types::float32;     //H5::PredType::NATIVE_FLOAT;
+std::cout << "float32\n";
                     break;
                 case 8:
                     fDataTypeInFile = z5::types::float64;   //H5::PredType::IEEE_F64LE ;
                     fDataTypeUser = z5::types::float64;     //H5::PredType::NATIVE_DOUBLE;
+std::cout << "float64\n";
                     break;
                 default:
                     throw M4Exception() << "M4Stream::M4Stream() Unknown floating-point data type size: " << fDataTypeSize;
@@ -166,7 +178,7 @@ std::cout << "Analog/floating-point stream data\n";
 // : n_acquisitions > 0 and n_records > 0
 // -> already has data
 
-#if 0
+#if 0 // old HDF5 code
         // variables to store the HDF5 error printing state
         H5E_auto2_t tAutoPrintFunc;
         void* tClientData;
@@ -226,12 +238,11 @@ std::cout << "Analog/floating-point stream data\n";
         //     }
         // }
 #endif
-
         fStreamParentLoc = aStreamsLoc;     // keep <root>/"streams"/"streamsN" group
 
-        // See if there are any records currently in file
+        // See if there are any acquisition records currently in file
         if(z5::filesystem::isSubGroup(*fStreamParentLoc, "acquisitions") == true)
-        { // "acquisitions" exists == read mode
+        { // "acquisitions" records exist == read mode
 
             LDEBUG( mlog, "Opened acquisition group in <read> mode" );
 
@@ -258,7 +269,7 @@ std::cout << "Analog/floating-point stream data\n";
             }
         }
         else
-        { // "acquisitions" doesn't exist == write mode, create new
+        { // no "acquisitions" records == write mode, create new
 
             fAcqLoc = new z5GroupHandle(*fStreamParentLoc, "acquisitions");     // <root>/"streams"/"streamsN"/"acquisitions"
 
@@ -266,8 +277,9 @@ std::cout << "Analog/floating-point stream data\n";
             fMode = kWrite;  // write mode
         }
 
-
-        Initialize();
+        // Initialize the stream
+std::cout << "Perform initialization of stream: " << aHeader.GetLabel() << std::endl;
+      Initialize();
 std::cout << "M4Stream::M4Stream() : void "  << aHeader.GetLabel() << std::endl;
     }
 
@@ -278,21 +290,42 @@ std::cout << "M4Stream::M4Stream() : void "  << aHeader.GetLabel() << std::endl;
     M4Stream::~M4Stream()
     {
 std::cout << "M4Stream::~M4Stream() DTOR\n";
-        delete fDataSpaceUser; 
+        // avoid releasing unallocated memory: segfault
+        if(fDataSpaceUser != nullptr)
+        {
+            delete fDataSpaceUser;
+        }
         fDataSpaceUser = nullptr;
 
-        delete fCurrentAcqDataSet; 
+        // avoid releasing unallocated memory: segfault
+        if(fCurrentAcqDataSet != nullptr)
+        {
+            delete fCurrentAcqDataSet;
+        }
         fCurrentAcqDataSet = nullptr;
 
-        delete fAcqLoc; 
+        // avoid releasing unallocated memory: segfault
+        if(fAcqLoc != nullptr)
+        {
+            delete fAcqLoc;
+        }
         fAcqLoc = nullptr;
 
-        delete fStreamParentLoc; 
+        // avoid releasing unallocated memory: segfault
+        if(fStreamParentLoc != nullptr)
+        {
+            delete fStreamParentLoc;
+        }
         fStreamParentLoc = nullptr;
 
-        delete [] fChannelRecords;
+        // avoid releasing unallocated memory: segfault
+        if(fChannelRecords != nullptr)
+        {
+            delete[] fChannelRecords;
+        }
 
         //TODO: release fMutexPtr created in CTOR M4Stream()
+std::cout << "M4Stream::~M4Stream() DTOR: void\n";
     }
 
     /*************************************************************************
@@ -302,7 +335,7 @@ std::cout << "M4Stream::~M4Stream() DTOR\n";
     void M4Stream::Initialize() const
     {
 std::cout << "M4Stream::Initialize()\n";        
-        LDEBUG( mlog, "Initializing stream" );
+//      LDEBUG( mlog, "Initializing stream" );
         fIsInitialized = false;
 
         // The case where the access format is separate, but the data in the file is interleaved is special.
@@ -312,8 +345,8 @@ std::cout << "M4Stream::Initialize()\n";
             fDataInterleaved && 
             fNChannels != 1 )
         {
-            LDEBUG(mlog, "Interleaved data");
-#if 0
+            LDEBUG(mlog, "Interleaved data" << " not implemented yet");
+#if 0 // original HDF5 code
             // no memory is allocated for the stream record
             fStreamRecord.Initialize();
 
@@ -394,7 +427,8 @@ std::cout << "M4Stream::Initialize()\n";
             fIsInitialized = true;
             return;
         }
-#if 0
+
+std::cout << "non-interleaved\n";
         // allocate stream record memory
         fStreamRecord.Initialize( fStrRecNBytes );
 
@@ -402,6 +436,7 @@ std::cout << "M4Stream::Initialize()\n";
         byte_type* tChanDataPtr = fStreamRecord.GetData();
         for( unsigned iChan = 0; iChan < fNChannels; ++iChan )
         {
+std::cout << "Record: " << iChan << " initialize\n";
             fChannelRecords[ iChan ].Initialize( fStreamRecord.GetRecordIdPtr(), fStreamRecord.GetTimePtr(), tChanDataPtr + fChanRecNBytes*iChan );
         }
 
@@ -410,13 +445,45 @@ std::cout << "M4Stream::Initialize()\n";
         fDoWriteRecord = &M4Stream::WriteRecordAsIs;
 
         // Arrays for HDF5 file reading/writing
-        fStrDataDims[ 0 ] = 1;                 fStrDataDims[ 1 ] = fStrRecSize * fSampleSize;
-        fStrMaxDataDims[ 0 ] = H5S_UNLIMITED;  fStrMaxDataDims[ 1 ] = fStrRecSize * fSampleSize;
-        fStrDataChunkDims[ 0 ] = 1;            fStrDataChunkDims[ 1 ] = fStrRecSize * fSampleSize;
-        fDataDims1Rec[ 0 ] = 1;             fDataDims1Rec[ 1 ] = fStrRecSize * fSampleSize;
-        fDataOffset[ 0 ] = 0;               fDataOffset[ 1 ] = 0;
-        fDataStride[ 0 ] = 1;               fDataStride[ 1 ] = fSampleSize;
-        fDataBlock[ 0 ] = 1;                fDataBlock[ 1 ] = fStrRecSize * fSampleSize;
+
+        // fStrDataDims  This keeps track of how much data has been recorded.  
+        // [0] is the number of records recorded, and 
+        // [1] is the size of a stream record in bytes
+        fStrDataDims[ 0 ] = 1;                 
+        fStrDataDims[ 1 ] = fStrRecSize * fSampleSize;
+
+        // fStrMaxDataDims  This is used to create the HDF5 dataset object.  
+        // It has unlimited rows, and its width is the size of a stream record in bytes
+        fStrMaxDataDims[ 0 ] = -1; //H5S_UNLIMITED;  
+        fStrMaxDataDims[ 1 ] = fStrRecSize * fSampleSize;
+
+        // fStrDataChunkDims  In HDF5 a chunk is the size of data that is contiguous, 
+        // and helps inform how the file is structured.  In this case the dimensions are 
+        // always 1 record (i.e. 1 row) by a stream record in bytes wide.
+        fStrDataChunkDims[ 0 ] = 1;            
+        fStrDataChunkDims[ 1 ] = fStrRecSize * fSampleSize;
+
+        // fDataDims1Rec  This describes the size of the data object that a user interacts with.  
+        // So when the data is accessed as separate channels, its one channel record wide in bytes.  
+        // When data is not accessed separately, its one stream record wide in bytes.
+        fDataDims1Rec[ 0 ] = 1;             
+        fDataDims1Rec[ 1 ] = fStrRecSize * fSampleSize;
+
+        // fDataOffset  This says where within the data space the data reading/writing starts.  
+        // So how many records (i.e. rows) down, and how many bytes over (only non-zero if 
+        // using separate-channel access)
+        fDataOffset[ 0 ] = 0;               
+        fDataOffset[ 1 ] = 0;
+
+        // fDataStride  I believe this specifies how far to move in memory between reads/writes
+        fDataStride[ 0 ] = 1;               
+        fDataStride[ 1 ] = fSampleSize;
+
+        // fDataBlock  I dont actually remember the significance of this or why its fSampleSize 
+        // for separate access, but the stream record size in the other case
+        fDataBlock[ 0 ] = 1;                
+        fDataBlock[ 1 ] = fStrRecSize * fSampleSize;
+
         /*
         std::cout << "str data dims: " << fStrDataDims[0] << " " << fStrDataDims[1] << std::endl;
         std::cout << "str max data dims: " << fStrMaxDataDims[0] << " " << fStrMaxDataDims[1] << std::endl;
@@ -427,12 +494,38 @@ std::cout << "M4Stream::Initialize()\n";
         std::cout << "str data block: " << fDataBlock[0] << " " << fDataBlock[1] << std::endl;
         */
 
-        // HDF5 object initialization
-        delete fDataSpaceUser;
-        fDataSpaceUser = new H5::DataSpace( N_DATA_DIMS, fDataDims1Rec, NULL );
+std::cout << "\nCreate new z5/Zarr DataSpace\n";
 
+        // Programmer's Note: z5::handle are for access to attributes: readAttribute(), writeAttribute()
+        // z5:filesystem::Dataset is for access to data: readSubarray(), writeSubarray()
+
+        std::string dsName = "acquisitions";
+        std::vector<size_t> shape = { 1,fStrRecSize };       // <row>,<col>
+        std::vector<size_t> chunks = { 1,fStrRecSize };      // <row>,<col>
+        z5::types::Datatypes z5Data;
+        z5::types::Datatypes::InverseDtypeMap& N5type = z5Data.dtypeToN5();
+        std::string strDataType = N5type[fDataTypeInFile];     // lookup/convert type to string
+std::cout << "stream datatype: " << strDataType << std::endl;
+#if 0
+//
+//
+//z5::DatasetMetadata meta(fDataTypeInFile,shape,chunks,true);
+//z5DatasetHandle hDataset;
+//
+//std::unique_ptr<z5::Dataset> mydataset = z5::createDataset(hDataset,meta);
+
+
+
+        if(fDataSpaceUser != nullptr)
+        {
+            delete fDataSpaceUser;      // release an existing
+        }
+        // Programmer's Note: fAcqLoc: <root>/"streams"/"streamsN"/"acquisitions"
+        // from M4Stream::M4Stream()
+//      fDataSpaceUser = z5::createDataset(*fAcqLoc, dsName, strDataType, shape, chunks);
+//      fDataSpaceUser = new z5::filesystem::handle::Dataset(*fAcqLoc, dsName, strDataType, shape, chunks)
+#endif
         fIsInitialized = true;
-#endif  
 std::cout << "M4Stream::Initialize(): void\n";        
     }
 
@@ -562,9 +655,10 @@ std::cout << "M4Stream::ReadRecord(): void\n";
 std::cout << "M4Stream::Close()\n";
         LDEBUG( mlog, "const M4Stream::Close()" );
 
-        delete fDataSpaceUser; 
+        delete fDataSpaceUser;
         fDataSpaceUser = nullptr;
-
+///@todo how to release z5::DataSet 
+/// 
         delete fCurrentAcqDataSet; 
         fCurrentAcqDataSet = nullptr;
 
@@ -684,8 +778,8 @@ std::cout << "M4Stream::Close()\n";
         //LDEBUG( mlog, "non-const M4Stream::Close()" );
         FinalizeStream();
 
-        delete fDataSpaceUser; 
-        fDataSpaceUser = nullptr;
+//      delete fDataSpaceUser;
+//      fDataSpaceUser = nullptr;
 
         delete fCurrentAcqDataSet; 
         fCurrentAcqDataSet = nullptr;

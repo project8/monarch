@@ -79,8 +79,6 @@ namespace monarch4
 
 
         private:
-            // void WriteChannels( HAS_ATTR_IFC* aLoc );
-            // void ReadChannels( const HAS_ATTR_IFC* aLoc ) const;
             void WriteChannels( z5GroupHandle aGroup );
             void ReadChannels( const z5GroupHandle aGroup ) const;            
    };
@@ -183,7 +181,6 @@ namespace monarch4
                                 uint32_t aBitDepth, uint32_t aBitAlignment,
                                 std::vector< unsigned >* aChanVec = NULL );
         public:
-            // void ReadFromFile( const z5::filesystem::handle::File* aFile ) const;
             void WriteToFile( z5FileHandle* aFile );
             void ReadFromFile( const z5FileHandle* aFile ) const;
 
@@ -194,13 +191,9 @@ namespace monarch4
             z5GroupHandle* GetChannelsGroup();
 
         private:
-            // void WriteChannelStreams( HAS_ATTR_IFC* aLoc );
-            // void ReadChannelStreams( const HAS_ATTR_IFC* aLoc ) const;
             void WriteChannelStreams( z5FileHandle* aFile );
             void ReadChannelStreams( const z5FileHandle* aFile ) const;
 
-            // void WriteChannelCoherence( HAS_ATTR_IFC* aLoc );
-            // void ReadChannelCoherence( const HAS_ATTR_IFC* aLoc ) const;
             void WriteChannelCoherence( z5FileHandle* aFile  );
             void ReadChannelCoherence( const z5FileHandle* aFile ) const;
 
@@ -216,11 +209,11 @@ namespace monarch4
             //template< typename XArrayType >
             //static void Write1DToHDF5( HAS_GRP_IFC* aLoc, const std::string& aName, const XArrayType& anArray );
 
-            template< typename XType >
-            static XType ReadScalarFromHDF5( const HAS_ATTR_IFC* aLoc, const std::string& aName );
-
-            template< typename XType >
-            static XType ReadScalarFromHDF5( const HAS_ATTR_IFC* aLoc, const std::string& aName, const XType& aDefault );
+//          template< typename XType >
+//          static XType ReadScalarFromHDF5( const HAS_ATTR_IFC* aLoc, const std::string& aName );
+//
+//          template< typename XType >
+//          static XType ReadScalarFromHDF5( const HAS_ATTR_IFC* aLoc, const std::string& aName, const XType& aDefault );
 
             //template< typename XArrayType >
             //static void Read1DFromHDF5( const HAS_ATTR_IFC* aLoc, const std::string& aName, XArrayType& anArray );

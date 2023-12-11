@@ -60,23 +60,23 @@ int main() {
         unsigned tSingleStreamNum = tHeader->AddStream( "1-channel device", 500, tSSSamples, 1, 1, sDigitizedUS, 8, sBitsAlignedLeft );
         unsigned tDoubleStreamNum = tHeader->AddStream( "2-channel device", 2, sInterleaved, 250, tDSSamples, 1, 2, sDigitizedUS, 16, sBitsAlignedLeft );
         unsigned tTripleStreamNum = tHeader->AddStream( "3-channel device", 3, sSeparate, 100, tTSSamples, 1, 1, sDigitizedUS, 8, sBitsAlignedLeft );
-        unsigned tFloatStreamNum = tHeader->AddStream( "Floating-point device", 100, tFlSSamples, 1, 4, sAnalog, 8, sBitsAlignedLeft );
+        unsigned tFloatStreamNum = tHeader->AddStream( "Floating-point device", 100, tFlSSamples, 1, 4, sAnalog, 32, sBitsAlignedLeft );
 
         tWriteTest->WriteHeader();
 
         // Programmer's Note: *tHeader into mlog (ostream) dumps header info to terminal!
 //      LINFO( mlog, "Wrote header:\n" << *tHeader );
-        LINFO( mlog, "Writing data" );
+//      LINFO( mlog, "Writing data" );
 
         // Stream 0
-        M4Stream* tSingleStream = tWriteTest->GetStream( tSingleStreamNum );
-std::cout << "tSingleStream: " << tSingleStream << std::endl;
-        byte_type* tSSData = tSingleStream->GetStreamRecord()->GetData();
-std::cout << "tSSData: " << tSSData << std::endl;
-        if (tSingleStream != nullptr && tSSData != nullptr)
-        {
-          std::cout << "stream and data pointers okay\n";
-        }
+//        M4Stream* tSingleStream = tWriteTest->GetStream( tSingleStreamNum );
+//std::cout << "tSingleStream: " << tSingleStream << std::endl;
+//      byte_type* tSSData = tSingleStream->GetStreamRecord()->GetData();
+//std::cout << "tSSData: " << tSSData << std::endl;
+//        if (tSingleStream != nullptr && tSSData != nullptr)
+//        {
+//          std::cout << "stream and data pointers okay\n";
+//        }
 //      for( unsigned iSample = 0; iSample < tSSSamples; ++iSample )
 //      {
 //          tSSData[ iSample ] = 1;

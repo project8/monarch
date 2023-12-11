@@ -46,8 +46,10 @@ namespace monarch4
 
             /// Allocate no memory for the record; data pointer is to NULL
             void Initialize();
+             
             /// Allocate aNBytes of memory for the record
             void Initialize( unsigned aNBytes );
+             
             /// Do not allocate memory for the record; instead point to someone else's memory.
             /// Warning: if the memory pointed to is de-allocated, use of this record should be discontinued
             void Initialize( RecordIdType* aRecPtr, TimeType* aTimePtr, byte_type* aDataPtr );
