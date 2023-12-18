@@ -39,11 +39,13 @@ namespace monarch4
     LOGGER( mlog, "M4Stream" );
 
     /*************************************************************************
-    * @brief Construct a new M4Stream::M4Stream object
+    * @brief Construct a new M4Stream::M4Stream object from specified context
     * 
-    * @param[in] aHeader M4StreamHeader representing the steram
-    * @param[in] aStreamsLoc <root>/"streams"/"streamsN"
-    * @param aAccessFormat 
+    * @param[in] aHeader reference to M4StreamHeader representing the stream
+    * @param[in] aStreamsLoc hierarchy position: <root>/"streams"/"streamsN"
+    * @param aAccessFormat Specifies whether the data channels are interleaved 
+    *        or separate in a stream (sSeparate, sInterleaved), defaults to
+    *        sSeparate
     *************************************************************************/
     M4Stream::M4Stream( const M4StreamHeader& aHeader, z5GroupHandle* aStreamsLoc, uint32_t aAccessFormat ) :
             fMode( kRead ),
@@ -76,6 +78,7 @@ namespace monarch4
             fNRecordsInFile( 0 ),
             fFirstRecordInFile( 0 ),
             // fStreamParentLoc( new H5::Group( aStreamsLoc->openGroup( aHeader.GetLabel() ) ) ),
+            fStreamParentLoc(new z5GroupHandle(*aStreamsLoc, aHeader.GetLabel())),
             fAcqLoc( nullptr ),
             fCurrentAcqDataSet( nullptr ),
             fDataSpaceUser( nullptr ),
@@ -237,7 +240,7 @@ std::cout << "float64\n";
         //     }
         // }
 #endif
-        fStreamParentLoc = aStreamsLoc;     // keep <root>/"streams"/"streamsN" group
+//      fStreamParentLoc = aStreamsLoc;     // keep <root>/"streams"/"streamsN" group
 std::cout << "See if there are any acquisition records currently in file\n";
 
         // See if there are any acquisition records currently in file

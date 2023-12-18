@@ -241,17 +241,22 @@ std::cout << "\nfor() Create M4Stream: " << strmNum++ << std::endl;
                 fStreams.back()->SetMutex( fMutexPtr );
             }
 #endif
-#if 0
-            for(auto strm : fHeader->GetStreamHeaders())
+//#if 0
+            // Programmer's Note: Reserving vector space and []-access avoids segfault at program shutdown
+            fStreams.reserve(10);       // preallocate space to avoid re-allocations
+            int numHeaders = fHeader->GetStreamHeaders().size();
+            for(int n=0; n<numHeaders; ++n )
             {
-std::cout << "\nfor() Create M4Stream: " << strmNum++ << std::endl;
-                fStreams.push_back( new M4Stream( strm, tStreamsGroup ) );     // Create new M4Stream
+std::cout << "\nfor() Create M4Stream: " << strmNum++ << std::endl;                
+                fStreams.push_back(new M4Stream( fHeader->GetStreamHeaders()[n], tStreamsGroup ));
                 fStreams.back()->SetMutex( fMutexPtr );
+//              fStreams[n] = new M4Stream( fHeader->GetStreamHeaders()[n], tStreamsGroup );
+//              fStreams[n]->SetMutex( fMutexPtr );
             }
-#endif
-    
+//#endif
+
+#if 0
             // Programmer's Note: create single stream for testing
-            fStreams.reserve(10);
 std::cout << "fStreams.size(): " << fStreams.size() << std::endl;
 //          auto strm0 = new M4Stream( fHeader->GetStreamHeaders()[0], tStreamsGroup );
             fStreams[0] = new M4Stream( fHeader->GetStreamHeaders()[0], tStreamsGroup );
@@ -264,6 +269,7 @@ std::cout << "fStreams.size(): " << fStreams.size() << std::endl;
 
 //          auto strm3 = new M4Stream( fHeader->GetStreamHeaders()[3], tStreamsGroup );
             fStreams[3] = new M4Stream( fHeader->GetStreamHeaders()[3], tStreamsGroup );
+#endif
 /// 
 //// Programmer's Note: how is deleting these causing a segfault?
         }

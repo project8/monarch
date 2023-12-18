@@ -53,13 +53,16 @@ namespace monarch4
             typedef void (M4Stream::*DoWriteRecordFunc)( bool );
 
         public:
-//          M4Stream( const M4StreamHeader& aHeader, HAS_GRP_IFC* aH5StreamParentLoc, uint32_t aAccessFormat = sSeparate );
+            // CTOR - only create with specified context
             M4Stream( const M4StreamHeader& aHeader, z5GroupHandle* aStreamsLoc, uint32_t aAccessFormat = sSeparate );
             virtual ~M4Stream();
 
             // Programmer's Note: With an explicit deletion of a function you express that it must never 
             // be used. This leads especially to clearly understandable error messages when trying to call such a function.
+            // COPY-CTOR removed - cannot (publicly) copy the M4Stream class
             M4Stream( const M4Stream& ) = delete;
+
+            // ASSIGNMENT operator removed - cannot (publicly) assign M4Stream class
             M4Stream& operator=( const M4Stream& ) = delete;
 
             M4MEMBERVARIABLE( Mode, Mode );
