@@ -231,19 +231,19 @@ std::cout << "\n\nMonarch4::WriteHeader(): Create the stream objects based on th
 
             // Create the stream objects based on the configuration from the header
 int strmNum = 0;
-#if 0
+//#if 0
             for( M4Header::M4StreamHeaders::const_iterator streamIt = fHeader->StreamHeaders().begin();
                     streamIt != fHeader->StreamHeaders().end();
                     ++streamIt )
             {
 std::cout << "\nfor() Create M4Stream: " << strmNum++ << std::endl;
-                fStreams.push_back( new M4Stream( *streamIt, tStreamsGroup ) );     // Create new M4Stream
+                fStreams.push_back(new M4Stream( *streamIt, tStreamsGroup ));
                 fStreams.back()->SetMutex( fMutexPtr );
             }
-#endif
-//#if 0
+//#endif
+#if 0
             // Programmer's Note: Reserving vector space and []-access avoids segfault at program shutdown
-            fStreams.reserve(10);       // preallocate space to avoid re-allocations
+//          fStreams.reserve(10);       // preallocate space to avoid re-allocations
             int numHeaders = fHeader->GetStreamHeaders().size();
             for(int n=0; n<numHeaders; ++n )
             {
@@ -253,7 +253,7 @@ std::cout << "\nfor() Create M4Stream: " << strmNum++ << std::endl;
 //              fStreams[n] = new M4Stream( fHeader->GetStreamHeaders()[n], tStreamsGroup );
 //              fStreams[n]->SetMutex( fMutexPtr );
             }
-//#endif
+#endif
 
 #if 0
             // Programmer's Note: create single stream for testing
