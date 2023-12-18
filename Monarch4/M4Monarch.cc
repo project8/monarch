@@ -36,7 +36,7 @@ namespace monarch4
     *************************************************************************/
     Monarch4::~Monarch4()
     {
-//std::cout << "Monarch4::~Monarch4(): default DTOR\n";
+std::cout << "Monarch4::~Monarch4(): default DTOR\n";
         if( fState == eOpenToRead || fState == eReadyToRead)
         {
             FinishReading();
@@ -47,12 +47,13 @@ namespace monarch4
             FinishWriting();
         }
 
+        // Release the streams
         while( ! fStreams.empty() )
         {
             delete fStreams.back();
             fStreams.pop_back();
         }
-//std::cout << "Monarch4::~Monarch4(): Monarch4 component destroyed\n";
+std::cout << "Monarch4::~Monarch4(): Monarch4 component destroyed\n";
     }
 
     /*************************************************************************
@@ -209,69 +210,81 @@ std::cout << "Monarch4::ReadHeader(): void\n";
     void Monarch4::WriteHeader()
     {
 std::cout << "Monarch4::WriteHeader()\n";
+#if 0   // Original HDF5 code
         if( fState != eOpenToWrite )
         {
             throw M4Exception() << "File not opened to write";
         }
 
-        // Write the run-configuration headers to the file
-        // This will create the following groups: 
-        //  file root directory
-        //      channel_coherence, 
-        //      channels/channel0..channelN-1, 
-        //      channel_streams
-        //      streams/stream0..streamN-1
-///@todo Handle nulptr fHeader
+        // Write the header to the file
+        // This will create the following groups: run, streams, and channels
+        try
+        {
+            fHeader->WriteToHDF5( fFile );
+        }
+        catch( H5::Exception& e )
+        {
+            throw M4Exception() << "HDF5 error while writing header:\n\t" << e.getDetailMsg() << " (function: " << e.getFuncName() << ")";
+        }
+        catch( M4Exception& e )
+        {
+            throw;
+        }
+
+        H5::Group* tStreamsGroup = fHeader->GetStreamsGroup();
+
+        try
+        {
+            // Create the stream objects based on the configuration from the header
+            for( M4Header::M4StreamHeaders::const_iterator streamIt = fHeader->StreamHeaders().begin();
+                    streamIt != fHeader->StreamHeaders().end();
+                    ++streamIt )
+            {
+                fStreams.push_back( new M4Stream( *streamIt, tStreamsGroup ) );
+                fStreams.back()->SetMutex( fMutexPtr );
+            }
+        }
+        catch( H5::Exception& e )
+        {
+            throw M4Exception() << "HDF5 error while creating stream objects:\n\t" << e.getDetailMsg() << " (function: " << e.getFuncName() << ")";
+        }
+        catch( M4Exception& e )
+        {
+            throw;
+        }
+
+        fState = eReadyToWrite;
+#endif
+
+        if( fState != eOpenToWrite )
+        {
+            throw M4Exception() << "File not opened to write";
+        }
+
+        // Write the header/configuration elements to File
         fHeader->WriteToFile( fFile );
 
+        // Create the stream objects
         z5GroupHandle* tStreamsGroup = fHeader->GetStreamsGroup();
         try
         {
 std::cout << "\n\nMonarch4::WriteHeader(): Create the stream objects based on the configuration from the header\n\n";
 
             // Create the stream objects based on the configuration from the header
-int strmNum = 0;
-//#if 0
-            for( M4Header::M4StreamHeaders::const_iterator streamIt = fHeader->StreamHeaders().begin();
-                    streamIt != fHeader->StreamHeaders().end();
-                    ++streamIt )
+//          for( M4Header::M4StreamHeaders::const_iterator streamIt = fHeader->StreamHeaders().begin();
+//                  streamIt != fHeader->StreamHeaders().end();
+//                  ++streamIt )
+//          {
+//              fStreams.push_back(new M4Stream( *streamIt, tStreamsGroup ));
+//              fStreams.back()->SetMutex( fMutexPtr );
+//          }
+
+            // c++-17 version is neater
+            for(auto& streamIt: fHeader->StreamHeaders())       
             {
-std::cout << "\nfor() Create M4Stream: " << strmNum++ << std::endl;
-                fStreams.push_back(new M4Stream( *streamIt, tStreamsGroup ));
+                fStreams.push_back(new M4Stream( streamIt, tStreamsGroup ));
                 fStreams.back()->SetMutex( fMutexPtr );
             }
-//#endif
-#if 0
-            // Programmer's Note: Reserving vector space and []-access avoids segfault at program shutdown
-//          fStreams.reserve(10);       // preallocate space to avoid re-allocations
-            int numHeaders = fHeader->GetStreamHeaders().size();
-            for(int n=0; n<numHeaders; ++n )
-            {
-std::cout << "\nfor() Create M4Stream: " << strmNum++ << std::endl;                
-                fStreams.push_back(new M4Stream( fHeader->GetStreamHeaders()[n], tStreamsGroup ));
-                fStreams.back()->SetMutex( fMutexPtr );
-//              fStreams[n] = new M4Stream( fHeader->GetStreamHeaders()[n], tStreamsGroup );
-//              fStreams[n]->SetMutex( fMutexPtr );
-            }
-#endif
-
-#if 0
-            // Programmer's Note: create single stream for testing
-std::cout << "fStreams.size(): " << fStreams.size() << std::endl;
-//          auto strm0 = new M4Stream( fHeader->GetStreamHeaders()[0], tStreamsGroup );
-            fStreams[0] = new M4Stream( fHeader->GetStreamHeaders()[0], tStreamsGroup );
-
-//          auto strm1 = new M4Stream( fHeader->GetStreamHeaders()[1], tStreamsGroup );
-            fStreams[1] = new M4Stream( fHeader->GetStreamHeaders()[1], tStreamsGroup );
-
-//          auto strm2 = new M4Stream( fHeader->GetStreamHeaders()[2], tStreamsGroup );
-            fStreams[2] = new M4Stream( fHeader->GetStreamHeaders()[2], tStreamsGroup );
-
-//          auto strm3 = new M4Stream( fHeader->GetStreamHeaders()[3], tStreamsGroup );
-            fStreams[3] = new M4Stream( fHeader->GetStreamHeaders()[3], tStreamsGroup );
-#endif
-/// 
-//// Programmer's Note: how is deleting these causing a segfault?
         }
         // catch( H5::Exception& e )
         // {
@@ -291,7 +304,32 @@ std::cout << "Monarch4::WriteHeader(): void\n\n";
     *************************************************************************/
     void Monarch4::FinishReading() const
     {
-std::cout << "Monarch4::FinishReading()\n";        
+std::cout << "Monarch4::FinishReading()\n";  
+      
+#if 0  // original HDF5 implementation
+       std::string filename = fHeader != nullptr ? fHeader->Filename() : std::string();
+        LDEBUG( mlog, "Finishing reading <" << filename << ">" );
+        try
+        {
+            delete fHeader;
+            fHeader = nullptr;
+            for( std::vector< M4Stream* >::iterator streamIt = fStreams.begin(); streamIt != fStreams.end(); ++streamIt )
+            {
+                const_cast< const M4Stream* >(*streamIt)->Close();
+                delete *streamIt;
+                *streamIt = nullptr;
+            }
+            delete fFile;
+            fFile = nullptr;
+        }
+        catch( std::exception& e )
+        {
+            throw M4Exception() << "Error while closing file <" << filename << ">:\n" << e.what();
+        }
+        fState = eClosed;
+        return;
+
+#endif
         std::string filename = fHeader != nullptr ? fHeader->Filename() : std::string();
         
         LDEBUG( mlog, "Finishing reading <" << filename << ">" );
@@ -312,8 +350,8 @@ std::cout << "Monarch4::FinishReading()\n";
             }
 
             // release ownership of M4Monarch
-            // fFile->reset();      
-            // fFile = nullptr;
+            delete fFile;
+            fFile = nullptr;
         }
         catch( std::exception& e )
         {
@@ -329,22 +367,22 @@ std::cout << "Monarch4::FinishReading(): void\n";
     *************************************************************************/
     void Monarch4::FinishWriting()
     {
+std::cout << "Monarch4::FinishWriting()\n";
+#if 0  // original HDF5 implementation
         std::string filename = fHeader != nullptr ? fHeader->Filename() : std::string();
         LINFO( mlog, "Finishing writing <" << filename << ">" );
         try
         {
-            //delete fHeader;
-            //fHeader = nullptr;
-            fHeader.reset();  // release ownership on the object
+            delete fHeader;
+            fHeader = nullptr;
             for( std::vector< M4Stream* >::iterator streamIt = fStreams.begin(); streamIt != fStreams.end(); ++streamIt )
             {
                 (*streamIt)->Close();
-
                 delete *streamIt;
                 *streamIt = nullptr;
             }
-            //delete fFile;
-            //fFile = nullptr;
+            delete fFile;
+            fFile = nullptr;
         }
         catch( std::exception& e )
         {
@@ -352,6 +390,34 @@ std::cout << "Monarch4::FinishReading(): void\n";
         }
         fState = eClosed;
         return;
+#endif
+        std::string filename = fHeader != nullptr ? fHeader->Filename() : std::string();
+        LINFO( mlog, "Finishing writing <" << filename << ">" );
+        try
+        {
+//          delete fHeader;
+//          fHeader = nullptr;
+            fHeader.reset();  // release ownership on the object
+
+            // Release the streams
+            for( std::vector< M4Stream* >::iterator streamIt = fStreams.begin(); streamIt != fStreams.end(); ++streamIt )
+            {
+                (*streamIt)->Close();
+
+                delete *streamIt;
+                *streamIt = nullptr;
+            }
+
+            // Release the data file
+            delete fFile;
+            fFile = nullptr;
+        }
+        catch( std::exception& e )
+        {
+            throw M4Exception() << "Error while closing file <" << filename << ">:\n" << e.what();
+        }
+        fState = eClosed;
+std::cout << "Monarch4::FinishWriting(): void\n";
     }
 
 }

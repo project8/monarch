@@ -806,19 +806,32 @@ std::cout << "M4Stream::WriteRecord(): void\n";
     void M4Stream::Close()
     {
 std::cout << "M4Stream::Close()\n";        
-        //LDEBUG( mlog, "non-const M4Stream::Close()" );
+
+        LDEBUG( mlog, "non-const M4Stream::Close()" );
         FinalizeStream();
 
-//      delete fDataSpaceUser;
+//      if(fDataSpaceUser != nullptr)
+//      {
+//        delete fDataSpaceUser;
+//      }
 //      fDataSpaceUser = nullptr;
 
-        delete fCurrentAcqDataSet; 
+        if(fCurrentAcqDataSet != nullptr)
+        {
+          delete fCurrentAcqDataSet;
+        }
         fCurrentAcqDataSet = nullptr;
 
-        delete fAcqLoc; 
+        if(fAcqLoc != nullptr)
+        {
+          delete fAcqLoc;
+        }
         fAcqLoc = nullptr;
 
-        delete fStreamParentLoc; 
+        if(fStreamParentLoc != nullptr)
+        {
+          delete fStreamParentLoc;
+        }
         fStreamParentLoc = nullptr;
 std::cout << "M4Stream::Close(): void\n";        
     }
@@ -842,7 +855,8 @@ std::cout << "M4Stream::Close(): void\n";
     void M4Stream::ReadRecordInterleavedToSeparate( bool aIsNewAcquisition ) const
     {
 std::cout << "M4Stream::ReadRecordInterleavedToSeparate()\n";
-#if 0
+
+#if 0 // original HDF5 code
         if( aIsNewAcquisition )
         {
             // try
@@ -882,6 +896,7 @@ std::cout << "M4Stream::ReadRecordInterleavedToSeparate()\n";
             fChannelRecords[ iChan ].SetRecordId( fAcqFirstRecIds[ iChan ] + fRecordCountInAcq );
         }
 #endif
+
 std::cout << "M4Stream::ReadRecordInterleavedToSeparate(): void\n";
     }
 
@@ -893,7 +908,8 @@ std::cout << "M4Stream::ReadRecordInterleavedToSeparate(): void\n";
     void M4Stream::ReadRecordAsIs( bool aIsNewAcquisition ) const
     {
 std::cout << "M4Stream::ReadRecordAsIs()\n";
-#if 0
+
+#if 0 // original HDF5 code
         if( aIsNewAcquisition )
         {
             // try
@@ -930,6 +946,7 @@ std::cout << "M4Stream::ReadRecordAsIs()\n";
             fChannelRecords[ iChan ].SetRecordId( fStreamRecord.GetRecordId() );
         }
 #endif
+
 std::cout << "M4Stream::ReadRecordAsIs(): void\n";
     }
 
@@ -941,7 +958,8 @@ std::cout << "M4Stream::ReadRecordAsIs(): void\n";
     void M4Stream::WriteRecordSeparateToInterleaved( bool aIsNewAcquisition )
     {
 std::cout << "M4Stream::WriteRecordSeparateToInterleaved()\n";
-#if 0
+
+#if 0 // original HDF5 code
         H5::DataSpace tDataSpaceInFile = fCurrentAcqDataSet->getSpace();
         for( unsigned iChan = 0; iChan < fNChannels; ++iChan )
         {
@@ -967,6 +985,7 @@ std::cout << "M4Stream::WriteRecordSeparateToInterleaved()\n";
             delete [] tIds;
         }
 #endif
+
 std::cout << "M4Stream::WriteRecordSeparateToInterleaved(): void\n";
     }
 
@@ -978,7 +997,8 @@ std::cout << "M4Stream::WriteRecordSeparateToInterleaved(): void\n";
     void M4Stream::WriteRecordAsIs( bool aIsNewAcquisition )
     {
 std::cout << "M4Stream::WriteRecordAsIs()\n";
-#if 0
+
+#if 0 // original HDF5 code
         H5::DataSpace tDataSpaceInFile = fCurrentAcqDataSet->getSpace();
 
         tDataSpaceInFile.selectHyperslab( H5S_SELECT_SET, fDataDims1Rec, fDataOffset );
@@ -992,6 +1012,7 @@ std::cout << "M4Stream::WriteRecordAsIs()\n";
             fCurrentAcqDataSet->createAttribute( "first_record_id", MH5Type< RecordIdType >::H5(), H5::DataSpace( H5S_SCALAR ) ).write( MH5Type< RecordIdType >::Native(), &tId );
         }
 #endif
+
 std::cout << "M4Stream::WriteRecordAsIs(): void\n";
     }
 
@@ -1001,29 +1022,29 @@ std::cout << "M4Stream::WriteRecordAsIs(): void\n";
     *************************************************************************/
     void M4Stream::BuildIndex() const
     {
-std::cout << "M4Stream::BuildIndex()\n";        
+std::cout << "M4Stream::BuildIndex()\n";  
+      
+#if 0 // original HDF5 code
         fRecordIndex.resize( fNRecordsInFile );
-#if 0
         unsigned tNRecInAcq;
         unsigned iRecInFile = 0;
         for( unsigned iAcq = 0; iAcq < fNAcquisitions; ++iAcq )
         {
             u32toa( iAcq, fAcqNameBuffer );
-
-            H5::Attribute tAttr( fAcqLoc->openDataSet( fAcqNameBuffer ).openAttribute( "n_records" ) );
+            H5::Attribute tAttr( fH5AcqLoc->openDataSet( fAcqNameBuffer ).openAttribute( "n_records" ) );
             tAttr.read( tAttr.getDataType(), &tNRecInAcq );
             LDEBUG( mlog, "Acquisition <" << fAcqNameBuffer << "> has " << tNRecInAcq << " records" );
-            
             for( unsigned iRecInAcq = 0; iRecInAcq < tNRecInAcq; ++iRecInAcq )
-            { // read each record
-
+            {
                 fRecordIndex.at( iRecInFile ).first = iAcq;
                 fRecordIndex.at( iRecInFile ).second = iRecInAcq;
                 LTRACE( mlog, "Record index: " << iRecInFile << " -- " << iAcq << " -- " << iRecInAcq );
                 ++iRecInFile;
             }
         }
-#endif        
+        return;
+#endif    
+    
 std::cout << "M4Stream::BuildIndex(): void\n";        
     }
 
@@ -1034,9 +1055,10 @@ std::cout << "M4Stream::BuildIndex(): void\n";
     void M4Stream::FinalizeCurrentAcq()
     {
 std::cout << "M4Stream::FinalizeCurrentAcq()\n";
+
 //ToDo: one entry, one exit        
+#if 0  // original HDF5 code
         if( fCurrentAcqDataSet == nullptr ) return;
-#if 0
         fNRecordsInAcq = fRecordCountInAcq;
 
         fCurrentAcqDataSet->createAttribute( "n_records", MH5Type< unsigned >::H5(), H5::DataSpace( H5S_SCALAR ) ).write( MH5Type< unsigned >::Native(), &fNRecordsInAcq );
@@ -1045,9 +1067,30 @@ std::cout << "M4Stream::FinalizeCurrentAcq()\n";
         fRecordCountInAcq = 0;
 
         delete fCurrentAcqDataSet;
-#endif        
+#endif      
+        if( fCurrentAcqDataSet == nullptr ) 
+        {
+std::cout << "empty fCurrentAcqDataSet: " << fStreamParentLoc->path() << std::endl;
+          return;
+        }
+
+        fNRecordsInAcq = fRecordCountInAcq;
+  
+///@todo write the dataspace
+
+        // Programmer's Note: fStreamParentLoc: <file>/"streams"/"streamN"
+        // create attr: for acquisitions this stream 
+std::cout << "Finalize acquistion for: " << fStreamParentLoc->path() << std::endl;
+        auto streamGrp = z5GroupHandle(*fStreamParentLoc, "");  // this will go into the M4StreamHeader attrib  
+        nlohmann::json jacqAttr;
+
+        jacqAttr["n_records"] = fNRecordsInAcq;
+        z5::writeAttributes(streamGrp, jacqAttr);
+
+        LDEBUG( mlog, "Finalizing acq. " << fAcquisitionId << " with " << fNRecordsInAcq << " records" );
+
+        fRecordCountInAcq = 0;
         fCurrentAcqDataSet = nullptr;
-std::cout << "M4Stream::FinalizeCurrentAcq(): void\n";
     }
 
     /*************************************************************************
@@ -1056,17 +1099,46 @@ std::cout << "M4Stream::FinalizeCurrentAcq(): void\n";
     *************************************************************************/
     void M4Stream::FinalizeStream()
     {
-std::cout << "M4Stream::FinalizeStream()\n";        
-#if 0
+std::cout << "M4Stream::FinalizeStream()\n";   
+     
+#if 0   // original HDF5 code
+        FinalizeCurrentAcq();
+
+        if( fH5AcqLoc == NULL ) return;
+
+        fNAcquisitions = ( fAcquisitionId + 1 ) * (unsigned)fRecordsAccessed;
+        fH5StreamParentLoc->openAttribute( "n_acquisitions" ).write( MH5Type< unsigned >::Native(), &fNAcquisitions );
+        fH5StreamParentLoc->openAttribute( "n_records" ).write( MH5Type< unsigned >::Native(), &fRecordCountInFile );
+        LDEBUG( mlog, "Finalizing stream with " << fNAcquisitions << " acquisitions and " << fRecordCountInFile << " records" );
+
+        return;
+#endif
+
         FinalizeCurrentAcq();
 
 ///@todo one entry, one exit
-        if( fAcqLoc == nullptr ) return;
+        if( fAcqLoc == nullptr ) 
+        {
+std::cout << "empty fAcqLoc: " << fStreamParentLoc->path() << std::endl;
+          return;
+        }
+
         fNAcquisitions = ( fAcquisitionId + 1 ) * (unsigned)fRecordsAccessed;
-        fStreamParentLoc->openAttribute( "n_acquisitions" ).write( MH5Type< unsigned >::Native(), &fNAcquisitions );
-        fStreamParentLoc->openAttribute( "n_records" ).write( MH5Type< unsigned >::Native(), &fRecordCountInFile );
+
+        // Programmer's Note: fStreamParentLoc: <file>/"streams"/"streamN"
+//std::cout << "fStreamParentLoc: " << fStreamParentLoc->path() << std::endl;
+
+        // create attr: for acquisitions this stream: 
+std::cout << "Finalize stream for: " << fStreamParentLoc->path() << std::endl;
+        auto streamGrp = z5GroupHandle(*fStreamParentLoc, "");  // this will go into the M4StreamHeader attrib  
+        nlohmann::json jacqAttr;
+
+        jacqAttr["n_acquisitions"] = fNAcquisitions;
+        jacqAttr["n_records"] = fRecordCountInFile;
+        z5::writeAttributes(streamGrp, jacqAttr);
+
         LDEBUG( mlog, "Finalizing stream with " << fNAcquisitions << " acquisitions and " << fRecordCountInFile << " records" );
-#endif        
+
 std::cout << "M4Stream::FinalizeStream(): void\n";        
     }
 } /* namespace monarch */
