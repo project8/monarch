@@ -203,7 +203,7 @@ namespace monarch4
             mutable char fAcqNameBuffer[ 10 ];
 
             mutable z5GroupHandle* fStreamParentLoc;
-            mutable z5GroupHandle* fAcqLoc;     // <root>/"streams"/"streamsN"/"acquisitions"
+            mutable z5GroupHandle* fAcqLoc;     // <file>/streams/streamsN/acquisitions group
 
             // fCurrentAcqDataset  This is the pointer to the dataset being actively used at any 
             // given time.  This is the thing to (from) which data is written (read).
@@ -215,7 +215,7 @@ namespace monarch4
             // so they dont see the dataspace that defines each acquisition (i.e. contiguous block of data).
             // mutable H5::DataSpace* fH5DataSpaceUser;
 //          mutable z5DatasetHandle* fDataSpaceUser;
-            mutable std::unique_ptr<z5::Dataset> fDataSpaceUser;
+            mutable std::unique_ptr<z5::Dataset> fDataSpaceUser;       // M4Stream dataset
 
             // mutable H5::DataType fDataTypeInFile;
             // mutable H5::DataType fDataTypeUser;

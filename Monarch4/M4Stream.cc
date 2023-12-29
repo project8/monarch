@@ -86,7 +86,7 @@ namespace monarch4
     {
 std::cout << "\nM4Stream::M4Stream() : "  << aHeader.GetLabel() << std::endl;
 
-//      LDEBUG( mlog, "Creating stream for <" << aHeader.GetLabel() << ">" );
+        LDEBUG( mlog, "Creating stream for <" << aHeader.GetLabel() << ">" );
 
         if( aHeader.GetDataFormat() == sDigitizedUS )
         {
@@ -165,14 +165,6 @@ std::cout << "float64\n";
                     throw M4Exception() << "M4Stream::M4Stream() Unknown floating-point data type size: " << fDataTypeSize;
             }
         }
-
-// open path: /streams/streamX/acquisitions
-//  if path doesn't exist, must be write mode
-// readAcquisitions()
-//   n_acquisitions
-//   n_records
-// : n_acquisitions > 0 and n_records > 0
-// -> already has data
 
 #if 0 // original HDF5 code
         // variables to store the HDF5 error printing state
@@ -271,7 +263,7 @@ std::cout << "float64\n";
         }
 
         // Initialize the stream
-      Initialize();
+        Initialize();
 
 std::cout << "M4Stream::M4Stream() : void "  << aHeader.GetLabel() << std::endl;
     }
@@ -298,7 +290,7 @@ std::cout << "M4Stream::~M4Stream() DTOR\n";
 //          delete fDataSpaceUser;
             fDataSpaceUser.release();   // std::unique_ptr<z5::Dataset>
         }
-        fDataSpaceUser = nullptr;
+//      fDataSpaceUser = nullptr;
 
         // avoid releasing unallocated memory: segfault
         if(fCurrentAcqDataSet != nullptr)
@@ -315,6 +307,7 @@ std::cout << "M4Stream::~M4Stream() DTOR\n";
         fAcqLoc = nullptr;
 
         // avoid releasing unallocated memory: segfault
+        // <file>/streams/streamN
         if(fStreamParentLoc != nullptr)
         {
             delete fStreamParentLoc;
@@ -396,10 +389,9 @@ std::cout << "M4Stream::Initialize()\n";
         if( fAccessFormat == sSeparate && 
             fDataInterleaved && 
             fNChannels != 1 )
-        {
-            LDEBUG(mlog, "Interleaved data" << " not implemented yet");
+        { // Interleaved, multichannel records
 
-            // no memory is allocated for the stream record
+            // no memory is allocated for the stream record, only clears any existing
             fStreamRecord.Initialize();
 
             // allocate memory for each channel record
@@ -459,7 +451,6 @@ std::cout << "M4Stream::Initialize()\n";
 //std::cout << "str data stride: " << fDataStride[0] << " " << fDataStride[1] << std::endl;
 //std::cout << "str data block: " << fDataBlock[0] << " " << fDataBlock[1] << std::endl;
 
-///@todo Create Zarr dataspace object
             // Data space object initialization
             if(fDataSpaceUser != nullptr)
             { // release any existing data space
@@ -474,7 +465,6 @@ std::cout << "M4Stream::Initialize()\n";
             // A dataset is an object composed of a collection of data elements, or raw data, 
             // and metadata that stores a description of the data elements, data layout, and all other 
             // information necessary to write, read, and interpret the stored data.
-//          fDataSpaceUser = new H5::DataSpace( N_DATA_DIMS, fDataDims1Rec, NULL );
 
 ///@todo verify fDataDims1Rec[1]
             std::vector<size_t> shape = { N_DATA_DIMS,fDataDims1Rec[1] };       // <row>,<col>
@@ -598,19 +588,13 @@ std::cout << "Record: " << iChan << " initialize\n";
 //std::cout << "str data stride: " << fDataStride[0] << " " << fDataStride[1] << std::endl;
 //std::cout << "str data block: " << fDataBlock[0] << " " << fDataBlock[1] << std::endl;
 
-std::cout << "\nCreate new z5/Zarr DataSpace\n";
-
-        // Programmer's Note: z5::handle are for access to attributes: readAttribute(), writeAttribute()
-        // z5:filesystem::Dataset is for access to data: readSubarray(), writeSubarray()
-
-        std::string dsName = "acquisitions";
-        std::vector<size_t> shape = { 1,fStrRecSize };       // <row>,<col>
-        std::vector<size_t> chunks = { 1,fStrRecSize };      // <row>,<col>
-
-        // map lookup/convert type to string
+        // map lookup to convert type to string for dataset type
         z5::types::Datatypes::InverseDtypeMap& N5type = z5::types::Datatypes::dtypeToN5();
         std::string strDataType = N5type[fDataTypeInFile];     
 std::cout << "stream datatype: " << strDataType << std::endl;
+
+        std::vector<size_t> shape = { 1,fStrRecSize };       // <row>,<col>
+        std::vector<size_t> chunks = { 1,fStrRecSize };      // <row>,<col>
 
         // <file>/streams/streamN/acquisitions
         // Programmer's Note: std::unique_ptr<z5::Dataset>
@@ -733,12 +717,13 @@ std::cout << "M4Stream::ReadRecord()\n";
         }
 
 #endif
+
 std::cout << "M4Stream::ReadRecord(): void\n";
         return true;
     }
 
     /*************************************************************************
-    * @brief Close the M4Stream, release data
+    * @brief Close the M4Stream, release handles
     * 
     *************************************************************************/
     void M4Stream::Close() const
@@ -795,7 +780,7 @@ std::cout << "M4Stream::WriteRecord()\n";
 
         if( ! fRecordsAccessed ) aIsNewAcquisition = true;
 
-        // try
+        try
         {
             std::unique_lock< std::mutex >( *fMutexPtr.get() );
 
@@ -840,19 +825,19 @@ std::cout << "M4Stream::WriteRecord()\n";
 
             return true;
         }
-        // catch( H5::Exception& e )
-        // {
-        //     LWARN( mlog, "DIAGNOSTIC: id of fCurrentAcqDataSet: " << fCurrentAcqDataSet->getId() );
-        //     LWARN( mlog, "DIAGNOSTIC: class name: " << fCurrentAcqDataSet->fromClass() );
-        //     H5D_space_status_t t_status;
-        //     fCurrentAcqDataSet->getSpaceStatus( t_status );
-        //     LWARN( mlog, "DIAGNOSTIC: offset: " << fCurrentAcqDataSet->getOffset() << "  space status: " << t_status << "  storage size: " << fH5CurrentAcqDataSet->getStorageSize() << "  in mem data size: " << fH5CurrentAcqDataSet->getInMemDataSize() );
-        //     throw M4Exception() << "HDF5 error while writing a record:\n\t" << e.getCDetailMsg() << " (function: " << e.getFuncName() << ")";
-        // }
-        // catch( std::exception& e )
-        // {
-        //     throw M4Exception() << e.what();
-        // }
+        catch( H5::Exception& e )
+        {
+            LWARN( mlog, "DIAGNOSTIC: id of fCurrentAcqDataSet: " << fCurrentAcqDataSet->getId() );
+            LWARN( mlog, "DIAGNOSTIC: class name: " << fCurrentAcqDataSet->fromClass() );
+            H5D_space_status_t t_status;
+            fCurrentAcqDataSet->getSpaceStatus( t_status );
+            LWARN( mlog, "DIAGNOSTIC: offset: " << fCurrentAcqDataSet->getOffset() << "  space status: " << t_status << "  storage size: " << fH5CurrentAcqDataSet->getStorageSize() << "  in mem data size: " << fH5CurrentAcqDataSet->getInMemDataSize() );
+            throw M4Exception() << "HDF5 error while writing a record:\n\t" << e.getCDetailMsg() << " (function: " << e.getFuncName() << ")";
+        }
+        catch( std::exception& e )
+        {
+            throw M4Exception() << e.what();
+        }
 
 #endif
 std::cout << "M4Stream::WriteRecord(): void\n";
@@ -860,7 +845,7 @@ std::cout << "M4Stream::WriteRecord(): void\n";
     }
 
     /*************************************************************************
-    * @brief Close stream, release data
+    * @brief Close stream, release handles
     * 
     *************************************************************************/
     void M4Stream::Close()
@@ -870,10 +855,11 @@ std::cout << "M4Stream::Close()\n";
         LDEBUG( mlog, "non-const M4Stream::Close()" );
         FinalizeStream();
 
-//      if(fDataSpaceUser != nullptr)
-//      {
+        if(fDataSpaceUser != nullptr)
+        {
 //        delete fDataSpaceUser;
-//      }
+          fDataSpaceUser.release();   // std::unique_ptr<z5::Dataset>
+        }
 //      fDataSpaceUser = nullptr;
 
         if(fCurrentAcqDataSet != nullptr)
@@ -1136,22 +1122,17 @@ std::cout << "empty fCurrentAcqDataSet: " << fStreamParentLoc->path() << std::en
 
         fNRecordsInAcq = fRecordCountInAcq;
   
-///@todo write the dataspace
-
+std::cout << "Finalize acquistion for: " << fCurrentAcqDataSet->path() << std::endl;
         // Programmer's Note: fStreamParentLoc: <file>/streams/streamN
         // create attr: for acquisitions this stream 
-std::cout << "Finalize acquistion for: " << fCurrentAcqDataSet->path() << std::endl;
-//      auto streamGrp = z5GroupHandle(*fCurrentAcqDataSet,"");
         nlohmann::json jacqAttr;
-
         jacqAttr["n_records"] = fNRecordsInAcq;
 
-        // Programmer's Note: This will update atribute "n_records" with new value
-//      z5::writeAttributes(streamGrp, jacqAttr);
+        // Programmer's Note: This will update exiting atribute "n_records" with new value
+        // <file>/streams/streamN/acquisitions/<recordNum>/<attrib>
         z5::writeAttributes(*fCurrentAcqDataSet, jacqAttr);
 
         LDEBUG( mlog, "Finalizing acq. " << fAcquisitionId << " with " << fNRecordsInAcq << " records" );
-
         fRecordCountInAcq = 0;
         fCurrentAcqDataSet = nullptr;
     }
@@ -1192,7 +1173,6 @@ std::cout << "empty fAcqLoc: " << fStreamParentLoc->path() << std::endl;
         // Programmer's Note: fStreamParentLoc: <file>/streams/streamN
         // create attr: for acquisitions this stream: 
 std::cout << "Finalize stream for: " << fStreamParentLoc->path() << std::endl;
-//      auto streamGrp = z5GroupHandle(*fStreamParentLoc, "");  // this will go into the M4StreamHeader attrib
         nlohmann::json jacqAttr;
 
         jacqAttr["n_acquisitions"] = fNAcquisitions;
@@ -1200,7 +1180,6 @@ std::cout << "Finalize stream for: " << fStreamParentLoc->path() << std::endl;
 
         // Programmer's Note: This will update atributes "n_acquisitions" and "n_records" with new values
         // <file>/streams/streamN/<attrib>
-//      z5::writeAttributes(streamGrp, jacqAttr);
         z5::writeAttributes(*fStreamParentLoc, jacqAttr);
 
         LDEBUG( mlog, "Finalizing stream with " << fNAcquisitions << " acquisitions and " << fRecordCountInFile << " records" );
