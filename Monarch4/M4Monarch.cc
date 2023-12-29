@@ -340,7 +340,7 @@ std::cout << "\n\nMonarch4::WriteHeader(): Create the stream objects based on th
 //              fStreams.back()->SetMutex( fMutexPtr );
 //          }
 
-            // c++-17 version is neater
+            // c++-17 version is more concise
             for(auto& streamIt: fHeader->StreamHeaders())       
             {
                 fStreams.push_back(new M4Stream( streamIt, tStreamsGroup ));
@@ -408,6 +408,7 @@ std::cout << "Monarch4::FinishReading()\n";
                 delete *streamIt;
                 *streamIt = nullptr;
             }
+
 
             // release ownership of M4Monarch
             delete fFile;

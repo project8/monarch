@@ -288,7 +288,7 @@ std::cout << "M4Stream::~M4Stream() DTOR\n";
         if(fDataSpaceUser != nullptr)
         {
 //          delete fDataSpaceUser;
-            fDataSpaceUser.release();   // std::unique_ptr<z5::Dataset>
+            fDataSpaceUser.reset();   // std::unique_ptr<z5::Dataset>
         }
 //      fDataSpaceUser = nullptr;
 
@@ -455,7 +455,7 @@ std::cout << "M4Stream::Initialize()\n";
             if(fDataSpaceUser != nullptr)
             { // release any existing data space
 //              delete fDataSpaceUser;
-              fDataSpaceUser.release(); // std::unique_ptr<z5::Dataset>
+              fDataSpaceUser.reset(); // std::unique_ptr<z5::Dataset>
             }
 
             // A dataspace defines the size and shape of the dataset or attribute raw data, 
@@ -733,7 +733,7 @@ std::cout << "M4Stream::Close()\n";
 
 //      delete fDataSpaceUser;
 //      fDataSpaceUser = nullptr;
-        fDataSpaceUser.release();   // std::unique_ptr<z5::Dataset>
+        fDataSpaceUser.reset();   // std::unique_ptr<z5::Dataset>
 
         delete fCurrentAcqDataSet; 
         fCurrentAcqDataSet = nullptr;
@@ -858,7 +858,7 @@ std::cout << "M4Stream::Close()\n";
         if(fDataSpaceUser != nullptr)
         {
 //        delete fDataSpaceUser;
-          fDataSpaceUser.release();   // std::unique_ptr<z5::Dataset>
+          fDataSpaceUser.reset();   // std::unique_ptr<z5::Dataset>
         }
 //      fDataSpaceUser = nullptr;
 
@@ -1102,7 +1102,6 @@ std::cout << "M4Stream::BuildIndex(): void\n";
     {
 std::cout << "M4Stream::FinalizeCurrentAcq()\n";
 
-//ToDo: one entry, one exit        
 #if 0  // original HDF5 code
         if( fCurrentAcqDataSet == nullptr ) return;
         fNRecordsInAcq = fRecordCountInAcq;
@@ -1116,6 +1115,7 @@ std::cout << "M4Stream::FinalizeCurrentAcq()\n";
 #endif      
         if( fCurrentAcqDataSet == nullptr ) 
         {
+///@todo one entry, one exit!
 std::cout << "empty fCurrentAcqDataSet: " << fStreamParentLoc->path() << std::endl;
           return;
         }
