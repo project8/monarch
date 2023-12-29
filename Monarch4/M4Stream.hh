@@ -214,7 +214,8 @@ namespace monarch4
             // is 1 row x [size of a record] bytes.  The user doesnt interact with all of the records, 
             // so they dont see the dataspace that defines each acquisition (i.e. contiguous block of data).
             // mutable H5::DataSpace* fH5DataSpaceUser;
-            mutable z5DatasetHandle* fDataSpaceUser;
+//          mutable z5DatasetHandle* fDataSpaceUser;
+            mutable std::unique_ptr<z5::Dataset> fDataSpaceUser;
 
             // mutable H5::DataType fDataTypeInFile;
             // mutable H5::DataType fDataTypeUser;

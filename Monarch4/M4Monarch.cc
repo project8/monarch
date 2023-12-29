@@ -79,7 +79,36 @@ std::cout << "Monarch4::~Monarch4(): Monarch4 component destroyed\n";
     *************************************************************************/
     const Monarch4* Monarch4::OpenForReading( const string& aFilename )
     {
-std::cout << "Monarch4::OpenForReading()\n";        
+std::cout << "Monarch4::OpenForReading()\n";  
+      
+#if 0 // original HDF5 implementation
+        Monarch4* tMonarch4 = new Monarch4();
+
+        try
+        {
+            tMonarch4->fFile = std::make_unique< z5::filesystem::handle::File >( aFilename, z5::FileMode::r );
+        }
+        catch( std::exception& e )
+        {
+            delete tMonarch4;
+            throw M4Exception() << "Could not open <" << aFilename << "> for reading; a std::exception was thrown:\n" << e.what();
+            return nullptr;
+        }
+        if( tMonarch4->fFile == nullptr )
+        {
+            delete tMonarch4;
+            throw M4Exception() << "Could not open <" << aFilename << "> for reading";
+            return nullptr;
+        }
+        LDEBUG( mlog, "Opened egg file <" << aFilename << "> for reading" );
+
+        tMonarch4->fHeader = std::make_unique< M4Header >();
+        tMonarch4->fHeader->Filename() = aFilename;
+
+        tMonarch4->fState = eOpenToRead;
+
+        return tMonarch4;
+#endif
         Monarch4* tMonarch4 = new Monarch4();
 
         try
@@ -124,6 +153,35 @@ std::cout << "Monarch4::OpenForReading(): newly created Monarch4 component\n";
     Monarch4* Monarch4::OpenForWriting( const string& aFilename )
     {
 std::cout << "Monarch4::OpenForWriting()\n"; 
+#if 0 // original HDF5 implementation
+        Monarch4* tMonarch4 = new Monarch4();
+
+        try
+        {
+            tMonarch4->fFile = std::make_unique< z5::filesystem::handle::File >( aFilename, z5::FileMode::w );
+            z5::createFile( *tMonarch4->fFile, true );
+        }
+        catch( std::exception& e )
+        {
+            delete tMonarch4;
+            throw M4Exception() << "Could not open <" << aFilename << "> for writing; a std::exception was thrown:\n" << e.what();
+            return nullptr;
+        }
+        if( tMonarch4->fFile == nullptr )
+        {
+            delete tMonarch4;
+            throw M4Exception() << "Could not open <" << aFilename << "> for writing";
+            return nullptr;
+        }
+        LDEBUG( mlog, "Opened egg file <" << aFilename << "> for writing" );
+
+        tMonarch4->fHeader = std::make_unique< M4Header >();
+        tMonarch4->fHeader->Filename() = aFilename;
+
+        tMonarch4->fState = eOpenToWrite;
+
+        return tMonarch4;
+#endif
 
         // Create new Monarch4 object
         Monarch4* tMonarch4 = new Monarch4();
@@ -168,6 +226,7 @@ std::cout << "Monarch4::OpenForWriting(): newly created Monarch4 component\n";
     void Monarch4::ReadHeader() const
     {
 std::cout << "Monarch4::ReadHeader()\n";
+#if 0 // Original HDF5 code
         if( fState != eOpenToRead )
         {
             throw M4Exception() << "File not opened to read";
@@ -175,12 +234,12 @@ std::cout << "Monarch4::ReadHeader()\n";
 
         // Read the header information from the file (run header, plus all stream and channel headers)
         fHeader->ReadFromFile( fFile );
-#if 0
-        z5::filesystem::handle::Group* tStreamsGroup = fHeader->GetStreamsGroup();
 
-        // TODO: investigate z5/Zarr exceptions
-        // try
-        // {
+        //TODO Z5: Creation of streams
+        H5::Group* tStreamsGroup = fHeader->GetStreamsGroup();
+
+        try
+        {
             // Create the stream objects based on the configuration from the header
             for( M4Header::M4StreamHeaders::const_iterator streamIt = fHeader->StreamHeaders().begin();
                     streamIt != fHeader->StreamHeaders().end();
@@ -189,16 +248,27 @@ std::cout << "Monarch4::ReadHeader()\n";
                 fStreams.push_back( new M4Stream( *streamIt, tStreamsGroup ) );
                 fStreams.back()->SetMutex( fMutexPtr );
             }
-        // }
-        // catch( H5::Exception& e )
-        // {
-        //     throw M4Exception() << "HDF5 error while creating stream objects for reading:\n\t" << e.getDetailMsg() << " (function: " << e.getFuncName() << ")";
-        // }
-        // catch( M4Exception& e )
-        // {
-        //     throw;
-        // }
+        }
+        catch( H5::Exception& e )
+        {
+            throw M4Exception() << "HDF5 error while creating stream objects for reading:\n\t" << e.getDetailMsg() << " (function: " << e.getFuncName() << ")";
+        }
+        catch( M4Exception& e )
+        {
+            throw;
+        }
+
+        fState = eReadyToRead;
+        return;
 #endif
+
+        if( fState != eOpenToRead )
+        {
+            throw M4Exception() << "File not opened to read";
+        }
+
+        // Read the header information from the file (run header, plus all stream and channel headers)
+        fHeader->ReadFromFile( fFile );
         fState = eReadyToRead;
 std::cout << "Monarch4::ReadHeader(): void\n";
     }
@@ -218,19 +288,9 @@ std::cout << "Monarch4::WriteHeader()\n";
 
         // Write the header to the file
         // This will create the following groups: run, streams, and channels
-        try
-        {
-            fHeader->WriteToHDF5( fFile );
-        }
-        catch( H5::Exception& e )
-        {
-            throw M4Exception() << "HDF5 error while writing header:\n\t" << e.getDetailMsg() << " (function: " << e.getFuncName() << ")";
-        }
-        catch( M4Exception& e )
-        {
-            throw;
-        }
+        fHeader->WriteToFile( fFile );
 
+        //TODO Z5: Creation of streams
         H5::Group* tStreamsGroup = fHeader->GetStreamsGroup();
 
         try
@@ -254,6 +314,7 @@ std::cout << "Monarch4::WriteHeader()\n";
         }
 
         fState = eReadyToWrite;
+        return;
 #endif
 
         if( fState != eOpenToWrite )
@@ -307,7 +368,7 @@ std::cout << "Monarch4::WriteHeader(): void\n\n";
 std::cout << "Monarch4::FinishReading()\n";  
       
 #if 0  // original HDF5 implementation
-       std::string filename = fHeader != nullptr ? fHeader->Filename() : std::string();
+        std::string filename = fHeader != nullptr ? fHeader->Filename() : std::string();
         LDEBUG( mlog, "Finishing reading <" << filename << ">" );
         try
         {
@@ -328,7 +389,6 @@ std::cout << "Monarch4::FinishReading()\n";
         }
         fState = eClosed;
         return;
-
 #endif
         std::string filename = fHeader != nullptr ? fHeader->Filename() : std::string();
         

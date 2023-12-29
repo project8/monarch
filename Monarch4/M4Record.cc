@@ -60,7 +60,7 @@ std::cout << "M4Record::~M4Record()\n";
     }
 
     /*************************************************************************
-    * @brief Initialize record
+    * @brief Basic initialize record by clearing its data
     * @note Data is cleared
     *************************************************************************/
     void M4Record::Initialize()
@@ -70,16 +70,27 @@ std::cout << "M4Record::Initialize(): clear\n";
     }
 
     /*************************************************************************
-    * @brief Initialize an M4Record with internaly managed buffer
+    * @brief Initialize an M4Record with internaly allocated/managed buffer
     * 
     * @param aNBytes Size of record in bytes
     *************************************************************************/
     void M4Record::Initialize( unsigned aNBytes )
     {
-std::cout << "M4Record::Initialize(): " << aNBytes << " bytes\n";;
+std::cout << "M4Record::Initialize(): " << aNBytes << " bytes\n";
+
+#if 0 // original HDF5 implementation
         ClearData();
         fRecordId = new RecordIdType();
-
+        fTime = new TimeType();
+        SetRecordId( 0 );
+        SetTime( 0 );
+        fData = new byte_type[ aNBytes ];
+        return;
+#endif
+        ClearData();
+        fRecordId = new RecordIdType();
+///@todo clarify fOwnsData operation - it looks like it does, but original 
+///code doesn't set this. 
 // fOwnsData = true;        signal internal data buffer??  see M4Record::ClearData()
         fTime = new TimeType();
         SetRecordId( 0 );
@@ -91,7 +102,7 @@ std::cout << "M4Record::Initialize(): void\n";
     }
 
     /*************************************************************************
-    * @brief Initialize an M4Record with an external buffer
+    * @brief Initialize an M4Record with an externaly allocated/managed buffer
     * 
     * @param[in] aRecPtr Pointer to type of record identifier
     * @param[in] aTimePtr Pointer to record start time
@@ -100,10 +111,17 @@ std::cout << "M4Record::Initialize(): void\n";
     void M4Record::Initialize( RecordIdType* aRecPtr, TimeType* aTimePtr, byte_type* aDataPtr )
     {
 std::cout << "M4Record::Initialize()\n";
+#if 0 // original HDF5 implementation
+        ClearData();
+        fOwnsData = false;
+        fRecordId = aRecPtr;
+        fTime = aTimePtr;
+        fData = aDataPtr;
+        return;
+#endif
         ClearData();
 
-        fOwnsData = false;          // signal data buffer owned externally
-        
+        fOwnsData = false;          // signal data buffer owned externally        
         fRecordId = aRecPtr;
         fTime = aTimePtr;
         fData = aDataPtr;
@@ -117,6 +135,20 @@ std::cout << "M4Record::Initialize(): void\n";
     void M4Record::ClearData()
     {
 std::cout << "M4Record::ClearData()\n";
+#if 0 // original HDF5 implementation
+        if( fOwnsData )
+        {
+            delete fRecordId;
+            delete fTime;
+            delete [] fData;
+        }
+        fRecordId = NULL;
+        fTime = NULL;
+        fData = NULL;
+        fOwnsData = true;
+        return;
+#endif
+
         if( fOwnsData )
         {
             // avoid releasing unallocated memory: segfault

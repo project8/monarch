@@ -42,7 +42,7 @@ namespace monarch4
     * @brief Construct a new M4Stream::M4Stream object from specified context
     * 
     * @param[in] aHeader reference to M4StreamHeader representing the stream
-    * @param[in] aStreamsLoc hierarchy position: <root>/"streams"/"streamsN"
+    * @param[in] aStreamsLoc hierarchy position: <file>/"streams"/"streamsN"
     * @param aAccessFormat Specifies whether the data channels are interleaved 
     *        or separate in a stream (sSeparate, sInterleaved), defaults to
     *        sSeparate
@@ -165,12 +165,6 @@ std::cout << "float64\n";
                     throw M4Exception() << "M4Stream::M4Stream() Unknown floating-point data type size: " << fDataTypeSize;
             }
         }
-///@todo initialize M4Stream::fStreamParentLoc
-// z5FileHandle f( "readme2.zr", z5::FileMode::modes::a );
-// auto channelsHandle = z5GroupHandle( f, "channels" );
-// fStreamParentLoc = z5GroupHandle( f, aHeader.GetLabel() );
-// nlohmann::json chGroupAttr;
-// z5::readAttributes( channelsHandle, chGroupAttr );
 
 // open path: /streams/streamX/acquisitions
 //  if path doesn't exist, must be write mode
@@ -180,7 +174,7 @@ std::cout << "float64\n";
 // : n_acquisitions > 0 and n_records > 0
 // -> already has data
 
-#if 0 // old HDF5 code
+#if 0 // original HDF5 code
         // variables to store the HDF5 error printing state
         H5E_auto2_t tAutoPrintFunc;
         void* tClientData;
@@ -188,61 +182,57 @@ std::cout << "float64\n";
         // Determine if we're in read or write mode
         // and get/create the acquisitions group
         // Nested exceptions are used so that the outer try block can be used to determine whether we're reading or writing
-        // try
-        // {
+        try
+        {
             // turn off HDF5 error printing because the throwing of an exception here means we're writing instead of reading
             H5::Exception::getAutoPrint( tAutoPrintFunc, &tClientData );
             H5::Exception::dontPrint();
 
-            // open stream's "acquisitions" group
-            fH5AcqLoc = new H5::Group( fStreamParentLoc->openGroup( "acquisitions" ) );
+            fH5AcqLoc = new H5::Group( fH5StreamParentLoc->openGroup( "acquisitions" ) );
             LDEBUG( mlog, "Opened acquisition group in <read> mode" );
 
             // turn HDF5 error printing back on
             H5::Exception::setAutoPrint( tAutoPrintFunc, tClientData );
 
-            // try
-            // { // try to read attributes
-
-                H5::Attribute tAttrNAcq( fStreamParentLoc->openAttribute( "n_acquisitions" ) );
+            try
+            {
+                H5::Attribute tAttrNAcq( fH5StreamParentLoc->openAttribute( "n_acquisitions" ) );
                 tAttrNAcq.read( tAttrNAcq.getDataType(), &fNAcquisitions );
-
-                H5::Attribute tAttrNRec( fStreamParentLoc->openAttribute( "n_records" ) );
+                H5::Attribute tAttrNRec( fH5StreamParentLoc->openAttribute( "n_records" ) );
                 tAttrNRec.read( tAttrNRec.getDataType(), &fNRecordsInFile );
-
-
                 BuildIndex();
-            // }
-            // catch( H5::Exception& )
-            // {
-            //     throw M4Exception() << "Acquisitions group is not properly setup for reading\n";
-            // }
+            }
+            catch( H5::Exception& )
+            {
+                throw M4Exception() << "Acquisitions group is not properly setup for reading\n";
+            }
 
             LDEBUG( mlog, "Number of acquisitions found: " << fNAcquisitions << "; Number of records found: " << fNRecordsInFile );
-            fMode = kRead;      // read mode
-        // }
-        // catch( H5::Exception& )
-        // {
-        //     // if we ended up here, the acquisitions group doesn't exist, so we must be in write mode
+            fMode = kRead;
+        }
+        catch( H5::Exception& )
+        {
+            // if we ended up here, the acquisitions group doesn't exist, so we must be in write mode
 
-        //     // turn HDF5 error printing back on
-        //     H5::Exception::setAutoPrint( tAutoPrintFunc, tClientData );
+            // turn HDF5 error printing back on
+            H5::Exception::setAutoPrint( tAutoPrintFunc, tClientData );
 
-        //     try
-        //     {
-        //         fH5AcqLoc = new H5::Group( fStreamParentLoc->createGroup( "acquisitions" ) );
-        //         LDEBUG( mlog, "Opened acquisition group in <write> mode" );
-        //         fMode = kWrite;  // write mode
-        //     }
-        //     catch( H5::Exception& )
-        //     {
-        //         throw M4Exception() << "Unable to open new acquisitions group for writing\n";
-        //     }
-        // }
+            try
+            {
+                fH5AcqLoc = new H5::Group( fH5StreamParentLoc->createGroup( "acquisitions" ) );
+                LDEBUG( mlog, "Opened acquisition group in <write> mode" );
+                fMode = kWrite;
+            }
+            catch( H5::Exception& )
+            {
+                throw M4Exception() << "Unable to open new acquisitions group for writing\n";
+            }
+        }
+
+        Initialize();
 #endif
-//      fStreamParentLoc = aStreamsLoc;     // keep <root>/"streams"/"streamsN" group
-std::cout << "See if there are any acquisition records currently in file\n";
 
+        // Determine if we're in read or write mode and get/create the acquisitions group
         // See if there are any acquisition records currently in file
         if(z5::filesystem::isSubGroup(*fStreamParentLoc, "acquisitions") == true)
         { // "acquisitions" records exist == read mode
@@ -250,7 +240,7 @@ std::cout << "See if there are any acquisition records currently in file\n";
             LDEBUG( mlog, "Opened acquisition group in <read> mode" );
 
             // open stream's "acquisitions" group
-            fAcqLoc = new z5GroupHandle(*fStreamParentLoc, "acquisitions");     // <root>/"streams"/"streamsN"/"acquisitions"
+            fAcqLoc = new z5GroupHandle(*fStreamParentLoc, "acquisitions");     // <root>/streams/streamsN/acquisitions
 
             nlohmann::json acqGroupAttr;
             z5::readAttributes( *fAcqLoc, acqGroupAttr );        // read the existing attributes
@@ -274,15 +264,15 @@ std::cout << "See if there are any acquisition records currently in file\n";
         else
         { // no "acquisitions" records == write mode, create new
 
-            fAcqLoc = new z5GroupHandle(*fStreamParentLoc, "acquisitions");     // <root>/"streams"/"streamsN"/"acquisitions"
+            fAcqLoc = new z5GroupHandle(*fStreamParentLoc, "acquisitions");     // <file>/streams/streamsN/acquisitions
 
             LDEBUG( mlog, "Opened acquisition group in <write> mode" );
             fMode = kWrite;  // write mode
         }
 
         // Initialize the stream
-std::cout << "Perform initialization of stream: " << aHeader.GetLabel() << std::endl;
       Initialize();
+
 std::cout << "M4Stream::M4Stream() : void "  << aHeader.GetLabel() << std::endl;
     }
 
@@ -293,10 +283,20 @@ std::cout << "M4Stream::M4Stream() : void "  << aHeader.GetLabel() << std::endl;
     M4Stream::~M4Stream()
     {
 std::cout << "M4Stream::~M4Stream() DTOR\n";
+
+#if 0 // original HDF5 code
+        delete fH5DataSpaceUser; fH5DataSpaceUser = NULL;
+        delete fZ5CurrentAcqDataSet; fH5CurrentAcqDataSet = nullptr;
+        delete fZ5AcqLoc; fH5AcqLoc = nullptr;
+        delete fZ5StreamParentLoc; fH5StreamParentLoc = nullptr;
+
+        delete [] fChannelRecords;
+#endif
         // avoid releasing unallocated memory: segfault
         if(fDataSpaceUser != nullptr)
         {
-            delete fDataSpaceUser;
+//          delete fDataSpaceUser;
+            fDataSpaceUser.release();   // std::unique_ptr<z5::Dataset>
         }
         fDataSpaceUser = nullptr;
 
@@ -337,8 +337,57 @@ std::cout << "M4Stream::~M4Stream() DTOR: void\n";
     *************************************************************************/
     void M4Stream::Initialize() const
     {
-std::cout << "M4Stream::Initialize()\n";        
-//      LDEBUG( mlog, "Initializing stream" );
+std::cout << "M4Stream::Initialize()\n";  
+      
+#if 0 // original HDF5 code
+        LDEBUG( mlog, "Initializing stream" );
+        fIsInitialized = false;
+
+        // The case where the access format is separate, but the data in the file is interleaved is special.
+        // In this case, the stream record memory is not used.
+        // Reading and writing is done directly from the channel records using HDF5's interleaving capabilities.
+        if( fAccessFormat == sSeparate && fDataInterleaved && fNChannels != 1 )
+        {
+            // no memory is allocated for the stream record
+            fStreamRecord.Initialize();
+
+            // allocate memory for each channel record
+            for( unsigned iChan = 0; iChan < fNChannels; ++iChan )
+            {
+                fChannelRecords[ iChan ].Initialize( fChanRecNBytes );
+            }
+
+            // set the read/write functions to the special versions
+            fDoReadRecord = &M4Stream::ReadRecordInterleavedToSeparate;
+            fDoWriteRecord = &M4Stream::WriteRecordSeparateToInterleaved;
+
+            // Arrays for HDF5 file reading/writing
+            fStrDataDims[ 0 ] = 1;                 fStrDataDims[ 1 ] = fStrRecSize * fSampleSize;
+            fStrMaxDataDims[ 0 ] = H5S_UNLIMITED;  fStrMaxDataDims[ 1 ] = fStrRecSize * fSampleSize;
+            fStrDataChunkDims[ 0 ] = 1;            fStrDataChunkDims[ 1 ] = fStrRecSize * fSampleSize;
+            fDataDims1Rec[ 0 ] = 1;             fDataDims1Rec[ 1 ] = fChanRecSize * fSampleSize;
+            fDataOffset[ 0 ] = 0;               fDataOffset[ 1 ] = 0;
+            fDataStride[ 0 ] = 1;               fDataStride[ 1 ] = fNChannels;
+            fDataBlock[ 0 ] = 1;                fDataBlock[ 1 ] = fSampleSize;
+            /*
+            std::cout << "str data dims: " << fStrDataDims[0] << " " << fStrDataDims[1] << std::endl;
+            std::cout << "str max data dims: " << fStrMaxDataDims[0] << " " << fStrMaxDataDims[1] << std::endl;
+            std::cout << "str data chunk dims: " << fStrDataChunkDims[0] << " " << fStrDataChunkDims[1] << std::endl;
+            std::cout << "str data dims 1 rec: " << fDataDims1Rec[0] << " " << fDataDims1Rec[1] << std::endl;
+            std::cout << "str data offset: " << fDataOffset[0] << " " << fDataOffset[1] << std::endl;
+            std::cout << "str data stride: " << fDataStride[0] << " " << fDataStride[1] << std::endl;
+            std::cout << "str data block: " << fDataBlock[0] << " " << fDataBlock[1] << std::endl;
+            */
+
+            // HDF5 object initialization
+            delete fH5DataSpaceUser;
+            fH5DataSpaceUser = new H5::DataSpace( N_DATA_DIMS, fDataDims1Rec, NULL );
+
+            fIsInitialized = true;
+            return;
+#endif
+
+        LDEBUG( mlog, "Initializing stream" );
         fIsInitialized = false;
 
         // The case where the access format is separate, but the data in the file is interleaved is special.
@@ -349,6 +398,7 @@ std::cout << "M4Stream::Initialize()\n";
             fNChannels != 1 )
         {
             LDEBUG(mlog, "Interleaved data" << " not implemented yet");
+
             // no memory is allocated for the stream record
             fStreamRecord.Initialize();
 
@@ -363,73 +413,58 @@ std::cout << "M4Stream::Initialize()\n";
             fDoWriteRecord = &M4Stream::WriteRecordSeparateToInterleaved;
 
             // Arrays for data file reading/writing
-//          fStrDataDims[ 0 ] = 1;                              // record is one array row
-//          fStrDataDims[ 1 ] = fStrRecSize * fSampleSize;      // number of columns to bytes
-            // fStrDataDims  This keeps track of how much data has been recorded.  
+            // fStrDataDims[]  This keeps track of how much data has been recorded.  
             // [0] is the number of records recorded, and 
             // [1] is the size of a stream record in bytes
-            fStrDataDims[ 0 ] = 1;                 
-            fStrDataDims[ 1 ] = fStrRecSize * fSampleSize;
+            fStrDataDims[ 0 ] = 1;                              // record is one array row
+            fStrDataDims[ 1 ] = fStrRecSize * fSampleSize;      // number of columns to bytes
             
-//          fStrMaxDataDims[ 0 ] = H5S_UNLIMITED;               // unlimited array rows?
-//          fStrMaxDataDims[ 1 ] = fStrRecSize * fSampleSize;   // number of columns to bytes
-            // fStrMaxDataDims  This is used to create the HDF5 dataset object.  
+            // fStrMaxDataDims[]  This is used to create the HDF5 dataset object.  
             // It has unlimited rows, and its width is the size of a stream record in bytes
-            fStrMaxDataDims[ 0 ] = -1; //H5S_UNLIMITED;  
-            fStrMaxDataDims[ 1 ] = fStrRecSize * fSampleSize;
+            fStrMaxDataDims[ 0 ] = -1;                            //H5S_UNLIMITED;  
+            fStrMaxDataDims[ 1 ] = fStrRecSize * fSampleSize;     // number of columns to bytes
             
-//          fStrDataChunkDims[ 0 ] = 1;                         // access sections by row
-//          fStrDataChunkDims[ 1 ] = fStrRecSize * fSampleSize; // number of columns to bytes
-            // fStrDataChunkDims  In HDF5 a chunk is the size of data that is contiguous, 
+            // fStrDataChunkDims[]  In HDF5 a chunk is the size of data that is contiguous, 
             // and helps inform how the file is structured.  In this case the dimensions are 
             // always 1 record (i.e. 1 row) by a stream record in bytes wide.
-            fStrDataChunkDims[ 0 ] = 1;            
-            fStrDataChunkDims[ 1 ] = fStrRecSize * fSampleSize;
+            fStrDataChunkDims[ 0 ] = 1;                           // access sections by row
+            fStrDataChunkDims[ 1 ] = fStrRecSize * fSampleSize;   // number of columns to bytes
             
-//          fDataDims1Rec[ 0 ] = 1;                             //
-//          fDataDims1Rec[ 1 ] = fChanRecSize * fSampleSize;    //
-            // fDataDims1Rec  This describes the size of the data object that a user interacts with.  
+            // fDataDims1Rec[]  This describes the size of the data object that a user interacts with.  
             // So when the data is accessed as separate channels, its one channel record wide in bytes.  
             // When data is not accessed separately, its one stream record wide in bytes.
             fDataDims1Rec[ 0 ] = 1;             
             fDataDims1Rec[ 1 ] = fStrRecSize * fSampleSize;
             
-//          fDataOffset[ 0 ] = 0;
-//          fDataOffset[ 1 ] = 0;
-            // fDataOffset  This says where within the data space the data reading/writing starts.  
+            // fDataOffset[]  This says where within the data space the data reading/writing starts.  
             // So how many records (i.e. rows) down, and how many bytes over (only non-zero if 
             // using separate-channel access)
             fDataOffset[ 0 ] = 0;               
             fDataOffset[ 1 ] = 0;
             
-//          fDataStride[ 0 ] = 1;                   // stride by array row
-//          fDataStride[ 1 ] = fNChannels;          // stride by number of channels per record???
-            // fDataStride  I believe this specifies how far to move in memory between reads/writes
-            fDataStride[ 0 ] = 1;               
-            fDataStride[ 1 ] = fNChannels;
+            // fDataStride[]  (Noah) I believe this specifies how far to move in memory between reads/writes
+            fDataStride[ 0 ] = 1;                   // stride by array row
+            fDataStride[ 1 ] = fNChannels;          // stride by number of channels per record???
             
-//          fDataBlock[ 0 ] = 1;                    // data block is one array row
-//          fDataBlock[ 1 ] = fSampleSize;          //
-            // fDataBlock  I dont actually remember the significance of this or why its fSampleSize 
+            // fDataBlock[]  (Noah) I dont actually remember the significance of this or why its fSampleSize 
             // for separate access, but the stream record size in the other case
-            fDataBlock[ 0 ] = 1;                
+            fDataBlock[ 0 ] = 1;                    // data block is one array row
             fDataBlock[ 1 ] = fSampleSize;
 
-            /*
-            std::cout << "str data dims: " << fStrDataDims[0] << " " << fStrDataDims[1] << std::endl;
-            std::cout << "str max data dims: " << fStrMaxDataDims[0] << " " << fStrMaxDataDims[1] << std::endl;
-            std::cout << "str data chunk dims: " << fStrDataChunkDims[0] << " " << fStrDataChunkDims[1] << std::endl;
-            std::cout << "str data dims 1 rec: " << fDataDims1Rec[0] << " " << fDataDims1Rec[1] << std::endl;
-            std::cout << "str data offset: " << fDataOffset[0] << " " << fDataOffset[1] << std::endl;
-            std::cout << "str data stride: " << fDataStride[0] << " " << fDataStride[1] << std::endl;
-            std::cout << "str data block: " << fDataBlock[0] << " " << fDataBlock[1] << std::endl;
-            */
+//std::cout << "str data dims: " << fStrDataDims[0] << " " << fStrDataDims[1] << std::endl;
+//std::cout << "str max data dims: " << fStrMaxDataDims[0] << " " << fStrMaxDataDims[1] << std::endl;
+//std::cout << "str data chunk dims: " << fStrDataChunkDims[0] << " " << fStrDataChunkDims[1] << std::endl;
+//std::cout << "str data dims 1 rec: " << fDataDims1Rec[0] << " " << fDataDims1Rec[1] << std::endl;
+//std::cout << "str data offset: " << fDataOffset[0] << " " << fDataOffset[1] << std::endl;
+//std::cout << "str data stride: " << fDataStride[0] << " " << fDataStride[1] << std::endl;
+//std::cout << "str data block: " << fDataBlock[0] << " " << fDataBlock[1] << std::endl;
 
-#if 0 // original HDF5 code
+///@todo Create Zarr dataspace object
             // Data space object initialization
             if(fDataSpaceUser != nullptr)
             { // release any existing data space
-                delete fDataSpaceUser;
+//              delete fDataSpaceUser;
+              fDataSpaceUser.release(); // std::unique_ptr<z5::Dataset>
             }
 
             // A dataspace defines the size and shape of the dataset or attribute raw data, 
@@ -441,25 +476,63 @@ std::cout << "M4Stream::Initialize()\n";
             // information necessary to write, read, and interpret the stored data.
 //          fDataSpaceUser = new H5::DataSpace( N_DATA_DIMS, fDataDims1Rec, NULL );
 
-//fDataTypeInFile = z5::types::int64;     //H5::PredType::STD_I64LE;
-//fDataTypeUser = z5::types::int64;       //H5::PredType::NATIVE_INT64;
+///@todo verify fDataDims1Rec[1]
+            std::vector<size_t> shape = { N_DATA_DIMS,fDataDims1Rec[1] };       // <row>,<col>
+            std::vector<size_t> chunks = { N_DATA_DIMS,fDataDims1Rec[1] };      // <row>,<col>
 
-            std::vector<size_t> shape = { N_DATA_DIMS,fDataDims1Rec };       // <row>,<col>
-            std::vector<size_t> chunks = { N_DATA_DIMS,fDataDims1Rec };      // <row>,<col>
-            z5::types::InverseDtypeMap& N5type = z5::types::dtypeToN5();
-            std::string strDataType = N5type(fDataTypeInFile);     // lookup/convert type to string
+            // map lookup/convert type to string
+            z5::types::Datatypes::InverseDtypeMap& N5type = z5::types::Datatypes::dtypeToN5();
+            std::string strDataType = N5type[fDataTypeInFile];     
+std::cout << "stream datatype: " << strDataType << std::endl;
 
-            fDataSpaceUser = z5DatasetHandle( *aFile, dsName, strDataType, shape, chunks );
+            // <file>/streams/streamN/acquisitions
+            // Programmer's Note: std::unique_ptr<z5::Dataset>
+            fDataSpaceUser = z5::createDataset( *fStreamParentLoc, "acquisitions", strDataType, shape, chunks );
 
-//// Create the Dataspace for "channel_streams"
-//const std::string dsName = "channel_streams";
-//std::vector<size_t> shape = { 1,fNChannels };       // <row>,<col>
-//std::vector<size_t> chunks = { 1,fNChannels };      // <row>,<col>
-//auto ds = z5::createDataset( *aFile, dsName, "uint32", shape, chunks );
-#endif
             fIsInitialized = true;
             return;
         }
+
+#if 0 // original HDF5 code
+        // allocate stream record memory
+        fStreamRecord.Initialize( fStrRecNBytes );
+
+        // channel records point to portions of the stream record and do not own their own data
+        byte_type* tChanDataPtr = fStreamRecord.GetData();
+        for( unsigned iChan = 0; iChan < fNChannels; ++iChan )
+        {
+            fChannelRecords[ iChan ].Initialize( fStreamRecord.GetRecordIdPtr(), fStreamRecord.GetTimePtr(), tChanDataPtr + fChanRecNBytes*iChan );
+        }
+
+        // set the read/write functions to the general versions
+        fDoReadRecord = &M4Stream::ReadRecordAsIs;
+        fDoWriteRecord = &M4Stream::WriteRecordAsIs;
+
+        // Arrays for HDF5 file reading/writing
+        fStrDataDims[ 0 ] = 1;                 fStrDataDims[ 1 ] = fStrRecSize * fSampleSize;
+        fStrMaxDataDims[ 0 ] = H5S_UNLIMITED;  fStrMaxDataDims[ 1 ] = fStrRecSize * fSampleSize;
+        fStrDataChunkDims[ 0 ] = 1;            fStrDataChunkDims[ 1 ] = fStrRecSize * fSampleSize;
+        fDataDims1Rec[ 0 ] = 1;             fDataDims1Rec[ 1 ] = fStrRecSize * fSampleSize;
+        fDataOffset[ 0 ] = 0;               fDataOffset[ 1 ] = 0;
+        fDataStride[ 0 ] = 1;               fDataStride[ 1 ] = fSampleSize;
+        fDataBlock[ 0 ] = 1;                fDataBlock[ 1 ] = fStrRecSize * fSampleSize;
+        /*
+        std::cout << "str data dims: " << fStrDataDims[0] << " " << fStrDataDims[1] << std::endl;
+        std::cout << "str max data dims: " << fStrMaxDataDims[0] << " " << fStrMaxDataDims[1] << std::endl;
+        std::cout << "str data chunk dims: " << fStrDataChunkDims[0] << " " << fStrDataChunkDims[1] << std::endl;
+        std::cout << "str data dims 1 rec: " << fDataDims1Rec[0] << " " << fDataDims1Rec[1] << std::endl;
+        std::cout << "str data offset: " << fDataOffset[0] << " " << fDataOffset[1] << std::endl;
+        std::cout << "str data stride: " << fDataStride[0] << " " << fDataStride[1] << std::endl;
+        std::cout << "str data block: " << fDataBlock[0] << " " << fDataBlock[1] << std::endl;
+        */
+
+        // HDF5 object initialization
+        delete fH5DataSpaceUser;
+        fH5DataSpaceUser = new H5::DataSpace( N_DATA_DIMS, fDataDims1Rec, NULL );
+
+        fIsInitialized = true;
+        return;
+#endif
 
 std::cout << "non-interleaved\n";
         // allocate stream record memory
@@ -517,15 +590,13 @@ std::cout << "Record: " << iChan << " initialize\n";
         fDataBlock[ 0 ] = 1;                
         fDataBlock[ 1 ] = fStrRecSize * fSampleSize;
 
-        /*
-        std::cout << "str data dims: " << fStrDataDims[0] << " " << fStrDataDims[1] << std::endl;
-        std::cout << "str max data dims: " << fStrMaxDataDims[0] << " " << fStrMaxDataDims[1] << std::endl;
-        std::cout << "str data chunk dims: " << fStrDataChunkDims[0] << " " << fStrDataChunkDims[1] << std::endl;
-        std::cout << "str data dims 1 rec: " << fDataDims1Rec[0] << " " << fDataDims1Rec[1] << std::endl;
-        std::cout << "str data offset: " << fDataOffset[0] << " " << fDataOffset[1] << std::endl;
-        std::cout << "str data stride: " << fDataStride[0] << " " << fDataStride[1] << std::endl;
-        std::cout << "str data block: " << fDataBlock[0] << " " << fDataBlock[1] << std::endl;
-        */
+//std::cout << "str data dims: " << fStrDataDims[0] << " " << fStrDataDims[1] << std::endl;
+//std::cout << "str max data dims: " << fStrMaxDataDims[0] << " " << fStrMaxDataDims[1] << std::endl;
+//std::cout << "str data chunk dims: " << fStrDataChunkDims[0] << " " << fStrDataChunkDims[1] << std::endl;
+//std::cout << "str data dims 1 rec: " << fDataDims1Rec[0] << " " << fDataDims1Rec[1] << std::endl;
+//std::cout << "str data offset: " << fDataOffset[0] << " " << fDataOffset[1] << std::endl;
+//std::cout << "str data stride: " << fDataStride[0] << " " << fDataStride[1] << std::endl;
+//std::cout << "str data block: " << fDataBlock[0] << " " << fDataBlock[1] << std::endl;
 
 std::cout << "\nCreate new z5/Zarr DataSpace\n";
 
@@ -535,27 +606,16 @@ std::cout << "\nCreate new z5/Zarr DataSpace\n";
         std::string dsName = "acquisitions";
         std::vector<size_t> shape = { 1,fStrRecSize };       // <row>,<col>
         std::vector<size_t> chunks = { 1,fStrRecSize };      // <row>,<col>
-        z5::types::Datatypes z5Data;
-        z5::types::Datatypes::InverseDtypeMap& N5type = z5Data.dtypeToN5();
-        std::string strDataType = N5type[fDataTypeInFile];     // lookup/convert type to string
-std::cout << "stream datatype: " << strDataType << std::endl;
-#if 0
-//
-//
-//z5::DatasetMetadata meta(fDataTypeInFile,shape,chunks,true);
-//z5DatasetHandle hDataset;
-//
-//std::unique_ptr<z5::Dataset> mydataset = z5::createDataset(hDataset,meta);
 
-        if(fDataSpaceUser != nullptr)
-        {
-            delete fDataSpaceUser;      // release an existing
-        }
-        // Programmer's Note: fAcqLoc: <root>/"streams"/"streamsN"/"acquisitions"
-        // from M4Stream::M4Stream()
-//      fDataSpaceUser = z5::createDataset(*fAcqLoc, dsName, strDataType, shape, chunks);
-//      fDataSpaceUser = new z5::filesystem::handle::Dataset(*fAcqLoc, dsName, strDataType, shape, chunks)
-#endif
+        // map lookup/convert type to string
+        z5::types::Datatypes::InverseDtypeMap& N5type = z5::types::Datatypes::dtypeToN5();
+        std::string strDataType = N5type[fDataTypeInFile];     
+std::cout << "stream datatype: " << strDataType << std::endl;
+
+        // <file>/streams/streamN/acquisitions
+        // Programmer's Note: std::unique_ptr<z5::Dataset>
+        fDataSpaceUser = z5::createDataset( *fStreamParentLoc, "acquisitions", strDataType, shape, chunks );
+
         fIsInitialized = true;
 std::cout << "M4Stream::Initialize(): void\n";        
     }
@@ -597,7 +657,7 @@ std::cout << "M4Stream::Initialize(): void\n";
     bool M4Stream::ReadRecord( int anOffset, bool aIfNewAcqStartAtFirstRec ) const
     {
 std::cout << "M4Stream::ReadRecord()\n";
-#if 0
+#if 0 // Original HDF5 code
         if( ! fIsInitialized ) Initialize();
 
         std::unique_lock< std::mutex >( *fMutexPtr.get() );
@@ -686,10 +746,10 @@ std::cout << "M4Stream::ReadRecord(): void\n";
 std::cout << "M4Stream::Close()\n";
         LDEBUG( mlog, "const M4Stream::Close()" );
 
-        delete fDataSpaceUser;
-        fDataSpaceUser = nullptr;
-///@todo how to release z5::DataSet 
-/// 
+//      delete fDataSpaceUser;
+//      fDataSpaceUser = nullptr;
+        fDataSpaceUser.release();   // std::unique_ptr<z5::Dataset>
+
         delete fCurrentAcqDataSet; 
         fCurrentAcqDataSet = nullptr;
 
@@ -730,7 +790,7 @@ std::cout << "M4Stream::WriteRecord()\n";
         // note: fRecordCountInAcq is used to keep track of the number of records written in each acquisition;
         //       fNRecordsInAcq is only valid for the last completed acquisition.
 
-#if 0
+#if 0 // Original HDF5 code
         if( ! fIsInitialized ) Initialize();
 
         if( ! fRecordsAccessed ) aIsNewAcquisition = true;
@@ -1049,8 +1109,8 @@ std::cout << "M4Stream::BuildIndex(): void\n";
     }
 
     /*************************************************************************
-    * @brief 
-    * 
+    * @brief Write the final stream-acquisition attributes at closing
+    *   <file>/streams/streamN/acquisitions/<record-number>/n_records
     *************************************************************************/
     void M4Stream::FinalizeCurrentAcq()
     {
@@ -1078,14 +1138,17 @@ std::cout << "empty fCurrentAcqDataSet: " << fStreamParentLoc->path() << std::en
   
 ///@todo write the dataspace
 
-        // Programmer's Note: fStreamParentLoc: <file>/"streams"/"streamN"
+        // Programmer's Note: fStreamParentLoc: <file>/streams/streamN
         // create attr: for acquisitions this stream 
-std::cout << "Finalize acquistion for: " << fStreamParentLoc->path() << std::endl;
-        auto streamGrp = z5GroupHandle(*fStreamParentLoc, "");  // this will go into the M4StreamHeader attrib  
+std::cout << "Finalize acquistion for: " << fCurrentAcqDataSet->path() << std::endl;
+//      auto streamGrp = z5GroupHandle(*fCurrentAcqDataSet,"");
         nlohmann::json jacqAttr;
 
         jacqAttr["n_records"] = fNRecordsInAcq;
-        z5::writeAttributes(streamGrp, jacqAttr);
+
+        // Programmer's Note: This will update atribute "n_records" with new value
+//      z5::writeAttributes(streamGrp, jacqAttr);
+        z5::writeAttributes(*fCurrentAcqDataSet, jacqAttr);
 
         LDEBUG( mlog, "Finalizing acq. " << fAcquisitionId << " with " << fNRecordsInAcq << " records" );
 
@@ -1094,8 +1157,9 @@ std::cout << "Finalize acquistion for: " << fStreamParentLoc->path() << std::end
     }
 
     /*************************************************************************
-    * @brief 
-    * 
+    * @brief Write the final stream attributes at closing
+    *   <file>/streams/streamN/n_acquisitions
+    *   <file>/streams/streamN/n_records
     *************************************************************************/
     void M4Stream::FinalizeStream()
     {
@@ -1125,17 +1189,19 @@ std::cout << "empty fAcqLoc: " << fStreamParentLoc->path() << std::endl;
 
         fNAcquisitions = ( fAcquisitionId + 1 ) * (unsigned)fRecordsAccessed;
 
-        // Programmer's Note: fStreamParentLoc: <file>/"streams"/"streamN"
-//std::cout << "fStreamParentLoc: " << fStreamParentLoc->path() << std::endl;
-
+        // Programmer's Note: fStreamParentLoc: <file>/streams/streamN
         // create attr: for acquisitions this stream: 
 std::cout << "Finalize stream for: " << fStreamParentLoc->path() << std::endl;
-        auto streamGrp = z5GroupHandle(*fStreamParentLoc, "");  // this will go into the M4StreamHeader attrib  
+//      auto streamGrp = z5GroupHandle(*fStreamParentLoc, "");  // this will go into the M4StreamHeader attrib
         nlohmann::json jacqAttr;
 
         jacqAttr["n_acquisitions"] = fNAcquisitions;
         jacqAttr["n_records"] = fRecordCountInFile;
-        z5::writeAttributes(streamGrp, jacqAttr);
+
+        // Programmer's Note: This will update atributes "n_acquisitions" and "n_records" with new values
+        // <file>/streams/streamN/<attrib>
+//      z5::writeAttributes(streamGrp, jacqAttr);
+        z5::writeAttributes(*fStreamParentLoc, jacqAttr);
 
         LDEBUG( mlog, "Finalizing stream with " << fNAcquisitions << " acquisitions and " << fRecordCountInFile << " records" );
 
