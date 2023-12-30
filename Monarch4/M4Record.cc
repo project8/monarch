@@ -57,6 +57,7 @@ std::cout << "M4Record::M4Record(template)\n";
     {
 std::cout << "M4Record::~M4Record()\n";
         ClearData();
+std::cout << "M4Record::~M4Record(): void\n";
     }
 
     /*************************************************************************
@@ -65,8 +66,9 @@ std::cout << "M4Record::~M4Record()\n";
     *************************************************************************/
     void M4Record::Initialize()
     {
-std::cout << "M4Record::Initialize(): clear\n";
+std::cout << "M4Record::Initialize()\n";
         ClearData();
+std::cout << "M4Record::Initialize(): void\n";
     }
 
     /*************************************************************************

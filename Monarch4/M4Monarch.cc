@@ -48,6 +48,7 @@ std::cout << "Monarch4::~Monarch4(): default DTOR\n";
         }
 
         // Release the streams
+std::cout << "Release the streams\n";
         while( ! fStreams.empty() )
         {
             delete fStreams.back();
@@ -188,7 +189,7 @@ std::cout << "Monarch4::OpenForWriting()\n";
 
         try
         {
-            // Create a new z5/Zarr File
+            // Create a new z5/Zarr File managed by the Monarch4 object
             tMonarch4->fFile = new z5FileHandle( aFilename, z5::FileMode::w );
             z5::createFile( *tMonarch4->fFile, true );
         }
@@ -199,12 +200,12 @@ std::cout << "Monarch4::OpenForWriting()\n";
             return nullptr;
         }
 
-        // if( tMonarch4->fFile == nullptr )
-        // {
-        //     delete tMonarch4;
-        //     throw M4Exception() << "Could not open <" << aFilename << "> for writing";
-        //     return nullptr;
-        // }
+        if( tMonarch4->fFile == nullptr )
+        {
+            delete tMonarch4;
+            throw M4Exception() << "Could not open <" << aFilename << "> for writing";
+            return nullptr;
+        }
 
         LDEBUG( mlog, "Opened egg file <" << aFilename << "> for writing" );
 
@@ -269,6 +270,29 @@ std::cout << "Monarch4::ReadHeader()\n";
 
         // Read the header information from the file (run header, plus all stream and channel headers)
         fHeader->ReadFromFile( fFile );
+
+        // Creation of streams
+//      H5::Group* tStreamsGroup = fHeader->GetStreamsGroup();
+        z5GroupHandle* tStreamsGroup = fHeader->GetStreamsGroup();
+
+        try
+        {
+            // Create the stream objects based on the configuration from the header
+std::cout << "Create the stream objects based on the configuration from the header\n";
+            for( M4Header::M4StreamHeaders::const_iterator streamIt = fHeader->StreamHeaders().begin();
+                    streamIt != fHeader->StreamHeaders().end();
+                    ++streamIt )
+            {
+                fStreams.push_back( new M4Stream( *streamIt, tStreamsGroup ) );
+                fStreams.back()->SetMutex( fMutexPtr );
+            }
+        }
+        catch( M4Exception& e )
+        {
+            std::cout << "Monarch4::ReadHeader() threw M4Exception\n";
+            throw;
+        }
+
         fState = eReadyToRead;
 std::cout << "Monarch4::ReadHeader(): void\n";
     }

@@ -193,7 +193,7 @@ std::cout << "M4StreamHeader::WriteToFile(): " << fLabel << std::endl;
 #endif
 
         z5::createGroup( aGroup, fLabel );
-        z5GroupHandle grpHandle = z5GroupHandle( aGroup, fLabel );  // <root>/"streams"/"streamsN"
+        z5GroupHandle grpHandle = z5GroupHandle( aGroup, fLabel );  // <file>/streams/streamsN
         nlohmann::json streamAttr;
 
 //std::cout << "  number: " << fNumber << std::endl;
@@ -924,7 +924,6 @@ std::cout << "M4Header::AddStream() multi-channel EXIT\n";
     * @param aFile path/filename
     * @return none, throw M4Exception on failure
     *************************************************************************/
-    // void M4Header::WriteToHDF5( H5::H5File* aFile )
     void M4Header::WriteToFile( z5FileHandle* aFile )
     {
 std::cout << "M4Header::WriteToFile()\n"; 
@@ -1139,7 +1138,7 @@ std::cout << "M4Header::ReadFromFile()\n";
             // char tBuffer[ tBuffSize ];
 
             // Create streams group correspoding to streams group
-            fStreamsGroup = new z5GroupHandle(*aFile, "streams");   // <root>/"streams" group
+            fStreamsGroup = new z5GroupHandle(*aFile, "streams");   // <file>/streams group
 
             // See how many streams are used
             nlohmann::json jstreamAttr;
@@ -1153,20 +1152,20 @@ std::cout << "M4Header::ReadFromFile()\n";
             // Read each of the stream-header objects and store
             for( size_t iStream = 0; iStream < nStreams; ++iStream )
             {
-                // Construct the stream label
-                std::string streamLabel = "streams/stream" + std::to_string(iStream);
+                // Construct the streamN label
+                std::string streamNLabel = "streams/stream" + std::to_string(iStream);
 
                 // Create a new M4StreamHeader in the collection, at the back
                 fStreamHeaders.push_back( M4StreamHeader() );
 
                 // Populate the new header (within the collection) from the file
                 // Stream group at this label-path
-                auto strmHandle = z5GroupHandle( *aFile, streamLabel );
-                fStreamHeaders.back().ReadFromFile( strmHandle, streamLabel );
+                auto strmHandle = z5GroupHandle( *aFile, streamNLabel );
+                fStreamHeaders.back().ReadFromFile( strmHandle, streamNLabel );
             }
 
             // Create channels group correspoding to file group
-            fChannelsGroup = new z5GroupHandle( *aFile, "channels");    // <root>/"channels"
+            fChannelsGroup = new z5GroupHandle( *aFile, "channels");    // <file>/channels group
 
             nlohmann::json jchanAttr;
             z5::readAttributes( *fChannelsGroup, jchanAttr );
@@ -1182,15 +1181,15 @@ std::cout << "M4Header::ReadFromFile()\n";
             for( size_t iChan = 0; iChan < nChannels; ++iChan )
             {
                 // Channel label
-                std::string chanLabel = "channels/channel" + std::to_string(iChan);
+                std::string chanNLabel = "channels/channel" + std::to_string(iChan);
 
                 // Create a new M4ChannelHeader in the collection, at the back
                 fChannelHeaders.push_back( M4ChannelHeader() );
 
                 // Populate the new header (within the collection) from the file
                 // Channel group at this label-path
-                auto chanHandle = z5GroupHandle( *aFile, chanLabel );
-                fChannelHeaders.back().ReadFromFile( chanHandle, chanLabel );
+                auto chanHandle = z5GroupHandle( *aFile, chanNLabel );
+                fChannelHeaders.back().ReadFromFile( chanHandle, chanNLabel );
             }
         }
         catch (const nlohmann::json::exception& e)
@@ -1329,7 +1328,7 @@ std::cout << "M4Header::ReadFromFile(): void\n";
     /*************************************************************************
     * @brief Write channel-coherence to file
     * 
-    * @param aLoc 
+    * @param[in] aFile 
     *************************************************************************/
     void M4Header::WriteChannelCoherence( z5FileHandle* aFile )
     {

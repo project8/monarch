@@ -226,13 +226,20 @@ std::cout << "float64\n";
 
         // Determine if we're in read or write mode and get/create the acquisitions group
         // See if there are any acquisition records currently in file
+std::cout << "See if there are any acquisition records for: " << fStreamParentLoc->path() << std::endl;
+
+//        std::string pth = (std::string)fStreamParentLoc->path() + std::string("/acquisitions");
+//std::cout << "pth: " << pth << std::endl;
+//        if(fs::exists(pth) == true)
+
         if(z5::filesystem::isSubGroup(*fStreamParentLoc, "acquisitions") == true)
         { // "acquisitions" records exist == read mode
+std::cout << "existing \"acquisitions\" records in file\n";
 
             LDEBUG( mlog, "Opened acquisition group in <read> mode" );
 
-            // open stream's "acquisitions" group
-            fAcqLoc = new z5GroupHandle(*fStreamParentLoc, "acquisitions");     // <root>/streams/streamsN/acquisitions
+            // handle to stream's "acquisitions" group
+            fAcqLoc = new z5GroupHandle(*fStreamParentLoc, "acquisitions");     // <file>/streams/streamsN/acquisitions
 
             nlohmann::json acqGroupAttr;
             z5::readAttributes( *fAcqLoc, acqGroupAttr );        // read the existing attributes
@@ -243,6 +250,8 @@ std::cout << "float64\n";
                 fNAcquisitions = (unsigned)acqGroupAttr["n_acquisitions"];
                 fNRecordsInFile = (unsigned)acqGroupAttr["n_records"];
 
+std::cout << "fNAcquisitions: " << fNAcquisitions << std::endl;
+std::cout << "fNRecordsInFile: " << fNAcquisitions << std::endl;
                 BuildIndex();
 
                 LDEBUG( mlog, "Number of acquisitions found: " << fNAcquisitions << "; Number of records found: " << fNRecordsInFile );
@@ -250,15 +259,18 @@ std::cout << "float64\n";
             }
             catch (const nlohmann::json::exception& e)
             { // JSON error
-                throw M4Exception() << "JSON error M4Stream::M4Stream(): " << e.what();
+                throw M4Exception() << "M4Stream::M4Stream(): JSON error: " << e.what();
             }
         }
         else
         { // no "acquisitions" records == write mode, create new
-
-            fAcqLoc = new z5GroupHandle(*fStreamParentLoc, "acquisitions");     // <file>/streams/streamsN/acquisitions
+std::cout << "no \"acquisitions\" in file\n";
 
             LDEBUG( mlog, "Opened acquisition group in <write> mode" );
+
+            // Programmer's Note: This is a handle to dataset to be created in 
+            // M4Stream::Initialize() by z5::openDataset()
+            fAcqLoc = new z5GroupHandle(*fStreamParentLoc, "acquisitions");     // <file>/streams/streamsN/acquisitions
             fMode = kWrite;  // write mode
         }
 
@@ -475,8 +487,8 @@ std::cout << "M4Stream::Initialize()\n";
             std::string strDataType = N5type[fDataTypeInFile];     
 std::cout << "stream datatype: " << strDataType << std::endl;
 
-            // <file>/streams/streamN/acquisitions
             // Programmer's Note: std::unique_ptr<z5::Dataset>
+            // Creates "acquisitions" group/dataset: <file>/streams/streamN/acquisitions
             fDataSpaceUser = z5::createDataset( *fStreamParentLoc, "acquisitions", strDataType, shape, chunks );
 
             fIsInitialized = true;
@@ -596,8 +608,8 @@ std::cout << "stream datatype: " << strDataType << std::endl;
         std::vector<size_t> shape = { 1,fStrRecSize };       // <row>,<col>
         std::vector<size_t> chunks = { 1,fStrRecSize };      // <row>,<col>
 
-        // <file>/streams/streamN/acquisitions
         // Programmer's Note: std::unique_ptr<z5::Dataset>
+        // Creates "acquisitions" group/dataset: <file>/streams/streamN/acquisitions
         fDataSpaceUser = z5::createDataset( *fStreamParentLoc, "acquisitions", strDataType, shape, chunks );
 
         fIsInitialized = true;
@@ -1096,7 +1108,7 @@ std::cout << "M4Stream::BuildIndex(): void\n";
 
     /*************************************************************************
     * @brief Write the final stream-acquisition attributes at closing
-    *   <file>/streams/streamN/acquisitions/<record-number>/n_records
+    *   <file>/streams/streamN/acquisitions/<acqIdr>/n_records
     *************************************************************************/
     void M4Stream::FinalizeCurrentAcq()
     {
@@ -1116,20 +1128,21 @@ std::cout << "M4Stream::FinalizeCurrentAcq()\n";
         if( fCurrentAcqDataSet == nullptr ) 
         {
 ///@todo one entry, one exit!
-std::cout << "empty fCurrentAcqDataSet: " << fStreamParentLoc->path() << std::endl;
+std::cout << "M4Stream::FinalizeCurrentAcq(): empty fCurrentAcqDataSet: " << fStreamParentLoc->path() << std::endl;
           return;
         }
 
         fNRecordsInAcq = fRecordCountInAcq;
   
 std::cout << "Finalize acquistion for: " << fCurrentAcqDataSet->path() << std::endl;
-        // Programmer's Note: fStreamParentLoc: <file>/streams/streamN
+        // Programmer's Note: fStreamParentLoc: <file>/streams/streamN/<acqId>
         // create attr: for acquisitions this stream 
         nlohmann::json jacqAttr;
         jacqAttr["n_records"] = fNRecordsInAcq;
 
         // Programmer's Note: This will update exiting atribute "n_records" with new value
-        // <file>/streams/streamN/acquisitions/<recordNum>/<attrib>
+        // <file>/streams/streamN/acquisitions/<acqId>/<attrib>
+std::cout << "Write <file>/streams/streamN/<acqId>/<attrib>: " << fStreamParentLoc->path() << std::endl;
         z5::writeAttributes(*fCurrentAcqDataSet, jacqAttr);
 
         LDEBUG( mlog, "Finalizing acq. " << fAcquisitionId << " with " << fNRecordsInAcq << " records" );
@@ -1164,7 +1177,7 @@ std::cout << "M4Stream::FinalizeStream()\n";
 ///@todo one entry, one exit
         if( fAcqLoc == nullptr ) 
         {
-std::cout << "empty fAcqLoc: " << fStreamParentLoc->path() << std::endl;
+std::cout << "M4Stream::FinalizeStream(): empty fAcqLoc: " << fStreamParentLoc->path() << std::endl;
           return;
         }
 
@@ -1172,7 +1185,6 @@ std::cout << "empty fAcqLoc: " << fStreamParentLoc->path() << std::endl;
 
         // Programmer's Note: fStreamParentLoc: <file>/streams/streamN
         // create attr: for acquisitions this stream: 
-std::cout << "Finalize stream for: " << fStreamParentLoc->path() << std::endl;
         nlohmann::json jacqAttr;
 
         jacqAttr["n_acquisitions"] = fNAcquisitions;
@@ -1180,6 +1192,8 @@ std::cout << "Finalize stream for: " << fStreamParentLoc->path() << std::endl;
 
         // Programmer's Note: This will update atributes "n_acquisitions" and "n_records" with new values
         // <file>/streams/streamN/<attrib>
+std::cout << "Write <file>/streams/streamN/<attrib>: " << fStreamParentLoc->path() << std::endl;
+std::cout << "n_acquisitions: " << fNAcquisitions << " n_records: " << fRecordCountInFile << std::endl;
         z5::writeAttributes(*fStreamParentLoc, jacqAttr);
 
         LDEBUG( mlog, "Finalizing stream with " << fNAcquisitions << " acquisitions and " << fRecordCountInFile << " records" );
