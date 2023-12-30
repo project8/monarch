@@ -39,6 +39,8 @@ int main() {
         tReadTest->ReadHeader(); 
 
         const M4Header* hdr = (const M4Header*)tReadTest->GetHeader();
+
+        // Dump header contents
         std::cout << *hdr;
        
     }

@@ -1470,7 +1470,8 @@ std::cout << "M4Header::ReadFromFile(): void\n";
 *************************************************************************/
 M4_API std::ostream& operator<<( std::ostream& out, const monarch4::M4StreamHeader& hdr )
 {
-    out << "\nStream Header Content:\n";
+    out << "\nStream Header Content: " << hdr.GetNumber() << std::endl;
+
     out << "\tStream Number: " << hdr.GetNumber() << '\n';
     out << "\tSource: " << hdr.Source() << '\n';
     out << "\tNumber of Channels: " << hdr.GetNChannels() << '\n';
@@ -1497,7 +1498,8 @@ M4_API std::ostream& operator<<( std::ostream& out, const monarch4::M4StreamHead
 *************************************************************************/
 M4_API std::ostream& operator<<( std::ostream& out, const monarch4::M4ChannelHeader& hdr )
 {
-    out << "\nChannel Header Content:\n";
+    out << "\nChannel Header Content: " << hdr.GetNumber() << std::endl;
+
     out << "\tChannel Number: " << hdr.GetNumber() << '\n';
     out << "\tSource: " << hdr.Source() << '\n';
     out << "\tAcquisition Rate: " << hdr.GetAcquisitionRate() << " MHz\n";
@@ -1524,7 +1526,8 @@ M4_API std::ostream& operator<<( std::ostream& out, const monarch4::M4ChannelHea
 *************************************************************************/
 M4_API std::ostream& operator<<( std::ostream& out, const monarch4::M4Header& hdr )
 {
-    out << "Monarch Header Content:\n";
+    out << "\n=======Monarch Header Content:=========\n";
+
     out << "\tEgg Version: " << hdr.EggVersion() << "\n";
     out << "\tFilename: " << hdr.Filename() << "\n";
     out << "\tRun Duration: " << hdr.GetRunDuration() << " ms\n";
@@ -1539,12 +1542,13 @@ M4_API std::ostream& operator<<( std::ostream& out, const monarch4::M4Header& hd
         out << "\t\tChannel " << iChan << " --> Stream " << hdr.ChannelStreams()[ iChan ] << "\n";
     }
 
-    out << "\tStream headers:\n";
+    out << "\n========Stream headers:========\n";
     for( uint32_t iStream = 0; iStream < hdr.StreamHeaders().size(); ++iStream )
     {
         out << hdr.StreamHeaders()[ iStream ];
     }
-    out << "\tChannel headers:\n";
+
+    out << "\n==========Channel headers:========\n";
     for( uint32_t iChan = 0; iChan < hdr.ChannelHeaders().size(); ++iChan )
     {
         out << hdr.ChannelHeaders()[ iChan ];

@@ -228,21 +228,20 @@ std::cout << "float64\n";
         // See if there are any acquisition records currently in file
 std::cout << "See if there are any acquisition records for: " << fStreamParentLoc->path() << std::endl;
 
-//        std::string pth = (std::string)fStreamParentLoc->path() + std::string("/acquisitions");
-//std::cout << "pth: " << pth << std::endl;
-//        if(fs::exists(pth) == true)
+          // handle to stream's "acquisitions" group/dataset
+          fAcqLoc = new z5GroupHandle(*fStreamParentLoc, "acquisitions");     // <file>/streams/streamsN/acquisitions
 
-        if(z5::filesystem::isSubGroup(*fStreamParentLoc, "acquisitions") == true)
-        { // "acquisitions" records exist == read mode
+          // Programmer's Note: readAttributes() doesn't fail if there are no attributes.
+          // The nlohmann::json component is empty in that case.
+          nlohmann::json acqGroupAttr;
+          z5::readAttributes( *fAcqLoc, acqGroupAttr );        // read the existing attributes
+
+        if( (acqGroupAttr.contains("n_acquisitions") == true) &&
+            (acqGroupAttr.contains("n_records") == true) )
+        { // "acquisitions" attributes exist == read mode
 std::cout << "existing \"acquisitions\" records in file\n";
 
             LDEBUG( mlog, "Opened acquisition group in <read> mode" );
-
-            // handle to stream's "acquisitions" group
-            fAcqLoc = new z5GroupHandle(*fStreamParentLoc, "acquisitions");     // <file>/streams/streamsN/acquisitions
-
-            nlohmann::json acqGroupAttr;
-            z5::readAttributes( *fAcqLoc, acqGroupAttr );        // read the existing attributes
 
             try
             { // Store existing attributes into class
@@ -263,7 +262,7 @@ std::cout << "fNRecordsInFile: " << fNAcquisitions << std::endl;
             }
         }
         else
-        { // no "acquisitions" records == write mode, create new
+        { // no "acquisitions" attributes == write mode, create new
 std::cout << "no \"acquisitions\" in file\n";
 
             LDEBUG( mlog, "Opened acquisition group in <write> mode" );
@@ -337,7 +336,7 @@ std::cout << "M4Stream::~M4Stream() DTOR: void\n";
     }
 
     /*************************************************************************
-    * @brief Initialize M4Stream parameters
+    * @brief Initialize M4Stream, opens dataset
     * @return none
     *************************************************************************/
     void M4Stream::Initialize() const
@@ -402,6 +401,7 @@ std::cout << "M4Stream::Initialize()\n";
             fDataInterleaved && 
             fNChannels != 1 )
         { // Interleaved, multichannel records
+std::cout << "Interleaved, multichannel records\n";
 
             // no memory is allocated for the stream record, only clears any existing
             fStreamRecord.Initialize();
@@ -488,8 +488,7 @@ std::cout << "M4Stream::Initialize()\n";
 std::cout << "stream datatype: " << strDataType << std::endl;
 
             // Programmer's Note: std::unique_ptr<z5::Dataset>
-            // Creates "acquisitions" group/dataset: <file>/streams/streamN/acquisitions
-            fDataSpaceUser = z5::createDataset( *fStreamParentLoc, "acquisitions", strDataType, shape, chunks );
+            fDataSpaceUser = z5::openDataset( *fStreamParentLoc, "acquisitions");
 
             fIsInitialized = true;
             return;
@@ -536,7 +535,7 @@ std::cout << "stream datatype: " << strDataType << std::endl;
         return;
 #endif
 
-std::cout << "non-interleaved\n";
+std::cout << "non-interleaved records\n";
         // allocate stream record memory
         fStreamRecord.Initialize( fStrRecNBytes );
 
@@ -609,8 +608,7 @@ std::cout << "stream datatype: " << strDataType << std::endl;
         std::vector<size_t> chunks = { 1,fStrRecSize };      // <row>,<col>
 
         // Programmer's Note: std::unique_ptr<z5::Dataset>
-        // Creates "acquisitions" group/dataset: <file>/streams/streamN/acquisitions
-        fDataSpaceUser = z5::createDataset( *fStreamParentLoc, "acquisitions", strDataType, shape, chunks );
+        fDataSpaceUser = z5::openDataset( *fStreamParentLoc, "acquisitions");
 
         fIsInitialized = true;
 std::cout << "M4Stream::Initialize(): void\n";        

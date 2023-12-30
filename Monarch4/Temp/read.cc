@@ -45,12 +45,33 @@ int main() {
     std::cout << "\nData:" << std::endl;
     std::cout << array2 << std::endl;
 
+    // Programmer's Note: readAttributes() doesn't fail if there are no attributes.
+    // The nlohmann::json component is empty in that case.
     cout << "read the attributes of dataset: /data\n";
     nlohmann::json attributesOut;   // object to receive attributes
     z5::readAttributes(dsHandle, attributesOut);
+
+    if(attributesOut.contains("bar") == true)
+    { // found "bar" key
+        std::cout << "bar:" << attributesOut.at("bar") << std::endl;
+    }
+    else
+    {
+        std::cout << "no 'bar' key\n";
+    }
+
+    if(attributesOut.contains("pi") == true)
+    { // found "pi" key
+        std::cout << "pi:" << attributesOut.at("pi") << std::endl;
+    }
+    else
+    {
+        std::cout << "no 'pi' key\n";
+    }
+
     std::cout << "Attributes: ";
     std::cout << attributesOut << std::endl;
-
+#if 0
     // Group: /channels
 // auto channelsHandle = z5::filesystem::handle::Group( f, "channels" );
     auto channelsHandle = z5GroupHandle( f, "channels" );
@@ -149,6 +170,7 @@ int main() {
         // Dump array buffer to screen
         std::cout << readArray << std::endl;
     }
+#endif
 }
 
 
