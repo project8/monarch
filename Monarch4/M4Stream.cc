@@ -233,19 +233,17 @@ std::cout << "See if there are any acquisition records for: " << fStreamParentLo
         {
 std::cout << "acquisitions group exists\n";
 
-            // handle to stream's "acquisitions" group/dataset
-            fAcqLoc = new z5GroupHandle(*fStreamParentLoc, "acquisitions");     // <file>/streams/streamsN/acquisitions
+              // handle to stream's "acquisitions" group/dataset
+              fAcqLoc = new z5GroupHandle(*fStreamParentLoc, "acquisitions");     // <file>/streams/streamsN/acquisitions
 
               nlohmann::json acqGroupAttr;
-    std::cout << "z5::readAttributes()\n";
               z5::readAttributes( *fAcqLoc, acqGroupAttr );        // read the existing attributes
 
             if( (acqGroupAttr.contains("n_acquisitions") == true) &&
                 (acqGroupAttr.contains("n_records") == true) )
             { // "acquisitions" attributes exist == read mode
-std::cout << "existing \"acquisitions\" records in file\n";
 
-                LDEBUG( mlog, "Opened acquisition group in <read> mode" );
+                LDEBUG( mlog, "Opened existing records acquisition group in <read> mode" );
 
                 try
                 { // Store existing attributes into class
@@ -255,10 +253,6 @@ std::cout << "existing \"acquisitions\" records in file\n";
 
 std::cout << "fNAcquisitions: " << fNAcquisitions << std::endl;
 std::cout << "fNRecordsInFile: " << fNAcquisitions << std::endl;
-                    BuildIndex();
-
-                    LDEBUG( mlog, "READ mode - Number of acquisitions found: " << fNAcquisitions << "; Number of records found: " << fNRecordsInFile );
-                    fMode = kRead;      // read mode
                 }
                 catch (const nlohmann::json::exception& e)
                 { // JSON error
@@ -267,12 +261,14 @@ std::cout << "fNRecordsInFile: " << fNAcquisitions << std::endl;
             }
             else
             { // There is acquisitions group, but no records
+
                 fNAcquisitions = 0;
                 fNRecordsInFile = 0;
-
-                LDEBUG( mlog, "READ mode - No acquisitions records" );
-                fMode = kRead;      // read mode
             }
+
+            BuildIndex();
+            fMode = kRead;      // read mode
+            LDEBUG( mlog, "READ mode - Number of acquisitions found: " << fNAcquisitions << "; Number of records found: " << fNRecordsInFile );
         }
         else
         { // no "acquisitions" attributes == write mode, create new
@@ -312,10 +308,10 @@ std::cout << "M4Stream::~M4Stream() DTOR\n";
         // avoid releasing unallocated memory: segfault
         if(fDataSpaceUser != nullptr)
         {
-//          delete fDataSpaceUser;
-            fDataSpaceUser.reset();   // std::unique_ptr<z5::Dataset>
+            delete fDataSpaceUser;
+//          fDataSpaceUser.reset();   // std::unique_ptr<z5::Dataset>
         }
-//      fDataSpaceUser = nullptr;
+        fDataSpaceUser = nullptr;
 
         // avoid releasing unallocated memory: segfault
         if(fCurrentAcqDataSet != nullptr)
@@ -481,8 +477,8 @@ std::cout << "Interleaved, multichannel records\n";
             // Data space object initialization
             if(fDataSpaceUser != nullptr)
             { // release any existing data space
-//              delete fDataSpaceUser;
-              fDataSpaceUser.reset(); // std::unique_ptr<z5::Dataset>
+                delete fDataSpaceUser;
+//              fDataSpaceUser.reset(); // std::unique_ptr<z5::Dataset>
             }
 
             // A dataspace defines the size and shape of the dataset or attribute raw data, 
@@ -497,24 +493,10 @@ std::cout << "Interleaved, multichannel records\n";
             { // read existing mode
 std::cout << "M4Stream::Initialize(): read existing mode\n";
                 // Programmer's Note: std::unique_ptr<z5::Dataset>
-                fDataSpaceUser = z5::openDataset( *fStreamParentLoc, "acquisitions");
+//              fDataSpaceUser = z5::openDataset( *fStreamParentLoc, "acquisitions");
+                fDataSpaceUser = new z5DatasetHandle( *fStreamParentLoc, "acquisitions");
             }
-#if 0
-            else
-            { // write/create mode
-    std::cout << "M4Stream::Initialize(): write/create mode\n";
 
-                // map lookup to convert type to string for dataset type
-                z5::types::Datatypes::InverseDtypeMap& N5type = z5::types::Datatypes::dtypeToN5();
-                std::string strDataType = N5type[fDataTypeInFile];     
-      std::cout << "stream datatype: " << strDataType << std::endl;
-
-                std::vector<size_t> shape = { N_DATA_DIMS,fDataDims1Rec[1] };       // <row>,<col>
-                std::vector<size_t> chunks = { N_DATA_DIMS,fDataDims1Rec[1] };      // <row>,<col>
-
-                fDataSpaceUser = z5::createDataset( *fStreamParentLoc, "acquisitions", strDataType, shape, chunks );
-            }
-#endif
             fIsInitialized = true;
             return;
         }
@@ -629,24 +611,10 @@ std::cout << "Record: " << iChan << " initialize\n";
 std::cout << "M4Stream::Initialize(): read existing mode\n";
 
             // Programmer's Note: std::unique_ptr<z5::Dataset>
-            fDataSpaceUser = z5::openDataset( *fStreamParentLoc, "acquisitions");
+//          fDataSpaceUser = z5::openDataset( *fStreamParentLoc, "acquisitions");
+            fDataSpaceUser = new z5DatasetHandle( *fStreamParentLoc, "acquisitions");
         }
-#if 0
-        else
-        { // write/create mode
-std::cout << "M4Stream::Initialize(): write/create mode\n";
 
-          // map lookup to convert type to string for dataset type
-          z5::types::Datatypes::InverseDtypeMap& N5type = z5::types::Datatypes::dtypeToN5();
-          std::string strDataType = N5type[fDataTypeInFile];     
-std::cout << "stream datatype: " << strDataType << std::endl;
-
-          std::vector<size_t> shape = { 1,fStrRecSize };       // <row>,<col>
-          std::vector<size_t> chunks = { 1,fStrRecSize };      // <row>,<col>
-
-          fDataSpaceUser = z5::createDataset( *fStreamParentLoc, "acquisitions", strDataType, shape, chunks );
-        }
-#endif
         fIsInitialized = true;
 std::cout << "M4Stream::Initialize(): void\n";        
     }
@@ -778,9 +746,12 @@ std::cout << "M4Stream::ReadRecord(): void\n";
 std::cout << "M4Stream::Close()\n";
         LDEBUG( mlog, "const M4Stream::Close()" );
 
-//      delete fDataSpaceUser;
-//      fDataSpaceUser = nullptr;
-        fDataSpaceUser.reset();   // std::unique_ptr<z5::Dataset>
+        if(fDataSpaceUser != nullptr)
+        {
+          delete fDataSpaceUser;
+        }
+        fDataSpaceUser = nullptr;
+//      fDataSpaceUser.reset();   // std::unique_ptr<z5::Dataset>
 
         delete fCurrentAcqDataSet; 
         fCurrentAcqDataSet = nullptr;
@@ -904,10 +875,10 @@ std::cout << "M4Stream::Close()\n";
 
         if(fDataSpaceUser != nullptr)
         {
-//        delete fDataSpaceUser;
-          fDataSpaceUser.reset();   // std::unique_ptr<z5::Dataset>
+            delete fDataSpaceUser;
+//          fDataSpaceUser.reset();   // std::unique_ptr<z5::Dataset>
         }
-//      fDataSpaceUser = nullptr;
+        fDataSpaceUser = nullptr;
 
         if(fCurrentAcqDataSet != nullptr)
         {
@@ -1115,7 +1086,7 @@ std::cout << "M4Stream::WriteRecordAsIs(): void\n";
     *************************************************************************/
     void M4Stream::BuildIndex() const
     {
-std::cout << "M4Stream::BuildIndex()\n";  
+std::cout << "==========M4Stream::BuildIndex()\n";  
       
 #if 0 // original HDF5 code
         fRecordIndex.resize( fNRecordsInFile );
@@ -1137,8 +1108,38 @@ std::cout << "M4Stream::BuildIndex()\n";
         }
         return;
 #endif    
+        fRecordIndex.resize( fNRecordsInFile );
+        unsigned tNRecInAcq;
+        unsigned iRecInFile = 0;
+        for( unsigned iAcq = 0; iAcq < fNAcquisitions; ++iAcq )
+        {
+            u32toa( iAcq, fAcqNameBuffer ); // acquisition record number
+std::cout << "record: " << fAcqNameBuffer << std::endl;
+
+            // handle to <file>/streams/streamsN/acquisitions/<recNumber>
+            auto dsHandle = z5GroupHandle(*fAcqLoc, fAcqNameBuffer);   
+
+            nlohmann::json acqRecAttr;
+            z5::readAttributes( dsHandle, acqRecAttr );        // read the record attribute
+
+            if( acqRecAttr.contains("n_records") == true )
+            { 
+                tNRecInAcq = (unsigned)acqRecAttr.at("n_records");
+
+                LDEBUG( mlog, "Acquisition <" << fAcqNameBuffer << "> has " << tNRecInAcq << " records" );
+                for( unsigned iRecInAcq = 0; iRecInAcq < tNRecInAcq; ++iRecInAcq )
+                {
+                    fRecordIndex.at( iRecInFile ).first = iAcq;
+                    fRecordIndex.at( iRecInFile ).second = iRecInAcq;
+
+                    LTRACE( mlog, "Record index: " << iRecInFile << " -- " << iAcq << " -- " << iRecInAcq );
+                    ++iRecInFile;
+                }
+            }
+///@todo alert to error missing n_records
+        }
     
-std::cout << "M4Stream::BuildIndex(): void\n";        
+std::cout << "========M4Stream::BuildIndex(): void\n";        
     }
 
     /*************************************************************************
