@@ -114,8 +114,7 @@ std::cout << "Monarch4::OpenForReading()\n";
 
         try
         {
-            // Create a new z5/Zarr File
-            // tMonarch4->fFile = std::make_unique< z5::filesystem::handle::File >( aFilename, z5::FileMode::r );
+            // Open existing z5/Zarr File
             tMonarch4->fFile = new z5FileHandle( aFilename, z5::FileMode::r );
         }
         catch( std::exception& e )
@@ -125,12 +124,14 @@ std::cout << "Monarch4::OpenForReading()\n";
             return nullptr;
         }
 
-        // if( tMonarch4->hFile == nullptr )
-        // {
-        //     delete tMonarch4;
-        //     throw M4Exception() << "Could not open <" << aFilename << "> for reading";
-        //     return nullptr;
-        // }
+        if( tMonarch4->fFile == nullptr )
+        {
+            delete tMonarch4;   // release the Monarch4 component
+
+            throw M4Exception() << "Could not open <" << aFilename << "> for reading";
+            return nullptr;
+        }
+
         LDEBUG( mlog, "Opened egg file <" << aFilename << "> for reading" );
 
         // Create the new M4Header
@@ -189,6 +190,13 @@ std::cout << "Monarch4::OpenForWriting()\n";
 
         try
         {
+            // Check if file already exists
+            if(fs::exists(aFilename) == true)
+            {
+              std::cout << "File: " << aFilename << " already exists\n";
+              fs::remove_all(aFilename);
+            }
+
             // Create a new z5/Zarr File managed by the Monarch4 object
             tMonarch4->fFile = new z5FileHandle( aFilename, z5::FileMode::w );
             z5::createFile( *tMonarch4->fFile, true );

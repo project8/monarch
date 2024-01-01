@@ -228,48 +228,62 @@ std::cout << "float64\n";
         // See if there are any acquisition records currently in file
 std::cout << "See if there are any acquisition records for: " << fStreamParentLoc->path() << std::endl;
 
-          // handle to stream's "acquisitions" group/dataset
-          fAcqLoc = new z5GroupHandle(*fStreamParentLoc, "acquisitions");     // <file>/streams/streamsN/acquisitions
 
-          // Programmer's Note: readAttributes() doesn't fail if there are no attributes.
-          // The nlohmann::json component is empty in that case.
-          nlohmann::json acqGroupAttr;
-          z5::readAttributes( *fAcqLoc, acqGroupAttr );        // read the existing attributes
+        if ( z5::filesystem::isSubGroup(*fStreamParentLoc, "acquisitions") == true)
+        {
+std::cout << "acquisitions group exists\n";
 
-        if( (acqGroupAttr.contains("n_acquisitions") == true) &&
-            (acqGroupAttr.contains("n_records") == true) )
-        { // "acquisitions" attributes exist == read mode
+            // handle to stream's "acquisitions" group/dataset
+            fAcqLoc = new z5GroupHandle(*fStreamParentLoc, "acquisitions");     // <file>/streams/streamsN/acquisitions
+
+              nlohmann::json acqGroupAttr;
+    std::cout << "z5::readAttributes()\n";
+              z5::readAttributes( *fAcqLoc, acqGroupAttr );        // read the existing attributes
+
+            if( (acqGroupAttr.contains("n_acquisitions") == true) &&
+                (acqGroupAttr.contains("n_records") == true) )
+            { // "acquisitions" attributes exist == read mode
 std::cout << "existing \"acquisitions\" records in file\n";
 
-            LDEBUG( mlog, "Opened acquisition group in <read> mode" );
+                LDEBUG( mlog, "Opened acquisition group in <read> mode" );
 
-            try
-            { // Store existing attributes into class
+                try
+                { // Store existing attributes into class
 
-                fNAcquisitions = (unsigned)acqGroupAttr["n_acquisitions"];
-                fNRecordsInFile = (unsigned)acqGroupAttr["n_records"];
+                    fNAcquisitions = (unsigned)acqGroupAttr["n_acquisitions"];
+                    fNRecordsInFile = (unsigned)acqGroupAttr["n_records"];
 
 std::cout << "fNAcquisitions: " << fNAcquisitions << std::endl;
 std::cout << "fNRecordsInFile: " << fNAcquisitions << std::endl;
-                BuildIndex();
+                    BuildIndex();
 
-                LDEBUG( mlog, "Number of acquisitions found: " << fNAcquisitions << "; Number of records found: " << fNRecordsInFile );
-                fMode = kRead;      // read mode
+                    LDEBUG( mlog, "READ mode - Number of acquisitions found: " << fNAcquisitions << "; Number of records found: " << fNRecordsInFile );
+                    fMode = kRead;      // read mode
+                }
+                catch (const nlohmann::json::exception& e)
+                { // JSON error
+                    throw M4Exception() << "M4Stream::M4Stream(): JSON error: " << e.what();
+                }
             }
-            catch (const nlohmann::json::exception& e)
-            { // JSON error
-                throw M4Exception() << "M4Stream::M4Stream(): JSON error: " << e.what();
+            else
+            { // There is acquisitions group, but no records
+                fNAcquisitions = 0;
+                fNRecordsInFile = 0;
+
+                LDEBUG( mlog, "READ mode - No acquisitions records" );
+                fMode = kRead;      // read mode
             }
         }
         else
         { // no "acquisitions" attributes == write mode, create new
-std::cout << "no \"acquisitions\" in file\n";
+std::cout << "acquisitions group doesn't exist\n";
 
             LDEBUG( mlog, "Opened acquisition group in <write> mode" );
 
             // Programmer's Note: This is a handle to dataset to be created in 
             // M4Stream::Initialize() by z5::openDataset()
             fAcqLoc = new z5GroupHandle(*fStreamParentLoc, "acquisitions");     // <file>/streams/streamsN/acquisitions
+
             fMode = kWrite;  // write mode
         }
 
@@ -389,6 +403,7 @@ std::cout << "M4Stream::Initialize()\n";
 
             fIsInitialized = true;
             return;
+        }
 #endif
 
         LDEBUG( mlog, "Initializing stream" );
@@ -478,18 +493,28 @@ std::cout << "Interleaved, multichannel records\n";
             // and metadata that stores a description of the data elements, data layout, and all other 
             // information necessary to write, read, and interpret the stored data.
 
-///@todo verify fDataDims1Rec[1]
-            std::vector<size_t> shape = { N_DATA_DIMS,fDataDims1Rec[1] };       // <row>,<col>
-            std::vector<size_t> chunks = { N_DATA_DIMS,fDataDims1Rec[1] };      // <row>,<col>
+            if(fMode == kRead)
+            { // read existing mode
+std::cout << "M4Stream::Initialize(): read existing mode\n";
+                // Programmer's Note: std::unique_ptr<z5::Dataset>
+                fDataSpaceUser = z5::openDataset( *fStreamParentLoc, "acquisitions");
+            }
+#if 0
+            else
+            { // write/create mode
+    std::cout << "M4Stream::Initialize(): write/create mode\n";
 
-            // map lookup/convert type to string
-            z5::types::Datatypes::InverseDtypeMap& N5type = z5::types::Datatypes::dtypeToN5();
-            std::string strDataType = N5type[fDataTypeInFile];     
-std::cout << "stream datatype: " << strDataType << std::endl;
+                // map lookup to convert type to string for dataset type
+                z5::types::Datatypes::InverseDtypeMap& N5type = z5::types::Datatypes::dtypeToN5();
+                std::string strDataType = N5type[fDataTypeInFile];     
+      std::cout << "stream datatype: " << strDataType << std::endl;
 
-            // Programmer's Note: std::unique_ptr<z5::Dataset>
-            fDataSpaceUser = z5::openDataset( *fStreamParentLoc, "acquisitions");
+                std::vector<size_t> shape = { N_DATA_DIMS,fDataDims1Rec[1] };       // <row>,<col>
+                std::vector<size_t> chunks = { N_DATA_DIMS,fDataDims1Rec[1] };      // <row>,<col>
 
+                fDataSpaceUser = z5::createDataset( *fStreamParentLoc, "acquisitions", strDataType, shape, chunks );
+            }
+#endif
             fIsInitialized = true;
             return;
         }
@@ -599,17 +624,29 @@ std::cout << "Record: " << iChan << " initialize\n";
 //std::cout << "str data stride: " << fDataStride[0] << " " << fDataStride[1] << std::endl;
 //std::cout << "str data block: " << fDataBlock[0] << " " << fDataBlock[1] << std::endl;
 
-        // map lookup to convert type to string for dataset type
-        z5::types::Datatypes::InverseDtypeMap& N5type = z5::types::Datatypes::dtypeToN5();
-        std::string strDataType = N5type[fDataTypeInFile];     
+        if(fMode == kRead)
+        { // read existing mode
+std::cout << "M4Stream::Initialize(): read existing mode\n";
+
+            // Programmer's Note: std::unique_ptr<z5::Dataset>
+            fDataSpaceUser = z5::openDataset( *fStreamParentLoc, "acquisitions");
+        }
+#if 0
+        else
+        { // write/create mode
+std::cout << "M4Stream::Initialize(): write/create mode\n";
+
+          // map lookup to convert type to string for dataset type
+          z5::types::Datatypes::InverseDtypeMap& N5type = z5::types::Datatypes::dtypeToN5();
+          std::string strDataType = N5type[fDataTypeInFile];     
 std::cout << "stream datatype: " << strDataType << std::endl;
 
-        std::vector<size_t> shape = { 1,fStrRecSize };       // <row>,<col>
-        std::vector<size_t> chunks = { 1,fStrRecSize };      // <row>,<col>
+          std::vector<size_t> shape = { 1,fStrRecSize };       // <row>,<col>
+          std::vector<size_t> chunks = { 1,fStrRecSize };      // <row>,<col>
 
-        // Programmer's Note: std::unique_ptr<z5::Dataset>
-        fDataSpaceUser = z5::openDataset( *fStreamParentLoc, "acquisitions");
-
+          fDataSpaceUser = z5::createDataset( *fStreamParentLoc, "acquisitions", strDataType, shape, chunks );
+        }
+#endif
         fIsInitialized = true;
 std::cout << "M4Stream::Initialize(): void\n";        
     }
