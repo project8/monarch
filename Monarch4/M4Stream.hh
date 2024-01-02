@@ -222,6 +222,11 @@ namespace monarch4
             // These are found in z5 file: types.hxx
             mutable z5Datatype fDataTypeInFile;
             mutable z5Datatype fDataTypeUser;
+            mutable std::string strDataType;        // string form of data type in file
+
+            // z5/Zarr/xarray 
+            mutable std::vector<size_t> dataShape;
+            mutable std::vector<size_t> dataChunks;
 
             enum { N_DATA_DIMS = 2 };
 
@@ -255,6 +260,7 @@ namespace monarch4
             // fDataBlock  I dont actually remember the significance of this or why its fSampleSize 
             // for separate access, but the stream record size in the other case
             mutable size_t fDataBlock[ N_DATA_DIMS ];
+
 
             mutable mutex_ptr fMutexPtr;
     };

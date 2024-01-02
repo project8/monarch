@@ -489,6 +489,15 @@ std::cout << "Interleaved, multichannel records\n";
             // and metadata that stores a description of the data elements, data layout, and all other 
             // information necessary to write, read, and interpret the stored data.
 
+///@todo verify fDataDims1Rec[1]
+            dataShape = { N_DATA_DIMS,fDataDims1Rec[1] };       // <row>,<col>
+            dataChunks = { N_DATA_DIMS,fDataDims1Rec[1] };      // <row>,<col>
+
+            // map lookup/convert type to string
+            z5::types::Datatypes::InverseDtypeMap& N5type = z5::types::Datatypes::dtypeToN5();
+            strDataType = N5type[fDataTypeInFile];     
+std::cout << "stream datatype: " << strDataType << std::endl;
+
             if(fMode == kRead)
             { // read existing mode
 std::cout << "M4Stream::Initialize(): read existing mode\n";
@@ -605,6 +614,23 @@ std::cout << "Record: " << iChan << " initialize\n";
 //std::cout << "str data offset: " << fDataOffset[0] << " " << fDataOffset[1] << std::endl;
 //std::cout << "str data stride: " << fDataStride[0] << " " << fDataStride[1] << std::endl;
 //std::cout << "str data block: " << fDataBlock[0] << " " << fDataBlock[1] << std::endl;
+
+        // A dataspace defines the size and shape of the dataset or attribute raw data, 
+        // and must be defined when the dataset or attribute is created.
+        // A Dataset contains the data values themselves.
+        
+        // A dataset is an object composed of a collection of data elements, or raw data, 
+        // and metadata that stores a description of the data elements, data layout, and all other 
+        // information necessary to write, read, and interpret the stored data.
+
+///@todo verify fDataDims1Rec[1]
+        dataShape = { N_DATA_DIMS,fDataDims1Rec[1] };       // <row>,<col>
+        dataChunks = { N_DATA_DIMS,fDataDims1Rec[1] };      // <row>,<col>
+
+        // map lookup/convert type to string
+        z5::types::Datatypes::InverseDtypeMap& N5type = z5::types::Datatypes::dtypeToN5();
+        strDataType = N5type[fDataTypeInFile];     
+std::cout << "stream datatype: " << strDataType << std::endl;
 
         if(fMode == kRead)
         { // read existing mode
@@ -976,26 +1002,26 @@ std::cout << "M4Stream::ReadRecordAsIs()\n";
 #if 0 // original HDF5 code
         if( aIsNewAcquisition )
         {
-            // try
-            // {
-                H5::Attribute tAttrAFRT( fCurrentAcqDataSet->openAttribute( "first_record_time" ) );
-                tAttrAFRT.read( tAttrAFRT.getDataType(), &fAcqFirstRecTime );
+            try
+            {
+             H5::Attribute tAttrAFRT( fCurrentAcqDataSet->openAttribute( "first_record_time" ) );
+             tAttrAFRT.read( tAttrAFRT.getDataType(), &fAcqFirstRecTime );
 
-                H5::Attribute tAttrAFRI( fCurrentAcqDataSet->openAttribute( "first_record_id" ) );
-                tAttrAFRI.read( tAttrAFRI.getDataType(), &fAcqFirstRecId );
-            // }
-            // catch( H5::Exception& )
-            // {
-            //     // Backwards compatibility with older files that don't have first_record_time and first_record_id
-            //     // Times increment by the record length starting at 0, but ID increments starting at 0
-            //     fAcqFirstRecTime = 0;
-            //     fAcqFirstRecId = 0;
-            //     for( unsigned iChan = 0; iChan < fNChannels; ++iChan )
-            //     {
-            //         fAcqFirstRecTimes[ iChan ] = 0;
-            //         fAcqFirstRecIds[ iChan ] = 0;
-            //     }
-            // }
+             H5::Attribute tAttrAFRI( fCurrentAcqDataSet->openAttribute( "first_record_id" ) );
+             tAttrAFRI.read( tAttrAFRI.getDataType(), &fAcqFirstRecId );
+            }
+            catch( H5::Exception& )
+            {
+                // Backwards compatibility with older files that don't have first_record_time and first_record_id
+                // Times increment by the record length starting at 0, but ID increments starting at 0
+                fAcqFirstRecTime = 0;
+                fAcqFirstRecId = 0;
+                for( unsigned iChan = 0; iChan < fNChannels; ++iChan )
+                {
+                    fAcqFirstRecTimes[ iChan ] = 0;
+                    fAcqFirstRecIds[ iChan ] = 0;
+                }
+            }
         }
 
         H5::DataSpace tDataSpaceInFile = fCurrentAcqDataSet->getSpace();
@@ -1010,6 +1036,60 @@ std::cout << "M4Stream::ReadRecordAsIs()\n";
             fChannelRecords[ iChan ].SetRecordId( fStreamRecord.GetRecordId() );
         }
 #endif
+    // read attributes
+      if( aIsNewAcquisition )
+      {
+        try
+        {
+          // Read the attributes from the record
+
+          nlohmann::json acqRecAttr;
+          z5::readAttributes( *fCurrentAcqDataSet, acqRecAttr );
+
+          if( (acqRecAttr.contains("first_record_time") == true) &&
+              (acqRecAttr.contains("first_record_id") == true) )
+          {
+            fAcqFirstRecTime = acqRecAttr.at("first_record_time");
+            fAcqFirstRecId = acqRecAttr.at("first_record_id");
+          }
+          else
+          { // attributes not available in file
+            
+            // Backwards compatibility with older files that don't have first_record_time and first_record_id
+            // Times increment by the record length starting at 0, but ID increments starting at 0
+            fAcqFirstRecTime = 0;
+            fAcqFirstRecId = 0;
+
+            for( unsigned iChan = 0; iChan < fNChannels; ++iChan )
+            {
+                fAcqFirstRecTimes[ iChan ] = 0;
+                fAcqFirstRecIds[ iChan ] = 0;
+            }
+          }
+        }
+        catch (const nlohmann::json::exception& e)
+        { // JSON error
+            throw M4Exception() << "M4Stream::ReadRecordAsIs(): JSON error: " << e.what();
+        }
+    }
+
+    // read record from dataset
+//  H5::DataSpace tDataSpaceInFile = fCurrentAcqDataSet->getSpace();
+//  tDataSpaceInFile.selectHyperslab( H5S_SELECT_SET, fDataDims1Rec, fDataOffset );
+//
+//  fCurrentAcqDataSet->read( fStreamRecord.GetData(), fDataTypeUser, *fDataSpaceUser, tDataSpaceInFile );
+//  fStreamRecord.SetTime( fAcqFirstRecTime + fRecordCountInAcq * fChanRecLength );
+//  fStreamRecord.SetRecordId( fAcqFirstRecId + fRecordCountInAcq );
+//  for( unsigned iChan = 0; iChan < fNChannels; ++iChan )
+//  {
+//      fChannelRecords[ iChan ].SetTime( fStreamRecord.GetTime() );
+//      fChannelRecords[ iChan ].SetRecordId( fStreamRecord.GetRecordId() );
+//  }
+
+      z5::types::ShapeType readOffset = { 0, 0};
+///@todo xarray access???  M4Record::GetData() 
+//z5::multiarray::readSubarray<strDataType>(*fCurrentAcqDataSet, array1, readOffset.begin());
+
 
 std::cout << "M4Stream::ReadRecordAsIs(): void\n";
     }
@@ -1076,6 +1156,22 @@ std::cout << "M4Stream::WriteRecordAsIs()\n";
             fCurrentAcqDataSet->createAttribute( "first_record_id", MH5Type< RecordIdType >::H5(), H5::DataSpace( H5S_SCALAR ) ).write( MH5Type< RecordIdType >::Native(), &tId );
         }
 #endif
+        z5::types::ShapeType writeOffset = { 0, 0};
+///@todo xarray access???  M4Record::GetData() 
+//z5::multiarray::writeSubarray<strDataType>(*fCurrentAcqDataSet, array1, writeOffset.begin());
+        
+        if( aIsNewAcquisition )
+        { // Write attributes of initial acquisition
+
+            TimeType tTime = fStreamRecord.GetTime();
+            RecordIdType tId = fStreamRecord.GetRecordId();
+
+            nlohmann::json acqRecAttr;
+            acqRecAttr["first_record_time"] = tTime;
+            acqRecAttr["first_record_id"] = tId;
+
+            z5::writeAttributes( *fCurrentAcqDataSet, acqRecAttr );
+        }
 
 std::cout << "M4Stream::WriteRecordAsIs(): void\n";
     }
