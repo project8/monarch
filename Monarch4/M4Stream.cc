@@ -884,6 +884,8 @@ std::cout << "M4Stream::WriteRecord()\n";
         }
 
 #endif
+
+
 std::cout << "M4Stream::WriteRecord(): void\n";
         return false;
     }

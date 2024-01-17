@@ -66,26 +66,28 @@ int main() {
 
         // Programmer's Note: *tHeader into mlog (ostream) dumps header info to terminal!
 //      LINFO( mlog, "Wrote header:\n" << *tHeader );
-//      LINFO( mlog, "Writing data" );
+        LINFO( mlog, "Writing data" );
+
+std::cout << "\n\n================\n\n";
 
         // Stream 0
-//        M4Stream* tSingleStream = tWriteTest->GetStream( tSingleStreamNum );
-//std::cout << "tSingleStream: " << tSingleStream << std::endl;
-//      byte_type* tSSData = tSingleStream->GetStreamRecord()->GetData();
-//std::cout << "tSSData: " << tSSData << std::endl;
-//        if (tSingleStream != nullptr && tSSData != nullptr)
-//        {
-//          std::cout << "stream and data pointers okay\n";
-//        }
-//      for( unsigned iSample = 0; iSample < tSSSamples; ++iSample )
-//      {
-//          tSSData[ iSample ] = 1;
-//      }
-//      if( ! tSingleStream->WriteRecord( true ) )
-//      {
-//          LERROR( mlog, "Unable to write the record!" );
-//          return RETURN_ERROR;
-//      }
+        M4Stream* tSingleStream = tWriteTest->GetStream( tSingleStreamNum );
+        std::cout << "tSingleStream: " << tSingleStream << std::endl;
+        byte_type* tSSData = tSingleStream->GetStreamRecord()->GetData();
+        std::cout << "tSSData: " << tSSData << std::endl;
+        if (tSingleStream != nullptr && tSSData != nullptr)
+        {
+          std::cout << "stream and data pointers okay\n";
+        }
+        for( unsigned iSample = 0; iSample < tSSSamples; ++iSample )
+        {
+            tSSData[ iSample ] = 1;
+        }
+        if( ! tSingleStream->WriteRecord( true ) )
+        {
+            LERROR( mlog, "Unable to write the record!" );
+            return RETURN_ERROR;
+        }
 //
 //      for( unsigned iSample = 0; iSample < tSSSamples; ++iSample )
 //      {
@@ -258,6 +260,8 @@ int main() {
         return RETURN_ERROR;
     }
 #endif
+
     std::cout << "writeMonarch: End of test\n";
+std::cout << "\n\n================\n\n";
     return 0;
 }
