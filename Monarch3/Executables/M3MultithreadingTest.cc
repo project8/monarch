@@ -156,8 +156,10 @@ int main( int argc, char** argv )
     catch( std::exception& e )
     {
         LERROR( mlog, "Exception thrown during write-speed test:\n" << e.what() );
+        STOP_LOGGING;
         return RETURN_ERROR;
     }
 
+    STOP_LOGGING;
     return RETURN_SUCCESS;
 }
