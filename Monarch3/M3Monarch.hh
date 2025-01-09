@@ -10,8 +10,9 @@
 
 #include "M3Exception.hh"
 #include "M3Header.hh"
-#include "logger.hh"
 #include "M3Stream.hh"
+
+#include "logger.hh"
 
 #include "H5Cpp.h"
 
