@@ -9,6 +9,7 @@
 
 #include "application.hh"
 #include "logger.hh"
+#include "macros.hh"
 
 #include <fstream>
 using std::ofstream;
@@ -32,6 +33,7 @@ int main( const int argc, const char** argv )
     if( tOutput.is_open() == false )
     {
         LERROR( mlog, "could not open output file!" );
+        STOP_LOGGING;
         return RETURN_ERROR;
     }
 
@@ -60,7 +62,8 @@ int main( const int argc, const char** argv )
     else
     {
         LERROR( mlog, "Unable to read a header with acquisition mode <" << tReadHeader->GetAcquisitionMode() << "> and format mode <" << tReadHeader->GetFormatMode() << ">" );
-        return -1;
+        STOP_LOGGING;
+        return RETURN_ERROR;
     }
 
     unsigned long long tRecordCount = 0;
@@ -74,6 +77,7 @@ int main( const int argc, const char** argv )
     if (! tReadTest->ReadRecord())
     {
         LERROR( mlog, "No records in the file" );
+        STOP_LOGGING;
         return RETURN_ERROR;
     }
     tRecordCount = 1;
@@ -112,6 +116,7 @@ int main( const int argc, const char** argv )
 
     tOutput.close();
 
+    STOP_LOGGING;
     return RETURN_SUCCESS;
 }
 

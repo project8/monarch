@@ -9,7 +9,6 @@
 #define M3HEADER_HH_
 
 #include "M3Constants.hh"
-#include "logger.hh"
 #include "M3MemberVariable.hh"
 #include "M3Types.hh"
 
@@ -20,7 +19,6 @@
 
 namespace monarch3
 {
-    LOGGER( mlog_mheader, "M3Header.hh" );
 
     /*!
      @class M3StreamHeader
@@ -273,6 +271,23 @@ namespace monarch3
     }
 
 
+}
+
+// Pretty printing methods
+// These methods need to be defined prior to the inclusion of logger.hh to allow them to work in the 
+// templated function logger.operator<<()
+M3_API std::ostream& operator<<( std::ostream& out, const monarch3::M3StreamHeader& hdr );
+M3_API std::ostream& operator<<( std::ostream& out, const monarch3::M3ChannelHeader& hdr );
+M3_API std::ostream& operator<<( std::ostream& out, const monarch3::M3Header& hdr );
+
+
+#include "logger.hh"
+
+namespace monarch3
+{
+    LOGGER( mlog_mheader, "M3Header.hh" );
+
+
     inline void M3Header::WriteScalarToHDF5( HAS_ATTR_IFC* aLoc, const std::string& aName, const std::string& aValue )
     {
         LTRACE( mlog_mheader, "Writing string to new scalar metadata <" << aName << ">: " << aValue << "; size = " << aValue.size() );
@@ -399,10 +414,5 @@ namespace monarch3
     }
 */
 }
-
-// Pretty printing methods
-M3_API std::ostream& operator<<( std::ostream& out, const monarch3::M3StreamHeader& hdr );
-M3_API std::ostream& operator<<( std::ostream& out, const monarch3::M3ChannelHeader& hdr );
-M3_API std::ostream& operator<<( std::ostream& out, const monarch3::M3Header& hdr );
 
 #endif
