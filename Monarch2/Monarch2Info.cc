@@ -2,6 +2,7 @@
 
 #include "application.hh"
 #include "logger.hh"
+#include "macros.hh"
 
 #include <cstring>
 #include <memory>
@@ -31,6 +32,7 @@ int main( const int argc, const char** argv )
     if( tHeaderOnly )
     {
         tReadTest->Close();
+        STOP_LOGGING;
         return RETURN_SUCCESS;
     }
 
@@ -52,6 +54,7 @@ int main( const int argc, const char** argv )
     else
     {
         LERROR( mlog, "Unable to read a header with acquisition mode <" << tReadHeader->GetAcquisitionMode() << "> and format mode <" << tReadHeader->GetFormatMode() << ">" );
+        STOP_LOGGING;
         return RETURN_ERROR;
     }
     try
@@ -69,6 +72,7 @@ int main( const int argc, const char** argv )
     catch (M2Exception& e)
     {
         LWARN( mlog, "Something went wrong during the reading of records!" << "\n\t" << e.what() );
+        STOP_LOGGING;
         return RETURN_ERROR;
     }
     LINFO( mlog, "record count <" << tRecordCount << ">" );
@@ -76,5 +80,6 @@ int main( const int argc, const char** argv )
 
     tReadTest->Close();
 
+    STOP_LOGGING;
     return RETURN_SUCCESS;
 }
