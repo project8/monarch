@@ -270,16 +270,14 @@ namespace monarch3
         return fStreamHeaders;
     }
 
+    // Pretty printing methods
+    // These methods need to be defined prior to the inclusion of logger.hh to allow them to work in the 
+    // templated function logger.operator<<()
+    M3_API std::ostream& operator<<( std::ostream& out, const M3StreamHeader& hdr );
+    M3_API std::ostream& operator<<( std::ostream& out, const M3ChannelHeader& hdr );
+    M3_API std::ostream& operator<<( std::ostream& out, const M3Header& hdr );
 
-}
-
-// Pretty printing methods
-// These methods need to be defined prior to the inclusion of logger.hh to allow them to work in the 
-// templated function logger.operator<<()
-M3_API std::ostream& operator<<( std::ostream& out, const monarch3::M3StreamHeader& hdr );
-M3_API std::ostream& operator<<( std::ostream& out, const monarch3::M3ChannelHeader& hdr );
-M3_API std::ostream& operator<<( std::ostream& out, const monarch3::M3Header& hdr );
-
+} // namespace monarch3
 
 #include "logger.hh"
 
