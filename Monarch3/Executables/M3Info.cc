@@ -50,7 +50,6 @@ int main( const int argc, const char** argv )
         if( tHeaderOnly )
         {
             tReadTest->FinishReading();
-            STOP_LOGGING;
             return RETURN_SUCCESS;
         }
 
@@ -137,11 +136,9 @@ int main( const int argc, const char** argv )
     catch( M3Exception& e )
     {
         LERROR( mlog, "Exception thrown during file reading:\n" << e.what() );
-        STOP_LOGGING;
         return RETURN_ERROR;
     }
 
-    STOP_LOGGING;
     return RETURN_SUCCESS;
 }
 
