@@ -271,7 +271,6 @@ int main( const int argc, const char** argv )
 
     unsigned tRetValue = tDoTest();
 
-    STOP_LOGGING;
     return tRetValue;
 }
 

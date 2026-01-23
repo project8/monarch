@@ -232,6 +232,5 @@ int main( const int argc, const char** argv )
 
     unsigned tRetVal = tDoTest();
     
-    STOP_LOGGING;
     return tRetVal;
 }

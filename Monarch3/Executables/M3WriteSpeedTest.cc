@@ -73,7 +73,6 @@ int main( int argc, char** argv )
         if( tNStreams == 0 )
         {
             LERROR( mlog, "Please specify a number of streams > 0" );
-            STOP_LOGGING;
             return RETURN_ERROR;
         }
 
@@ -206,7 +205,6 @@ int main( int argc, char** argv )
                     if( ! tStreams[ iStream ]->WriteRecord( tIsNewAcq ) )
                     {
                         LERROR( mlog, "Unable to write record <" << iRecord << "> for stream <" << iStream << ">" );
-                        STOP_LOGGING;
                         return RETURN_ERROR;
                     }
                 }
@@ -235,10 +233,8 @@ int main( int argc, char** argv )
     catch( std::exception& e )
     {
         LERROR( mlog, "Exception thrown during write-speed test:\n" << e.what() );
-        STOP_LOGGING;
         return RETURN_ERROR;
     }
 
-    STOP_LOGGING;
     return RETURN_SUCCESS;
 }

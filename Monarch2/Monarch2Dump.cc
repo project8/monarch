@@ -43,7 +43,6 @@ int main( const int argc, const char** argv )
         {
             LERROR( mlog, "could not open channel one output file!" );
             tReadTest->Close();
-            STOP_LOGGING;
             return RETURN_ERROR;
         }
 
@@ -77,14 +76,12 @@ int main( const int argc, const char** argv )
         {
             LERROR( mlog, "could not open channel one output file!" );
             tReadTest->Close();
-            STOP_LOGGING;
             return RETURN_ERROR;
         }
         if( tOutputTwo.is_open() == false )
         {
             LERROR( mlog, "could not open channel two output file!" );
             tReadTest->Close();
-            STOP_LOGGING;
             return RETURN_ERROR;
         }
 
@@ -121,7 +118,6 @@ int main( const int argc, const char** argv )
 
     tReadTest->Close();
 
-    STOP_LOGGING;
     return RETURN_SUCCESS;
 }
 
