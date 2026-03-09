@@ -690,70 +690,71 @@ namespace monarch3
         return;
     }
 
-}
-
-M3_API std::ostream& operator<<( std::ostream& out, const monarch3::M3StreamHeader& hdr )
-{
-    out << "Stream Header Content:\n";
-    out << "\tStream Number: " << hdr.GetNumber() << '\n';
-    out << "\tSource: " << hdr.Source() << '\n';
-    out << "\tNumber of Channels: " << hdr.GetNChannels() << '\n';
-    out << "\tChannel Format: " << hdr.GetChannelFormat() << '\n';
-    out << "\tAcquisition Rate: " << hdr.GetAcquisitionRate() << " MHz\n";
-    out << "\tRecord Size: " << hdr.GetRecordSize() << " samples\n";
-    out << "\tSample Size: " << hdr.GetSampleSize() << " elements\n";
-    out << "\tData Type Size: " << hdr.GetDataTypeSize() << " bytes\n";
-    out << "\tData Format: " << hdr.GetDataFormat() << '\n';
-    out << "\tBit Depth: " << hdr.GetBitDepth() << " bits\n";
-    out << "\tBit Alignment: " << hdr.GetBitAlignment() << '\n';
-    out << "\tNumber of Acquisitions: " << hdr.GetNAcquisitions() << '\n';
-    out << "\tNumber of Records: " << hdr.GetNRecords() << '\n';
-    return out;
-}
-
-M3_API std::ostream& operator<<( std::ostream& out, const monarch3::M3ChannelHeader& hdr )
-{
-    out << "Channel Header Content:\n";
-    out << "\tChannel Number: " << hdr.GetNumber() << '\n';
-    out << "\tSource: " << hdr.Source() << '\n';
-    out << "\tAcquisition Rate: " << hdr.GetAcquisitionRate() << " MHz\n";
-    out << "\tRecord Size: " << hdr.GetRecordSize() << " samples\n";
-    out << "\tSample Size: " << hdr.GetSampleSize() << " elements\n";
-    out << "\tData Type Size: " << hdr.GetDataTypeSize() << " bytes\n";
-    out << "\tData Format: " << hdr.GetDataFormat() << '\n';
-    out << "\tBit Depth: " << hdr.GetBitDepth() << " bits\n";
-    out << "\tBit Alignment: " << hdr.GetBitAlignment() << '\n';
-    out << "\tVoltage Offset: " << hdr.GetVoltageOffset() << " V\n";
-    out << "\tVoltage Range: " << hdr.GetVoltageRange() << " V\n";
-    out << "\tFrequency Min: " << hdr.GetFrequencyMin() << " Hz\n";
-    out << "\tFrequency Range: " << hdr.GetFrequencyRange() << " Hz\n";
-    return out;
-}
-
-M3_API std::ostream& operator<<( std::ostream& out, const monarch3::M3Header& hdr )
-{
-    out << "Monarch Header Content:\n";
-    out << "\tEgg Version: " << hdr.EggVersion() << "\n";
-    out << "\tFilename: " << hdr.Filename() << "\n";
-    out << "\tRun Duration: " << hdr.GetRunDuration() << " ms\n";
-    out << "\tTimestamp: " << hdr.Timestamp() << "\n";
-    out << "\tDescription: " << hdr.Description() << "\n";
-    out << "\tNumber of Channels: " << hdr.GetNChannels() << "\n";
-    out << "\tNumber of Streams: " << hdr.GetNStreams() << "\n";
-    out << "\tChannel-to-stream mapping:\n";
-    for( uint32_t iChan = 0; iChan < hdr.ChannelStreams().size(); ++iChan )
+    M3_API std::ostream& operator<<( std::ostream& out, const M3StreamHeader& hdr )
     {
-        out << "\t\tChannel " << iChan << " --> Stream " << hdr.ChannelStreams()[ iChan ] << "\n";
+        out << "Stream Header Content:\n";
+        out << "\tStream Number: " << hdr.GetNumber() << '\n';
+        out << "\tSource: " << hdr.Source() << '\n';
+        out << "\tNumber of Channels: " << hdr.GetNChannels() << '\n';
+        out << "\tChannel Format: " << hdr.GetChannelFormat() << '\n';
+        out << "\tAcquisition Rate: " << hdr.GetAcquisitionRate() << " MHz\n";
+        out << "\tRecord Size: " << hdr.GetRecordSize() << " samples\n";
+        out << "\tSample Size: " << hdr.GetSampleSize() << " elements\n";
+        out << "\tData Type Size: " << hdr.GetDataTypeSize() << " bytes\n";
+        out << "\tData Format: " << hdr.GetDataFormat() << '\n';
+        out << "\tBit Depth: " << hdr.GetBitDepth() << " bits\n";
+        out << "\tBit Alignment: " << hdr.GetBitAlignment() << '\n';
+        out << "\tNumber of Acquisitions: " << hdr.GetNAcquisitions() << '\n';
+        out << "\tNumber of Records: " << hdr.GetNRecords() << '\n';
+        return out;
     }
-    out << "\tStream headers:\n";
-    for( uint32_t iStream = 0; iStream < hdr.StreamHeaders().size(); ++iStream )
+
+    M3_API std::ostream& operator<<( std::ostream& out, const M3ChannelHeader& hdr )
     {
-        out << hdr.StreamHeaders()[ iStream ];
+        out << "Channel Header Content:\n";
+        out << "\tChannel Number: " << hdr.GetNumber() << '\n';
+        out << "\tSource: " << hdr.Source() << '\n';
+        out << "\tAcquisition Rate: " << hdr.GetAcquisitionRate() << " MHz\n";
+        out << "\tRecord Size: " << hdr.GetRecordSize() << " samples\n";
+        out << "\tSample Size: " << hdr.GetSampleSize() << " elements\n";
+        out << "\tData Type Size: " << hdr.GetDataTypeSize() << " bytes\n";
+        out << "\tData Format: " << hdr.GetDataFormat() << '\n';
+        out << "\tBit Depth: " << hdr.GetBitDepth() << " bits\n";
+        out << "\tBit Alignment: " << hdr.GetBitAlignment() << '\n';
+        out << "\tVoltage Offset: " << hdr.GetVoltageOffset() << " V\n";
+        out << "\tVoltage Range: " << hdr.GetVoltageRange() << " V\n";
+        out << "\tFrequency Min: " << hdr.GetFrequencyMin() << " Hz\n";
+        out << "\tFrequency Range: " << hdr.GetFrequencyRange() << " Hz\n";
+        return out;
     }
-    out << "\tChannel headers:\n";
-    for( uint32_t iChan = 0; iChan < hdr.ChannelHeaders().size(); ++iChan )
+
+    M3_API std::ostream& operator<<( std::ostream& out, const M3Header& hdr )
     {
-        out << hdr.ChannelHeaders()[ iChan ];
+        out << "Monarch Header Content:\n";
+        out << "\tEgg Version: " << hdr.EggVersion() << "\n";
+        out << "\tFilename: " << hdr.Filename() << "\n";
+        out << "\tRun Duration: " << hdr.GetRunDuration() << " ms\n";
+        out << "\tTimestamp: " << hdr.Timestamp() << "\n";
+        out << "\tDescription: " << hdr.Description() << "\n";
+        out << "\tNumber of Channels: " << hdr.GetNChannels() << "\n";
+        out << "\tNumber of Streams: " << hdr.GetNStreams() << "\n";
+        out << "\tChannel-to-stream mapping:\n";
+        for( uint32_t iChan = 0; iChan < hdr.ChannelStreams().size(); ++iChan )
+        {
+            out << "\t\tChannel " << iChan << " --> Stream " << hdr.ChannelStreams()[ iChan ] << "\n";
+        }
+        out << "\tStream headers:\n";
+        for( uint32_t iStream = 0; iStream < hdr.StreamHeaders().size(); ++iStream )
+        {
+            out << hdr.StreamHeaders()[ iStream ];
+        }
+        out << "\tChannel headers:\n";
+        for( uint32_t iChan = 0; iChan < hdr.ChannelHeaders().size(); ++iChan )
+        {
+            out << hdr.ChannelHeaders()[ iChan ];
+        }
+        return out;
     }
-    return out;
-}
+
+} // namespace monarch3
+

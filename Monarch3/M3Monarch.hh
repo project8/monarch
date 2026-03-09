@@ -8,9 +8,8 @@
 #ifndef M3MONARCH_HH_
 #define M3MONARCH_HH_
 
-#include "M3Exception.hh"
 #include "M3Header.hh"
-#include "logger.hh"
+#include "M3Exception.hh"
 #include "M3Stream.hh"
 
 #include "H5Cpp.h"

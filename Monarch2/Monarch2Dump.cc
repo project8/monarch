@@ -2,6 +2,7 @@
 
 #include "application.hh"
 #include "logger.hh"
+#include "macros.hh"
 
 #include <cstdlib>
 

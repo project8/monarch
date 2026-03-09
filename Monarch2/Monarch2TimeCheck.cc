@@ -9,6 +9,7 @@
 
 #include "application.hh"
 #include "logger.hh"
+#include "macros.hh"
 
 #include <fstream>
 using std::ofstream;
@@ -60,7 +61,7 @@ int main( const int argc, const char** argv )
     else
     {
         LERROR( mlog, "Unable to read a header with acquisition mode <" << tReadHeader->GetAcquisitionMode() << "> and format mode <" << tReadHeader->GetFormatMode() << ">" );
-        return -1;
+        return RETURN_ERROR;
     }
 
     unsigned long long tRecordCount = 0;
