@@ -45,7 +45,7 @@ jobs:
             pybind11 \
             rapidjson \
             yaml-cpp
-          pip install pytest numpy
+          pip3 install pytest numpy
 
       - name: Install dependencies -- Linux
         if: startsWith(matrix.os, 'ubuntu')
@@ -108,7 +108,7 @@ jobs:
           submodules: recursive
 
       - name: Select CC version
-        if: ${{ matrix.os == 'ubuntu-22.04' }}
+        if: ${{ matrix.os == 'ubuntu-22.04' || matrix.os == 'ubuntu-22.04-arm' }}
         run: |
           echo "CC=gcc-12" >> $GITHUB_ENV
           echo "CXX=g++-12" >> $GITHUB_ENV
