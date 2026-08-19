@@ -45,7 +45,7 @@ jobs:
             pybind11 \
             rapidjson \
             yaml-cpp
-          pip install pytest
+          pip install pytest numpy
 
       - name: Install dependencies -- Linux
         if: startsWith(matrix.os, 'ubuntu')
@@ -64,7 +64,7 @@ jobs:
           sudo cmake -DPYBIND11_TEST=FALSE ..
           sudo make -j2 install
           cd ../..
-          pip install pytest
+          pip install pytest numpy
 
       - name: Configure
         run: |
@@ -140,7 +140,8 @@ jobs:
           cmake .. \
             -DMonarch_BUILD_MONARCH2=TRUE \
             -DMonarch_BUILD_MONARCH3=FALSE \
-            -DMonarch_ENABLE_TESTING=TRUE
+            -DMonarch_ENABLE_TESTING=TRUE \
+            -DScarab_BUILD_PYTHON=FALSE
 
       - name: Build
         run: |
