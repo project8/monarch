@@ -49,7 +49,7 @@ namespace monarch3_pybind
             // ---- Factory methods ----
             .def_static( "open_for_reading",
                 []( const std::string& filename ) -> Monarch3Ptr {
-                    return Monarch3Ptr( Monarch3::OpenForReading( filename ) );
+                    return Monarch3Ptr( const_cast<monarch3::Monarch3*>(monarch3::Monarch3::OpenForReading( filename )) );
                 },
                 pybind11::arg( "filename" ),
                 "Open an existing egg file for reading.\n"
@@ -57,7 +57,7 @@ namespace monarch3_pybind
                 MONARCH3_BIND_CALL_GUARD_STREAMS )
             .def_static( "open_for_writing",
                 []( const std::string& filename ) -> Monarch3Ptr {
-                    return Monarch3Ptr( Monarch3::OpenForWriting( filename ) );
+                    return Monarch3Ptr( monarch3::Monarch3::OpenForWriting( filename ) );
                 },
                 pybind11::arg( "filename" ),
                 "Create or overwrite an egg file for writing.\n"
