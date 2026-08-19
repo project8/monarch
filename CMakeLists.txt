@@ -151,6 +151,10 @@ endif( Monarch_BUILD_PYTHON )
 
 pbuilder_prepare_project()
 
+if( Monarch_ENABLE_TESTING )
+    enable_testing()
+endif( Monarch_ENABLE_TESTING )
+
 
 ########
 # Scarab

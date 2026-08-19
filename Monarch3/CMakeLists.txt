@@ -53,3 +53,8 @@ add_subdirectory( Executables )
 if( Monarch_BUILD_PYTHON )
     add_subdirectory( python )
 endif( Monarch_BUILD_PYTHON )
+
+# Tests
+if( Monarch_ENABLE_TESTING )
+    add_subdirectory( Tests )
+endif( Monarch_ENABLE_TESTING )
