@@ -112,10 +112,9 @@ if( Monarch_BUILD_MONARCH2 )
     find_package( Protobuf REQUIRED )
     include_directories( BEFORE ${PROJECT_SOURCE_DIR}/Monarch2 ${PROJECT_BINARY_DIR}/Monarch2 ${PROJECT_BINARY_DIR} )
 
-    list( APPEND PUBLIC_EXT_LIBS_M2 
-        protobuf::libprotobuf 
-        protobuf::libprotobuf-lite 
-        protobuf::libprotoc
+    list( APPEND PUBLIC_EXT_LIBS_M2
+        protobuf::libprotobuf
+        protobuf::libprotobuf-lite
     )
 endif( Monarch_BUILD_MONARCH2 )
 
