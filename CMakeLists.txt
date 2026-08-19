@@ -109,7 +109,16 @@ endif( Monarch_BUILD_MONARCH3 )
 ##########
 
 if( Monarch_BUILD_MONARCH2 )
-    find_package( Protobuf REQUIRED )
+    # Use config mode so that protobuf's abseil dependency is propagated automatically.
+    # Modern protobuf (v22 / 4.x+ via brew) depends on abseil internally; the old
+    # FindProtobuf module mode does not surface that transitive dependency, causing
+    # undefined absl:: symbols at link time.
+    find_package( protobuf CONFIG QUIET )
+    if( NOT protobuf_FOUND )
+        # Fall back to module mode for older protobuf installations that only ship
+        # a FindProtobuf module and no config file.
+        find_package( Protobuf REQUIRED )
+    endif()
     include_directories( BEFORE ${PROJECT_SOURCE_DIR}/Monarch2 ${PROJECT_BINARY_DIR}/Monarch2 ${PROJECT_BINARY_DIR} )
 
     list( APPEND PUBLIC_EXT_LIBS_M2
