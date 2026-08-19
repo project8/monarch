@@ -9,7 +9,7 @@ set( PROTO_FILES
 
 protobuf_generate( 
     LANGUAGE CPP 
-    OUT_VAR Monarch_Protobuf_Sources #Monarch_Protobuf_Headers 
+    OUT_VAR Monarch_Protobuf_Output 
     PROTOS ${PROTO_FILES} 
 )
 message( STATUS "Generating protobuf source files: ${Monarch_Protobuf_Sources}" )
@@ -18,8 +18,11 @@ message( STATUS "Generating protobuf source files: ${Monarch_Protobuf_Sources}" 
 # monarch2 library #
 ####################
 
+list( GET Monarch_Protobuf_Output 0 Monarch_Protobuf_Headers )
+list( GET Monarch_Protobuf_Output 1 Monarch_Protobuf_Sources )
+
 set( MONARCH2_HEADERFILES
-#    ${Monarch_Protobuf_Sources}
+    ${Monarch_Protobuf_Headers}
     M2Exception.hh
     M2Header.hh
     M2IO.hh
