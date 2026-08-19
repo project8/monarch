@@ -8,6 +8,7 @@ Contents:
 
    Monarch_versions
    UsageMonarch3
+   UsageMonarch3Python
 
 .. end of toc
 .. (you must not remove or modify the above comment line, it is required by the API Doc generation)

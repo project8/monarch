@@ -18,6 +18,7 @@ add_definitions( -DEgg_VERSION=${Egg_VERSION} )
 # Monarch library options
 set( Monarch_BUILD_MONARCH2 FALSE CACHE BOOL "Build Monarch2 library (requires Protobuf)" )
 set( Monarch_BUILD_MONARCH3 TRUE CACHE BOOL "Build Monarch3 library (requires HDF5)" )
+set( Monarch_BUILD_PYTHON FALSE CACHE BOOL "Build Monarch3 Python bindings (requires pybind11)" )
 
 
 ########################
@@ -130,6 +131,18 @@ if( Monarch_BUILD_MONARCH2 )
         protobuf::libprotoc
     )
 endif( Monarch_BUILD_MONARCH2 )
+
+
+##########
+# Python #
+##########
+
+if( Monarch_BUILD_PYTHON )
+    find_package( Python3 REQUIRED COMPONENTS Interpreter Development )
+    set( PYBIND11_PYTHON_VERSION ${Python3_VERSION} CACHE STRING "" )
+    find_package( pybind11 REQUIRED )
+    include_directories( ${Python3_INCLUDE_DIRS} )
+endif( Monarch_BUILD_PYTHON )
 
 
 #####################
