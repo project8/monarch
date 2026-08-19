@@ -7,7 +7,7 @@ set( PROTO_FILES
     Protobuf/MonarchHeader.proto
 )
 
-protobuf_generate_cpp( Monarch_Protobuf_Sources Monarch_Protobuf_Headers ${PROTO_FILES} )
+protobuf_generate( Monarch_Protobuf_Sources Monarch_Protobuf_Headers ${PROTO_FILES} )
 
 
 ####################
