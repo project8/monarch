@@ -37,82 +37,69 @@ if( Monarch_BUILD_MONARCH3 )
     find_package( HDF5 REQUIRED COMPONENTS CXX )
     include_directories( BEFORE ${PROJECT_SOURCE_DIR}/Monarch3 )
 
-    # HDF5 doesn't currently define imported targets.  Therefore we have to do it ourselves.
+    if( HDF5_VERSION VERSION_LESS "1.10.1" )
+        message( FATAL_ERROR "HDF5 must be v1.10.1 or newer" )
+    elseif( HDF5_VERSION VERSION_GREATER_EQUAL "2.0.0" )
+        list( APPEND PUBLIC_EXT_LIBS_M3 hdf5::hdf5_cpp )
+    else() # 1.10.1 ... <2.0.0
 
-    # Library variables returned by the FindHDF5 module are paths to the actual libraries.
-    # We'll store all libraries, regardless of platform, in a single list.
-    set( ALL_HDF5_LIBRARIES )
-    if( WIN32 )
+        # HDF5 doesn't currently define imported targets.  Therefore we have to do it ourselves.
 
-        # In testing on 3/24/16 I found that the .dlls were being found, not the .libs.  I don't understand why, but this fixes the problem if it occurs.
-        # HDF5_CXX_LIBRARIES was blank in testing, so I commented out the first line.
-        #string( REPLACE ".dll" ".lib" HDF5_CXX_LIBRARIES ${HDF5_CXX_LIBRARIES} )
-        string( REPLACE ".dll" ".lib" HDF5_C_LIBRARY ${HDF5_C_LIBRARY} )
-        string( REPLACE ".dll" ".lib" HDF5_CXX_LIBRARY ${HDF5_CXX_LIBRARY} )
+        # Library variables returned by the FindHDF5 module are paths to the actual libraries.
+        # We'll store all libraries, regardless of platform, in a single list.
+        set( ALL_HDF5_LIBRARIES )
+        if( WIN32 )
 
-        list( APPEND ALL_HDF5_LIBRARIES ${HDF5_C_LIBRARY} ${HDF5_CXX_LIBRARY} )
+            # In testing on 3/24/16 I found that the .dlls were being found, not the .libs.  I don't understand why, but this fixes the problem if it occurs.
+            # HDF5_CXX_LIBRARIES was blank in testing, so I commented out the first line.
+            #string( REPLACE ".dll" ".lib" HDF5_CXX_LIBRARIES ${HDF5_CXX_LIBRARIES} )
+            string( REPLACE ".dll" ".lib" HDF5_C_LIBRARY ${HDF5_C_LIBRARY} )
+            string( REPLACE ".dll" ".lib" HDF5_CXX_LIBRARY ${HDF5_CXX_LIBRARY} )
 
-        message( STATUS "HDF5_C_LIBRARY: ${HDF5_C_LIBRARY}" )
-        message( STATUS "HDF5_CXX_LIBRARY: ${HDF5_CXX_LIBRARY}" )
+            list( APPEND ALL_HDF5_LIBRARIES ${HDF5_C_LIBRARY} ${HDF5_CXX_LIBRARY} )
 
-    else()
+            message( STATUS "HDF5_C_LIBRARY: ${HDF5_C_LIBRARY}" )
+            message( STATUS "HDF5_CXX_LIBRARY: ${HDF5_CXX_LIBRARY}" )
 
-        list( APPEND ALL_HDF5_LIBRARIES ${HDF5_CXX_LIBRARIES} )
-        message( STATUS "HDF5_CXX_LIBRARIES: ${HDF5_CXX_LIBRARIES}" )
+        else()
 
+            list( APPEND ALL_HDF5_LIBRARIES ${HDF5_CXX_LIBRARIES} )
+            message( STATUS "HDF5_CXX_LIBRARIES: ${HDF5_CXX_LIBRARIES}" )
+
+        endif()
+
+        # Now we create an imported library for the C++ library, and assign all other libraries as dependencies
+        add_library( HDF5CXXLib SHARED IMPORTED )
+        foreach( LIBRARY_PATH IN LISTS ALL_HDF5_LIBRARIES )
+            get_filename_component( LIBRARY ${LIBRARY_PATH} NAME_WE )
+            string(TOLOWER ${LIBRARY} LIBRARY_LOWER ) # avoid any potential case variation
+            if( LIBRARY_LOWER STREQUAL "libhdf5_cpp" )
+                # this is the C++ library
+                set_target_properties( HDF5CXXLib PROPERTIES IMPORTED_LOCATION ${LIBRARY_PATH} )
+
+                # We want the relevant include directories to be propagated as part of the HDF5 library properties
+                # HDF5_INCLUDE_DIR is deprecated, but is placed here to ensure the directory is picked up if an older version of cmake is used
+                target_include_directories( HDF5CXXLib INTERFACE ${HDF5_INCLUDE_DIRS} ${HDF5_INCLUDE_DIR} )
+            else()
+                # this is a dependency library
+                add_library( ${LIBRARY} SHARED IMPORTED )
+                set_target_properties(  ${LIBRARY} PROPERTIES IMPORTED_LOCATION ${LIBRARY_PATH} )
+
+                # We want the dependency libraries to be propagated as part of the HDF5 library properties
+                target_link_libraries( HDF5CXXLib INTERFACE ${LIBRARY} )
+            endif()
+        endforeach()
+
+        # Add the imported library to the set of external libraries
+        list( APPEND PUBLIC_EXT_LIBS_M3 HDF5CXXLib )
+    
     endif()
 
-    # Now we create an imported library for the C++ library, and assign all other libraries as dependencies
-    add_library( HDF5CXXLib SHARED IMPORTED )
-    foreach( LIBRARY_PATH IN LISTS ALL_HDF5_LIBRARIES )
-        get_filename_component( LIBRARY ${LIBRARY_PATH} NAME_WE )
-        string(TOLOWER ${LIBRARY} LIBRARY_LOWER ) # avoid any potential case variation
-        if( LIBRARY_LOWER STREQUAL "libhdf5_cpp" )
-            # this is the C++ library
-            set_target_properties( HDF5CXXLib PROPERTIES IMPORTED_LOCATION ${LIBRARY_PATH} )
-
-            # We want the relevant include directories to be propagated as part of the HDF5 library properties
-            # HDF5_INCLUDE_DIR is deprecated, but is placed here to ensure the directory is picked up if an older version of cmake is used
-            target_include_directories( HDF5CXXLib INTERFACE ${HDF5_INCLUDE_DIRS} ${HDF5_INCLUDE_DIR} )
-        else()
-            # this is a dependency library
-            add_library( ${LIBRARY} SHARED IMPORTED )
-            set_target_properties(  ${LIBRARY} PROPERTIES IMPORTED_LOCATION ${LIBRARY_PATH} )
-
-            # We want the dependency libraries to be propagated as part of the HDF5 library properties
-            target_link_libraries( HDF5CXXLib INTERFACE ${LIBRARY} )
-        endif()
-    endforeach()
-
-    # Add the imported library to the set of external libraries
-    list( APPEND PUBLIC_EXT_LIBS_M3 HDF5CXXLib )
-    
-    # The following is a work-around to provide compatibility with the HDF5 1.8 API and the HDF5 1.10 API
-    # It should be removed in favor of the 1.10 API once we're able to make 1.10 a requirement
-    # If you upgrade your version of HDF5, you'll need to clear your CMake cache before rebuilding
-    # First, test for the version of HDF5 in use
-    include( CheckCXXSourceCompiles )
-    set( CMAKE_REQUIRED_QUIET FALSE )
-    set( CMAKE_REQUIRED_LIBRARIES ${HDF5_CXX_LIBRARIES} )
-    set( CMAKE_REQUIRED_INCLUDES ${HDF5_INCLUDE_DIRS} )
-    check_cxx_source_compiles("
-        #include <H5Cpp.h>
-        int main()
-        {
-            H5::CommonFG* tester = new H5::H5File(\"new_file.h5\", H5F_ACC_TRUNC);
-            tester->openGroup(\"my_group\");
-            return 0;
-        }
-        " HAVE_OLD_HDF5 )
-    
-    # Then set preprocessor macros accordingly
-    if( ${HAVE_OLD_HDF5} )
-        message( STATUS "HDF5 is version 1.10.0 or older" )
-        set( HDF5_DEFINITIONS -DHAS_ATTR_IFC=H5::H5Location -DHAS_GRP_IFC=H5::CommonFG)
-    else( ${HAVE_OLD_HDF5} )
-        message( STATUS "HDF5 is version 1.10.1 or newer" )
-        set( HDF5_DEFINITIONS -DHAS_ATTR_IFC=H5::H5Object -DHAS_GRP_IFC=H5::H5Object )
-    endif( ${HAVE_OLD_HDF5} )
+    # The following macros were originally introduced to handle compatibility with the HDF5 1.8 API and the HDF5 1.10.1 API
+    # 1.10 is now the minimum version (as of 8/19/2026) so the workaround for v1.8 has been removed.
+    # But these definitions still need to be used until the source code is adjusted.
+    message( STATUS "HDF5 is version 1.10.1 or newer" )
+    set( HDF5_DEFINITIONS -DHAS_ATTR_IFC=H5::H5Object -DHAS_GRP_IFC=H5::H5Object )
 
 endif( Monarch_BUILD_MONARCH3 )
 
