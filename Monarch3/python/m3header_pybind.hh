@@ -90,15 +90,26 @@ namespace monarch3_pybind
             .def_property( "description",
                 []( const monarch3::M3Header& h ) { return h.Description(); },
                 []( monarch3::M3Header& h, const std::string& v ) { h.Description() = v; } )
-            // AddStream overloads
+            // AddStream overloads — lambda wrappers are needed because pybind11 cannot
+            // implicitly convert Python None to a raw std::vector<unsigned>* pointer.
             .def( "add_stream",
-                ( unsigned ( monarch3::M3Header::* )(
-                    const std::string&,
-                    uint32_t, uint32_t, uint32_t,
-                    uint32_t, uint32_t,
-                    uint32_t, uint32_t,
-                    std::vector< unsigned >* ) )
-                &monarch3::M3Header::AddStream,
+                []( monarch3::M3Header& h,
+                    const std::string& source,
+                    uint32_t acq_rate, uint32_t rec_size, uint32_t sample_size,
+                    uint32_t data_type_size, uint32_t data_format,
+                    uint32_t bit_depth, uint32_t bit_alignment,
+                    pybind11::object chan_vec_py ) -> unsigned
+                {
+                    std::vector< unsigned > buf;
+                    std::vector< unsigned >* ptr = nullptr;
+                    if( ! chan_vec_py.is_none() )
+                    {
+                        buf = chan_vec_py.cast< std::vector< unsigned > >();
+                        ptr = &buf;
+                    }
+                    return h.AddStream( source, acq_rate, rec_size, sample_size,
+                                        data_type_size, data_format, bit_depth, bit_alignment, ptr );
+                },
                 pybind11::arg( "source" ),
                 pybind11::arg( "acq_rate" ),
                 pybind11::arg( "rec_size" ),
@@ -107,17 +118,27 @@ namespace monarch3_pybind
                 pybind11::arg( "data_format" ),
                 pybind11::arg( "bit_depth" ),
                 pybind11::arg( "bit_alignment" ),
-                pybind11::arg( "chan_vec" ) = nullptr,
+                pybind11::arg( "chan_vec" ) = pybind11::none(),
                 "Add a single-channel stream; returns the stream number" )
             .def( "add_stream",
-                ( unsigned ( monarch3::M3Header::* )(
-                    const std::string&,
-                    uint32_t, uint32_t,
-                    uint32_t, uint32_t, uint32_t,
-                    uint32_t, uint32_t,
-                    uint32_t, uint32_t,
-                    std::vector< unsigned >* ) )
-                &monarch3::M3Header::AddStream,
+                []( monarch3::M3Header& h,
+                    const std::string& source,
+                    uint32_t n_channels, uint32_t channel_format,
+                    uint32_t acq_rate, uint32_t rec_size, uint32_t sample_size,
+                    uint32_t data_type_size, uint32_t data_format,
+                    uint32_t bit_depth, uint32_t bit_alignment,
+                    pybind11::object chan_vec_py ) -> unsigned
+                {
+                    std::vector< unsigned > buf;
+                    std::vector< unsigned >* ptr = nullptr;
+                    if( ! chan_vec_py.is_none() )
+                    {
+                        buf = chan_vec_py.cast< std::vector< unsigned > >();
+                        ptr = &buf;
+                    }
+                    return h.AddStream( source, n_channels, channel_format, acq_rate, rec_size,
+                                        sample_size, data_type_size, data_format, bit_depth, bit_alignment, ptr );
+                },
                 pybind11::arg( "source" ),
                 pybind11::arg( "n_channels" ),
                 pybind11::arg( "channel_format" ),
@@ -128,7 +149,7 @@ namespace monarch3_pybind
                 pybind11::arg( "data_format" ),
                 pybind11::arg( "bit_depth" ),
                 pybind11::arg( "bit_alignment" ),
-                pybind11::arg( "chan_vec" ) = nullptr,
+                pybind11::arg( "chan_vec" ) = pybind11::none(),
                 "Add a multi-channel stream; returns the stream number" )
             .def( "__repr__", []( const monarch3::M3Header& h ) {
                 std::ostringstream out;

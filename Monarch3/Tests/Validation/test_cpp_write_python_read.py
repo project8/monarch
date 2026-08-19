@@ -77,30 +77,37 @@ def test_stream1_data_sequential(cpp_written_egg):
 
 
 def test_stream1_offset_navigation(cpp_written_egg):
-    """Verify seeking with non-zero offsets (mirrors M3ReadTest Test 2)."""
+    """Verify seeking with non-zero offsets (mirrors M3ReadTest Test 2).
+
+    Key: ReadRecord uses aIfNewAcqStartAtFirstRec=True by default, which snaps to the
+    first record of any new acquisition entered.  Pass False to land exactly on the
+    offset-targeted record when crossing an acquisition boundary.
+    """
     with monarch3.Monarch3.open_for_reading(cpp_written_egg) as m:
         m.read_header()
         stream = m.get_stream(1)
 
-        # Read record 0 (offset=0 from start)
+        # Read record 0 (offset=0 from start); acq 0, rec 0
         assert stream.read_record(0), "Expected record 0"
         ch0 = stream.get_channel_data(0).view(np.uint16)
-        assert np.all(ch0 == STREAM1_VALUES[0][0])
+        assert np.all(ch0 == STREAM1_VALUES[0][0]), f"Expected {STREAM1_VALUES[0][0]}, got {ch0}"
 
-        # Skip forward: offset=1 steps to record 2 (crossing to acquisition 1)
-        assert stream.read_record(1), "Expected record 2"
+        # Skip forward with offset=1 crossing to acquisition 1.
+        # aIfNewAcqStartAtFirstRec=False: land on the exact target (file rec 2, acq 1 rec 1,
+        # values 10000/20000) rather than snapping back to the start of acq 1.
+        assert stream.read_record(1, False), "Expected record 2"
         ch0 = stream.get_channel_data(0).view(np.uint16)
-        assert np.all(ch0 == STREAM1_VALUES[2][0])
+        assert np.all(ch0 == STREAM1_VALUES[2][0]), f"Expected {STREAM1_VALUES[2][0]}, got {ch0}"
 
         # Reread record 2 (offset=-1)
         assert stream.read_record(-1), "Expected reread of record 2"
         ch0 = stream.get_channel_data(0).view(np.uint16)
-        assert np.all(ch0 == STREAM1_VALUES[2][0])
+        assert np.all(ch0 == STREAM1_VALUES[2][0]), f"Expected {STREAM1_VALUES[2][0]}, got {ch0}"
 
         # Step back to record 1 (offset=-2)
         assert stream.read_record(-2), "Expected record 1"
         ch0 = stream.get_channel_data(0).view(np.uint16)
-        assert np.all(ch0 == STREAM1_VALUES[1][0])
+        assert np.all(ch0 == STREAM1_VALUES[1][0]), f"Expected {STREAM1_VALUES[1][0]}, got {ch0}"
 
         # Request past end of file
         assert not stream.read_record(5), "Expected False for out-of-bounds forward seek"
@@ -133,15 +140,24 @@ def test_stream2_data(cpp_written_egg):
 
 
 def test_stream2_skip_to_second_record(cpp_written_egg):
-    """Skip directly to record 1 using offset=1 (mirrors M3ReadTest Test 3)."""
+    """Skip directly to record 1 using offset=1 (mirrors M3ReadTest Test 3).
+
+    Stream 2 has only 1 acquisition, so aIfNewAcqStartAtFirstRec does not matter here;
+    the snap-to-first-in-acq only fires when entering a *new* acquisition.  However,
+    the very first ReadRecord call always treats the stream as entering a new acquisition,
+    so we must pass False to land on the exact offset target (rec 1) rather than rec 0.
+    """
     with monarch3.Monarch3.open_for_reading(cpp_written_egg) as m:
         m.read_header()
         stream = m.get_stream(2)
-        assert stream.read_record(1), "Expected record 1 via skip"
+        assert stream.read_record(1, False), "Expected record 1 via skip"
         v0, v1, v2 = STREAM2_VALUES[1]
         assert np.all(stream.get_channel_data(0).view(np.uint8) == v0)
         assert np.all(stream.get_channel_data(1).view(np.uint8) == v1)
         assert np.all(stream.get_channel_data(2).view(np.uint8) == v2)
+
+        # Verify that a backward seek past the beginning returns False
+        assert not stream.read_record(-3), "Expected False for out-of-bounds backward seek"
 
 
 # ---- Stream 3: single-channel float32 ----

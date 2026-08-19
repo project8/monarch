@@ -57,10 +57,14 @@ def tmp_egg(tmp_path):
     return str(tmp_path / "test.egg")
 
 
-@pytest.fixture
-def cpp_written_egg(tmp_path):
-    """Run M3WriteTest to produce the gold-standard egg file; return its path."""
-    path = str(tmp_path / "cpp_written.egg")
+@pytest.fixture(scope="session")
+def cpp_written_egg(tmp_path_factory):
+    """Run M3WriteTest once per session to produce the gold-standard egg file.
+
+    Session scope avoids spawning multiple concurrent M3WriteTest processes (which
+    can be killed by macOS resource throttling when pytest runs tests back-to-back).
+    """
+    path = str(tmp_path_factory.mktemp("cpp_written") / "cpp_written.egg")
     result = subprocess.run(
         ["M3WriteTest", path],
         capture_output=True,
