@@ -45,7 +45,9 @@ jobs:
             pybind11 \
             rapidjson \
             yaml-cpp
-          pip3 install pytest numpy
+          python3 -m venv $(pwd)/venv
+          source $(pwd)/venv/bin/activate
+          python3 -m pip install pytest numpy
 
       - name: Install dependencies -- Linux
         if: startsWith(matrix.os, 'ubuntu')
