@@ -1,7 +1,6 @@
 Monarch
 =======
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/9495b2fba24c44c8884d78c80873e45d)](https://www.codacy.com/project/Project8/monarch/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=project8/monarch&amp;utm_campaign=Badge_Grade_Dashboard)
 [![Documentation Status](https://readthedocs.org/projects/monarch/badge/?version=stable)](https://monarch.readthedocs.io/en/stable/?badge=stable)
 [![DOI](https://zenodo.org/badge/2208206.svg)](https://zenodo.org/badge/latestdoi/2208206)
 
@@ -28,7 +27,7 @@ Requirements
 ------------
 
 - CMake 3.1 or higher
-- HDF5 1.8.12 or higher (Monarch3 only)
+- HDF5 1.10.1 or higher (Monarch3 only)
 - Google Protocol Buffers (Monarch2 only)
 
 
