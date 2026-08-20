@@ -91,9 +91,9 @@ namespace monarch2
 
     };
 
-}
+    // Pretty printing method
+    std::ostream& operator<<( std::ostream& out, const M2Header& hdr );
 
-// Pretty printing method
-std::ostream& operator<<( std::ostream& out, const monarch2::M2Header& hdr );
+}
 
 #endif

@@ -1,0 +1,189 @@
+name: Run Tests
+
+on:
+  push:
+    branches: [ 'main', 'develop' ]
+    tags: ['*']
+  pull_request:
+
+  workflow_dispatch:
+
+jobs:
+
+  Monarch3Tests:
+
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, ubuntu-24.04-arm, ubuntu-22.04, ubuntu-22.04-arm, macos-26, macos-15-intel, macos-15]
+
+    steps:
+
+      - name: Checkout the repo
+        uses: actions/checkout@v7
+        with:
+          submodules: recursive
+
+      - name: Select CC version
+        # We require GCC 12 or higher if using GCC
+        # The default GCC for Ubuntu 22.04 is 11, but 12 is available
+        if: ${{ matrix.os == 'ubuntu-22.04' || matrix.os == 'ubuntu-22.04-arm' }}
+        run: |
+          echo "CC=gcc-12" >> $GITHUB_ENV
+          echo "CXX=g++-12" >> $GITHUB_ENV
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install Python packages
+        run: pip install pytest numpy
+
+      - name: Install dependencies -- Mac
+        # pybind11 is manually installed because we need to use v3.0.0 (as of 8/21/25)
+        # Fix the /usr/local directory structure
+        if: startsWith(matrix.os, 'macos')
+        run: |
+          brew install \
+            hdf5 \
+            boost \
+            pybind11 \
+            rapidjson \
+            yaml-cpp
+
+      - name: Install dependencies -- Linux
+        if: startsWith(matrix.os, 'ubuntu')
+        run: |
+          sudo apt-get update
+          DEBIAN_FRONTEND=noninteractive sudo apt-get install -y \
+            libhdf5-dev \
+            libboost-all-dev \
+            rapidjson-dev \
+            libyaml-cpp-dev
+          git clone https://github.com/pybind/pybind11.git
+          cd pybind11
+          git checkout v3.1.0
+          mkdir build
+          cd build
+          sudo cmake -DPYBIND11_TEST=FALSE ..
+          sudo make -j2 install
+
+      - name: Configure
+        run: |
+          mkdir build
+          cd build
+          cmake .. \
+            -DMonarch_BUILD_MONARCH3=TRUE \
+            -DMonarch_ENABLE_TESTING=TRUE \
+            -DMonarch_BUILD_PYTHON=TRUE
+
+      - name: Build
+        run: |
+          cd build
+          make -j2 install
+
+      - name: Run tests
+        run: |
+          cd build
+          ctest --output-on-failure
+
+# For debugging
+#      - name: Setup tmate session
+#        if: ${{ ! success() }}
+#        uses: mxschmitt/action-tmate@v3
+
+
+  Monarch2Tests:
+
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, ubuntu-24.04-arm, ubuntu-22.04, ubuntu-22.04-arm, macos-26, macos-15-intel, macos-15]
+
+    steps:
+
+      - name: Checkout the repo
+        uses: actions/checkout@v7
+        with:
+          submodules: recursive
+
+      - name: Select CC version
+        if: ${{ matrix.os == 'ubuntu-22.04' || matrix.os == 'ubuntu-22.04-arm' }}
+        run: |
+          echo "CC=gcc-12" >> $GITHUB_ENV
+          echo "CXX=g++-12" >> $GITHUB_ENV
+
+      - name: Install dependencies -- Mac
+        if: startsWith(matrix.os, 'macos')
+        run: |
+          brew install \
+            protobuf \
+            boost \
+            rapidjson \
+            yaml-cpp
+
+      - name: Install dependencies -- Linux
+        if: startsWith(matrix.os, 'ubuntu')
+        run: |
+          sudo apt-get update
+          DEBIAN_FRONTEND=noninteractive sudo apt-get install -y \
+            protobuf-compiler \
+            libprotobuf-dev \
+            libboost-all-dev \
+            rapidjson-dev \
+            libyaml-cpp-dev
+
+      - name: Configure
+        run: |
+          mkdir build
+          cd build
+          cmake .. \
+            -DMonarch_BUILD_MONARCH2=TRUE \
+            -DMonarch_BUILD_MONARCH3=FALSE \
+            -DMonarch_ENABLE_TESTING=TRUE \
+            -DScarab_BUILD_PYTHON=FALSE
+
+      - name: Build
+        run: |
+          cd build
+          make -j2 install
+
+# Tests have not been implemented
+#      - name: Run tests
+#        run: |
+#          cd build
+#          ctest --output-on-failure
+
+# For debugging
+#      - name: Setup tmate session
+#        if: ${{ ! success() }}
+#        uses: mxschmitt/action-tmate@v3
+
+
+  Release:
+
+    runs-on: ubuntu-24.04
+
+    if: ${{ github.event_name == 'push' && contains(github.ref, 'refs/tags/') }}
+
+    needs: [Monarch3Tests, Monarch2Tests]
+
+    steps:
+
+      - name: Checkout the repo
+        uses: actions/checkout@v7
+        with:
+          submodules: recursive
+
+      - name: Release with a changelog
+        uses: rasmus-saks/release-a-changelog-action@v1.2.0
+        with:
+          github-token: '${{ secrets.GITHUB_TOKEN }}'
+          path: 'changelog.md'
+          title-template: 'Monarch v{version} -- Release Notes'
+          tag-template: 'v{version}'

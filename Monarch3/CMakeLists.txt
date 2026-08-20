@@ -48,3 +48,13 @@ pbuilder_install_headers( ${MONARCH3_HEADERFILES} )
 
 # Executables
 add_subdirectory( Executables )
+
+# Python bindings
+if( Monarch_BUILD_PYTHON )
+    add_subdirectory( python )
+endif( Monarch_BUILD_PYTHON )
+
+# Tests
+if( Monarch_ENABLE_TESTING )
+    add_subdirectory( Tests )
+endif( Monarch_ENABLE_TESTING )

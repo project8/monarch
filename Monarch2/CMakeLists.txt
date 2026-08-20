@@ -7,15 +7,23 @@ set( PROTO_FILES
     Protobuf/MonarchHeader.proto
 )
 
-protobuf_generate_cpp( Monarch_Protobuf_Sources Monarch_Protobuf_Headers ${PROTO_FILES} )
-
+protobuf_generate( 
+    LANGUAGE CPP 
+    OUT_VAR Monarch_Protobuf_Output 
+    PROTOS ${PROTO_FILES} 
+)
+message( STATUS "Generating protobuf source files: ${Monarch_Protobuf_Output}" )
 
 ####################
 # monarch2 library #
 ####################
 
+list( GET Monarch_Protobuf_Output 0 Monarch_Protobuf_Headers )
+list( GET Monarch_Protobuf_Output 1 Monarch_Protobuf_Sources )
+include_directories( ${CMAKE_CURRENT_BINARY_DIR}/Protobuf )
+
 set( MONARCH2_HEADERFILES
-    ${Monarch_Protobuf_Sources}
+    ${Monarch_Protobuf_Headers}
     M2Exception.hh
     M2Header.hh
     M2IO.hh

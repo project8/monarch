@@ -112,35 +112,35 @@ int main( const int argc, const char** argv )
                 return RETURN_ERROR;
             }
 
-            LINFO( mlog, "Skip to the third record, crossing to the next acquisition (record 2; acquisition 1)" );
-            if( ! ReadRecordCheck( tStream1, 1, tStrHeader1.GetDataFormat() ) )
+            LINFO( mlog, "Skip to the second record in acquisition 1 (record 2 in file), crossing to the next acquisition" );
+            if( ! tStream1->ReadRecord( 1, false ) )
             {
-                LERROR( mlog, "Failed read record check" );
+                LERROR( mlog, "Failed to read record" );
                 return RETURN_ERROR;
             }
 
-            LINFO( mlog, "Reread the third record (record 2; acquisition 1)" );
+            LINFO( mlog, "Reread the current record (record 2 in file; record 1 in acquisition 1)" );
             if( ! ReadRecordCheck( tStream1, -1, tStrHeader1.GetDataFormat() ) )
             {
                 LERROR( mlog, "Failed read record check" );
                 return RETURN_ERROR;
             }
 
-            LINFO( mlog, "Go backwards to the second record (record 1; acquisition 1)" );
+            LINFO( mlog, "Go backwards to the first record in acquisition 1 (record 1 in file)" );
             if( ! ReadRecordCheck( tStream1, -2, tStrHeader1.GetDataFormat() ) )
             {
                 LERROR( mlog, "Failed read record check" );
                 return RETURN_ERROR;
             }
 
-            LINFO( mlog, "Go backwards to the first record (record 1; acquisition 0)" );
+            LINFO( mlog, "Go backwards to acquisition 0 (record 0 in file)" );
             if( ! ReadRecordCheck( tStream1, -2, tStrHeader1.GetDataFormat() ) )
             {
                 LERROR( mlog, "Failed read record check" );
                 return RETURN_ERROR;
             }
 
-            LINFO( mlog, "Reread the first record (record 1; acquisition 0)" );
+            LINFO( mlog, "Reread the first record (record 0 in file; acquisition 0)" );
             if( ! ReadRecordCheck( tStream1, -1, tStrHeader1.GetDataFormat() ) )
             {
                 LERROR( mlog, "Failed read record check" );
@@ -177,9 +177,9 @@ int main( const int argc, const char** argv )
             }
 
             LINFO( mlog, "Skipping immediately to the second record (record 1)" );
-            if( ! ReadRecordCheck( tStream2, 1, tStrHeader2.GetDataFormat() ) )
+            if( ! tStream2->ReadRecord( 1, false ) )
             {
-                LERROR( mlog, "Failed read record check" );
+                LERROR( mlog, "Failed to read record" );
                 return RETURN_ERROR;
             }
 

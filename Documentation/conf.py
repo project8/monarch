@@ -17,8 +17,9 @@
 #  * the project, copyright, and author variables
 #  * the arguments used to assign variables htmlhelp_basename, latex_documents, man_pages, and texinfo_documents
 
-#import sys
+import sys
 import os
+import importlib.util
 from subprocess import call, check_output
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -26,31 +27,17 @@ from subprocess import call, check_output
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #sys.path.insert(0, os.path.abspath('.'))
 
+# Fall back to the pure-Python stub when the compiled monarch3 extension is not
+# available (e.g. local doc builds where the C++ library has not been compiled).
+if importlib.util.find_spec('monarch3') is None:
+    sys.path.insert(0, os.path.abspath('stubs'))
+
 # version
 this_version = 'v?.?.?'
 try:
-    this_version = check_output(['git', 'describe', '--abbrev=0', '--tags'])
+    this_version = check_output(['git', 'describe', '--abbrev=0', '--tags']).decode('utf-8').strip()
 except:
     pass
-
-# environment variables used by Doxygen
-os.environ['PROJECT_NAME'] = 'Monarch'
-os.environ['PROJECT_NUMBER'] = this_version
-os.environ['PROJECT_BRIEF_DESC'] = 'Project 8 Data File Format Library'
-# located in your documentation directory, or give the relative path from the documentation directory
-os.environ['PROJECT_LOGO'] = ''
-
-# directories in which doxygen should look for source files; if you have a `doxfiles` directory in your documentation, that should go here; string with space-separated directories
-os.environ['DOXYGEN_INPUT'] = 'DoxFiles ../Monarch3  ../Monarch2'
-# directories within DOXYGEN_INPUT that you want to exclude from doxygen (e.g. if there's  a submodule included that you don't want to index); string with space-separated directories
-os.environ['DOXYGEN_EXCLUDE'] = ''
-# directories outside of DOXYGEN_INPUT that you want the C preprocessor to look in for macro definitions (e.g. if there's a submodule not included that has relevant macros); string with space-separated directories
-os.environ['PREPROC_INCLUDE_PATH'] = '../Scarab/library/utility ../Scarab/library/logger'
-
-# Doxygen
-call(['doxygen', '../Scarab/documentation/cpp/Doxyfile'])
-call(['mv', './user_doxygen_out/html', './_static'])
-
 
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
 if on_rtd:
@@ -69,7 +56,15 @@ else:
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = []
+extensions = [
+    'sphinx.ext.autodoc',
+]
+
+autodoc_default_options = {
+    'members': True,
+    'undoc-members': False,
+    'show-inheritance': True,
+}
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -87,7 +82,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'Monarch'
-copyright = u'2018, Monarch Authors'
+copyright = u'2026, Monarch Authors'
 author = u'Project 8 Collaboration'
 
 # The version info for the project you're documenting, acts as replacement for

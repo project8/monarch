@@ -267,24 +267,24 @@ TimeType M2Header::GetRecordTime0() const
     {
         return fProtobufHeader->voltagerange();
     }
-}
 
-std::ostream& operator<<( std::ostream& out, const monarch2::M2Header& hdr )
-{
-    out << "Monarch Header Content: " << "\n";
-    out << "\tFilename: " << hdr.GetFilename() << "\n";
-    out << "\tAcquisition Mode (# channels): " << hdr.GetAcquisitionMode() << "\n";
-    out << "\tAcquisition Rate: " << hdr.GetAcquisitionRate() << " MHz\n";
-    out << "\tRun Duration: " << hdr.GetRunDuration() << " ms\n";
-    out << "\tRecord Size: " << hdr.GetRecordSize() << "\n";
-    out << "\tTimestamp: " << hdr.GetTimestamp() << "\n";
-    out << "\tDescription: " << hdr.GetDescription() << "\n";
-    out << "\tRun Type: " << hdr.GetRunType() << "\n";
-    out << "\tRun Source: " << hdr.GetRunSource() << "\n";
-    out << "\tFormat Mode: " << hdr.GetFormatMode() << "\n";
-    out << "\tData Type Size: " << hdr.GetDataTypeSize() << " bytes\n";
-    out << "\tBit Depth: " << hdr.GetBitDepth() << " bits\n";
-    out << "\tVoltage Min: " << hdr.GetVoltageMin() << " V\n";
-    out << "\tVoltage Range: " << hdr.GetVoltageRange() << " V\n";
-    return out;
-}
+    std::ostream& operator<<( std::ostream& out, const M2Header& hdr )
+    {
+        out << "Monarch Header Content: " << "\n";
+        out << "\tFilename: " << hdr.GetFilename() << "\n";
+        out << "\tAcquisition Mode (# channels): " << hdr.GetAcquisitionMode() << "\n";
+        out << "\tAcquisition Rate: " << hdr.GetAcquisitionRate() << " MHz\n";
+        out << "\tRun Duration: " << hdr.GetRunDuration() << " ms\n";
+        out << "\tRecord Size: " << hdr.GetRecordSize() << "\n";
+        out << "\tTimestamp: " << hdr.GetTimestamp() << "\n";
+        out << "\tDescription: " << hdr.GetDescription() << "\n";
+        out << "\tRun Type: " << hdr.GetRunType() << "\n";
+        out << "\tRun Source: " << hdr.GetRunSource() << "\n";
+        out << "\tFormat Mode: " << hdr.GetFormatMode() << "\n";
+        out << "\tData Type Size: " << hdr.GetDataTypeSize() << " bytes\n";
+        out << "\tBit Depth: " << hdr.GetBitDepth() << " bits\n";
+        out << "\tVoltage Min: " << hdr.GetVoltageMin() << " V\n";
+        out << "\tVoltage Range: " << hdr.GetVoltageRange() << " V\n";
+        return out;
+    }
+} // namespace monarch2
