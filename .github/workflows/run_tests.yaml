@@ -34,6 +34,14 @@ jobs:
           echo "CC=gcc-12" >> $GITHUB_ENV
           echo "CXX=g++-12" >> $GITHUB_ENV
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install Python packages
+        run: pip install pytest numpy
+
       - name: Install dependencies -- Mac
         # pybind11 is manually installed because we need to use v3.0.0 (as of 8/21/25)
         # Fix the /usr/local directory structure
@@ -45,9 +53,6 @@ jobs:
             pybind11 \
             rapidjson \
             yaml-cpp
-          python3 -m venv $(pwd)/venv
-          source $(pwd)/venv/bin/activate
-          python3 -m pip install pytest numpy
 
       - name: Install dependencies -- Linux
         if: startsWith(matrix.os, 'ubuntu')
@@ -65,10 +70,6 @@ jobs:
           cd build
           sudo cmake -DPYBIND11_TEST=FALSE ..
           sudo make -j2 install
-          cd ../..
-          python -m venv $(pwd)/venv
-          source $(pwd)/venv/bin/activate
-          python -m pip install pytest numpy
 
       - name: Configure
         run: |
@@ -86,7 +87,6 @@ jobs:
 
       - name: Run tests
         run: |
-          source $(pwd)/venv/bin/activate
           cd build
           ctest --output-on-failure
 
