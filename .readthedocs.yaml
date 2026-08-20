@@ -18,13 +18,13 @@ build:
     - doxygen
     - graphviz
     - tree
-#  jobs:
-#    pre_build:
-#      - git submodule update --init --recursive
-#      - python ./documentation/source/run_doxygen.py
-#      - mkdir -p $READTHEDOCS_OUTPUT/html
-#      - mv ./user_doxygen_out/html $READTHEDOCS_OUTPUT/html/_static
-#      - tree
+  jobs:
+    pre_build:
+      - git submodule update --init --recursive
+      - python ./Documentation/run_doxygen.py
+      - mkdir -p $READTHEDOCS_OUTPUT/html
+      - mv ./user_doxygen_out/html $READTHEDOCS_OUTPUT/html/_static
+      - tree
 
 # Build documentation in the "Documentation/" directory with Sphinx
 sphinx:
