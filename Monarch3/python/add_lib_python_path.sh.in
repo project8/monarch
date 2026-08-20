@@ -1,0 +1,3 @@
+# Adds the lib install directory to the python path
+
+export PYTHONPATH=@LIB_INSTALL_DIR@:$PYTHONPATH

@@ -1,5 +1,5 @@
-EggStandards
-============
+Egg Standards
+=============
 
 .. toctree::
     :maxdepth: 3
