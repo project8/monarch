@@ -10,7 +10,6 @@ Contents:
    UsageMonarch3Cpp
    UsageMonarch3Python
    TestingMonarch3
-   PythonAPI
 
 .. end of toc
 .. (you must not remove or modify the above comment line, it is required by the API Doc generation)

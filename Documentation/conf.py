@@ -27,8 +27,8 @@ from subprocess import call, check_output
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #sys.path.insert(0, os.path.abspath('.'))
 
-# Use the pure-Python stub when the compiled monarch3 extension is not available
-# (e.g. on ReadTheDocs, which does not compile C++).
+# Fall back to the pure-Python stub when the compiled monarch3 extension is not
+# available (e.g. local doc builds where the C++ library has not been compiled).
 if importlib.util.find_spec('monarch3') is None:
     sys.path.insert(0, os.path.abspath('stubs'))
 

@@ -15,12 +15,20 @@ build:
     # rust: "1.64"
     # golang: "1.19"
   apt_packages:
+    - cmake
     - doxygen
     - graphviz
+    - libboost-filesystem-dev
+    - libhdf5-dev
+    - pybind11-dev
+    - rapidjson-dev
+    - libyaml-cpp-dev
     - tree
   jobs:
     pre_build:
       - git submodule update --init --recursive
+      - cmake -S . -B _rtd_build -DMonarch_BUILD_PYTHON=ON -DPBUILDER_PY_INSTALL_IN_SITELIB=ON -DCMAKE_INSTALL_PREFIX=/usr/local
+      - cmake --build _rtd_build --target install -- -j$(nproc)
       - python ./Documentation/run_doxygen.py
       - mkdir -p $READTHEDOCS_OUTPUT/html
       - mv ./user_doxygen_out/html $READTHEDOCS_OUTPUT/html/_static
