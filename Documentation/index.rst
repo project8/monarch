@@ -7,7 +7,7 @@ Contents:
    :maxdepth: 2
 
    Monarch_versions
-   UsageMonarch3
+   UsageMonarch3Cpp
    UsageMonarch3Python
    TestingMonarch3
 
