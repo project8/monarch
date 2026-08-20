@@ -1,5 +1,5 @@
-How to use Monarch3 with C++
-============================
+How to use Monarch3 in C++
+==========================
 
 Thread safety: Reading and writing records (via ``M3Stream::ReadRecord()`` and ``M3Stream::WriteRecord()``, respectively) are thread-safe
 except that the HDF5 C library (on which the C++ library is built) is inherently non-thread-safe.  Though multi-threaded writing may

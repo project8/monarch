@@ -1,5 +1,5 @@
-How to use Monarch3 from Python
-================================
+How to use Monarch3 in Python
+=============================
 
 The ``monarch3`` Python module is a pybind11 binding of the Monarch3 C++ library.
 It exposes the same read/write workflow as the C++ API but with Pythonic conventions:
