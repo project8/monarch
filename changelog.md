@@ -27,6 +27,8 @@ Types of changes: Added, Changed, Deprecated, Removed, Fixed, Security
 - Documentation pages: `UsageMonarch3Python.rst` and `TestingMonarch3.rst`
 - GitHub Actions workflow (`.github/workflows/run_tests.yaml`) with separate jobs for
   Monarch3 (including Python validation tests) and Monarch2, plus a Release job
+- Python API documentation is built on ReadTheDocs, including building the full C++ library 
+  and Python bindings so that the full API is available.
 
 ### Fixed
 
@@ -35,8 +37,10 @@ Types of changes: Added, Changed, Deprecated, Removed, Fixed, Security
   a `ReadRecord(-2)` call that would step before the start of the file
 - `M3ReadTest`: Test 3 (stream 2 skip) likewise uses `aIfNewAcqStartAtFirstRec=false` for
   the initial offset skip
+- RTD documentation setup was updated to modern RTD standards
 
 ### Changed
 
 - HDF5 minimum version raised to 1.10.1; the v1.8 API compatibility workaround has been
   removed from `CMakeLists.txt`
+- C++ use documentation was updated
