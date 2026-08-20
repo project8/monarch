@@ -12,7 +12,7 @@ protobuf_generate(
     OUT_VAR Monarch_Protobuf_Output 
     PROTOS ${PROTO_FILES} 
 )
-message( STATUS "Generating protobuf source files: ${Monarch_Protobuf_Sources}" )
+message( STATUS "Generating protobuf source files: ${Monarch_Protobuf_Output}" )
 
 ####################
 # monarch2 library #
@@ -20,6 +20,7 @@ message( STATUS "Generating protobuf source files: ${Monarch_Protobuf_Sources}" 
 
 list( GET Monarch_Protobuf_Output 0 Monarch_Protobuf_Headers )
 list( GET Monarch_Protobuf_Output 1 Monarch_Protobuf_Sources )
+include_directories( ${CMAKE_CURRENT_BINARY_DIR}/Protobuf )
 
 set( MONARCH2_HEADERFILES
     ${Monarch_Protobuf_Headers}
