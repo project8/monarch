@@ -92,6 +92,7 @@ def test_python_write_cpp_read(tmp_egg):
         ["M3ReadTest", tmp_egg],
         capture_output=True,
         text=True,
+        timeout=30,
     )
     assert result.returncode == 0, (
         f"M3ReadTest failed on Python-written file (return code {result.returncode}):\n"

@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 Types of changes: Added, Changed, Deprecated, Removed, Fixed, Security
 
+## Unreleased
+
+
+## [3.9.1] - 2026-08-21
+
+### Added
+
+- Doc page for installation
+
+### Fixed
+
+- Updated Scarab to v3.14.3
+- Updated old actions/setup-python version (5-->7)
+- Fixed failing test (Monarch3Tests on macos-26); was getting killed possibly by OS throttling; added 30-second timeout to the subprocess.run() call.
+
+
 ## [3.9.0] - 2026-08-20
 
 ### Added
